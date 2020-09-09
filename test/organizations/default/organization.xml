@@ -1,0 +1,194 @@
+<organization id="kth-lvzn8qxk-1.0_default" version="1.0">
+  <title>Default Organization</title>
+  <description>Sample organization included with the OLI project template.</description>
+  <audience>This organization is intended as an example for OLI content authors.</audience>
+  <labels sequence="Sequence" unit="Unit" module="Module" section="Section"/>
+  <sequences>
+  <sequence id="part1" category="content" audience="all">
+  <title>Introduktion till Python</title>
+  <unit id="afb7e3bef62049eeb5de6da8a4587a69">
+  <title>Introduktion till Python</title>
+  <module id="bc8a5bb1c48144938f8dae7606c6d63d">
+  <title>Variabler och utskrifter</title>
+  <item id="a6f3820c0ada4eb8ae0c5882a51c52b7" scoring_mode="default">
+  <resourceref idref="e3ccc18a824a48c6ac359e136fa7602f"/>
+  </item>
+  <item id="e03e5354d4e24d28a0da7cce8aa3c8f3" scoring_mode="default">
+  <resourceref idref="f62e01e5f1a5445c928abc765b61276d"/>
+  </item>
+  <item id="a7613f82cc42449e99cf7aa1c2a436b5" scoring_mode="default">
+  <resourceref idref="e8d6c5ac60c642c58756aa000da1e934"/>
+  </item>
+  <item id="e7a48cfec5ff41d09d74b6053a2393d4" scoring_mode="default">
+  <resourceref idref="a42fbd35e5614b2baa9c17e8c5c8f883"/>
+  </item>
+  <item id="efd777f8f0ad4d89afad64610241a869" scoring_mode="default">
+  <resourceref idref="dcd086e76c404dfd81704080212c4ee3"/>
+  </item>
+  <item id="fd1078033ada4003b13adacec57eb843" scoring_mode="default">
+  <resourceref idref="cbe61f71253b4c0987e513f2e453f244"/>
+  </item>
+  <item id="f26438adcdf94de4aef9ccca38c74e50" scoring_mode="default">
+  <resourceref idref="ff0bbbdf86c84c7798f2bda856f05a7f"/>
+  </item>
+  <item id="c28b05023be3447bb2e897e4a66c22c7" scoring_mode="default">
+  <resourceref idref="newb35edda7cbe245d2becce6292ffb0674"/>
+  </item>
+  </module>
+  <module id="bd3af810c0a34d9f8c278eaa0419ca42">
+  <title>Inmatning och styrstrukturer</title>
+  <item id="badf227726334823af09c9b132b57d56" scoring_mode="default">
+  <resourceref idref="e507bc0faf2c4f15aed7f57f6a62d381"/>
+  </item>
+  <item id="f433ef8c360b4dbab4d89ede1cb88413" scoring_mode="default">
+  <resourceref idref="c9a96435cf3a4c2fa4d0e19952f08607"/>
+  </item>
+  <item id="ab86d68537cd44cb8aa3c510569c11a6" scoring_mode="default">
+  <resourceref idref="f9f19d41295546b8b9e33fa872684cba"/>
+  </item>
+  <item id="ec1f44ee6b2a41bca3930c30f815db2a" scoring_mode="default">
+  <resourceref idref="b79c9a4a246e4ad6a44e79c9cafcc730"/>
+  </item>
+  <item id="b1e08bc550cb4cd4bfe5b890700cf22b" scoring_mode="default">
+  <resourceref idref="fe082f47e8a74c2db78c37d29ed6f27c"/>
+  </item>
+  <item id="bfd00a181b5049a1b0836a3a73cf0cd5" scoring_mode="default">
+  <resourceref idref="newab2d4fbf3fb44416bc346688b00c34d4"/>
+  </item>
+  </module>
+  <module id="ce035df5a17547778b8e53616b4685fe">
+  <title>Listor, for-slingor och uppslagslistor</title>
+  <item id="e4d67ae797ab4377948d4b713d7da8e4" scoring_mode="default">
+  <resourceref idref="a5ba12ddbeef43ac9dcb1c6052ecbae7"/>
+  </item>
+  <item id="a7847d5fce364c6895278203d15d147e" scoring_mode="default">
+  <resourceref idref="f046388bcdbd446ca3378a26ba26d94d"/>
+  </item>
+  <item id="c8cd6fb42b0f413ea679ce7800ed3e02" scoring_mode="default">
+  <resourceref idref="ab7c7b0837494a159a21505719a71685"/>
+  </item>
+  <item id="bba49716b4b9494b95c428e7003a375c" scoring_mode="default">
+  <resourceref idref="a0fc529d25214562bc0d342dcee91c1b"/>
+  </item>
+  <item id="c5f74093b3b34007a81053c2a3538d30" scoring_mode="default">
+  <resourceref idref="d0bb8e76eb7744b88c5c2dcd8c358bb2"/>
+  </item>
+  <item id="d0a334bd605145fcaef3aba544cd8899" scoring_mode="default">
+  <resourceref idref="newb2bf74e9973445cab783cbeed1e83608"/>
+  </item>
+  </module>
+  <module id="bdfdcce126d6406cbba40085b0b31592">
+  <title>Funktioner och moduler</title>
+  <item id="b10434af20f24061bafdab975bf83e7a" scoring_mode="default">
+  <resourceref idref="f1a2990d37244945b4d7e9e6457c1c57"/>
+  </item>
+  <item id="b31bf2823cfd4f90a9a3105e0ac6533a" scoring_mode="default">
+  <resourceref idref="b6ceb99144ea42a38d79ed0bd62b03f9"/>
+  </item>
+  <item id="e5f6c2dafa454114b8084bb4d1ebc9e2" scoring_mode="default">
+  <resourceref idref="fdfcfef3f4eb4439b87b3f087621656d"/>
+  </item>
+  <item id="dac24be3d13a4f669ec7f3d1d39e8dc1" scoring_mode="default">
+  <resourceref idref="b358a9b4c2244392b3bfba19deb05359"/>
+  </item>
+  <item id="ca2b4ab1ad1d441b849d05f529ad86d0" scoring_mode="default">
+  <resourceref idref="e46deb2ce2e84ff58e5133062d507f9f"/>
+  </item>
+  <item id="c159a3dfb8b141d1ab933dd0af0f5161" scoring_mode="default">
+  <resourceref idref="aa37b444ae4b4845a121149383a58584"/>
+  </item>
+  <item id="d2caf70bac3649b6bdf788b835fa2354" scoring_mode="default">
+  <resourceref idref="cd41f42a212e43429dcec557e4fdbf07"/>
+  </item>
+  <item id="c4d34ce748164710a270f70427da3c0c" scoring_mode="default">
+  <resourceref idref="c4cd8744652741bc85ba90ffc75c6e1c"/>
+  </item>
+  <item id="b4e9def62c404874b042ad75daa2c95a" scoring_mode="default">
+  <resourceref idref="d1037ba0817344b2abb20cc8f9bb3aae"/>
+  </item>
+  <item id="fab0c9e720404e4894dd3779eedd503c" scoring_mode="default">
+  <resourceref idref="newde2e87c1a5274cc0ae735a1852865e81"/>
+  </item>
+  </module>
+  <module id="df99c2153c6544ea9977201e0aa24135">
+  <title>Filer och filhantering</title>
+  <item id="bf7236f7f7a54980abfdf66b1afcb899" scoring_mode="default">
+  <resourceref idref="dcfd2d9efcfc4068a59bb122cb0885ee"/>
+  </item>
+  <item id="a2a57f7c23b849298e97b0e7a264167c" scoring_mode="default">
+  <resourceref idref="aa89b18eee2b441698ce9b0ae42223f1"/>
+  </item>
+  <item id="ce03876144fe4e599cc71fb1d1ab4961" scoring_mode="default">
+  <resourceref idref="b1007ebf424c4d99af2367f9e5d5953c"/>
+  </item>
+  <item id="c5bcff10893a4203b893642796b87918" scoring_mode="default">
+  <resourceref idref="ebde73c4d4014efea31ff11aa53522e0"/>
+  </item>
+  <item id="aa31ce7ba69a48e7857ae52e700237a2" scoring_mode="default">
+  <resourceref idref="bf8f01c14f14433fb8b7405725253729"/>
+  </item>
+  <item id="ecf1307ea8374224b04ddf015681a5a8" scoring_mode="default">
+  <resourceref idref="cc3594315f7947e79cf293ceca1070a3"/>
+  </item>
+  <item id="f5fa8c7d88f94260b9cb0b18508346ef" scoring_mode="default">
+  <resourceref idref="c540b9376d78414e83e766d5e13bcd2d"/>
+  </item>
+  <item id="df9658a6e3904d9580e273491872f0c8" scoring_mode="default">
+  <resourceref idref="newcbe122c3f6ee46c183620cabaf9badbd"/>
+  </item>
+  </module>
+  <module id="cb88ff92bbb14e27a99b11b837f5a423">
+  <title>Klasser och objekt</title>
+  <item id="ac3351b7b58941cbb3618847798f1712" scoring_mode="default">
+  <resourceref idref="f3e2e0e82b7d43eda1ff250bfe861151"/>
+  </item>
+  <item id="ad562f4bd0ad45a7b46799e54e95d922" scoring_mode="default">
+  <resourceref idref="e492a2f4c57541f3926265a362fda730"/>
+  </item>
+  <item id="fc22888944ee49998310b15010886941" scoring_mode="default">
+  <resourceref idref="f8f6963938af49a08e60860001641c9c"/>
+  </item>
+  <item id="c750386bdbb144f69375f3d8f82e520e" scoring_mode="default">
+  <resourceref idref="a0542015f6b143498b87cc4ca9d4562e"/>
+  </item>
+  <item id="c4b47a1f4ad94054b79c04ffb8f3e0e5" scoring_mode="default">
+  <resourceref idref="ffdc234adc3f4a139c11f85cfebe6e90"/>
+  </item>
+  <item id="cbf142cf2d934d25b04abc5109587eb3" scoring_mode="default">
+  <resourceref idref="d2f93f35abda4c80968c94c736d75f71"/>
+  </item>
+  <item id="bebe67da21d2438d95a7ebc0aab9a231" scoring_mode="default">
+  <resourceref idref="d8ce04b5fff44946a97fbcb370ff81a1"/>
+  </item>
+  <item id="f9a31149589b4b59a71c8e2cf40f080d" scoring_mode="default">
+  <resourceref idref="c33762e53d334f3ba3ccda7a8e36c0ed"/>
+  </item>
+  <item id="b35a06df1d434089808dd4ce97009699" scoring_mode="default">
+  <resourceref idref="newc2687a4fb1f64b8b98c2845a427a727c"/>
+  </item>
+  </module>
+  <module id="cf94e2e64bcf4721a70b543067f0b437">
+  <title>Grafiskt gränssnitt</title>
+  <item id="ba852b65f3324c349c1f09e43966d319" scoring_mode="default">
+  <resourceref idref="a2ea5a2858d94eae85c05e1d59583201"/>
+  </item>
+  <item id="b199719dac224f34b7637e8cfb439dd2" scoring_mode="default">
+  <resourceref idref="aa19e2e2b5c8482ebf2d6a92558154ce"/>
+  </item>
+  <item id="f599311295a241b78cd22ce903b7905e" scoring_mode="default">
+  <resourceref idref="d27497e8d21e4bf585e3f2a290775c32"/>
+  </item>
+  <item id="fa0e58c321c347ddb9d3f404224f9b82" scoring_mode="default">
+  <resourceref idref="a72c59b3ae054c11b3954342f7939678"/>
+  </item>
+  <item id="bd79212a3d614410bb0a4fd552f2ccf3" scoring_mode="default">
+  <resourceref idref="aff78d09765947d990ad62116105520b"/>
+  </item>
+  <item id="ff565e6c3927431faad7d2cb8e450153" scoring_mode="default">
+  <resourceref idref="testd19a658654be42b28da0ca74cec482cd"/>
+  </item>
+  </module>
+  </unit>
+  </sequence>
+  </sequences>
+  </organization>

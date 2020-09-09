@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "module": "commonjs",
+      "target": "es5",
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "removeComments": false,
+      "inlineSources": true,
+      "sourceMap": true,
+      "noEmitHelpers": false,
+      "alwaysStrict": true,
+      "outDir": "./dist",
+      "baseUrl": ".",
+      "paths": {
+        "*": ["src/*"]
+      },
+      "lib": [
+        "es2015",
+        "es2016",
+        "es2017"
+      ],
+      "types": [
+        "node"
+      ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
