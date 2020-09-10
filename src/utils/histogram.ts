@@ -1,7 +1,10 @@
+import { access } from "fs/promises";
 
 export type AttributeHistogram = { [index:string] : number };
 export type ElementDetails = { element: string, count: number, attributes: AttributeHistogram };
 export type ElementHistogram = { [index:string] : ElementDetails };
+
+export type BucketedHistograms = { [index:string] : ElementHistogram };
 
 // Create a new empty histogram
 export function create() {
@@ -70,4 +73,52 @@ export function merge(a: ElementHistogram, b: ElementHistogram) {
   mergeAll(merged, b);
 
   return merged;
+}
+
+// Determine the union of all elements, sort them as an array
+function getUniqueElements(b: BucketedHistograms) {
+  return Object.keys(Object.keys(b)
+    .reduce((a, c) => [...a, ...Object.keys(b[c])], [])
+    .reduce(
+      (a, c) => {
+        if (a[c] === undefined) {
+          a[c] = true;
+        }
+        return a;
+      },
+      {} as any)).sort();
+}
+
+function buildHeader(b: BucketedHistograms) {
+  return [{ id: 'element', title: 'element' }, ...Object.keys(b).map((k: string) => {
+    return {
+      id: k,
+      title: k,
+    };
+  })];
+}
+
+export function outputCSV(outDir: string, b: BucketedHistograms) {
+
+  // Open the CSV writer with the header row defined
+  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+  const csvWriter = createCsvWriter({
+    path: `${outDir}/histogram.csv`,
+    header: buildHeader(b),
+  });
+
+  // For each element, in order, create a record where the columns
+  // are the bucket types and their counts for that element, along with
+  // and entry for the element itself
+  const records = getUniqueElements(b)
+    .map((element: string) => {
+      return Object.keys(b).reduce(
+        (a: any, t: any) => {
+          a[t] = b[t][element] === undefined ? 0 : b[t][element].count;
+          return a;
+        },
+        { element });
+    });
+
+  return csvWriter.writeRecords(records);
 }

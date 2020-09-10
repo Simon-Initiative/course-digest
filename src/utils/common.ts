@@ -12,3 +12,19 @@ export const executeSerially = (funcs: any) =>
       promise.then((result: any) =>
       func().then(Array.prototype.concat.bind(result))),
     Promise.resolve([]));
+
+export enum LegacyTypes {
+  package = 'x-oli-package',
+  workbook_page = 'x-oli-workbook_page',
+  assessment2 = 'x-oli-assessment2',
+  inline = 'x-oli-inline-assessment',
+  feedback = 'x-oli-feedback',
+  embed_activity = 'x-oli-embed-activity',
+  organization = 'x-oli-organization',
+  learning_objective = 'x-oli-objective',
+  learning_objectives = 'x-oli-learning_objectives',
+  skill = 'x-oli-skill',
+  skills_model = 'x-oli-skills_model',
+  webcontent = 'x-oli-webcontent',
+  assessment2_pool = 'x-oli-assessment2-pool',
+}

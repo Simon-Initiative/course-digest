@@ -1,22 +1,20 @@
 const glob = require('glob');
 import { rootTag } from '../utils/xml';
+import * as Histogram from '../utils/histogram';
 
 // Build a map of resource ids to the full path of the resource for all resources
 // found in the project directory
 
 import * as WB from './workbook';
 import * as Org from './organization';
+import * as Other from './other';
 
-export type UnsupportedSummary = {
-  type: 'UnsupportedSummary',
-  file: string,
-};
+export type Summary = WB.WorkbookPageSummary | Org.OrganizationSummary | Other.OtherSummary;
 
-export type Summary = WB.WorkbookPageSummary | Org.OrganizationSummary | UnsupportedSummary;
+export type ResourceType = 'WorkbookPage' | 'Organization' | 'Other';
 
-export type ResourceType = 'WorkbookPage' | 'Organization' | 'Unsupported';
-
-export function mapResources(directory: string) : Promise<{ [index:string] : string }> {
+export type ResourceMap = { [index:string] : string };
+export function mapResources(directory: string) : Promise<ResourceMap> {
   return new Promise((resolve, reject) => {
     glob(`${directory}/**/*.xml`, {}, (err: any, files: any) => {
 
@@ -45,7 +43,7 @@ function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag.indexOf('oli_workbook_page_3_8') !== -1) {
       return 'WorkbookPage';
     }
-    return 'Unsupported';
+    return 'Other';
   });
 }
 
@@ -59,10 +57,7 @@ export function summarize(file: string): Promise<Summary | string> {
       } else if (t === 'Organization') {
         resolve(WB.summarize(file));
       } else {
-        resolve({
-          type: 'UnsupportedSummary',
-          file,
-        });
+        resolve(Other.summarize(file));
       }
     });
   });
