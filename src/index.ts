@@ -39,7 +39,8 @@ function outputDigest(
 
 // Recursive helper to read a collection of resources and produce summaries.
 // Resources can reference other resources in a chain (e.g. Workbook page ->
-// Assessment -> Pool) so this operates in batches, recursively to follow
+// Assessment -> Pool) so this function operates on resource summarization
+// asynchronously, in batches, and then recursively follows
 // references that it finds in each batch of summaries.  We need to be careful
 // to avoid circular references and processing duplicates so we track the references
 // that we have seen along the way.
