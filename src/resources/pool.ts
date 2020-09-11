@@ -3,15 +3,15 @@ import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { HasHistogram } from './common';
 
-export interface OtherSummary extends HasHistogram {
-  type: 'OtherSummary';
+export interface PoolSummary extends HasHistogram {
+  type: 'PoolSummary';
 }
 
 // Summarize an organization
-export function summarize(file: string) : Promise<OtherSummary | string> {
+export function summarize(file: string) : Promise<PoolSummary | string> {
 
-  const summary : OtherSummary = {
-    type: 'OtherSummary',
+  const summary : PoolSummary = {
+    type: 'PoolSummary',
     elementHistogram: Histogram.create(),
   };
 

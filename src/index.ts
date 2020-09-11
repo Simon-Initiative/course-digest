@@ -2,6 +2,7 @@ import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
 import * as Histogram from './utils/histogram';
 import { executeSerially, ItemReference } from './utils/common';
+import { HasReferences } from './resources/common';
 
 type MissingResource = {
   type: 'MissingResource',
@@ -36,19 +37,68 @@ function outputDigest(
   return executeSerially([() => Histogram.outputCSV(outputDirectory, bucketedHistograms)]);
 }
 
-function produceResourceSummaries(
-  itemReferences: ItemReference[], resourceMap: Resources.ResourceMap) : Promise<SummaryResult[]> {
+// Recursive helper to read a collection of resources and produce summaries.
+// Resources can reference other resources in a chain (e.g. Workbook page ->
+// Assessment -> Pool) so this operates in batches, recursively to follow
+// references that it finds in each batch of summaries.  We need to be careful
+// to avoid circular references and processing duplicates so we track the references
+// that we have seen along the way.
+function innerProduceSummaries(
+  resolve: any, reject: any,
+  itemReferences: ItemReference[],
+  resourceMap: Resources.ResourceMap,
+  seenReferences: { [index: string] : boolean },
+  allSummaries: SummaryResult[]) {
 
-  const summarizers = itemReferences.map((ref) => {
+  const doSummary = (ref: ItemReference) => {
     const path = resourceMap[ref.id];
-
+    seenReferences[ref.id] = true;
     if (path !== undefined) {
       return () => Resources.summarize(path);
     }
     return () => Promise.resolve({ type: 'MissingResource', id: ref.id });
+  };
+
+  const summarizers = itemReferences.map((ref: ItemReference) => doSummary(ref));
+
+  executeSerially(summarizers)
+  .then((results: SummaryResult[]) => {
+
+    // From this round of results, collect any new references that
+    // we need to follow
+    const toFollow: ItemReference[] = [];
+    results.forEach((r: SummaryResult) => {
+      allSummaries.push(r);
+
+      if ((r as any).found !== undefined) {
+        (r as any).found().forEach((ref: ItemReference) => {
+          const id = ref.id;
+          if (seenReferences[id] === undefined) {
+            toFollow.push(ref);
+            seenReferences[id] = true;
+          }
+        });
+      }
+    });
+
+    // See if we are done or if there is another round of references
+    // to follow and summarize
+    if (toFollow.length === 0) {
+      resolve(allSummaries);
+    } else {
+      innerProduceSummaries(resolve, reject, toFollow, resourceMap, seenReferences, allSummaries);
+    }
+
+  });
+}
+
+function produceResourceSummaries(
+  itemReferences: ItemReference[], resourceMap: Resources.ResourceMap) : Promise<SummaryResult[]> {
+
+  return new Promise((resolve, reject) => {
+    innerProduceSummaries(resolve, reject, itemReferences, resourceMap, {}, []);
   });
 
-  return executeSerially(summarizers);
 }
 
 function collectOrgItemReferences(packageDirectory: string, id: string = '') {

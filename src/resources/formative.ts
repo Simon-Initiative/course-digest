@@ -1,17 +1,20 @@
 
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
 import { HasHistogram } from './common';
 
-export interface OtherSummary extends HasHistogram {
-  type: 'OtherSummary';
+export interface FormativeSummary extends HasHistogram {
+  type: 'FormativeSummary';
 }
 
 // Summarize an organization
-export function summarize(file: string) : Promise<OtherSummary | string> {
+export function summarize(file: string) : Promise<FormativeSummary | string> {
 
-  const summary : OtherSummary = {
-    type: 'OtherSummary',
+  const foundIds: ItemReference[] = [];
+
+  const summary : FormativeSummary = {
+    type: 'FormativeSummary',
     elementHistogram: Histogram.create(),
   };
 

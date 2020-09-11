@@ -2,19 +2,20 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
+
 import { HasReferences, HasHistogram } from './common';
 
-export interface WorkbookPageSummary extends HasReferences, HasHistogram {
-  type: 'WorkbookPageSummary';
+export interface SummativeSummary extends HasReferences, HasHistogram {
+  type: 'SummativeSummary';
 }
 
 // Summarize an organization
-export function summarize(file: string) : Promise<WorkbookPageSummary | string> {
+export function summarize(file: string) : Promise<SummativeSummary | string> {
 
   const foundIds: ItemReference[] = [];
 
-  const summary : WorkbookPageSummary = {
-    type: 'WorkbookPageSummary',
+  const summary : SummativeSummary = {
+    type: 'SummativeSummary',
     found: () => foundIds,
     elementHistogram: Histogram.create(),
   };
@@ -22,16 +23,9 @@ export function summarize(file: string) : Promise<WorkbookPageSummary | string> 
   return new Promise((resolve, reject) => {
 
     visit(file, (tag: string, attrs: Object) => {
-
       Histogram.update(summary.elementHistogram, tag, attrs);
 
-      if (tag === 'wb:inline') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-      if (tag === 'wb:xref') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-      if (tag === 'activity_link' || tag === 'activity') {
+      if (tag === 'poolref') {
         foundIds.push({ id: (attrs as any)['idref'] });
       }
     })
