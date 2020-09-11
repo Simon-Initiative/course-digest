@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:10
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -9,6 +9,3 @@ COPY yarn.lock ./
 RUN yarn
 
 COPY . .
-
-EXPOSE 8000
-CMD [ "npm", "start" ]
