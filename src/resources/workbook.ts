@@ -28,7 +28,7 @@ export function summarize(file: string) : Promise<WorkbookPageSummary | string> 
       if (tag === 'wb:inline') {
         foundIds.push({ id: (attrs as any)['idref'] });
       }
-      if (tag === 'wb:xref') {
+      if (tag === 'xref') {
         foundIds.push({ id: (attrs as any)['idref'] });
       }
       if (tag === 'activity_link' || tag === 'activity') {
