@@ -4,7 +4,7 @@ This tool takes as input a full course package source tree and generates a  hist
 
 ## Running from source
 
-To run from source requires having node version 10 installed.
+Running form source requires having node version 10+, yarn, and git command line installed.
 
 To generate a full course package digest using this tool from source:
 
@@ -14,10 +14,11 @@ yarn install
 npm run start <course package dir> <output dir> [<organization id>]
 ```
 
-## Running from pre-built docker image
+## Running from pre-built docker image (`olisimon/digest`)
 
-This only requires that you have docker installed on the host machine. To generate a package 
-digest running this tool from the published, prebuilt docker container:
+This only requires that you have docker installed on the host machine. 
+
+To generate a package digest running this tool from the published, prebuilt docker container:
 
 ```
 docker run -t -i --mount type=bind,src=<output dir>,dst=/out --mount type=bind,src=<course package dir>,dst=/data olisimon/digest:latest npm run start -- /data /out [<organization id]>
