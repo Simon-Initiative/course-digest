@@ -16,7 +16,7 @@ npm run start <course package dir> <output dir> [<organization id>]
 
 ## Running from pre-built docker image
 
-This only requires that you have docker installed on the host maching. To generate a package 
+This only requires that you have docker installed on the host machine. To generate a package 
 digest running this tool from the published, prebuilt docker container:
 
 ```
