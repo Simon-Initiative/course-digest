@@ -1,6 +1,6 @@
 # Course Digest
 
-This tool generates a full course histogram of element usage, bucketed by resource type and version.
+This tool takes as input a full course package source tree and generates a  histogram of XML element usage, bucketed by resource type and version, captured in a single `histogram.csv` output file. 
 
 ## Running from source
 
