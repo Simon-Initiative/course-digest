@@ -42,7 +42,7 @@ export function summarize(file: string) : Promise<OrganizationSummary | string> 
       Histogram.update(summary.elementHistogram, tag, attrs);
 
       if (tag === 'resourceref') {
-        summary.itemReferences.push({ id: (attrs as any)['idref'] });
+        summary.itemReferences.push({ id: ((attrs as any)['idref']).trim() });
       }
       if (tag === 'organization') {
         summary.id = (attrs as any)['id'];

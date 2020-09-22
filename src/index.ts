@@ -2,7 +2,6 @@ import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
 import * as Histogram from './utils/histogram';
 import { executeSerially, ItemReference } from './utils/common';
-import { HasReferences } from './resources/common';
 
 type MissingResource = {
   type: 'MissingResource',
