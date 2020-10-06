@@ -2,6 +2,8 @@ import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
 import * as Histogram from './utils/histogram';
 import { executeSerially, ItemReference } from './utils/common';
+import { ResourceMap, mapResources } from 'utils/resource_mapping';
+import { summarize } from './summarize';
 
 type MissingResource = {
   type: 'MissingResource',
@@ -46,7 +48,7 @@ function outputDigest(
 function innerProduceSummaries(
   resolve: any, reject: any,
   itemReferences: ItemReference[],
-  resourceMap: Resources.ResourceMap,
+  resourceMap: ResourceMap,
   seenReferences: { [index: string] : boolean },
   allSummaries: SummaryResult[]) {
 
@@ -54,7 +56,7 @@ function innerProduceSummaries(
     const path = resourceMap[ref.id];
     seenReferences[ref.id] = true;
     if (path !== undefined) {
-      return () => Resources.summarize(path);
+      return () => summarize(path);
     }
     return () => Promise.resolve({ type: 'MissingResource', id: ref.id });
   };
@@ -93,7 +95,7 @@ function innerProduceSummaries(
 }
 
 function produceResourceSummaries(
-  itemReferences: ItemReference[], resourceMap: Resources.ResourceMap) : Promise<SummaryResult[]> {
+  itemReferences: ItemReference[], resourceMap: ResourceMap) : Promise<SummaryResult[]> {
 
   return new Promise((resolve, reject) => {
     innerProduceSummaries(resolve, reject, itemReferences, resourceMap, {}, []);
@@ -107,15 +109,18 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
     Orgs.locate(packageDirectory)
     .then((orgs) => {
 
-      executeSerially(orgs.map(o => () => Orgs.summarize(o)))
-      .then((results: (string | Orgs.OrganizationSummary)[]) => {
+      executeSerially(orgs.map(file => () => {
+        const o = new Orgs.Organization();
+        return o.summarize(file);
+      }))
+      .then((results: (string | Resources.Summary)[]) => {
 
         const seenReferences = {} as any;
         const references: ItemReference[] = [];
 
         results.forEach((r) => {
           if (typeof(r) !== 'string' && (id === '' || id === r.id)) {
-            r.itemReferences.forEach((i) => {
+            r.found().forEach((i) => {
 
               if (seenReferences[i.id] === undefined) {
                 seenReferences[i.id] = true;
@@ -150,7 +155,7 @@ function main() {
   const specificOrg = process.argv.length === 5 ? process.argv[4] : '';
 
   executeSerially([
-    () => Resources.mapResources(packageDirectory),
+    () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
   .then((results: any) => produceResourceSummaries(results.slice(1), results[0]))
   .then((summaries: SummaryResult[]) => alongWith(

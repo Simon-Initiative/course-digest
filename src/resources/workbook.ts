@@ -2,42 +2,48 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
-import { HasReferences, HasHistogram } from './common';
+import { Resource, TorusResource, Summary } from './resource';
 
-export interface WorkbookPageSummary extends HasReferences, HasHistogram {
-  type: 'WorkbookPageSummary';
-}
+export class WorkbookPage extends Resource {
 
-// Summarize an organization
-export function summarize(file: string) : Promise<WorkbookPageSummary | string> {
+  toTorus(file: string): Promise<string | TorusResource> {
+    throw new Error('Method not implemented.');
+  }
 
-  const foundIds: ItemReference[] = [];
+  summarize(file: string): Promise<string | Summary> {
 
-  const summary : WorkbookPageSummary = {
-    type: 'WorkbookPageSummary',
-    found: () => foundIds,
-    elementHistogram: Histogram.create(),
-  };
+    const foundIds: ItemReference[] = [];
+    const summary : Summary = {
+      type: 'Summary',
+      elementHistogram: Histogram.create(),
+      id: '',
+      found: () => foundIds,
+    };
 
-  return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-    visit(file, (tag: string, attrs: Object) => {
+      visit(file, (tag: string, attrs: Object) => {
 
-      Histogram.update(summary.elementHistogram, tag, attrs);
+        Histogram.update(summary.elementHistogram, tag, attrs);
 
-      if (tag === 'wb:inline') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-      if (tag === 'xref') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-      if (tag === 'activity_link' || tag === 'activity') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-    })
-    .then((result) => {
-      resolve(summary);
-    })
-    .catch(err => reject(err));
-  });
+        if (tag === 'workbook_page') {
+          summary.id = (attrs as any)['id'];
+        }
+        if (tag === 'wb:inline') {
+          foundIds.push({ id: (attrs as any)['idref'] });
+        }
+        if (tag === 'xref') {
+          foundIds.push({ id: (attrs as any)['idref'] });
+        }
+        if (tag === 'activity_link' || tag === 'activity') {
+          foundIds.push({ id: (attrs as any)['idref'] });
+        }
+      })
+      .then((result) => {
+        resolve(summary);
+      })
+      .catch(err => reject(err));
+    });
+  }
+
 }

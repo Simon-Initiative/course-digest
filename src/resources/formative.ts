@@ -2,30 +2,38 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
-import { HasHistogram } from './common';
+import { Resource, TorusResource, Summary } from './resource';
 
-export interface FormativeSummary extends HasHistogram {
-  type: 'FormativeSummary';
-}
+export class Formative extends Resource {
 
-// Summarize an organization
-export function summarize(file: string) : Promise<FormativeSummary | string> {
+  toTorus(file: string): Promise<string | TorusResource> {
+    throw new Error('Method not implemented.');
+  }
 
-  const foundIds: ItemReference[] = [];
+  summarize(file: string): Promise<string | Summary> {
 
-  const summary : FormativeSummary = {
-    type: 'FormativeSummary',
-    elementHistogram: Histogram.create(),
-  };
+    const foundIds: ItemReference[] = [];
+    const summary : Summary = {
+      type: 'Summary',
+      elementHistogram: Histogram.create(),
+      id: '',
+      found: () => foundIds,
+    };
 
-  return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-    visit(file, (tag: string, attrs: Object) => {
-      Histogram.update(summary.elementHistogram, tag, attrs);
-    })
-    .then((result) => {
-      resolve(summary);
-    })
-    .catch(err => reject(err));
-  });
+      visit(file, (tag: string, attrs: Object) => {
+        Histogram.update(summary.elementHistogram, tag, attrs);
+
+        if (tag === 'assessment') {
+          summary.id = (attrs as any)['id'];
+        }
+
+      })
+      .then((result) => {
+        resolve(summary);
+      })
+      .catch(err => reject(err));
+    });
+  }
 }
