@@ -2,7 +2,7 @@ import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
 import * as Histogram from './utils/histogram';
 import { executeSerially, ItemReference } from './utils/common';
-import { ResourceMap, mapResources } from 'utils/resource_mapping';
+import { ResourceMap, mapResources } from './utils/resource_mapping';
 import { summarize } from './summarize';
 
 type MissingResource = {
@@ -148,11 +148,11 @@ function alongWith(promiseFunc: any, ...along: any) {
   });
 }
 
-function main() {
+function summaryAction() {
 
-  const packageDirectory = process.argv[2];
-  const outputDirectory = process.argv[3];
-  const specificOrg = process.argv.length === 5 ? process.argv[4] : '';
+  const packageDirectory = process.argv[3];
+  const outputDirectory = process.argv[4];
+  const specificOrg = process.argv.length === 6 ? process.argv[5] : '';
 
   executeSerially([
     () => mapResources(packageDirectory),
@@ -163,7 +163,33 @@ function main() {
   .then((results: any[]) => outputDigest(outputDirectory, results[0], results[1]))
   .then((results: any) => console.log('Done!'))
   .catch((err: any) => console.log(err));
+}
 
+function convertAction() {
+
+}
+
+function helpAction() {
+  console.log('OLI Legacy Course Package Digest Tool');
+  console.log('-------------------------------------\n');
+  console.log('Supported actions:\n');
+  console.log('Summarizing a course package current OLI DTD element usage:');
+  console.log('npm run start summarize <course package dir> <outdir dir> [<organization id>]\n');
+  console.log('Convert an OLI course package to the Torus digest format:');
+  console.log('npm run start convert <course package dir> <outdir dir> [<organization id>]\n');
+}
+
+function main() {
+
+  const action = process.argv[2];
+
+  if (action === 'summarize') {
+    summaryAction();
+  } else if (action === 'convert') {
+    convertAction();
+  } else {
+    helpAction();
+  }
 }
 
 main();

@@ -1,7 +1,8 @@
 import * as Histogram from '../utils/histogram';
-import { ItemReference } from 'utils/common';
+import { ItemReference } from '../utils/common';
 
 export interface Summary {
+  type: 'Summary';
   id: string;
   elementHistogram: Histogram.ElementHistogram;
   found: () => ItemReference[];

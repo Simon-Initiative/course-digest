@@ -1,5 +1,5 @@
-import { Summary, ResourceType } from 'resources/resource';
-import { determineResourceType, create } from 'resources/create';
+import { Summary, ResourceType } from './resources/resource';
+import { determineResourceType, create } from './resources/create';
 
 export function summarize(file: string): Promise<Summary | string> {
 

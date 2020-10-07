@@ -1,7 +1,6 @@
 
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
-import { HasHistogram } from './common';
 import { Resource, TorusResource, Summary } from './resource';
 
 export class Other extends Resource {
