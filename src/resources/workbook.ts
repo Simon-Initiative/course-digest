@@ -3,11 +3,16 @@ import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
 import { Resource, TorusResource, Summary } from './resource';
+import * as DOM from '../utils/dom';
 
 export class WorkbookPage extends Resource {
 
-  toTorus(file: string): Promise<string | TorusResource> {
-    throw new Error('Method not implemented.');
+  restructure($: any) : any {
+    DOM.flattenNestedSections($);
+  }
+
+  translate(xml: string) : Promise<TorusResource> {
+    
   }
 
   summarize(file: string): Promise<string | Summary> {

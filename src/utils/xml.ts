@@ -4,13 +4,16 @@ const Parser = require('node-xml-stream');
 const fs = require('fs');
 
 export type TagVisitor = (tag: string, attributes: Object) => void;
+export type ClosingTagVisitor = (tag: string) => void;
 
 // Visit all tags and their attributes in an XML file in a top-down
 // fashion.  This is promise based and resolves 'true' when the
 // streaming of the file completes, and resolves a string error message
 // if an error is encountered.  The 'visitor' callback function will be
 // executed for every tag (element) encountered in the XML document.
-export function visit(file: string, visitor: TagVisitor) : Promise<true | string> {
+export function visit(
+  file: string, visitor: TagVisitor,
+  closingTagVisitor? : ClosingTagVisitor) : Promise<true | string> {
 
   return new Promise((resolve, reject) => {
 
@@ -32,6 +35,16 @@ export function visit(file: string, visitor: TagVisitor) : Promise<true | string
 
       visitor(cleanedTag, attrs);
     });
+
+    parser.on('closetag', (tag: string) => {
+      if (closingTagVisitor !== undefined) {
+        let cleanedTag = tag.trim();
+        if (cleanedTag.endsWith('/')) {
+          cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+        }
+      }
+    });
+
     parser.on('finish', () => {
       resolve(true);
     });

@@ -16,7 +16,7 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag === 'organization') {
       return 'Organization';
     }
-    if (tag.indexOf('oli_workbook_page_3_8') !== -1 
+    if (tag.indexOf('oli_workbook_page_3_8') !== -1
       || tag.indexOf('oli_workbook_page_mathml_3_8') !== -1) {
       return 'WorkbookPage';
     }

@@ -3,6 +3,12 @@ export type ItemReference = {
   id: string,
 };
 
+export type MissingResource = {
+  type: 'MissingResource',
+  id: string,
+};
+
+
 // Take an array of functions that return promises and
 // execute them serially, resolving an array of their
 // resolutions

@@ -6,8 +6,12 @@ import { Resource, TorusResource, Summary } from './resource';
 
 export class Summative extends Resource {
 
-  toTorus(file: string): Promise<string | TorusResource> {
-    throw new Error('Method not implemented.');
+  restructure($: any) : any {
+
+  }
+
+  translate(xml: string) : Promise<TorusResource> {
+
   }
 
   summarize(file: string): Promise<string | Summary> {

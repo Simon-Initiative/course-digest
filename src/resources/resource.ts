@@ -1,5 +1,7 @@
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
+import { visit } from '../utils/xml';
+import * as DOM from '../utils/dom';
 
 export interface Summary {
   type: 'Summary';
@@ -68,7 +70,15 @@ export abstract class Resource {
 
   abstract summarize(file: string): Promise<Summary | string>;
 
-  abstract toTorus(file: string): Promise<TorusResource | string>;
+  restructure($: any): any {}
+
+  abstract translate(xml: string): Promise<TorusResource | string>;
+
+  convert(file: string): Promise<TorusResource | string> {
+    const $ = DOM.read(file);
+    this.restructure($);
+    return this.translate($.root().html());
+  }
 
   mapElementName(element: string) : string {
     return elementNameMap[element] === undefined ? element : elementNameMap[element];
