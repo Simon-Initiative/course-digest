@@ -34,3 +34,4 @@ export enum LegacyTypes {
   webcontent = 'x-oli-webcontent',
   assessment2_pool = 'x-oli-assessment2-pool',
 }
+

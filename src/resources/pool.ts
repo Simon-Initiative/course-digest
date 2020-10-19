@@ -9,8 +9,8 @@ export class Pool extends Resource {
 
   }
 
-  translate(xml: string) : Promise<TorusResource> {
-
+  translate(xml: string) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve(['']);
   }
 
   summarize(file: string): Promise<string | Summary> {

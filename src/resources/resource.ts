@@ -13,19 +13,35 @@ export interface Summary {
 export type ResourceType = 'WorkbookPage' | 'Organization'
 | 'Formative' | 'Summative' | 'Feedback' | 'Other';
 
-export type TorusResourceType = Container | Page | Activity | Objective;
+export type TorusResourceType = Hierarchy | Page | Activity | Objectives;
 
 export interface TorusResource {
   originalFile: string;
   id: string;
   title: string;
   tags: string[];
-  itemReferences: string[];
-  found: () => string[];
+  unresolvedReferences: string[];
 }
 
-export interface Container extends TorusResource {
-  type: 'Container';
+export interface Container {
+  id: string;
+  title: string;
+  tags: string[];
+  children: (Container | PageReference)[];
+}
+
+export interface PageReference {
+  id: string;
+}
+
+export interface Objective {
+  id: string;
+  title: string;
+  children: Objective[];
+}
+
+export interface Hierarchy extends TorusResource {
+  type: 'Hierarchy';
   children: TorusResource[];
 }
 
@@ -42,9 +58,9 @@ export interface Activity extends TorusResource {
   objectives: Object;
 }
 
-export interface Objective extends TorusResource {
-  type: 'Objective';
-  children: TorusResource[];
+export interface Objectives extends TorusResource {
+  type: 'Objectives';
+  children: Objective[];
 }
 
 const elementNameMap : { [index:string] : string } = {
@@ -72,9 +88,9 @@ export abstract class Resource {
 
   restructure($: any): any {}
 
-  abstract translate(xml: string): Promise<TorusResource | string>;
+  abstract translate(xml: string): Promise<(TorusResource | string)[]>;
 
-  convert(file: string): Promise<TorusResource | string> {
+  convert(file: string): Promise<(TorusResource | string)[]> {
     const $ = DOM.read(file);
     this.restructure($);
     return this.translate($.root().html());

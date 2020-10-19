@@ -1,6 +1,6 @@
 // XML related utilities
-
-const Parser = require('node-xml-stream');
+const stream = require('stream');
+const Parser = require('node-xml-stream-parser');
 const fs = require('fs');
 
 export type TagVisitor = (tag: string, attributes: Object) => void;
@@ -55,6 +55,68 @@ export function visit(
 
     const stream = fs.createReadStream(file);
     stream.pipe(parser);
+  });
+}
+
+export function toJSON2(xml: string) : Promise<Object> {
+
+  const root : any = {};
+  root.children = [];
+
+  const stack = [root];
+
+  const top = () => stack[stack.length - 1];
+  const pop = () => stack.pop();
+  const push = (o: any) => stack.push(o);
+
+  return new Promise((resolve, reject) => {
+
+    const parser = new Parser();
+
+    parser.on('opentag', (tag: string, attrs: any) => {
+
+      let cleanedTag = tag.trim();
+      if (cleanedTag.endsWith('/')) {
+        cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+      }
+
+      const object : any = { type: cleanedTag, children: [] };
+
+      Object.keys(attrs)
+        .forEach((k) => {
+          if ((attrs as any)[k].endsWith('/')) {
+            (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
+          }
+        });
+      Object.keys(attrs).forEach(k => object[k] = attrs[k]);
+
+      top().children.push(object);
+      push(object);
+    });
+
+    parser.on('closetag', (tag: string) => {
+      pop();
+    });
+
+    parser.on('text', (text: string) => {
+      top().children.push({ type: 'text', text });
+    });
+    parser.on('cdata', (cdata: string) => {
+      top().children.push({ type: 'text', cdata });
+    });
+
+    parser.on('finish', () => {
+      resolve(root);
+    });
+
+    parser.on('error', (err: string) => {
+      reject(err);
+    });
+
+    const s = new stream.PassThrough();
+    s.write(xml);
+    s.end();
+    s.pipe(parser);
   });
 }
 

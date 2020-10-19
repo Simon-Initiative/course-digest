@@ -10,9 +10,10 @@ export class Formative extends Resource {
 
   }
 
-  translate(xml: string) : Promise<TorusResource> {
-
+  translate(xml: string) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve(['']);
   }
+  
   summarize(file: string): Promise<string | Summary> {
 
     const foundIds: ItemReference[] = [];

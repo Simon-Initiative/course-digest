@@ -1,9 +1,11 @@
 import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
-
+import * as DOM from './utils/dom';
 import { executeSerially, ItemReference, MissingResource } from './utils/common';
 import { mapResources } from './utils/resource_mapping';
 import * as Summarize from './summarize';
+import * as Convert from './convert';
+import { processResources } from './process';
 
 type ConversionResult = Resources.TorusResource | MissingResource;
 
@@ -61,7 +63,7 @@ function summaryAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => Summarize.produceResourceSummaries(results.slice(1), results[0]))
+  .then((results: any) => processResources(Summarize.summarize, results.slice(1), results[0]))
   .then((summaries: Summarize.SummaryResult[]) => alongWith(
     () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
   .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
@@ -73,17 +75,36 @@ function convertAction() {
 
   const packageDirectory = process.argv[3];
   const outputDirectory = process.argv[4];
-  const specificOrg = process.argv.length === 6 ? process.argv[5] : '';
+  const specificOrg = process.argv[5];
+
+  console.log(packageDirectory);
 
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => convertResources(results.slice(1), results[0]))
-  .then((converted: ConversionResult[]) => alongWith(
-    () => Promise.resolve(aggregateMedia(converted)), converted))
-  .then((results: any[]) => outputConversion(outputDirectory, results[0], results[1]))
+  .then((results: any) => {
+    const map = results[0];
+    const references = results.slice(1);
+
+    const o = new Orgs.Organization();
+    const $ = DOM.read(specificOrg);
+    o.restructure($);
+
+    const xml = $.html();
+    o.translate(xml).then(r => console.log(JSON.stringify(r[0] as any, undefined, 2)));
+
+
+  });
+
+/*
+  executeSerially([
+    () => mapResources(packageDirectory),
+    () => collectOrgItemReferences(packageDirectory, specificOrg)])
+  .then((results: any) => processResources(Convert.convert, results.slice(1), results[0]))
+  .then((results: any[]) => Convert.output(outputDirectory, results[0]))
   .then((results: any) => console.log('Done!'))
   .catch((err: any) => console.log(err));
+  */
 }
 
 function helpAction() {

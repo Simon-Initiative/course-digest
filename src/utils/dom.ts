@@ -7,13 +7,45 @@ function flattenSection($: any, selector: string, tag: string) {
 
   const triple = $(selector);
 
-  triple.each(function(i: any, elem: any) {
-    const text = $(this).children('title').html();
-    const body = $(this).children('body').html();
+  triple.each((i: any, elem: any) => {
+    const text = $(elem).children('title').html();
+    const body = $(elem).children('body').html();
 
-    $(this).children('title').replaceWith(`<${tag}>${text}</${tag}>${body}`);
-    $(this).children('body').replaceWith($(this).children('body').children());
-    $(this).replaceWith($(this).children());
+    $(elem).children('title').replaceWith(`<${tag}>${text}</${tag}>${body}`);
+    $(elem).children('body').replaceWith($(elem).children('body').children());
+    $(elem).replaceWith($(elem).children());
+  });
+}
+
+export function flattenResourceRefs($: any) {
+
+  const refs = $('item resourceref');
+
+  refs.each((i: any, elem: any) => {
+    const id = $(elem).attr('idref');
+    $(elem).replaceWith(`<page-ref idref=${id}`);
+  });
+}
+
+export function rename($: any, source: string, dest: string) {
+  $(source).each((i: any, item: any) => (item.tagName = dest));
+}
+
+export function mergeTitles($: any) {
+  mergeTitle($, 'organization');
+  mergeTitle($, 'sequence');
+  mergeTitle($, 'unit');
+  mergeTitle($, 'module');
+  mergeTitle($, 'section');
+}
+
+function mergeTitle($: any, selector: string) {
+  const items = $(selector);
+
+  items.each((i: any, elem: any) => {
+    const text = $(elem).children('title').text();
+    $(elem).attr('title', text);
+    $(elem).children().remove('title');
   });
 }
 

@@ -1,19 +1,43 @@
 
 const glob = require('glob');
-import { visit } from '../utils/xml';
 import { ItemReference } from '../utils/common';
 import * as Histogram from '../utils/histogram';
+import * as DOM from '../utils/dom';
+import * as XML from '../utils/xml';
 
-import { Resource, TorusResource, Summary } from './resource';
+import { Resource, TorusResource, Hierarchy, Container, PageReference, Summary } from './resource';
 
 export class Organization extends Resource {
 
   restructure($: any) : any {
-
+    DOM.flattenResourceRefs($);
+    DOM.mergeTitles($);
+    DOM.rename($, 'sequence', 'container');
+    DOM.rename($, 'unit', 'container');
+    DOM.rename($, 'module', 'container');
+    DOM.rename($, 'section', 'container');
   }
 
-  translate(xml: string) : Promise<TorusResource> {
+  translate(xml: string) : Promise<(TorusResource | string)[]> {
 
+    const foundIds: ItemReference[] = [];
+    const h : Hierarchy = {
+      type: 'Hierarchy',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      children: [],
+    };
+
+
+    return new Promise((resolve, reject) => {
+      XML.toJSON2(xml).then((r: any) => {
+        h.children = [r];
+        resolve([h]);
+      });
+    });
   }
 
   summarize(file: string): Promise<string | Summary> {
@@ -28,7 +52,7 @@ export class Organization extends Resource {
 
     return new Promise((resolve, reject) => {
 
-      visit(file, (tag: string, attrs: Object) => {
+      XML.visit(file, (tag: string, attrs: Object) => {
 
         Histogram.update(summary.elementHistogram, tag, attrs);
 
