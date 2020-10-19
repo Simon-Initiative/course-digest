@@ -5,14 +5,37 @@ import * as Histogram from '../utils/histogram';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 
-import { Resource, TorusResource, Hierarchy, Container, PageReference, Summary } from './resource';
+import { Resource, TorusResource, Hierarchy, Summary } from './resource';
+
+function removeSequences($: any) {
+
+  const sequences = $('sequences');
+  sequences.each((i: any, elem: any) => {
+    $(elem).replaceWith($(elem).children());
+  });
+  const sequence = $('sequence');
+  sequence.each((i: any, elem: any) => {
+    $(elem).replaceWith($(elem).children());
+  });
+
+}
+
+function flattenOrganization($: any) {
+
+  const org = $('organization');
+  org.each((i: any, elem: any) => {
+    $(elem).replaceWith($(elem).children());
+  });
+
+}
 
 export class Organization extends Resource {
 
   restructure($: any) : any {
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
-    DOM.rename($, 'sequence', 'container');
+    removeSequences($);
+    flattenOrganization($);
     DOM.rename($, 'unit', 'container');
     DOM.rename($, 'module', 'container');
     DOM.rename($, 'section', 'container');
@@ -31,10 +54,9 @@ export class Organization extends Resource {
       children: [],
     };
 
-
     return new Promise((resolve, reject) => {
-      XML.toJSON2(xml).then((r: any) => {
-        h.children = [r];
+      XML.toJSON(xml).then((r: any) => {
+        h.children = r.children;
         resolve([h]);
       });
     });

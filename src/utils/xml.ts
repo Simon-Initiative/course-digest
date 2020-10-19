@@ -58,7 +58,7 @@ export function visit(
   });
 }
 
-export function toJSON2(xml: string) : Promise<Object> {
+export function toJSON(xml: string) : Promise<Object> {
 
   const root : any = {};
   root.children = [];

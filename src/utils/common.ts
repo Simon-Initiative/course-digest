@@ -8,7 +8,6 @@ export type MissingResource = {
   id: string,
 };
 
-
 // Take an array of functions that return promises and
 // execute them serially, resolving an array of their
 // resolutions
@@ -34,4 +33,3 @@ export enum LegacyTypes {
   webcontent = 'x-oli-webcontent',
   assessment2_pool = 'x-oli-assessment2-pool',
 }
-
