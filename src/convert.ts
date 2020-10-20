@@ -2,20 +2,17 @@ import { TorusResource, ResourceType } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, ItemReference } from './utils/common';
 import * as DOM from './utils/dom';
-import { ResourceMap } from './utils/resource_mapping';
 
 const fs = require('fs');
 
-// write to a new file named 2pac.txt
-
 interface MediaItem {
   file: string;
-
 }
 
 export function convert(file: string) : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
+
       const item = create(t);
 
       const $ = DOM.read(file);
@@ -34,7 +31,8 @@ export function output(
   const mediaItems: MediaItem[] = [];
 
   return executeSerially([
-    () => outputManifest(outputDirectory, hierarchy, mediaItems),
+    () => outputHierarchy(outputDirectory, hierarchy),
+    () => outputMediaManifest(outputDirectory, mediaItems),
     ...converted.map(r => () => outputResource(outputDirectory, r)),
   ]);
 }
@@ -54,8 +52,18 @@ function outputFile(path: string, o: Object) : Promise<boolean> {
   });
 }
 
-function outputManifest(outputDirectory: string, h: TorusResource, mediaItems: MediaItem[]) {
-  return outputFile(`${outputDirectory}/manifest.json`, h);
+function outputHierarchy(outputDirectory: string, h: TorusResource) {
+  return outputFile(`${outputDirectory}/hierarchy.json`, h);
+}
+
+function outputMediaManifest(outputDirectory: string, mediaItems: MediaItem[]) {
+
+  const manifest = {
+    mediaItems,
+    type: 'MediaManifest',
+  };
+
+  return outputFile(`${outputDirectory}/media-manifest.json`, manifest);
 }
 
 function outputResource(outputDirectory: string, resource: TorusResource) {

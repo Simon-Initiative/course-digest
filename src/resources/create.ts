@@ -13,7 +13,7 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
   .then((tag: string) => {
 
-    if (tag === 'organization') {
+    if (tag.indexOf('organization') !== -1) {
       return 'Organization';
     }
     if (tag.indexOf('oli_workbook_page_3_8') !== -1

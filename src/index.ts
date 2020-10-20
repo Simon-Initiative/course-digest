@@ -85,11 +85,7 @@ function convertAction() {
 
     Convert.convert(specificOrg)
     .then((results) => {
-
       const hierarchy = results[0] as Resources.TorusResource;
-
-      console.log(map);
-      console.log(references);
 
       processResources(Convert.convert, references, map)
       .then((converted: Resources.TorusResource[]) => {
