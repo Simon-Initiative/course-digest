@@ -24,6 +24,7 @@ export function convert(file: string) : Promise<(TorusResource | string)[]> {
 }
 
 export function output(
+  courseDirectory: string,
   outputDirectory: string,
   hierarchy: TorusResource,
   converted: TorusResource[]) {
@@ -31,6 +32,7 @@ export function output(
   const mediaItems: MediaItem[] = [];
 
   return executeSerially([
+    () => outputManifest(courseDirectory, outputDirectory),
     () => outputHierarchy(outputDirectory, hierarchy),
     () => outputMediaManifest(outputDirectory, mediaItems),
     ...converted.map(r => () => outputResource(outputDirectory, r)),
@@ -50,6 +52,21 @@ function outputFile(path: string, o: Object) : Promise<boolean> {
       }
     });
   });
+}
+
+function outputManifest(courseDir: string, outputDirectory: string) {
+
+  const $ = DOM.read(`${courseDir}/content/package.xml`);
+  const title = $('package title').text();
+  const description = $('package description').text();
+
+  const manifest = {
+    title,
+    description,
+    type: 'Manifest',
+  };
+
+  return outputFile(`${outputDirectory}/manifest.json`, manifest);
 }
 
 function outputHierarchy(outputDirectory: string, h: TorusResource) {

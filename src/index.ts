@@ -89,7 +89,7 @@ function convertAction() {
 
       processResources(Convert.convert, references, map)
       .then((converted: Resources.TorusResource[]) => {
-        Convert.output(outputDirectory, hierarchy, converted);
+        Convert.output(packageDirectory, outputDirectory, hierarchy, converted);
       });
 
     });
