@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Here is the stop.jpg image:
+
+<br></br><image src="stop.jpg" alt="red stop sign with white letters">
+
+<p>For the stop.jpg image, write code that picks out the blue sky (using the &gt; avg * factor technique, as in lecture). Change the blue pixels to be red=20 green=20 blue=20 .. so it looks like nighttime. Adjust your code so it changes the sky, but not the white letters in the sign (which are technically a little blue).
+
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="60"  class="tacode" spellcheck="false" style='min-height:12em;' meh='image\20\3D\20new\20SimpleImage\28\22stop.jpg\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20avg\20\3D\20\28pixel.getRed\28\29\20\2B\20pixel.getGreen\28\29\20\2B\20pixel.getBlue\28\29\29/3\3B\0A\20\20if\20\28pixel.getBlue\28\29\20\3E\20avg\20\2A\201.1\29\20\7B\0A\20\20\20\20pixel.setRed\2820\29\3B\0A\20\20\20\20pixel.setGreen\2820\29\3B\0A\20\20\20\20pixel.setBlue\2820\29\3B\0A\20\20\7D\0A\7D\0Aprint\28image\29\3B\0A\0A'    tol='15' 
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("stop.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

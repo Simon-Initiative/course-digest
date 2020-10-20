@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_07ae216f8ba44c16a20690195f448373">
+   <title>tutor</title>
+   <question id="aQ_07ae216f8ba44c16a20690195f448373">
+      <body>
+         <p>Which of the follow best describes phishing?</p>
+         <p>    </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Someone sends out spam email, forging your address as the sender. </choice>
+         <choice value="1">Someone tricks you into typing your username and password into a fake website. </choice>
+         <choice value="2">Someone tries to pay you with a fake check. </choice>
+         <choice value="3">Someone breaks into your email account and sends spam to your address book. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>While this can happen, phishing is not about forging your email address.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>The phishing site resembles the real site, but it communicates with the unauthorized person.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This is a common crime on Craigslist, but phishing is an online problem.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Sending spam from unauthorized access to an email account is something people do, but phishing is about how that access was gained.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -20,6 +20,7 @@ function innerProcess<T>(
   const doSummary = (ref: ItemReference) => {
     const path = resourceMap[ref.id];
     seenReferences[ref.id] = true;
+    console.log(path);
     if (path !== undefined) {
       return () => processFunc(path);
     }

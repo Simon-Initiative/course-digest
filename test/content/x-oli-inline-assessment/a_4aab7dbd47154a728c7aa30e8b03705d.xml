@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_4aab7dbd47154a728c7aa30e8b03705d">
+   <title>tutor</title>
+   <question id="aQ_4aab7dbd47154a728c7aa30e8b03705d">
+      <body>
+         <p>Which one of the following best describes the operation of the CPU on the machine code instructions in RAM?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">The CPU compares the bytes of adjacent instructions to discover differing bits. </choice>
+         <choice value="1">The CPU sets the "run" bit to 1 within each instruction byte. </choice>
+         <choice value="2">The CPU runs the first instruction, then the second, and so on. </choice>
+         <choice value="3">The CPU swaps the instructions around, so the first is last and the last is first. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The CPU works on the bytes, but not comparing.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The CPU does something with the instruction, not changing it.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>The CPU runs each instruction in turn.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The CPU does something with the instructions, not moving them around.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

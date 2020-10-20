@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-tables-m-tables_quiz-p-table_quiz"><head><title>Table Quiz</title></head><body><image id="e32c5142ae7c44bf87ce895a52ed3992" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><codeblock id="a39fed65b30c4524b62065d54691aaf1" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="06ad6a7f3f744f11a1dcdf7e434e19bc" xblock-family="xblock.v1" display_name="Question 1" hints="" tolerance="" body="<p>Edit the code to print the row for the name Abby.
+</p>" regex="Abby.*284.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  
+}" solution_code="Solution code goes here"/>
+    ]]></codeblock><codeblock id="df0049e6f3de4c8ea09309057de465a6" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="f6735cc001714d6fbaee3559550b2edd" xblock-family="xblock.v1" display_name="Question 2" hints="" tolerance="" body="<p>Write code to print the rows where the rank is less than (<) 5 (i.e., ranks 1 through 4).</p>" regex="Jacob.*\n(.*\n)+Olivia.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  
+}" solution_code="Solution code goes here"/>
+    ]]></codeblock><codeblock id="e2ce770112024697b201f7a5fe27cc7a" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="e41f09fb3a41426ead99108a94ca186e" xblock-family="xblock.v1" display_name="Question 3" hints="" tolerance="" body="<p>Edit the code to print all the rows where the name starts with Q. </p>" regex="Quinn.*(.*\n)+Quinten.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name") ..something.. ) {
+    print(row);
+  }
+}" solution_code=""/>
+    ]]></codeblock><codeblock id="c5c0f0d9952b49cebf376c6344a3020e" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="92eaeb5456d547099aa82369394e088a" xblock-family="xblock.v1" display_name="Question 4" hints="" tolerance="" body="<p>Edit the code to print all the rows where the name <b>ends</b> with x (lowercase x).</p>" regex="Alex.*(.*\n)+Maxx.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name") ..something.. ) {
+    print(row);
+  }
+}" solution_code=""/>
+    ]]></codeblock><codeblock id="c50598973cb2493bab8a3f542c7a62dc" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="6806203edf1b4e849092d17d4362006c" xblock-family="xblock.v1" display_name="Question 5" hints="" tolerance="" body="<p>The starter code prints all the rows in which the name starts with Q. Edit the code so it prints rows in which the name starts with K and ends with r (lowercase r).</p>" regex="Kyler.*(.*\n)+Kimber.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+    print(row);
+  }
+}" solution_code=""/>
+    ]]></codeblock><codeblock id="acc57215ac9e4cb68ab7c4c0142702e0" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="a61bbcd3fcc246988a0e934b83d8dd7f" xblock-family="xblock.v1" display_name="Question 6" hints="" tolerance="" body="<p>The starter code prints all the rows in which the name starts with Q. Edit the code to print rows in which the name ends with g (lowercase) or the name ends with v (lowercase).
+</p>" regex="King.*(.*\n)+Pranav.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+    print(row);
+  }
+}" solution_code=""/>
+    ]]></codeblock><codeblock id="aea9e4ecc41b41eb8f9aa2f0eb2ee248" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="3f2abed8002146c69154040e89b96947" xblock-family="xblock.v1" display_name="Question 7" hints="" tolerance="" body="<p>Write code to count and print the number of names ending with the letter d (lowercase).</p>" regex="ount:?\s34\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+count = 0;
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+      print(row);
+  }
+}" solution_code=""/>
+    ]]></codeblock></body></workbook_page>

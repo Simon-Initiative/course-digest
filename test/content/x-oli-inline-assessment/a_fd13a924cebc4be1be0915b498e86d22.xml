@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_fd13a924cebc4be1be0915b498e86d22">
+   <title>tutor</title>
+   <question id="aQ_fd13a924cebc4be1be0915b498e86d22">
+      <body>
+         <p>Which one of the following best describes digitization of sound?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Many times per second, convert the signal into a number representing red, green, or blue. 
+</choice>
+         <choice value="1">Many times per second, convert the signal into a number representing the difference between this signal and another music signal. 
+</choice>
+         <choice value="2">Many times per second, convert the signal into a number representing the signal's distance from the midline. 
+</choice>
+         <choice value="3">Many times per second, convert the signal into a number representing the difference between the left and right channels. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Digitization does convert the signal, but not to colors.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Digitization does a conversion to a number, but not between two signals.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Digitization measures the value of the signal many times per second.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Digitization does a conversion to a number, but not between left and right channelts.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

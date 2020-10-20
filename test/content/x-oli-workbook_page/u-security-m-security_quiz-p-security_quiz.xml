@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-security-m-security_quiz-p-security_quiz">
+   <head>
+      <title>Security Quiz</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="49752f4a692943c0acaacf6a56a01e5c" display_name="Security Quiz" editor="raw"/>-->
+      <image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><!--<h1>Security Quiz</h1>--><p/>
+      <wb:inline idref="a_f17c899cbfdf40cab5114c988270d3a6"/>
+		<wb:inline idref="a_afdd516d50b44fc0bc90fd5dc6a9d495"/>
+		<wb:inline idref="a_a17a52a9b5a24b6ebe8ef97a639c8a07"/>
+		<wb:inline idref="a_bcbfda78355e44a9b3865051a9c177e2"/>
+		<wb:inline idref="a_6a248cb18fc24e879a6b8241e00daba2"/>
+		<wb:inline idref="a_f421911138014e41b7cbefb5ba716a6d"/>
+
+      <!--A License section was here:<html filename="0fef62b46ded4b12a393da92f8c3c052" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

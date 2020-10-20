@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_c620d9298bd343d0b4f7106eaeab2047">
+   <title>tutor</title>
+   <question id="aQ_c620d9298bd343d0b4f7106eaeab2047">
+      <body>
+         <p>Which of the following best describes the role of a domain name?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Define which domains that packets from this computer are allowed to reach. </choice>
+         <choice value="1">Define a shorthand name for the IP address of a computer on the Internet. </choice>
+         <choice value="2">Identify a web page. </choice>
+         <choice value="3">Define a shorthand name for certain files. </choice>
+         <choice value="4">Define which computers supervise other computers in the domain. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A domain name is more about identifying a computer on the Internet.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>The domain name is a human-readable shorthand name for a computer's IP address.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>You need more than the domain name to identify a web page.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Domain names are a form of name, but not for files.</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>Domain names are part of identifying a computer on the Internet.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

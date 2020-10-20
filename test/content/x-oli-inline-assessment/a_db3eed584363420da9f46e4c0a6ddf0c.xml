@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_db3eed584363420da9f46e4c0a6ddf0c">
+   <title>tutor</title>
+   <question id="aQ_db3eed584363420da9f46e4c0a6ddf0c">
+      <body>
+         <p>Suppose a home surveillance video recording system produces 12 GB of data per day. How many MB per hour does it produce?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="500">
+            <feedback>12 GB per day is 500 MB per hour.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>12 GB of video per day and 24 hours in a day means 0.5 GB of video per hour.</hint>
+         <hint>0.5 GB is 500 MB.</hint>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_d91562c87874426bbbcd08f71aab0369">
+   <title>tutor</title>
+   <question id="aQ_d91562c87874426bbbcd08f71aab0369">
+      <body>
+         <p>Which one of the following best describes the role of the CPU?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">The CPU provides persistent storage. </choice>
+         <choice value="1">The CPU is the brains of the computer. </choice>
+         <choice value="2">The CPU provides temporary storage during computations. </choice>
+         <choice value="3">The CPU sends bytes on the network. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Storage is not the main role of the CPU.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>The CPU performs the computations in the computer.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>Storage is not the main role of the CPU.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Networking is not the main role of the CPU.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

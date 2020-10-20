@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_141dcf5779774070b5ac38a3f9f25b98">
+   <title>tutor</title>
+   <question id="aQ_141dcf5779774070b5ac38a3f9f25b98">
+      <body>
+         <p>Which one of the following tests if a row's name starts with Ba?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>if (row.getField("name") == startsWith("Ba"))</code>
+         </choice>
+         <choice value="1">
+            <code>if (row.getField("name") == "Ba"))</code>
+         </choice>
+         <choice value="2">
+            <code>if (row.getField("name").endsWith("Ba"))</code>
+         </choice>
+         <choice value="3">
+            <code>if (row.getField("name").startsWith("Ba"))</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The syntax == startsWith doesn't check for the first two letters of a string.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The syntax == "Ba" doesn't check for the first two letters of a string.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>The syntax .endsWith is almost right but doesn't check for the first two letters of a string.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>The syntax .startsWith("Ba") checks whether the first two letters of a row's name are Ba.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

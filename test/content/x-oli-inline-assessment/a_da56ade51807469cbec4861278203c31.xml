@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_da56ade51807469cbec4861278203c31">
+   <title>tutor</title>
+   <question id="aQ_da56ade51807469cbec4861278203c31">
+      <body>
+         <p>Each of the following shows an if statement line. Which one does <em style="bold">NOT</em> have a syntax error?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>if (row.getField("name").startsWith("Ac") {</code>
+         </choice>
+         <choice value="1">
+            <code>if (row.getField("name").startsWith("Z)) {</code>
+         </choice>
+         <choice value="2">
+            <code>if (row.getField("name").startsWith(Barb")) {</code>
+         </choice>
+         <choice value="3">
+            <code>if (row.getField("name").startsWith("Ba")) {</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The final ) is missing.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The closing " is missing.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>The opening " is missing.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>This if statement is correctly punctuated with no missing ) or ".</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -1,13 +1,10 @@
 import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
-import * as DOM from './utils/dom';
 import { executeSerially, ItemReference, MissingResource } from './utils/common';
 import { mapResources } from './utils/resource_mapping';
 import * as Summarize from './summarize';
 import * as Convert from './convert';
 import { processResources } from './process';
-
-type ConversionResult = Resources.TorusResource | MissingResource;
 
 function collectOrgItemReferences(packageDirectory: string, id: string = '') {
 
@@ -25,6 +22,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
         const references: ItemReference[] = [];
 
         results.forEach((r) => {
+
           if (typeof(r) !== 'string' && (id === '' || id === r.id)) {
             r.found().forEach((i) => {
 
@@ -76,35 +74,32 @@ function convertAction() {
   const packageDirectory = process.argv[3];
   const outputDirectory = process.argv[4];
   const specificOrg = process.argv[5];
-
-  console.log(packageDirectory);
+  const specificOrgId = process.argv[6];
 
   executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrg)])
+    () => collectOrgItemReferences(packageDirectory, specificOrgId)])
   .then((results: any) => {
     const map = results[0];
     const references = results.slice(1);
 
-    const o = new Orgs.Organization();
-    const $ = DOM.read(specificOrg);
-    o.restructure($);
+    Convert.convert(specificOrg)
+    .then((results) => {
 
-    const xml = $.html();
-    o.translate(xml).then(r => console.log(JSON.stringify(r[0] as any, undefined, 2)));
+      const hierarchy = results[0] as Resources.TorusResource;
 
+      console.log(map);
+      console.log(references);
+
+      processResources(Convert.convert, references, map)
+      .then((converted: Resources.TorusResource[]) => {
+        Convert.output(outputDirectory, hierarchy, converted);
+      });
+
+    });
 
   });
 
-/*
-  executeSerially([
-    () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => processResources(Convert.convert, results.slice(1), results[0]))
-  .then((results: any[]) => Convert.output(outputDirectory, results[0]))
-  .then((results: any) => console.log('Done!'))
-  .catch((err: any) => console.log(err));
-  */
 }
 
 function helpAction() {

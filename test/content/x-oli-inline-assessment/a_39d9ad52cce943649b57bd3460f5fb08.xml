@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_39d9ad52cce943649b57bd3460f5fb08">
+   <title>tutor</title>
+   <question id="aQ_39d9ad52cce943649b57bd3460f5fb08">
+      <body>
+         <p>Penelope has worked her way through the entire Principles of Computing course by skipping the text  and jumping straight to the activities, which she enjoys. When she doesn’t get an  answer right on one of the activities, she tries the other answers until she  discovers the correct one. Unfortunately, she does not pass the final exam and has  to retake it. “Oh well,” she sighs. “Back to the drawing board.” Once again, she  opens the first unit, skips the text, and goes straight to the activities. Penelope  has failed to </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> properly assess the task.  </choice>
+         <choice value="1"> accurately evaluate her own strengths and weaknesses.  </choice>
+         <choice value="2"> plan an effective strategy for working through the  course.  </choice>
+         <choice value="3"> successfully monitor her own performance.  </choice>
+         <choice value="4"> adjust her approach.  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>  From the story, we can’t really know whether Penelope  assessed the task inaccurately. What we do know is that she neither learned  from her experience nor adjusted her approach the second time  around. </feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>  This is possible, but not the best answer. It's true that  if Penelope had accurately assessed her strengths and weaknesses the first  time she worked through the course, she would have realized that she could  not pass the final exam without reading the explanatory text. However, it  was her failure to adjust her approach the second time that stands out  here. </feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>  This is true, but not the best answer. Penelope did not  plan an effective strategy for working through the Principles of Computing course the  first time. However, an even bigger mistake was not reflecting on and  adjusting her approach after it failed. </feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>  While Penelope clearly did not monitor her performance  closely enough to know her initial approach to studying was not effective,  her bigger mistake was to employ the same approach the second time around. </feedback>
+         </response>
+         <response match="4" score="1">
+            <feedback>  This is the best answer. Penelope is employing the same  unsuccessful approach to prepare for the final exam the second time, without  learning from her mistakes the first time. </feedback>
+         </response>
+         <hint> Look back at the definition for each skill outlined in the section on Metacognition to see if one looks like a match. </hint>
+         <hint> Notice that Penelope’s key decision point now is whether or not she will learn  from her past mistakes and find a more effective way to go through the unit so  she can learn the material. </hint>
+      </part>
+   </question>
+</assessment>

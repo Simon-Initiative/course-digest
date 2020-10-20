@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_6a248cb18fc24e879a6b8241e00daba2">
+   <title>tutor</title>
+   <question id="aQ_6a248cb18fc24e879a6b8241e00daba2">
+      <body>
+         <p>What is the most dangerous type of file to open on your computer?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">A PNG image file 
+</choice>
+         <choice value="1">A program file 
+</choice>
+         <choice value="2">A MP4 video file 
+</choice>
+         <choice value="3">A MP3 sound file 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A PNG file is not risky: you just see the contents.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>A program file is very risky, as it can take whatever actions were programmed into it, taking data or modifying your system.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A video file is not risky: you just see the contents.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>A MP3 file is not risky: you just hear the contents.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

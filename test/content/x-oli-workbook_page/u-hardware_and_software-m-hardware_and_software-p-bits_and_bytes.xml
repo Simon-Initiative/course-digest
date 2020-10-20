@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-hardware_and_software-m-hardware_and_software-p-bits_and_bytes">
+	<head>
+		<title>Bits and Bytes</title>
+		<objref idref="u-hardware_and_software-m-hardware_and_software-p-bits_and_bytes_LO_1" />
+	</head>
+	<body>
+		<image id="b8acb41793b34985bc7b0fdc8b5940c5" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<section id="d76dae03ef5846308fa1a000be488d95">
+			<title>Bits and Bytes</title>
+			<body>
+				<p id="cba578494acd4807ad24200f2bdd8aca">At the smallest scale in the computer, information is stored as bits and groups of bits called bytes. In this section, we look at how bits and bytes work.</p>
+				<section id="eee34c5878a747dc846bd64e52c232fb">
+					<title>Bits</title>
+					<body>
+						<p id="c5ea5fade29841d5bfe590588f2bcfa3">A <em style="italic">bit</em> is the smallest unit of data storage. A bit can represent just one of two possible values, typically 0 or 1. Inside a chip, the state of a bit, 0 or 1, is usually represented by a high or low voltage.</p>
+					</body>
+				</section>
+				<section id="ee8a05463fee42f9a80887cba121ba52">
+					<title>Bytes</title>
+					<body>
+						<p id="eb8e851296664111b2da0862c230b56e">A bit by itself is too small to be much use, so they are grouped into <em style="italic">bytes</em>. A byte is collection of bits, usually 8. With each bit being either 0 or 1, a byte value looks like this:</p>
+						<codeblock id="ca1c7038308d42308347590b0396893a" syntax="java" highlight="" number="false" start="">
+1 0 0 1 1 0 1 1
+						</codeblock>
+					</body>
+				</section>
+			</body>
+		</section>
+		<section id="d0ecce9508f34df7b1a673c3e3787a0e">
+			<title>Bytes and Letters</title>
+			<body>
+				<p id="da17eed4e12347cb90e905940203bd9e">One byte can store about one typed letter, such as <em style="italic">A</em> or <em style="italic">k</em>, so the word <em style="italic">Hello</em> takes up about 5 bytes. An email that has about 2,000 typed letters will take up about 2,000 bytes.</p>
+				<p id="a913db46d9e84c85b24341140d5c597a">The 1-byte-per-letter rule is for the English A to Z, 0 to 9 alphabet. Languages such as Japanese and Mandarin may require 2 or 4 bytes per symbol. <em style="italic">Unicode</em> is an international standard that defines official byte patterns to represent the symbols for hundreds of languages.</p>
+				<section id="f35c1bc6e8504a6f8d456d3a99d5b90b">
+					<title>One Byte: 256 Patterns</title>
+					<body>
+						<p id="bf6765f108db4f1cbd18cb21b63d7b46">How many different patterns can be stored in 1 byte? A byte has 8 bits, and each bit can be either 0 or 1, so 256 different patterns can be stored in one byte. (For the curious, the derivation of the number 256 is given below.)</p>
+						<p id="a195b4a0ca7b41119b0eecef87579864">We can do a back-of-the-envelope calculation to see how the 1-byte-per-letter rule works. Just count all the possible typed letters: there are 26 uppercase letters and 26 lowercase letters plus 10 digits and 40 or so miscellaneous symbols (such as % and *), and punctuation marks. The total is approximately 100 different typed letters. The approximately 100 possible letters fit easily in the 256 patterns available in 1 byte.</p>
+					</body>
+				</section>
+				<section id="e8a3c37ad6334619b54109ec0ab0d280">
+					<title>Derivation of 256</title>
+					<body>
+						<p id="e2eef0e8ab9b454faf7f619c443a2358">One bit can store two possible values: 0 or 1. Two bits can store four possible values: 00, 01, 10, or 11. Three bits can store eight possible values: 000, 001, 010, 011, 100, 101, 110, 111. Each time a bit is added, the number of possible values doubles. Therefore, starting with 1 bit = 2 possible values and adding 1 bit at a time up to 8 bits, the sequence is (1 bit)2, (2 bits)4, (3)8, (4)16, (5)32, (6)64, (7)128, and (8)256.</p>
+					</body>
+				</section>
+			</body>
+		</section>
+		<wb:inline idref="a_61fc71e22dab41cb941a595963810a11"/>
+		<wb:inline idref="a_1faaee8cb1984bd59df370e05e0b5934"/>
+		<wb:inline idref="a_b05d1903aa7a4a46a0c290e88857a304"/>
+	</body>
+</workbook_page>

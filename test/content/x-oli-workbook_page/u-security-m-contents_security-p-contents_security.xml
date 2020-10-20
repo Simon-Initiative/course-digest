@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-security-m-contents_security-p-contents_security">
+   <head>
+      <title>Contents: Security</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="a1299a9c0ce043d9901c6949d100ab5f" display_name="Contents: Security" editor="raw"/>--><!--<h1>Contents: Security</h1>--><ul>
+         <li>
+            <ul>
+               <li>
+                  <activity_link idref="u-security-m-security-p-computer_security_passwords"
+                                 title="u-security-m-security-p-computer_security_passwords">Computer Security: Passwords</activity_link>
+               </li>
+               <li>
+                  <activity_link idref="u-security-m-security-p-computer_security_phishing"
+                                 title="u-security-m-security-p-computer_security_phishing">Computer Security: Phishing</activity_link>
+               </li>
+               <li>
+                  <activity_link idref="u-security-m-security-p-computer_security_malware"
+                                 title="u-security-m-security-p-computer_security_malware">Computer Security: Malware</activity_link>
+               </li>
+               <li>
+                  <activity_link idref="u-security-m-security_quiz-p-security_quiz"
+                                 title="u-security-m-security_quiz-p-security_quiz">Security Quiz</activity_link>
+               </li>
+            </ul>
+         </li>
+      </ul>
+      <!--A License section was here:<html filename="0e0154b760964e11a05edce9d2ce1068" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

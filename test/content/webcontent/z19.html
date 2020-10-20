@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Change the "print" code below so it produces the following output when run:
+
+<codeblock syntax="java">
+1
+1 2
+1 2 3
+</codeblock>
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="5" cols="70"  class="tacode" spellcheck="false" style='min-height:6em;'   re='\5E\5Cs\2A1\5Cs\2A1\5Cs\2A2\5Cs\2A1\5Cs\2A2\5Cs\2A3\5Cs\2A\24' 
+onKeyPress='return handleCR(this ,event)'>
+print(1);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+
+</body>
+</html>

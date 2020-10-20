@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_bf3964797e7b4fc3b1e7f378aa1dcafc">
+   <title>tutor</title>
+   <question id="aQ_bf3964797e7b4fc3b1e7f378aa1dcafc">
+      <body>
+         <p>
+            <em style="bold">For the questions below, enter your answer as a plain number without units, such as 42.</em>
+         </p>
+         <p>4000 kilobytes (kB) is equal to how many megabytes (MB)?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="4">
+            <feedback>4000 kB is about 4 MB.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>A megabyte is about 1000 kB.</hint>
+         <hint>4000 kB is about 4 MB.</hint>
+      </part>
+   </question>
+</assessment>

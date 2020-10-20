@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_dac9c2e8afcd40f2ac76a4caf28442f8">
+   <title>tutor</title>
+   <question id="aQ_dac9c2e8afcd40f2ac76a4caf28442f8">
+      <body>
+         <p>Is the following an effective and efficient strategy for Joe to use?</p>
+         <p>Read the unit straight through from the beginning and do the  activities as they come up.</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> yes  </choice>
+         <choice value="1"> no  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="1">
+            <feedback>  If this is Joe's first programming course, this may be the  most efficient and effective strategy for him. </feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>  If this is Joe's first programming course, this  may be the most efficient and effective strategy for him. </feedback>
+         </response>
+         <hint> Think about which of these different strategies will be most likely to give  Joe (a) all the information he needs for the final exam and (b) opportunities to  practice applying the information and checking his understanding. </hint>
+      </part>
+   </question>
+</assessment>

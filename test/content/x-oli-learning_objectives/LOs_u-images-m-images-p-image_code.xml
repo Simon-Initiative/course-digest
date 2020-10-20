@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-images-m-images-p-image_code">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="7cc6a782e12540068953b5dfa0aeb8d2" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_code_LO_1">
+Learning Objective: Write code to use RGB functions.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="5872be18a9544ecdae23967e4345d73b" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_code_LO_2">
+Learning Objective: Write code to use simple functions.
+</objective>
+</objectives>

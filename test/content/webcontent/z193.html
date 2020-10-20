@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Write code to print the rows where the rank is less than  (&lt;) 10, i.e. ranks 1 through 9.
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="10" cols="70"  class="tacode" spellcheck="false" style='min-height:12em;' meh='table\20\3D\20new\20SimpleTable\28\22baby-2010.csv\22\29\3B\0Afor\20\28row\3A\20table\29\20\7B\0A\20\20//\20your\20code\20here\0A\20\20if\20\28row.getField\28\22rank\22\29\20\3C\2010\29\20\7B\0A\20\20\20\20print\28row\29\3B\0A\20\20\7D\0A\7D\0A\0A'   re='\5EJacob\2C\201\2C\20boy\2C\202010\0A\28.\2A\0A\29\7B16\2C16\7DChloe\2C\209\2C\20girl\2C\202010\0A\24' 
+onKeyPress='return handleCR(this ,event)'>
+table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // your code here
+  
+}&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+
+</body>
+</html>

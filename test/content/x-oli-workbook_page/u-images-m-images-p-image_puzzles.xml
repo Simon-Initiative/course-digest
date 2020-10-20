@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-image_puzzles">
+  <head>
+    <title>Image Puzzles</title>
+    <objref idref="u-images-m-images-p-image_puzzles_LO_1" />
+    <objref idref="u-images-m-images-p-image_puzzles_LO_2" />
+  </head>
+  <body>
+    <image id="d716b015bbf8470a810334edbe3cf9fe" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <section id="df0dfc552dd24d2fab84694ce2875203">
+      <title>Puzzles</title>
+      <body>
+        <p id="b30111484c754a65bfc2ec7b506bb1ad">The images puzzles here require you to write code to undo distortions to an image, recovering the original image. The puzzles are similar to the 5-10-20 puzzles, providing practice writing image changing code.</p>
+      </body>
+    </section>
+    <codeblock id="b5899945547a4f249196e6d075be94c6" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;0741b11cf36046d399292981457c407a&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 4): Set the green and blue to 0 and multiply the red by 10
+Hint (2 of 4): Set the green value to 0 using &lt;code&gt;pixel.setGreen(0);&lt;/code&gt;
+Hint (3 of 4): Set the blue value to 0 using &lt;code&gt;pixel.setBlue(0);&lt;/code&gt;
+Hint (4 of 4): Multiply the red value by 10 using &lt;code&gt;pixel.setRed(pixel.getRed() * 10);&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Here we have the &quot;gold&quot; puzzle image.
+
+&lt;br&gt;&lt;img src=&quot;/static/puzzle-gold.png&quot; alt=&quot;Gold puzzle image&quot;&gt;
+
+&lt;p&gt;The goal is to write code to undo the distortions of the puzzle image. The puzzle image has been distorted in two ways:
+
+&lt;p&gt;1. The green and blue values are just random values in the range 0 to 255 (&quot;snow&quot;).
+&lt;p&gt;Your code: Write code to set the green and blue values to 0, erasing the snow.
+&lt;p&gt;2. The data of the real image is exclusively in the red values. All the red values have been divided by 10, so they are very dark.
+&lt;p&gt;Your code: Write code  to multiply the red values by 10, restoring them to regular brightness.
+
+&lt;p&gt;When the image is solved, it will look very red. The fix for that is in a later section.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;puzzle-gold.png&quot;);
+for (pixel: image) {
+  // Your code here
+  
+}
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;puzzle-gold.png&quot;);
+for (pixel: image) {
+  pixel.setGreen(0);
+  pixel.setBlue(0);
+  pixel.setRed(pixel.getRed() * 10);
+}
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="b03b82bdafc84296a36265f71ec209cd" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;5176a6d0d8fd4471b520793593661e95&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): Clear the random noise by setting red to 0 with &lt;code&gt;pixel.setRed(0);&lt;/code&gt; and likewise for green.
+Hint (2 of 3): Multiply the blue value with a line like &lt;code&gt;pixel.setBlue( ...something ... );&lt;/code&gt;
+Hint (3 of 3): Multiply the blue value with a line like &lt;code&gt;pixel.setBlue(pixel.getBlue() * 10);&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Write code to fix the puzzle-iron.png image. The red and green values in the image are random noise, so they should be set to 0. The real image is in the blue values, which have been divided by 10. The solution image will look blue, since it is exclusively in the blue values. We learn how to fix that blueness in a later section.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;puzzle-iron.png&quot;);
+for (pixel: image) {
+  // Your code here
+  
+}
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;puzzle-iron.png&quot;);
+for (pixel: image) {
+  pixel.setRed(0);
+  pixel.setGreen(0);
+  pixel.setBlue(pixel.getBlue() * 10);
+}
+print(image);&quot;/&gt;
+    </codeblock>
+  </body>
+</workbook_page>

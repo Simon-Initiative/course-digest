@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-advanced_images-m-advanced_images-p-image_logic"><head><title>Image Logic</title><objref idref="u-advanced_images-m-advanced_images-p-image_logic_LO_1" /><objref idref="u-advanced_images-m-advanced_images-p-image_logic_LO_2" /><objref idref="u-advanced_images-m-advanced_images-p-image_logic_LO_3" /></head><body><p id="b1a200c0e0804c88b51fa49ba299d369"><image id="ecafd0f0c0714b02944a5ce88c8a80e9" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle"><caption><p id="eebafd7cfdf94ef2a5f7b3455d70054c" /></caption><popout enable="false"></popout></image></p><p id="ec000bb3eef941499bfb7c34fd9f517e">Our use of loops thus far has allowed us to write a little bit of code that is run for many data items. That&apos;s one big theme in computer code. The if statement, the topic of this section, adds a second theme: the ability to write a true/false test to control whether or not a bit of code runs. Combined with the loop, the if statement greatly expands what we can do with code.</p><section id="af2c7cbc0b8842b0831dceff2e2373a5"><title>If Statement Syntax</title><body><p id="af8bfb443af449f38d3f7306a35ec87f">The if statement has a true/false test that controls whether or not some code is run. Here is an example if statement shown inside a for-loop, which tests the red value of every pixel:</p><codeblock id="e75b9e4a862244a8adc1d6e0c56fff7c" syntax="java" highlight="" number="false" start=""><![CDATA[image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  if (pixel.getRed() > 160) {
+    pixel.setRed(0);
+    pixel.setGreen(0);
+    pixel.setBlue(0);
+  }
+}
+
+print(image);
+        ]]></codeblock><p id="bf75223f3bb540e5b69920ea53c6735c">Here is the first line of the if statement, with its true/false test within parentheses:</p><codeblock id="c73ae321aaeb4a2aab6636b8357e1875" syntax="java" highlight="" number="false" start=""><![CDATA[
+  if (pixel.getRed() > 160) {
+        ]]></codeblock><p id="d3d9509744b34b7fbe293dbd53e12615">The test <code>(pixel.getRed() &amp;gt; 160)</code> retrieves the red value of the pixel and tests whether the value is greater than 160, true or false. If the test is true, the if statement runs the body code inside the curly braces, in this case, the body code changes the pixel to black. If the test is false, the body code is skipped.</p><p id="b53a759f09624067a7563c71e74eab73">In this case, the for-loop goes over all the pixels. For each pixel, the if statement checks whether the red value is over 160, and if so, it sets that pixel to black. The if statement allows us to write code in the body that runs only for certain pixels—the pixels for which the test returns true.</p></body></section><section id="ab46a57947ca454aad8959ed770e88fc"><title>If Color Example</title><body><p id="b2651a6562d741d7bfa026b897d94355">For this example, we use a picture of a stop sign:</p><image id="b46f3ea54108482fb5efd72b995e4bf8" src="../webcontent/stop.jpg" alt="red stop sign, white letters" style="inline" vertical-align="middle"><caption><p id="c2f092288bdb43a39b630001ad569d3b" /></caption><popout enable="false"></popout></image><p id="c7490888c1344a4c80bcde920759304d">The goal of the code below is to change the red sign to blue without changing the rest of the image. The code uses the test from above, <code>(pixel.getRed() &amp;gt; 160)</code>. The strategy is that the pixels that make up the red sign will naturally have high red values, so this test will pick out just the red pixels of the sign. The body of the if statement sets the selected pixels to blue. Run the code to see what it does.</p><codeblock id="fcc4451d2030463cb253fc5d448f9a5c" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image-logic-1" rows="13" cols="65" spellcheck="false" onkeypress="return handleCR(this ,event)">
+                      image = new SimpleImage("stop.jpg");
+							for (pixel: image) {
+								if (pixel.getRed() > 160) {
+									pixel.setRed(0);
+									pixel.setGreen(0);
+									pixel.setBlue(255);
+								}
+							}
+							print(image);
+						</textarea>
+            <input value="Run" onclick="evaluateClear("image-logic-1")" type="button"/>]]></codeblock><p id="cc954f2b2dbd4312a91f0fbff9a1151d" /><p id="b6d1b3b3db464483921fe9e347858dce" /></body></section><p id="de92b30eddc045ef9e2f49e8900b948b" /><section id="f6f6ae8e70dc44d5b367f3d74a6ff9a7"><title>The Problem with (red &amp;gt; 160) Test</title><body><p id="d6e46db80b1d4487a73a549ef3cbda66">The code above demonstrates the operation of the if statement: only pixels for which the test <code>(pixel.getRed() &amp;gt; 160)</code> is true are changed to blue. It does an acceptable but not a perfect job of changing the stop sign to blue, even if we experiment to find the best value to use in the test: 160, 170, 180, and so on. The problem is that the test <code>(red &amp;gt; 160)</code> gets both white and red areas. The red value is high in two kinds of cases: the red part of the sign we want but also parts of the scene that are near white. Recall that pure white is (255, 255, 255), so in whitish areas, all three values are high, so our <code>(red &amp;gt; 160)</code> test gets those too—the white letters inside the sign are a clear example of this problem. We can improve the test so it can distinguish the red and white parts of the sign. We need a better test to pick out the red areas but to ignore the white areas.</p></body></section><section id="e9e80e6798754e2387dac2dbad5feb97"><title>Color Bars</title><body><p id="b57238220fb84424979a5230b318e8b0">Suppose we have three pixels. Each pixel has the familiar RGB values. Suppose these three values are graphed as bar graphs like this:</p><p id="a6f658e2a1b0477ba7bdc5d8aac8c1f2"><image id="e475805af7ca40b68756a04ed0fd0182" src="../webcontent/image-if-avg1.png" alt="red/green/blue bar graphs of three pixels" style="inline" vertical-align="middle"><caption><p id="e03058820c934c039f8d479be9c7669c" /></caption><popout enable="false"></popout></image></p><p id="d7798a4a99d2496bbdfc48c76b415232">In each pixel, either the red, the green, or the blue is strongest. Look at the graph to figure which shade dominates for each pixel. It&apos;s just whichever bar is tallest—or to be specific, whichever bar is tallest <em style="italic">relative to the others</em>. The problem with our earlier strategy was that it just looked at absolute numbers—(red &amp;gt; 160)—failing to take into account this relative quality: which bar is higher than the other two.</p><section id="e657f462fdd348498b5afaa117c9f448"><title>Recall Average of Pixel Color</title><body><p id="b72518cfa5ae4d248cb8a3db44a1994e">Recall this code that, inside a loop, computes the average of the red, blue, and green values and stores that number in a variable named <code>avg</code>. </p><codeblock id="e58cf070d6d14f9a9474bec0e6d5f1b7" syntax="java" highlight="" number="false" start=""><![CDATA[avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+            ]]></codeblock></body></section><section id="b7ceb05dccfb45f29b443855534f2c58"><title>Color Bars with Average</title><body><p id="ca9dc22f4c6642a5a7976812af4eb293">Here are the three pixels again, but now the <code>avg</code> value is shown as a line drawn across the bars.</p><p id="ef1993e49ebc4f18adaf089564b2a7a3"><image id="befd1639b7c14a14bc75107a4e8c94b3" src="../webcontent/image-if-avg2.png" alt="red/green/blue bar graphs with avg shown" style="inline" vertical-align="middle"><caption><p id="c79b97da36da4351971ff880c8b17d39" /></caption><popout enable="false"></popout></image></p><p id="ea1cd032487c486995175e55b315f9f5">The <code>avg</code> gives us a handy way to tell if a color is high relative to the others. A pixel is reddish if the red value is over the <code>avg</code>. In this case, the first pixel is reddish and the other two are not. Or, in terms of code, the test will look like this: <code>(pixel.getRed() &amp;gt; avg)</code>. Using <code>avg</code> in this way is a great way to detect whether a pixel tends toward red or green or blue.</p></body></section></body></section><section id="e64b2ccc2045456ebe79d6f3a558ad6e"><title>Color avg Test Example: Stop</title><body><p id="b81dfaa5feb54bacb523b27a24c44a1d">Here is code that uses the <code>avg</code> technique to detect the redish pixels with the test <code>(pixel.getRed() &amp;gt; avg * 1.1)</code>. The <code>* 1.1</code> is an adjustment factor that depends on the particular image. You can adjust the factor for a particular image to get the look you want. A larger factor makes the test more restrictive, letting fewer pixels through to be operated on by the body. A smaller factor makes the test less restrictive, letting more pixels through.</p><p id="e4a113b88b624912a2faff4d6f961a24">Run this code to see what it does. Try the values 1.3, 1.5, 1.7, and 1.9 for the <code>* 1.1</code> factor until you think it looks best. There are a few reddish pixels in the trees, so unavoidably, those are changed to blue, too.</p><codeblock id="a37140902a6a4258a73fadc8001e0f71" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image-logic-2" rows="14" cols="65" spellcheck="false" onkeypress="return handleCR(this ,event)">
+                      image = new SimpleImage("stop.jpg");
+							for (pixel: image) {
+								avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+
+								if (pixel.getRed() > avg * 1.1) {
+									pixel.setRed(0);
+									pixel.setGreen(0);
+									pixel.setBlue(255);
+								}
+							}
+							print(image);
+						</textarea>
+            <input value="Run" onclick="evaluateClear("image-logic-2")" type="button"/>]]></codeblock><p id="d0a1e25113e645a2b0ce0c8c776c2f7c" /><p id="ee70e51c2237403c8e199bd12709f4aa" /><p id="f80923be1ba345a18c125b24c085688f">The <code>avg</code> technique is a better way to select the red parts of the sign. Using the average in this way, the code can detect which pixels have a red cast, and the <code>* 1.1</code> factor allows us to adjust the if test to get the pixels we want. In this case, a factor of 1.5 or 1.7 factor does a pretty nice job of changing just the red parts of the sign to blue.</p></body></section><codeblock id="dbf1e8331930470ea4e73dcda35840c7" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="e9b9bb76c3f64f09b9038ed6da2c156a" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): The if-test looks like <code>if (pixel.getGreen() > ..something.. ) {</code>
+Hint (2 of 3): Inside the if statement, use the line <code> pixel.setGreen(0);</code>
+Hint (3 of 3): The if-test looks like <code>if (pixel.getGreen() > avg * 1.0) {</code>" tolerance="10" body="<p><img src="../webcontent/fence-ivy.jpg" alt="green ivy in front of red fence">
+
+<p>Write code that selects the green leaf pixels in the image using the <code>> avg * factor</code> technique. The standard line to compute the average for each pixel is included in the starter code. For this image, a factor of * 1.0 works well. What factor number works best is just a quirk dependent on the specific image.
+
+<p>For each green pixel identified, set its green value to 0. The result is that the green leaves are changed to a weird purple color, since setting green to 0 leaves only red and blue contributing to the image colors." regex="" starter_code="image = new SimpleImage("fence-ivy.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("fence-ivy.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  if (pixel.getGreen() > avg * 1.0) {
+    pixel.setGreen(0);
+  }
+  
+}
+print(image);"/>
+    ]]></codeblock><codeblock id="e5d89b6ed2d84ed1994bcdce9087f3cb" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="6af4c56f5bd543419f58e7922b1762b8" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): Test for the blue sky with code like: <code>if (pixel.getBlue() > avg * ..something.. ) {</code>
+Hint (2 of 3): Test for the blue sky with code like: <code>if (pixel.getBlue() > avg * 1.1) {</code>. The * 1.1 is an adjustment factor that depends on the particular image. A larger factor makes the test more restrictive, letting fewer pixels through to be operated on by the body. A smaller factor makes the test less restrictive, letting more pixels through. While other adjustment factors are possible, using 1.1 is the least restrictive and best to use here.
+Hint (3 of 3): Inside the if-statement, set the sky to dark gray by setting red, green, and blue all to 50." tolerance="10" body="<p>For the stop.jpg image, write an if statement to detect the blue sky using the <code>> avg * factor</code> technique. Change the detected blue pixels to dark gray (red=50, green=50, blue=50), so the image is changed to nighttime. Adjust the * factor so it detects the blue sky but not the white letters in the sign (which technically are a little blue).
+
+<p><img src="../webcontent/stop.jpg" alt="red stop sign">
+" regex="" starter_code="image = new SimpleImage("stop.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("stop.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  if (pixel.getBlue() > avg * 1.1) {
+    pixel.setRed(50);
+    pixel.setGreen(50);
+    pixel.setBlue(50);
+  }
+  
+}
+print(image);"/>
+    ]]></codeblock><codeblock id="f3261bf967ec477fa632bdb9a198d332" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="89516f97614246b8884dc362b37d39ea" xblock-family="xblock.v1" display_name="Learn By Doing Curb-1" hints="Hint (1 of 3): Write an if statement to detect the red with the <code>avg</code> technique. In its body, set the pixel to be gray.
+Hint (2 of 3): The if-test looks like this: <code>if (pixel.getRed() > avg * ..something.. ) {</code>
+Hint (3 of 3): Inside the if-statement, set red, green, and blue all to 120." tolerance="10" body="<p><img src="../webcontent/curb.jpg" alt="street with red curb">
+<p>Suppose you are visiting Stanford University and get an annoying parking ticket. Philosophically, they say you are better off taking in events as they have actually happened. Nonetheless, here we'll try to fix history in code.
+<p>Write code to detect the red curb. Use a factor of * 1.2. Change the red curb to medium gray (red=120, green=120, blue=120).
+<p>This will also change some other reddish parts of the image to gray. The overall change made by this code looks okay but a little crude. We'll improve the code in the next problem." regex="" starter_code="image = new SimpleImage("curb.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("curb.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  if (pixel.getRed() > avg * 1.2) {
+    pixel.setRed(120);
+    pixel.setGreen(120);
+    pixel.setBlue(120);
+  }
+}
+print(image);"/>
+    ]]></codeblock><codeblock id="bb9d24cba02f41a7b946f418101e7798" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="1d1e7f9f0946471998007765cc1e3fd1" xblock-family="xblock.v1" display_name="Learn By Doing Curb-2" hints="Hint (1 of 3): If statement to detect the red: <code> if (pixel.getRed() > avg * 1.0) {</code>
+Hint (2 of 3): Inside the if statement, change the pixel to grayscale by setting red, green, and blue all to be the <code>avg</code> value,
+Hint (3 of 3): Use a line like: <code>pixel.setRed(avg);</code>, and likewise for green and blue." tolerance="4" body="<p><img src="../webcontent/curb.jpg" alt="street with red curb">
+
+<p>For this problem, we will improve the solution of the previous problem.
+<p>Detect the red pixels in the same way as in the previous problem. Instead of setting each detected pixel's RGB values to 120, set each detected pixel to be <b>grayscale</b>. In this way, we drain the red hue from the curb but keep its natural-looking light/dark shading. This effect looks much better.
+
+<p>Reminder: To convert a pixel to grayscale, compute the average value of the RGB values, and then set red, green, and blue all to that value." regex="" starter_code="image = new SimpleImage("curb.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("curb.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  if (pixel.getRed() > avg * 1.2) {
+    pixel.setRed(avg);
+    pixel.setGreen(avg);
+    pixel.setBlue(avg);
+  }
+}
+print(image);"/>
+    ]]></codeblock></body></workbook_page>

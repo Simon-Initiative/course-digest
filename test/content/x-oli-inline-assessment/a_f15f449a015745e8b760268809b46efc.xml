@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_f15f449a015745e8b760268809b46efc">
+   <title>tutor</title>
+   <question id="aQ_f15f449a015745e8b760268809b46efc">
+      <body>
+         <p>Which of the following best describes a D/A converter?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">It takes in numeric samples and converts them to an analog signal. </choice>
+         <choice value="1">It takes in digital error numbers and converts them to alpha values. </choice>
+         <choice value="2">It takes in decimal values and converts them to Avagadro values. </choice>
+         <choice value="3">It takes in digital IP addresses and converts them to routing numbers. </choice>
+         <choice value="4">It takes in an analog signal and converts it to numeric samples. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="1">
+            <feedback>A D/A converter converts digital numeric samples to analog signal.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>D/A input is numeric, but it is not focused on errors specifically.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>D/A input is numeric, but the output is not in Avagardo values.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>D/A input is numeric, but it does not take in IP addresses to convert to routing numbers.</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>This is an example of an A/D converter.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

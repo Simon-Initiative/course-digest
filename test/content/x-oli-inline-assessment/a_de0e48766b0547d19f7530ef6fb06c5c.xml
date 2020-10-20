@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_de0e48766b0547d19f7530ef6fb06c5c">
+   <title>tutor</title>
+   <question id="aQ_de0e48766b0547d19f7530ef6fb06c5c">
+      <body>
+         <p>Is the following an effective and efficient strategy for Joe to use?</p>
+         <p>Read the unit straight through from the beginning, but skip the  activities.</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> yes  </choice>
+         <choice value="1"> no  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>  Although reading the text will provide Joe with the  information content of the unit, by skipping the activities he misses the  chance to practice and check his understanding. </feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>  Although reading the text will provide Joe with the  information content of the unit, by skipping the activities he misses the  chance to practice and check his understanding. </feedback>
+         </response>
+         <hint> Think about which of these different strategies will be most likely to give  Joe (a) all the information he needs for the final exam and (b) opportunities to  practice applying the information and checking his understanding. </hint>
+      </part>
+   </question>
+</assessment>

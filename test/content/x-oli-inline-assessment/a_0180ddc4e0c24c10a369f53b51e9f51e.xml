@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_0180ddc4e0c24c10a369f53b51e9f51e">
+   <title>tutor</title>
+   <question id="aQ_0180ddc4e0c24c10a369f53b51e9f51e">
+      <body>
+         <p>Suppose you want to log in to gmail.com and not a phishing site. Which of the following URLs is the correct one? </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">login.now.at.gmmmail.com </choice>
+         <choice value="1">accounts.google.sitesnow.ru </choice>
+         <choice value="2">gmail.login.groogle.com </choice>
+         <choice value="3">accounts.google.com </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>gmmmail.com is not the correct domain.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>sitesnow.ru is not the correct domain.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>groogle.com is not the correct domain.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>When a user logs in to gmail, this is the domain it shows in the URL. The domain ends in google.com, so the user can be confident it is not a phishing site.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

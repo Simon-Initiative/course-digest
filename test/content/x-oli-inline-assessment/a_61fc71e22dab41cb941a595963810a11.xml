@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_61fc71e22dab41cb941a595963810a11">
+   <title>tutor</title>
+   <question id="aQ_61fc71e22dab41cb941a595963810a11">
+      <body>
+         <p>
+            <em style="bold">For the questions below, type in a whole number (for example, 7).</em>
+         </p>
+         <p>How many possible values can be stored in 1 bit?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="2">
+            <feedback>A bit can store 2 values, typically called 0 and 1.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>The possible values of a bit are often called 0 and 1.</hint>
+         <hint>A bit can store 2 possible values.</hint>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_fbc939a9347d4e08b1d5e7b9c81d6d6b">
+   <title>tutor</title>
+   <question id="aQ_fbc939a9347d4e08b1d5e7b9c81d6d6b">
+      <body>
+         <p>The code below operates on the tree.jpg image.</p>
+         <code>
+image = new SimpleImage("tree.jpg");
+
+for (pixel: image) {
+  pixel.setRed(0);   // How many times does this line run?
+}
+
+print(image);
+</code>
+         <p/>
+         <p>Suppose the tree.jpg image is 1,000 by 1,000 pixels. How many times does the line <code>pixel.setRed(0);</code> run when this code runs?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">1 </choice>
+         <choice value="1">255 </choice>
+         <choice value="2">1,000 </choice>
+         <choice value="3">65,025 </choice>
+         <choice value="4">1 million </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The line of code in the body runs repeatedly, once for each pixel in the image.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>255 is the maximum value for one pixel.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>1000 is the total number pixels along one side of the image.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>65,025 is 255*255, and 255 is the maximum value for one pixel.</feedback>
+         </response>
+         <response match="4" score="1">
+            <feedback>The inside body of the loop runs once for each pixel and 1,000 * 1,000 = 1 million pixels.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

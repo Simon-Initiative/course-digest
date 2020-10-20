@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_193b254f6290435a9c765076d23739ad">
+   <title>tutor</title>
+   <question id="aQ_193b254f6290435a9c765076d23739ad">
+      <body>
+         <p>Which of the following best describes the role of an IP address?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Identify priority packets to be sent immediately. 
+</choice>
+         <choice value="1">Control packet encryption. 
+</choice>
+         <choice value="2">Identify a computer on a network so it can send and receive packets. 
+</choice>
+         <choice value="3">Identify each byte in RAM for use by the CPU. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>IP addresses identify something other than priority.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>IP addresses identify something other than encryption.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>IP addresses identify a computer on the internet.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>IP addresses identify something other than bytes in RAM.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

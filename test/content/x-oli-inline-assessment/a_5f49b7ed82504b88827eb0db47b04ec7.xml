@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_5f49b7ed82504b88827eb0db47b04ec7">
+   <title>tutor</title>
+   <question id="aQ_5f49b7ed82504b88827eb0db47b04ec7">
+      <body>
+         <p>A digital image is made of many tiny square _______.</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="pixel">
+            <feedback>The image is made of many tiny pixels.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>A digital image is made of these tiny elements.</hint>
+         <hint>Each element shows a single color.</hint>
+         <hint>A digitial image is made of many tiny pixels.</hint>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-networking-m-networking-p-the_internet">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="7764d6e3afdd461ebeb92766549ebc05" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-networking-m-networking-p-the_internet_LO_1">
+Learning Objective: Identify the basic components of the global Internet.
+<!--<h1>The Internet<deleted TCP/IP</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+<li>Define the basic components of the global Internet.<deleted worldwide Internet.</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>-->
+</objective>
+</objectives>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-hardware_and_software-m-hardware_and_software_quiz-p-hardware_and_software_quiz">
+	<head>
+		<title>Hardware and Software Quiz</title>
+	</head>
+	<body>
+		<image id="c5be0f4ef0434d12851c4ac2946b386f" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<wb:inline idref="a_d91562c87874426bbbcd08f71aab0369"/>
+		<wb:inline idref="a_6caf9a36c5f34e84baf0635477138f63"/>
+		<wb:inline idref="a_384b77cd105d4bfdafdf91a3b8e1ca0c"/>
+		<wb:inline idref="a_4aab7dbd47154a728c7aa30e8b03705d"/>
+		<wb:inline idref="a_2ff35346359f42a4bbcab2585b3dfba2"/>
+		<wb:inline idref="a_bc97989d48aa4da1be35adfba01d0c71"/>
+		<wb:inline idref="a_ef26045f6af44fbf8ff3d20de9e81448"/>
+		<wb:inline idref="a_ad6398fadc594a16b242f327461f9453"/>
+	</body>
+</workbook_page>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_4f6c372ef2024facb76c7001029ee537">
+   <title>tutor</title>
+   <question id="aQ_4f6c372ef2024facb76c7001029ee537">
+      <body>
+         <p>Which of the following is a true statement?</p>
+         <p>  </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">To connect to the Internet, a computer connects to a router and tells it what IP address will be used. </choice>
+         <choice value="1">To connect to the Internet, a computer connects to its DHCP to determine its IP address. </choice>
+         <choice value="2">To connect to the Internet, a computer connects to a router and is told what IP address to use. </choice>
+         <choice value="3">To connect to the Internet, a computer connects to a router and waits until its desired IP address is available. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The router determines the IP address.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>DHCP is a protocol, not a thing to connect to.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>The router tells the computer what IP address to use.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Typically, the computer does not wait for a particular IP address; it uses whatever is available.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

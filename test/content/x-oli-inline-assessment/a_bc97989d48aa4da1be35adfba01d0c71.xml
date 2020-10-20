@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_bc97989d48aa4da1be35adfba01d0c71">
+   <title>tutor</title>
+   <question id="aQ_bc97989d48aa4da1be35adfba01d0c71">
+      <body>
+         <p>Which of the following requires 1 byte of storage?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Approximately one average-sized text email </choice>
+         <choice value="1">A single typed letter, such as <em style="italic">T</em>
+         </choice>
+         <choice value="2">A small color image </choice>
+         <choice value="3">A single true/false value </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>An email is too much information to store in a single byte.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>A single byte can hold approximately a single letter.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>An image is too much information to store in a single byte.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>A single true/false value takes much less space than 1 byte.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

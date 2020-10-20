@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_67c70e6f7cd245ef975f1d7888eb8e2a">
+   <title>tutor</title>
+   <question id="aQ_67c70e6f7cd245ef975f1d7888eb8e2a">
+      <body>
+         <p>Which of the following best describes the purpose of a packet checksum?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Checksums detect whether bytes were corrupted in transit. </choice>
+         <choice value="1">Checksums compress sent bytes so they take up less space. </choice>
+         <choice value="2">Checksums encrypt bytes on the wire so they cannot be read by others. </choice>
+         <choice value="3">Checksums speed access to frequently used bytes. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="1">
+            <feedback>Sometimes bits are corrupted during transmission, and the checksum helps the recipient detect the corruption.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Checksums are about error detection, not compression.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>Checksums are about error detection, not encryption.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Checksums are about error detection, not speeding up access.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

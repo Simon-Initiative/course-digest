@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_5a31922cb6344ac3832866d50372fb3a">
+   <title>tutor</title>
+   <question id="aQ_5a31922cb6344ac3832866d50372fb3a">
+      <body>
+         <p>What is the x, y coordinate of the upper left pixel (the origin)? Please type in the x, y numbers separated by a space, like this: 42 43</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="0\s+0">
+            <feedback>x=0 y=0 is the upper left pixel.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>What is the x, y coordinate of the pixel at the upper left of an image?</hint>
+         <hint>The x value of the upper left corner is 0. What is the y value?</hint>
+         <hint>The x, y value of the upper left corner is 0 0</hint>
+      </part>
+   </question>
+</assessment>

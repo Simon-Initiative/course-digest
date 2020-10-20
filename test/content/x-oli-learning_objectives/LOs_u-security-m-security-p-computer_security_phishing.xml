@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-security-m-security-p-computer_security_phishing">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="51bd973399f449b682250d0b699928a6" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-security-m-security-p-computer_security_phishing_LO_1">
+Learning Objective: Explain phishing attacks and how to avoid them.
+<!--<h1>Computer Security: Phishing</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+<li>Explain phishing attacks and how to avoid them.</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>-->
+</objective>
+</objectives>

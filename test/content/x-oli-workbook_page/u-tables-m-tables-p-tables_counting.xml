@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-tables-m-tables-p-tables_counting">
+   <head>
+      <title>Tables: Counting</title>
+      <objref idref="u-tables-m-tables-p-tables_counting_LO_1"/>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="a523aaa015ad4da8b3a7c38553616fb5" display_name="Tables: Counting" editor="raw"/>--><!--<h1>Tables: Counting</h1>--><!--The .xml file paired with the source html file read:
+<html filename="f54422a7afaa4d32b2e22907de5c5a8f" display_name="Tables: Counting" editor="raw"/>--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><section>
+         <title>Counting</title>
+         <body>
+            <p>Thus far, we've used an if-test inside a loop to select certain rows to print. In this section, we use a variable with a little code to <em style="italic">count</em> how many times an if-test is true. 			</p>
+         </body>
+      </section>
+      <section>
+         <title>Code to Count</title>
+         <body>
+            <p>Counting requires three additions to the standard loop/if/print structure we used previously:</p>
+            <ol>
+               <li>Store 0 into a <code>count</code> variable before the loop:
+						
+						<code>count = 0;</code>
+               </li>
+               <li>Inside the if statement, increase <code>count</code> by 1 with this line:
+						
+						<code>count = count + 1;</code>
+               </li>
+               <li>After the loop, print the final value stored in <code>count</code>:
+						
+						<code>print("count:", count);</code>
+               </li>
+            </ol>
+            <p>Inside the if statement, <code>count = count + 1;</code> increases the number stored in <code>count</code> by 1. This is a strange-looking line, but you just need to know that it increases the value stored in <code>count</code> by 1, such as increasing count from 6 to 7 (details below for the curious).</p>
+            <p>The following code is a loop that detects all the names in the baby-2010.csv file that start with <em style="italic">Q</em>. After printing the rows, the code prints the count of how many names started with <em style="italic">Q</em>.
+				</p>
+            <p>Run this code to see what it does. The three added lines described above are marked (1), (2), and (3) in the code. Note the line printed at the very end of the output.</p>
+            <!-- CODE -->
+            <codeblock syntax="text">&lt;textarea id="table4-1"
+                      rows="14"
+                      cols="70"
+                      spellcheck="false"
+                      onKeyPress="return handleCR(this ,event)"&gt;
+table = new SimpleTable("baby-2010.csv");
+count = 0;  // (1)
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+    print(row);
+    count = count + 1;  // (2)
+  }
+}
+print("count", count);  // (3)
+						&lt;/textarea&gt;
+            &lt;input type="button" value="Run" onClick="evaluateClear(&#34;table4-1&#34;)"/&gt;</codeblock>
+            <!-- OUTPUT -->
+            <p> </p>
+            <p>
+               <em style="bold">Optional:</em> How does the line <code>count = count + 1;</code> work? The computer first evaluates the expression on the right side of the =. Say, for example, that the value 6 is stored in <code>count</code> initially. The right side is <code>count + 1</code>, which evaluates to 7. Then that value is assigned back into the <code>count</code> variable. In effect, whatever number is stored in <code>count</code> to start with, that number + 1 is stored into <code>count</code>.
+					</p>
+         </body>
+      </section>
+      <wb:inline idref="a_ba4c617584054958aa1225b640caf196"/>
+
+      <codeblock syntax="xml">
+				<!-- !!!vertical-->
+&lt;image-coding url_name="a20d7ee957df4109b06962c71de729d7" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): Inside the if-statement, add &lt;code&gt;count = count + 1;&lt;/code&gt;.
+Hint (2 of 2): After the loop, add &lt;code&gt;print("count", count);&lt;/code&gt;." tolerance="" body="&lt;p&gt;Write code to count and print the number of names starting with the letter Q. The last line printed should look like the "code to count" example above. You can print out rows or other things in the loop too, if you like, so long as the "count" line appears at the end.&lt;/p&gt;
+&lt;p&gt;Two changes are required: (a) Add code to increment the count variable. (b) Add code to print the count after the loop. &lt;/p&gt;" regex="ount:?\s7\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+count = 0;
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+      print(row);
+  }
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+count = 0;
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+  	print(row);
+      	count = count + 1;  // (2)
+  }
+}
+print("count", count);  // (3)
+"/&gt;
+			</codeblock>
+      <codeblock syntax="xml">
+				<!-- !!!vertical-->
+&lt;image-coding url_name="74227eeef2e24775b3ec67c83bff950a" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): Change the test to &lt;code&gt;row.getField("name").endsWith("k")&lt;/code&gt;.
+Hint (2 of 3): Inside the if-statement add: &lt;code&gt;count = count + 1;&lt;/code&gt;
+Hint (3 of 3): After the loop, add &lt;code&gt;print("count", count);&lt;/code&gt;" tolerance="" body="&lt;p&gt;Write code to count and print the number of names ending with the letter k (lowercase). The last line printed should look like the "code to count" example above. You can print out rows or other things in the loop too, if you like, so long as the "count" line appears at the end.&lt;/p&gt;
+
+" regex="ount:?\s21\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+count = 0;
+for (row: table) {
+  if (row.getField("name").startsWith("Q")) {
+      print(row);
+  }
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+count = 0;
+for (row: table) {
+  if (row.getField("name").endsWith("k")) {
+  	print(row);
+      	count = count + 1;  // (2)
+  }
+}
+print("count", count);  // (3)
+"/&gt;
+			</codeblock>
+      <!--A License section was here:<html filename="cfe48a6ad99f479f9e1382dc8d87831e" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

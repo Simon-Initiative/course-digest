@@ -1,9 +1,8 @@
-
-import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
-import { Resource, TorusResource, Summary } from './resource';
+import { Resource, TorusResource, Summary, Page } from './resource';
 import * as DOM from '../utils/dom';
+import * as XML from '../utils/xml';
 
 export class WorkbookPage extends Resource {
 
@@ -12,7 +11,27 @@ export class WorkbookPage extends Resource {
   }
 
   translate(xml: string) : Promise<(TorusResource | string)[]> {
-    return Promise.resolve(['']);
+
+    const page : Page = {
+      type: 'Page',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      content: [],
+      isGraded: false,
+      objectives: [],
+    };
+
+    return new Promise((resolve, reject) => {
+      XML.toJSON(xml).then((r: any) => {
+
+        page.id = r.children[0].id;
+        page.content = { model: r.children[0].children };
+        resolve([page]);
+      });
+    });
   }
 
   summarize(file: string): Promise<string | Summary> {
@@ -27,7 +46,7 @@ export class WorkbookPage extends Resource {
 
     return new Promise((resolve, reject) => {
 
-      visit(file, (tag: string, attrs: Object) => {
+      XML.visit(file, (tag: string, attrs: Object) => {
 
         Histogram.update(summary.elementHistogram, tag, attrs);
 

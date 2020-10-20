@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-images-m-images-p-image_expressions">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="584afd79c63344c6be652f702c0a72e0" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_expressions_LO_1">
+Learning Objective: Interpret a phrase such as "double the red value" to the corresponding color-change code (i.e., the "set/get" pattern).
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="634c800db2764e428c9ccc3e27af0166" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_expressions_LO_2">
+Learning Objective: Write code to solve a 5-10-20 puzzle.
+</objective>
+</objectives>

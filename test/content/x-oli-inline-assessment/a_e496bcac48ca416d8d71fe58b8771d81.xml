@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_e496bcac48ca416d8d71fe58b8771d81">
+   <title>tutor</title>
+   <question id="aQ_e496bcac48ca416d8d71fe58b8771d81">
+      <body>
+         <p>The following if-test lines attempt to detect the row with name Alice, but most of them have a syntax error. Which one does <em style="bold">NOT</em> have a syntax error?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>if (row.getField("name") == "Alice" {</code>
+         </choice>
+         <choice value="1">
+            <code>if (row.getField("name") = "Alice") {</code>
+         </choice>
+         <choice value="2">
+            <code>if (row.getField("name")  == "Alice")) {</code>
+         </choice>
+         <choice value="3">
+            <code>if (row.getField("name") == "Alice") {</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The final ) is missing.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The single = should be ==.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This line contains an extra ).</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>if (row.getField("name") == "Alice") is the correct syntax.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_dd9bf3c936584ec48e92b01497a0e048">
+   <title>tutor</title>
+   <question id="aQ_dd9bf3c936584ec48e92b01497a0e048">
+      <body>
+         <p>The following lines attempt to produce the following output, but most of the lines do not work because of a syntax error.</p>
+         <code>
+ 1 to 3
+</code>
+         <p/>
+         <p>Which line does <em style="bold">not</em> have a syntax error?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">print(1, "to" 3); </choice>
+         <choice value="1">print(1, "to, 3); </choice>
+         <choice value="2">print(1, "to", 3; </choice>
+         <choice value="3">print(1, "to", 3); </choice>
+         <choice value="4">print(1, "to", 3)); </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This line is missing a comma after "to"</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This line is missing a quotation mark: "</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This line is missing a close parenthesis: )</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>This is the correct syntax: print(1, "to", 3);</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>This line has an extra close parenthesis: )</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

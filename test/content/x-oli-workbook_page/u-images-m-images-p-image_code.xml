@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-image_code"><head><title>Image Code</title><objref idref="u-images-m-images-p-image_code_LO_1" /><objref idref="u-images-m-images-p-image_code_LO_2" /></head><body><image id="ed07f8c65e5e4da8a9cb1d919c5f0143" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle"><caption><p id="ce6ff11ef8454d61bc763b04edf73391" /></caption><popout enable="false"></popout></image><section id="c6e7f5d93a2d4efca7e513680fd91c25"><title>Manipulating Digital Images</title><body><p id="f222d1bcaa6d4934966063b74b2d08d5">In this section, we look at simple code to load and manipulate a digital image. We manipulate just one pixel at a time. In the next section, we operate on thousands of pixels at a time.</p></body></section><section id="fa598f6aa3af44a486e0c38ae076e555"><title>x.png</title><body><p id="fe291d4ca0a84febb1526769b31623c7">The x.png image is a very small black square with a white x at its center, 10 pixels wide by 10 pixels high. Here is a copy of x.png right in the page: <image id="e0aedb11046a4be2b3b05b82ab43a31f" src="../webcontent/x.png" alt="the x.png image" style="inline" vertical-align="middle"><caption><p id="c2f85048b9b944708ef981bf7903abf7" /></caption><popout enable="false"></popout></image></p><p id="e695febfd0f142e79c30d93f125b6521">Being 10 pixels wide is quite small! We&apos;ll see how to enlarge x.png below. PNG (Portable Network Graphics) is an image format, like JPG.</p></body></section><section id="e9d34ad684a744b4a41c2151092c3c73"><title>Example: x.png Code </title><body><p id="a88701538ae040da98aa8639111cf68b">Our first three-line code example loads the &quot;x.png&quot; image and prints it. Click the <em>Run</em> button to see what it does.</p><codeblock id="fcb0117badb84d1a8e66c9b69f483ae4" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image2-1" rows="6" cols="55" spellcheck="false" onkeypress="return handleCR(this ,event)">
+                      image = new SimpleImage("x.png");
+							image.setZoom(20);
+							print(image);</textarea>
+            <input type="button" value="Run" onclick="evaluateClear("image2-1")"/>]]></codeblock><p id="feffa44740fc40d09b368afd2e9f4acb" /><p id="ac45eb2a9c2e4ba98bd8bbf2a291d828" /><p id="e70b70bfe3124700ab353cf66de0d622">What does each line of code do?</p><table id="e16d844784cb4ece92c3a92de6019b41" summary="" rowstyle="plain"><cite id="i495032261f8b42acb193619a575bf672" /><caption><p id="d0899777e9bf4bd0a6240f2782b1854d" /></caption><tr><th colspan="1" rowspan="1" align="left"><p id="b1b6ab92629c44a78636a5a3ea3dc3ee">Code</p></th><th colspan="1" rowspan="1" align="left"><p id="dec1284f034842bea7a48885a8d7c9a3">Explanation</p></th></tr><tr><td colspan="1" rowspan="1" align="left"><code>image = new SimpleImage(&quot;x.png&quot;);</code></td><td colspan="1" rowspan="1" align="left"><p id="f010a4ea2c9a4df5905f14e634f488ba">Loads the image named x.png into a variable named image used by the later lines</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>image.setZoom(20);</code></td><td colspan="1" rowspan="1" align="left"><p id="ebbefaee91eb45c587343b82952af2e0">Sets the zoom to 20, meaning that this image will appear at 20 times normal size when printed; any number—5, 10, 20, 30, ...—works here</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>print(image);</code></td><td colspan="1" rowspan="1" align="left"><p id="f7906271b32c47158bd06e51b2d2ab5f">Prints the image to the right, as usual (previously, we used </p><code>print</code><p id="b9de28b06cee497099c00191969ed16a">with strings and numbers, but </p><code>print</code><p id="c8ff0c65661844edaad25965ea1500a2">works with images, too)</p></td></tr></table></body></section><codeblock id="eefeed3fb2194b4194c9aa877ea76895" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="14d007b9da4f4794bc7b6ad37f5d3232" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): Remember the setZoom code.
+Hint (2 of 2): You need to add <code>image.setZoom(40);</code>" tolerance="" body="<p>Modify and add lines to the starter code as needed to solve this Learn By Doing.</p>
+
+<p>Write code to set the zoom to 40</p>" regex="" starter_code="image = new SimpleImage("x.png");
+
+// Your code here
+
+print(image);" solution_code="image = new SimpleImage("x.png");
+image.setZoom(40);
+pixel = image.getPixel(0, 0);
+
+
+
+print(image);"/>
+       ]]></codeblock><section id="b6cb6400284148a28be5dd2593285aad"><title>Example: pixel.setRed(255)</title><body><p id="c323b0c00ce94de7a7ba3d2386a4d01a">This code example manipulates a pixel. Run the code to see what it does.</p><codeblock id="bf962256f30144639d069f62489ef000" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image2-2" rows="10" cols="55" spellcheck="false" onkeypress="return handleCR(this ,event)">
+                      image = new SimpleImage("x.png");
+							image.setZoom(20);
+
+							pixel = image.getPixel(0, 0);
+							pixel.setRed(255);
+
+							print(image);</textarea>
+            <input type="button" value="Run" onclick="evaluateClear("image2-2")"/>]]></codeblock><p id="dbfb0a68bdd84e2a84d41701dd3cbeff" /><p id="c2f97b559b2744dea528b30d444b8e35">This example adds two lines to the previous Example x.png Code:</p><table id="a20792e7b0cc40dfafdce11d4e3f1493" summary="" rowstyle="plain"><cite id="i69deb3e4633942bba0d57aeebe1c578c" /><caption><p id="e9aaeb3b63594d2bb55cd304bfbf02cc" /></caption><tr><th colspan="1" rowspan="1" align="left"><p id="b3d83f0bf72e4d3380a77b7cf04f3605">Code</p></th><th colspan="1" rowspan="1" align="left"><p id="a21c834ed77a42cd99c96afda66958fd">Explanation</p></th></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel = image.getPixel(0, 0);</code></td><td colspan="1" rowspan="1" align="left"><p id="bcb2a51cd3d240c1b5e9cc75cf6f8ba5">Accesses the pixel at (0, 0) and stores the reference in a variable named pixel; (0, 0) indicates the upper-left pixel, at x=0, y=0.</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel.setRed(255);</code></td><td colspan="1" rowspan="1" align="left"><p id="e22a10e3c57d42b89eeb58956247a8ef">Modifies the pixel by setting its red value to 255.</p></td></tr></table><p id="c3d7754f95dd479394b0aceb876ae920">The code accesses the pixel at (0, 0) and sets its red value to 255. That pixel was pure black—red, green, and blue all set to 0—so after the code runs, red is 255, and green and blue are still 0. The result is that the pixel appears bright red.</p><section id="a5a1a8173e5545df93149a10542e1ff6"><title>Pixel Set Red, Green, Blue Functions</title><body><p id="a3778b55b32f45068223f89ba9fc4cec">In the previous example, <code>pixel.setRed(255)</code> sets the red value, and as you might guess, there are functions available to modify the red, blue, and green value of a pixel to be any number in the range 0 to 255.</p><table id="c05be529cf074e749df5cf5989017335" summary="" rowstyle="plain"><cite id="id7508e57ca0341769d34de0a0242add3" /><caption><p id="f8d42c3e912e472bb2f146a0671d54ed" /></caption><tr><th colspan="1" rowspan="1" align="left"><p id="bd68b24d701f4906b9ca01f8d5e09c84">Code</p></th><th colspan="1" rowspan="1" align="left"><p id="be4cb7f6d0ff42b4857e7170e20152e0">Explanation</p></th></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel.setRed(<em style="italic">number</em>); </code></td><td colspan="1" rowspan="1" align="left"><p id="d50b3c498d2146ed948d087f3bb31382">Sets the red value of the pixel to be the given number (0 to 255).</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel.setGreen(<em style="italic">number</em>); </code></td><td colspan="1" rowspan="1" align="left"><p id="ea5a8689f54546edbee263ca33f6f0f7">Sets the green value.</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel.setBlue(<em style="italic">number</em>); </code></td><td colspan="1" rowspan="1" align="left"><p id="ef0a12beca6547b5ad35e4e49af46881">Sets the blue value.</p></td></tr></table></body></section><section id="dd8c41b451c94dcfa75081171d8e058c"><title>The noun.verb() Pattern</title><body><p id="d17bd030203c48fea942baf59e3151ba">Computer code follows a few patterns, and the one we&apos;re seeing here is the <code>noun.verb()</code> pattern. The noun is the thing we want to operate on (e.g., a pixel). The verb, such as <code>setRed</code> or <code>setZoom</code>, operates on that noun. As you get used to this pattern, our code will look a little less cryptic.</p></body></section><section id="f43049a7b1b54a73abad2b68064e1b29"><title>Image Functions Reference</title><body><p id="f835981d50ab44f686430e6cadf82623">For later reference, there is a separate <activity_link title="u-course_resources-m-course_resources-p-image_functions_reference" idref="u-course_resources-m-course_resources-p-image_functions_reference" target="self" purpose="checkpoint">image functions reference</activity_link> page, which lists in one place the image functions, such as the <code>pixel.setRed(</code> we are using here.</p></body></section></body></section><codeblock id="f2c50b5755db416e92e36eb6ad5a66bf" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="cb006c43a2ee441aa3e1a4cab26544e6" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): The starter code access the pixel at 0,0. Add code to set the blue value of that pixel to 255.
+Hint (2 of 2): Use one of these three lines: <br><code>pixel.setRed(255);</code> <br><code>pixel.setGreen(255);</code>  <br><code>pixel.setBlue(255);</code>" tolerance="" body="
+<p>Write code to set the pixel at (0, 0) to blue (i.e., blue value is 255, red and green are left at 0). </p>" regex="" starter_code="image = new SimpleImage("x.png");
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+// Your code here
+
+print(image);" solution_code="image = new SimpleImage("x.png");
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+pixel.setBlue(255);
+
+print(image);"/>
+       ]]></codeblock><codeblock id="ef8921ebeeb84ee0ba8741597a8db097" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="7fa663cdc3974800a67ddc997f3ead13" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint: (1 of 2) Pure white is made by setting red, green, and blue each to the same number.
+Hint: (2 of 2): Use line of code,  <code>pixel.setRed(255);</code>, and two similar lines for green and blue." tolerance="" body="<p>Write code to set the pixel at (0, 0) to pure white.</p>" regex="" starter_code="image = new SimpleImage("x.png");
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+// Your code here
+
+print(image);" solution_code="image = new SimpleImage("x.png");
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+pixel.setRed(255);
+pixel.setGreen(255);
+pixel.setBlue(255);
+
+print(image);"/>
+       ]]></codeblock></body></workbook_page>

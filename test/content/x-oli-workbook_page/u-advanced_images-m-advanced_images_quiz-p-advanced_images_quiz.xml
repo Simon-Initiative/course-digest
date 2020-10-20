@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-advanced_images-m-advanced_images_quiz-p-advanced_images_quiz">
+  <head>
+    <title>Advanced Images Quiz</title>
+  </head>
+  <body>    <!--The .xml file paired with the source html file read:
+<html filename="92c6a1f505424f37b5401a15b47cdcd0" display_name="Advanced Images Quiz" editor="raw"/>-->    <!-- <link href="../webcontent/stylesheet_cs101.css" rel="stylesheet" type="text/css"/> -->    <!--<h1>Advanced Image Quiz</h1>-->
+    <image src="../webcontent/1x1.png"/>
+    <!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>-->    <!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>-->
+    <codeblock syntax="xml">
+      <!-- !!!vertical-->
+&lt;image-coding url_name="99b4052f322949b79c67b97ff8eda89d" xblock-family="xblock.v1" display_name="Question 1" hints="" tolerance="" body="&lt;p&gt;Write code to fix the puzzle-copper.png image. The red values in the image are random noise, so they should be set to 0. The real image is in the blue and green values, which have both been divided by 10. It is acceptable for the solution image to have some horizontal banding in the colors.&lt;/p&gt;" regex="" starter_code="image = new SimpleImage("puzzle-copper.png");
+for (pixel: image) {
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("puzzle-copper.png");
+for (pixel: image) {
+  pixel.setRed(0);
+  pixel.setGreen(pixel.getGreen() * 10);
+  pixel.setBlue(pixel.getBlue() * 10);
+}
+print(image);"/&gt;
+    </codeblock>
+    <codeblock syntax="xml">
+      <!-- !!!vertical-->
+&lt;image-coding url_name="d06ff1a52642426d8bfce66b3fdf46a9" xblock-family="xblock.v1" display_name="Question 2" hints="" tolerance="" body="&lt;p&gt;The image below, golden-gate-red.jpg, shows the Golden Gate Bridge, but all of the data is in the red values. Copy the red values to blue and green to create a grayscale image.&lt;/p&gt;" regex="" starter_code="image = new SimpleImage("golden-gate-red.jpg");
+for (pixel: image) {
+  // your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("golden-gate-red.jpg");
+for (pixel: image) {
+  // your code here
+  pixel.setGreen(pixel.getRed());
+  pixel.setBlue(pixel.getRed());
+}
+print(image);"/&gt;
+    </codeblock>
+    <codeblock syntax="xml">
+      <!-- !!!vertical-->
+&lt;image-coding url_name="13180f940b83483488806e9b30c1aff4" xblock-family="xblock.v1" display_name="Question 3" hints="" tolerance="" body="&lt;p&gt;Write code to change the banana.jpg image from color to grayscale.&lt;/p&gt;
+
+&lt;br&gt;&lt;img src="../webcontent/banana.jpg"&gt;" regex="" starter_code="image = new SimpleImage("banana.jpg");
+for (pixel: image) {
+  // your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("banana.jpg");
+for (pixel: image) {
+  // your code here
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  pixel.setRed(avg);
+  pixel.setGreen(avg);
+  pixel.setBlue(avg);
+}
+print(image);"/&gt;
+    </codeblock>
+    <codeblock syntax="xml">
+      <!-- !!!vertical-->
+&lt;image-coding url_name="5689f6f3898d46128d10f4696d38c3e1" xblock-family="xblock.v1" display_name="Question 4" hints="" tolerance="" body="&lt;p&gt;&lt;img src="../webcontent/banana.jpg" alt="yellow banana on red bricks"&gt;
+
+&lt;p&gt;Detect all of the yellow banana pixels with the &lt;code&gt;avg&lt;/code&gt; technique: &lt;code&gt;green &gt; avg * factor&lt;/code&gt; (this works because the yellow banana is made with red and green light). Set the red value of the detected pixels to 0. The result is to change the banana to a weird glowing greenish color. Some little bits of green moss will also be changed, since they are selected by the &lt;code&gt;green &gt; avg&lt;/code&gt; test too." regex="" starter_code="image = new SimpleImage("banana.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);" solution_code="image = new SimpleImage("banana.jpg");
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  if (pixel.getGreen() &gt; avg * 1.0) {
+    pixel.setRed(0);
+  }
+}
+print(image);"/&gt;
+    </codeblock>
+    <codeblock syntax="xml">
+      <!-- !!!vertical-->
+&lt;image-coding url_name="d8226ccad07a44afba07e9c34639016d" xblock-family="xblock.v1" display_name="Question 5" hints="" tolerance="5" body="&lt;p&gt;Here we have striped-fish-blue.jpg showing a fish with a blue background:
+&lt;br&gt;&lt;img src="../webcontent/striped-fish-blue.jpg" alt="fish in front of blue background"&gt;
+
+&lt;p&gt;Here we have paris.jpg:
+&lt;br&gt;&lt;img src="../webcontent/paris.jpg" alt="paris with eiffel tower"&gt;
+
+&lt;p&gt;The striped fish is facing right in front of a blue background. Parts of the fish are blue also: the eye and the vertical stripe in the middle. Write code to replace all the of the blue parts of the fish image with paris pixels. In particular, adjust the code so that the blue background, blue middle stripe, and blue eye of the fish are all completely changed to paris.jpg pixels. This requires quite a low factor in the &lt;code&gt;avg * factor&lt;/code&gt; test." regex="" starter_code="image = new SimpleImage("striped-fish-blue.jpg");
+back = new SimpleImage("paris.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+   
+}
+print(image);" solution_code="image = new SimpleImage("striped-fish-blue.jpg");
+back = new SimpleImage("paris.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // your code here
+  if (pixel.getBlue() &gt; avg * 0.5) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+
+print(image);
+"/&gt;
+    </codeblock>
+    <!--A License section was here:<html filename="35e5cd03f43b451dbba300b2d41cb60e" display_name="Licensing" editor="raw"/>-->
+  </body>
+</workbook_page>

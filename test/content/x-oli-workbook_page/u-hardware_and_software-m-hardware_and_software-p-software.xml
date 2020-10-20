@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-hardware_and_software-m-hardware_and_software-p-software">
+	<head>
+		<title>Software</title>
+		<objref idref="u-hardware_and_software-m-hardware_and_software-p-software_LO_1" />
+	</head>
+	<body>
+		<image id="d4bc21f74dc44782ad0c31d94ecdec20" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<section id="f1fb84c5a9b44ea8be04bb8f74664a43">
+			<title>Basic Types of Software</title>
+			<body>
+				<p id="caea15bd078a420ea2ea5d67ced4d4f4">
+					<em style="italic">Software</em> is the general category of code that runs on the hardware. If the hardware is like a piano, then the software is like the music. The common case is a program such as Firefox—software you run on your computer (or phone) to solve a particular problem. A computer can run multiple programs at the same time, keeping their use of memory, drawing in windows, and so on, separated so they hopefully do not interfere with each other. </p>
+			</body>
+		</section>
+		<section id="c2d39a2e3152426cb44ad631b852f171">
+			<title>CPU and Machine Code</title>
+			<body>
+				<p id="ac2d8b1da1d0418897b677f335976345">The CPU is the active brains of the comptuer. The CPU can understand only a very primitive language known as <em style="italic">machine code</em> (also called <em style="italic">native code</em>). The machine code is hardwired into the design of the CPU hardware; it is not something that can be changed.</p>
+				<p id="ff21e40c884046a1a7ad39d942b24e83">Machine code defines a set of individual instructions. Each machine code instruction is extremely primitive; for example, an instruction might add two numbers or test whether a number is equal to zero. When stored, each instruction takes up just a few bytes. If we say that a CPU can execute 2 billion operations per second, <em style="italic">operations</em> refers to the CPU carrying out the simple machine code instructions. </p>
+				<p id="f703a525975b403d866d3bb80709313a">A program, such as Firefox, is made up of a sequence of millions of these very simple machine code instructions. It&apos;s a little hard to believe that something as rich and complicated as Firefox can be built from instructions that just add or compare two numbers, but that is how it works. A sand sculpture can be rich and complicated when viewed from a distance, even though the individual grains of sand are extremely simple.</p>
+			</body>
+		</section>
+		<section id="ca32ee26d958456783530fb74f5beffa">
+			<title>CPU Runs Machine Code Instructions</title>
+			<body>
+				<p id="a17f2ee79bef489bb24a5dac4ddc8316">What does it mean for a CPU to run machine code instructions? The machine code instructions are laid out in RAM, one after the other. Say each instruction takes up 4 bytes, so the first instruction is in the first 4 bytes, and the next instruction is in the next 4 bytes, and so on, for millions of instructions. To run a block of code, the CPU runs the first instruction, doing whatever it says to do, such as add 2 numbers together. Then the CPU runs the next instruction, and the next, and the next, and so on.</p>
+			</body>
+		</section>
+		<section id="bdae2275261447d28270449ddcd8a75a">
+			<title>Programming Languages In Translation</title>
+			<body>
+				<p id="f4ec6f6f41d44648aa3d7b187e18990b">Machine code is the <em style="italic">native</em> language, the only thing understood by the CPU. Machine code instructions are so primitive, programmers don&apos;t want to write machine code directly. Instead, programmers use <em style="italic">programming languages</em> with useful features such as for-loops and if statements. Machine code is so primitive, it does not even have loops. Popular programming langauges include Python, Java, C++, and JavaScript (the language we use in this course).</p>
+				<p id="cd211b14bd964f208c2b0d773a2b3dbe">If code is written in a programming language such as JavaScript, how does it run on a CPU that only understands machine code? The answer is <em style="italic">translation</em>. There are many techniques (not detailed here) that can translate a programming langauge such as JavaScript into equivalent machine code, and then the CPU can run the machine code.</p>
+				<p id="eea183d04a6c47d7b71e531958ddacfe">This is exactly what happens with the Run button for this course. You write JavaScript code. When you click the Run button, there is a process of translation to machine code, and then the CPU can run the machine code.</p>
+			</body>
+		</section>
+
+		<wb:inline idref="a_13fc8f51d6a54969a9ae6f1838ab6347"/>
+
+		<wb:inline idref="a_90d6f87478a24b5cbf508a59c6fd62a7"/>
+
+		<wb:inline idref="a_276c326c9a19445fa8b4aa05f0770805"/>
+
+	</body>
+</workbook_page>

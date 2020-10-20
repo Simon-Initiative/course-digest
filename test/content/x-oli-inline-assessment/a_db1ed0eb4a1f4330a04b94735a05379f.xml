@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_db1ed0eb4a1f4330a04b94735a05379f">
+   <title>tutor</title>
+   <question id="aQ_db1ed0eb4a1f4330a04b94735a05379f">
+      <body>
+         <p>We want code that produces the following output when run:</p>
+         <code>
+1 kitten
+</code>
+         <p>Which of the following lines produces that output when run?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">print("1, kitten"); </choice>
+         <choice value="1">print("kitten", 1); </choice>
+         <choice value="2">print(1, "kitten"); </choice>
+         <choice value="3">print(1, kitten); </choice>
+         <choice value="4">print(1 "kitten"); </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This prints 1, kitten.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This code prints kitten 1.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>This code prints 1 kitten.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>This code has a syntax error: quotation marks are needed around "kitten."</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>This code has a syntax error: a missing comma.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

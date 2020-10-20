@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_f94e5ce7ae7f4b899341626e3b3fd1fa">
+   <title>tutor</title>
+   <question id="aQ_f94e5ce7ae7f4b899341626e3b3fd1fa">
+      <body>
+         <p>Silicon Valley in California is an important place in computing. Why is the word <em style="italic">silicon</em> in Silicon Valley?</p>
+         <p>  </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Silicon is a naturally soft and rubbery substance. </choice>
+         <choice value="1">Silicon is a key element in dilithium crystals that are used in making chips. </choice>
+         <choice value="2">Silicon is used to make chips containing millions of transistors. </choice>
+         <choice value="3">Silicon is used to make fast hard drives. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Silcone is the soft rubbery substance, not silicon.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Silicon is used in making chips. However, dilithium is a fictional chemical element from the TV show Star Trek.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Silicon chips containing transistors are a key building block of computers.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The key part of a hard drive is a magnetic platter, not silicon.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

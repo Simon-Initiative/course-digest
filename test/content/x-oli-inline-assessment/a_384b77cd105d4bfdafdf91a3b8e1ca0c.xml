@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_384b77cd105d4bfdafdf91a3b8e1ca0c">
+   <title>tutor</title>
+   <question id="aQ_384b77cd105d4bfdafdf91a3b8e1ca0c">
+      <body>
+         <p>Which one of the following best describes Moore's law?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">The number of transistors produced worldwide doubles every 18 to 24 months. </choice>
+         <choice value="1">Transistors approximately double in cost every 18 to 24 months. </choice>
+         <choice value="2">The number of transistors that can fit on an area of chip doubles every 18 to 24 months. </choice>
+         <choice value="3">The speed of a transistor in gigahertz doubles every 18 to 24 months. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Moore's law involves a different sort of doubling.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Moore's law is not about increasing cost.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Moore's law is about fitting more transistors on a chip.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Increasing speed is only loosely associated with Moore's law.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

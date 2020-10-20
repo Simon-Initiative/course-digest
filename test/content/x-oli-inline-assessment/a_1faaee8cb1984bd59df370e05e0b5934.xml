@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_1faaee8cb1984bd59df370e05e0b5934">
+   <title>tutor</title>
+   <question id="aQ_1faaee8cb1984bd59df370e05e0b5934">
+      <body>
+         <p>How many bits are in 1 byte?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="8">
+            <feedback>A byte is made of 8 bits.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>A byte consists of a number of bits, more than 2 but less than 10.</hint>
+         <hint>A byte consists of 8 bits.</hint>
+      </part>
+   </question>
+</assessment>

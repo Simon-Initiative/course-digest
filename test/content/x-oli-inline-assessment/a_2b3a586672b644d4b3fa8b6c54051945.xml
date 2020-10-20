@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_2b3a586672b644d4b3fa8b6c54051945">
+   <title>tutor</title>
+   <question id="aQ_2b3a586672b644d4b3fa8b6c54051945">
+      <body>
+         <p>In the RGB scheme, 0 is the minimum possible value for red, green, and blue. What is the maximum value?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="255">
+            <feedback>Red, green, and blue values are in the range 0 to 255 inclusive.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>0 is the minimum, the maximum is a number less than 1000.</hint>
+         <hint>The maximum is 255.</hint>
+      </part>
+   </question>
+</assessment>

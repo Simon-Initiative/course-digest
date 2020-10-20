@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-image_expressions">
+  <head>
+    <title>Image Expressions</title>
+    <objref idref="u-images-m-images-p-image_expressions_LO_1" />
+    <objref idref="u-images-m-images-p-image_expressions_LO_2" />
+  </head>
+  <body>
+    <image id="a977decd8f594f80acb29b70c60ce118" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <section id="e3d3c4e481374cc8820b47d38901decd">
+      <title>Expressions</title>
+      <body>
+        <p id="feace21ea0a547a489b98f33865fd9d8">In this section, we see code <em style="italic">expressions</em>, which greatly expand what we can do in a loop. Expressions enable interesting image manipulation code and the neat 5-10-20 image puzzle.</p>
+      </body>
+    </section>
+    <section id="eec1e189823047ca91badc70bd47b5aa">
+      <title>Expressions: 1 + 1</title>
+      <body>
+        <p id="ead5e64a117e4aa5a3f4acdcf4e48720">We have seen code that calls the <code>print()</code> function, giving a value within the parentheses, such as 42 in the example below.</p>
+        <codeblock id="bff97ab4b9f44c2da7813dcccfb6d13c" syntax="java" highlight="" number="false" start="">
+  					print(42);
+        </codeblock>
+        <p id="b3cf488e404349028ece6f2d61699e98">Instead of a plain number like 42, an <em style="italic">expression</em> written in the code, such as 11 + 13, computes the value to use on the fly. Run the following to see what it does.</p>
+        <codeblock id="eec2d7ceda0044c08182a5b75a4d444a" syntax="text" highlight="" number="false" start="">&lt;textarea id=&quot;image-expression-1&quot; rows=&quot;5&quot; cols=&quot;30&quot; spellcheck=&quot;false&quot; onKeyPress=&quot;return handleCR(this ,event)&quot;&gt;
+								print(11 + 31);
+							&lt;/textarea&gt;
+            &lt;input type=&quot;button&quot; value=&quot;Run&quot; onClick=&quot;evaluateClear(&quot;image-expression-1&quot;)&quot;/&gt;</codeblock>
+        <p id="c3b149c9d026470a87bc140f90800365"></p>
+        <p id="ee785d863f2d47d4b60b68466723ec2b">When the line <code>print(11 + 31);</code> runs, the computer first computes the expression 11 + 31, yielding 42. Then, in effect, it calls <code>print(42)</code>, passing in the computed value. Anywhere in the code where we have used a fixed number such as 0 or 255, we can instead write an expression, letting the computer compute a value when that line runs.</p>
+      </body>
+    </section>
+    <section id="a59eddcaa0d349b6ba390079cd6569bc">
+      <title>pixel.getRed(), pixel.getGreen(), pixel.getBlue()</title>
+      <body>
+        <p id="abcc5c0ba5aa42e6bb0b1a44a339a5e5">We have seen fuctions such as <code>pixel.setRed(0);</code> used to change a color value. There are also three pixel functions that <em style="italic">get</em> the red, green, or blue value of a pixel. These are very handy to use in expressions.</p>
+        <table id="f9bc6bd7436a4352b62e38e1bfee4a16" summary="" rowstyle="plain">
+          <cite id="i7150cedda92346b4b7d60b3faadea899" />
+          <caption />
+          <tr>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="c36580db6fd4406ca40e0588b9bc14fd">Code</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="b9e8fb98b4d9487d812bef0b3dbd6c5e">Explanation</p>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <code>pixel.getRed()</code>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="e96134a5fc9d47588545aae9595467d1">Retrieves the red value from a pixel</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <code>pixel.getGreen()</code>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="a57a68f044b44621ad5392d82d873027">Retrieves the green value from a pixel</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <code>pixel.getBlue()</code>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c7ab5ee0e4134f809c5d41762972d9f5">Retrieves the blue value from a pixel</p>
+            </td>
+          </tr>
+        </table>
+        <p id="a375c65d76af42ec8aa634c1d33f80f4">
+          <em>Syntax note:</em>
+          <code>pixel.getRed()</code> must have the left and right parentheses at its end, even though there is nothing inside them. When calling a function such as <code>print(&quot;hello&quot;);</code> or <code>pixel.setRed(255);</code> or <code>pixel.getRed();</code>, the parentheses are always there. The parentheses are a requirement of the JavaScript syntax for calling a function.</p>
+      </body>
+    </section>
+    <section id="f81a193f300e4ef7b5583e3a8dfb4cb4">
+      <title>Set/Get Pattern: Combine pixel.setRed() and pixel.getRed()</title>
+      <body>
+        <p id="e45000c8dfb8496a9115713ddca507fc">The code below <em style="italic">doubles</em> the red value of a pixel.</p>
+        <codeblock id="c0fb445b3a394a3b804f798af644f135" syntax="java" highlight="" number="false" start="">
+							old = pixel.getRed();
+							pixel.setRed(old * 2);
+        </codeblock>
+        <p id="da0576cd7ab04274bcb59e7b98b190ac">The example combines <code>pixel.getRed()</code> with <code>pixel.setRed(</code> to double the red value in a pixel. Suppose, for example, that the red value initially is 50. The first line retrieves the red value (50) from the pixel and stores it in a variable named <code>old</code>. The second line computes the expression <code>old * 2</code> (100 in this case), and sets that value back into the pixel as its new red value. The net effect is to double the red value of the pixel from 50 to 100.</p>
+        <p id="baf3668d64bc4c159488221e7f5a5f95">The above lines of code can actually be written as just one set/get line:</p>
+        <codeblock id="caf57086851b42fa8812aab15116b9e0" syntax="java" highlight="" number="false" start="">
+							pixel.setRed(pixel.getRed() * 2);
+        </codeblock>
+        <p id="c89bd164cb5645258a1bd230c6379bec">Instead of using the variable <code>old</code>, we place the desired <code>pixel.getRed()</code> directly where it is needed. Suppose we have a pixel r:100 g:20 b:30. Here is the sequence of operations by the above line:</p>
+        <ol id="c3b51fd9a5bd49669d6173b3f6845643">
+          <li>
+            <p id="ec31ff1275314a1fa737d5ef1b0a87a9">Evaluates the </p>
+            <code>pixel.getRed() * 2</code>
+            <p id="c2626cc22b274885931b0c5f0ffa6af2"> expression: </p>
+            <code>pixel.getRed()</code>
+            <p id="b5229bd6b1744bda9a83e75e77bfb34a"> is 100, and that * 2 is 200, so the whole expression is 200</p>
+          </li>
+          <li>
+            <p id="b4699e66df1d4ebaa2e656741924b468">Calls </p>
+            <code>pixel.setRed(200);</code>
+          </li>
+          <li>
+            <p id="a3d4febd5499403ca95812af8ef92157">Result is that the pixel is changed from r:100 g:20 b:30 to r:200 g:20 b:30</p>
+          </li>
+        </ol>
+        <p id="ec756b8ce66d4ad2a57ebc6032325b68">The code <code>pixel.getRed() * 2</code> is an expression, which is whatever the old red value was multiplied by 2. The <code>setRed()</code>,          <code>setGreen()</code>, and <code>setBlue()</code> functions automatically limit the value set to the range 0 to 255. If <code>setRed()</code> is called with a value greater than 255, the value defaults to 255, and likewise, if a value less than 0 is passed in, it defaults to 0.</p>
+      </body>
+    </section>
+    <section id="af6d0a2e45ae4cbe875b2b65ca62f5d6">
+      <title>Loops with Expressions: Set/Get Patterns</title>
+      <body>
+        <p id="c80f913868d44caca0561d82605d56d6">Using only the set function (<code>setRed()</code>,          <code>setGreen()</code>and <code>setBlue</code>), we are limited to setting a specific RGB value between 0 and 255. Using the set/get pattern, we can express the RGB value we want in terms of the existing value: we can triple the red value, for instance, or we can set the blue value to 50% of its original value.</p>
+        <ul id="be01e59ec7d24ef6957d91caed650922">
+          <li>
+            <p id="eee4fbe1502142d699ca8c06d4fa512f">Double the red value (with set/get pattern):</p>
+          </li>
+          <li>
+            <ul id="e651934abe7247bfbd56cfc2ab1227a1">
+              <li>
+                <code>pixel.setRed(pixel.getRed() * 2);</code>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p id="aaff0567b2684a169e80b89f09dceaa1">Halve the blue value:</p>
+          </li>
+          <li>
+            <ul id="e49a728bc1bc4864b94f4b7940b22a18">
+              <li>
+                <code>pixel.setBlue(pixel.getBlue() * 0.5);</code>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p id="e4b1d243747c4dc480bf579ebe5fec23">We&apos;ll use this pattern a lot:</p>
+          </li>
+          <li>
+            <ul id="eb1bd155f66a4d4288bea53853dae3b5">
+              <li>
+                <code>pixel.setRed(pixel.getRed() * <em style="italic">something</em>);
+                </code>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </body>
+    </section>
+    <section id="f9e4c061c7fb4b9c89b7af95f0a7035d">
+      <title>Example: Image Expression</title>
+      <body>
+        <p id="aa37c99ea099429286c2461978ef3260">The following example uses the set/get pattern to change the green value to 50% of its original value. Run it to see what it does.</p>
+        <codeblock id="b909ac51d8cb44c29b709d18a78edd95" syntax="text" highlight="" number="false" start="">&lt;textarea id=&quot;image-expression-2&quot; rows=&quot;10&quot; cols=&quot;50&quot; spellcheck=&quot;false&quot; onKeyPress=&quot;return handleCR(this ,event)&quot;&gt;
+									image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+									for (pixel: image) {
+										pixel.setGreen(pixel.getGreen() * 0.5);
+
+									}
+
+									print(image);
+								&lt;/textarea&gt;
+            &lt;input type=&quot;button&quot; value=&quot;Run&quot; onClick=&quot;evaluateClear(&quot;image-expression-2&quot;)&quot;/&gt;</codeblock>
+        <p id="ea5a51041bae4c888e23d719b4c8bf58"></p>
+        <p id="b20f1ad9a9f74eeea037b7c704b0130b">The code is going over all the pixels and making a relative change to the green values, changing the colors in the image.</p>
+      </body>
+    </section>
+    <codeblock id="a6256e9d8fe44a7da462bdcb355f9975" syntax="xml" highlight="" number="false" start="">
+			&lt;image-coding url_name=&quot;6f4077b3b8a14bdeaec013eb0b677156&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): This code decreases red to 25%: &lt;code&gt;pixel.setRed(pixel.getRed() * 0.25);&lt;/code&gt;. Write similar code to decrease green and blue.
+Hint (2 of 3): To decrease green, the code looks like this: &lt;code&gt;pixel.setGreen(pixel.getGreen() * ..something..);&lt;/code&gt;.
+Hint (3 of 3): To decrease green, the code is: &lt;code&gt;pixel.setGreen(pixel.getGreen() * 0.25);&lt;/code&gt;. A similar line is needed to decrease the blue.&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The starter code decreases the red values to 25% of their original value. Add code to decrease the green and blue values in the same way, multiplying by 0.25. The result should be that the whole image looks darker.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+  pixel.setRed(pixel.getRed() * 0.25);
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+
+  pixel.setRed(pixel.getRed() * 0.25);
+  pixel.setGreen(pixel.getGreen() * 0.25);
+  pixel.setBlue(pixel.getBlue() * 0.25);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="b8411f3b159c4ea994dac475d39406aa" syntax="xml" highlight="" number="false" start="">
+			&lt;image-coding url_name=&quot;2ea0860f0c544436b7f2c64fc3d8a4cd&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 2): The code change red looks like this: &lt;code&gt;pixel.setRed(pixel.getRed() * ..something..);&lt;/code&gt;.
+Hint (2 of 2): The code to decrease red to 25%: &lt;code&gt;pixel.setRed(pixel.getRed() * 0.25);&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Here is banana.jpg:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../webcontent/banana.jpg&quot; alt=&quot;Yellow banana on red bricks&quot;&gt;
+&lt;p&gt;Write code to set the red values to 25% of their original value. The result should make the banana look greenish, since the original yellow was red + green light. The red bricks also will look darker.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;banana.jpg&quot;);
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;banana.jpg&quot;);
+
+for (pixel: image) {
+
+  pixel.setRed(pixel.getRed() * 0.25);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <section id="b077815dadbb48d2b40d0b6ca3869678">
+      <title>5-10-20 Puzzle</title>
+      <body>
+        <p id="e62aedacb3c9447b89175b83a527cce8">A 5-10-20 puzzle is an image in which the values of red, green, and blue have been divided by 5, 10, and 20, so the image looks dark and weird. The challenge is to write code to scale the red, green, and blue value back up so the image looks right. Solving these puzzles makes heavy use of the <code>pixel.setRed(pixel.getRed() * 20);</code> pattern introduced in this section.</p>
+        <p id="ef6cc00f834a4072a69217fd8fdafb94">To solve a 5-10-20 puzzle, write code to scale the colors back up by multiplying them by 5, 10, or 20 to recover the original image. We don&apos;t know which color was divided by which number. The challenge is figuring out which number (5, 10, or 20) should be used to multiply the red, green, and blue values to repair the image. Each number is used only once. Run experiments, pairing 5, 10, and 20 with the various colors until the image looks right. The 5-10-20 can be arranged in only six possible ways: 5-10-20, 5-20-10, 10-5-20, 10-20-5, 20-5-10, and 20-10-5.</p>
+      </body>
+    </section>
+    <codeblock id="cae3125a552c43a093fdf73cc2591d3f" syntax="xml" highlight="" number="false" start="">
+			&lt;image-coding url_name=&quot;5c054dad414e48ca82383097bcf8de2e&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): Multiply green by 5.
+Hint (2 of 3): The code to multiply green is &lt;code&gt;pixel.setGreen(pixel.getGreen() * 5);&lt;/code&gt;
+Hint (3 of 3): Multiply blue by 10&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Here is 51020-banana.png:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../webcontent/51020-banana.png&quot; alt=&quot;5-10-20 encoded yellow banana&quot;&gt;
+&lt;p&gt;This is a 5-10-20 puzzle. For this problem, it is given that red is the color that needs to be multiplied by 20, and that code is provided. Green and blue need to be multiplied by 5 and 10, but we do not know which color value should be multiplied by which number. Try it both ways. The correct code will recover the original banana image with normal-looking colors.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;51020-banana.png&quot;);
+
+for (pixel: image) {
+  pixel.setRed(pixel.getRed() * 20);
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;51020-banana.png&quot;);
+
+for (pixel: image) {
+  pixel.setRed(pixel.getRed() * 20);
+  // Your code here
+  pixel.setGreen(pixel.getGreen() * 5);
+  pixel.setBlue(pixel.getBlue() * 10);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="ffc94e348a4d48bcb551dbdc28be6f16" syntax="xml" highlight="" number="false" start="">
+			&lt;image-coding url_name=&quot;ce33ba886be64343bcab252794ebfe74&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): Red should be multiplied by 10.
+Hint (2 of 3): Green should be multiplied up by 5.
+Hint (3 of 3): Blue should be multiplied by 20.&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The original image showed an orange poppy flower in front of a blurry green and brown background.
+&lt;p&gt;Write code to fix the 51020-poppy.png image, experimenting to figure out which number (5, 10, or 20) should be used to multiply the red, green, and blue values to fix the image, using each number once.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;51020-poppy.png&quot;);
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;51020-poppy.png&quot;);
+
+for (pixel: image) {
+
+  pixel.setRed(pixel.getRed() * 10);
+  pixel.setGreen(pixel.getGreen() * 5);
+  pixel.setBlue(pixel.getBlue() * 20);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+  </body>
+</workbook_page>

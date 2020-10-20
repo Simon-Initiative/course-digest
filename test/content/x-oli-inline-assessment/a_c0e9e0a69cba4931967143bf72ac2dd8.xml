@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_c0e9e0a69cba4931967143bf72ac2dd8">
+   <title>tutor</title>
+   <question id="aQ_c0e9e0a69cba4931967143bf72ac2dd8">
+      <body>
+         <p>Suppose there are four 500-MB hard drives plus one 2-GB flash drive. What is the total capacity, in gigabytes, of this hardware?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="4">
+            <feedback>2 GB of hard drive capacity plus 2 GB of flash drive capacity is 4 GB total.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>Four 500 MB hard drives is 2000 MB.</hint>
+         <hint>2000 MB is 2 GB.</hint>
+         <hint>2 GB of hard drive capacity plus 2 GB of flash drive capacity is 4 GB total.</hint>
+      </part>
+   </question>
+</assessment>

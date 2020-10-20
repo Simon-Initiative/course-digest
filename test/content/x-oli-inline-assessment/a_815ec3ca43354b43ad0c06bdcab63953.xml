@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_815ec3ca43354b43ad0c06bdcab63953">
+   <title>tutor</title>
+   <question id="aQ_815ec3ca43354b43ad0c06bdcab63953">
+      <body>
+         <p>Which of the following best describes a D/A converter?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">It takes in digital error numbers and converts them to alpha values. 
+</choice>
+         <choice value="1">It takes in decimal values and converts them to 1s and 0s. 
+</choice>
+         <choice value="2">It takes in digital IP addresses, preparing them for routing. 
+</choice>
+         <choice value="3">It takes in numeric samples and converts them to an analog signal. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A D/A converter takes in numbers, but not error numbers.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>A D/A converter does not output 1s and 0s.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A D/A converter takes in numbers, but not IP address numbers.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>A D/A converter takes in sample numbers and outputs an analog signal.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

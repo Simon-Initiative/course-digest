@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_276c326c9a19445fa8b4aa05f0770805">
+   <title>tutor</title>
+   <question id="aQ_276c326c9a19445fa8b4aa05f0770805">
+      <body>
+         <p>A series of machine code instructions are stored in RAM. Which of the following best describes the operation of the CPU?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">The CPU compares the bytes of adjacent instructions to discover differing bits. </choice>
+         <choice value="1">The CPU checks whether the instructions are correct </choice>
+         <choice value="2">The CPU sets all the bytes to the value 42, which means "run." </choice>
+         <choice value="3">The CPU swaps the instructions around, so the first is last and the last is first. </choice>
+         <choice value="4">The CPU runs the first instruction, then the second, and so on. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The CPU uses instructions in RAM, but not for comparisons.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The CPU does not check the instructions. This should be done by the programmer or the compiler or both.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>The CPU uses instructions in RAM, but not typically by changing them.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The CPU uses instructions in RAM, but not typically by rearranging them.</feedback>
+         </response>
+         <response match="4" score="1">
+            <feedback>The CPU runs each instruction.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

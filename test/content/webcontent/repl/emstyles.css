@@ -1,0 +1,73 @@
+/*
+Copyright (c) 2019 Carnegie Mellon University.
+*/
+
+/* The console container element */
+#console {
+  height: 250px;
+  width: 50%;
+  position:relative;
+  background-color: black;
+  border: 2px solid #CCC;
+  margin: 0 auto;
+  margin-top: 0px;
+  display: inline-block;
+  left: 0;
+}
+#console.console-only {
+  width: 100%;
+}
+#editor {
+  height: 250px;
+  width: 50%;
+  border: 2px solid #CCC;
+  position:relative;
+  display: inline-block;
+  left: 0;
+  margin-right: -5px;
+}
+#oli-embed {
+  position: relative;
+  margin-bottom: 5px;
+}
+.hints {
+  border-radius: 10px;
+  background: #fde9a2;
+  border: solid 2px;
+  border-color: #73716e;
+  padding: 4px 7px 4px 7px;
+  display: none;
+  position: relative;
+}
+.hints .next {
+  display: block;
+  position: absolute;
+  top: 31%;
+  right: 15px;
+  background: url("asSprite.png") no-repeat -8px 0px;
+  text-indent: -9999px;
+  height: 15px;
+  width: 10px;
+}
+.hints .content {
+  display: inline-block;
+}
+.feedback {
+  margin-top: 5px;
+  border-radius: 10px;
+  border: solid 2px;
+  border-color: #73716e;
+  padding: 4px 7px 4px 7px;
+  display: none;
+}
+
+/* ace editor styles */
+.ace_editor {
+  height: 250px;
+  width: 350px;
+  border: 1px solid #CCC;
+}
+
+.scrollmargin {
+  height: 80px;
+}

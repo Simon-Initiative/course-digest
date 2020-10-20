@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_5bc81e60f657487f9f269747af12bd46">
+   <title>tutor</title>
+   <question id="aQ_5bc81e60f657487f9f269747af12bd46">
+      <body>
+         <p>Which one of the following is the best password?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">secret </choice>
+         <choice value="1">password1 </choice>
+         <choice value="2">strawberry </choice>
+         <choice value="3">straaaaberry </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This is not a strong password because it is a real word, and it is commonly used. It is also only 6 characters long and secure passwords have more characters.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This is a commonly chosen password, appearing on the list of commonly chosen passwords, and so it not a strong password.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This is not a strong password because it is a real word.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>This is a strong password because it is based on a word but significantly altered.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

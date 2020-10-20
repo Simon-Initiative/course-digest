@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-security-m-security-p-computer_security_phishing">
+	<head>
+		<title>Computer Security: Phishing</title>
+		<objref idref="u-security-m-security-p-computer_security_phishing_LO_1" />
+	</head>
+	<body>
+		<image id="c7dfa5b783024e3188dbdf6a94c6876d" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<section id="bd37639c7e8f431c9ec7045ee02f092d">
+			<title>Phishing Attacks</title>
+			<body>
+				<p id="af8e7bcb16f7410d81587c2fd27e39f7">With <em style="italic">phishing</em>, the attackers trick users into providing their username, password, and other sensitive information. Most commonly, phishing begins with an email or forum comment containing a link to a phishing page. The initating email can be quite provocative and convincing, using such messages as &quot;Your account has been compromised. It is urgent that you visit www.paypal.com immediately.&quot; The link in the email will lead to a legitimate-looking Web page, such as in the following.</p>
+				<image id="fbd797d3bcce49cca8b0dcd671438cfe" src="../webcontent/security-paypal-phish.png" alt="Phishing site masquerading as a PayPal login page" style="inline" vertical-align="middle">
+					<caption />
+					<popout enable="false"></popout>
+				</image>
+				<p id="a92ec8e30c444698bb2a77d394ed4291">The phishing page will mimic the look and colors of the legitimate page. If users enter their email address and password as prompted, the sensitive information goes right to the attacker, who can then log in and cause problems.</p>
+				<p id="deeba9b8149f42968e23756c3c53228e">How can you avoid typing your information into a phishing page? You must always look at the Uniform Resource Locator (URL) at the top of the browser window. Nothing else matters. In this case, the URL should be something ending with <em style="italic">paypal.com</em>, such as www.paypal.com or login.paypal.com. In this phishing page, the URL is update.your.account.information.cantercumemerkezi.com. The attackers have inserted reasonable-sounding words on the left as camouflage, but <em style="italic">cantercumemerkezi.com</em> is clearly not paypal.com.</p>
+			</body>
+		</section>
+		<section id="d56b60d0cebe498fbf56faa000327173">
+			<title>Fake ATM: Phishing Analogy</title>
+			<body>
+				<p id="ed55a92aff944e409728538436acd8fe">This pre-Internet incident resembles phishing. Criminals installed a fake automatic teller machine (ATM) made of plywood in front of a real ATM, with an &quot;Under Construction&quot; sign. Victims would put their card into the fake ATM and type in their PIN. Then the machine would print an &quot;Out of Order&quot; message and give the card back. The bad guys in this way collected all the card numbers and PINs and drained the accounts over the weekend. This is a creative real-world analog of a phishing page.</p>
+			</body>
+		</section>
+		<p id="b9ff3eab82f049ed92bcbbb5b242ca32" />
+		<section id="fcf39cd39c534bdb866e5885603a1378">
+			<title>How to Avoid Phishing</title>
+			<body>
+				<p id="ca78df016a044164a84710a75aa8c340">Malicious users are hoping that when you are presented with username/password fields, you will simply type them in out of habit. Therefore, when a link leads to a login page, slow down and look carefully at the URL at the top of your browser. The URL of a fraudulent website may look legitimate at first glance, but check for misspellings, such as www.shwarb.com instead of the correct www.schwab.com.</p>
+				<p id="edddbee2ce094e05a61f6b63557cbfe8">The two rightmost words of the URL define the organization controlling the URL, so that&apos;s what you must check:</p>
+				<ul id="ceeb13bb00a643deb286353920c8bce8">
+					<li>
+						<p id="ac2fe4f073e24fb58a06760c7a764024">
+							<em>Safe:</em> accounts.google.com, login.gmail.com</p>
+					</li>
+					<li>
+						<p id="e0531ad06b0e46a69ec4c433b8caafa0">
+							<em>Not safe:</em> accounts.google.bad-guy.ru, gmail.login.quicksite.hk</p>
+					</li>
+				</ul>
+				<p id="da440ca6ae964a1daaadb97bf773705c">A safer alternative to clicking on a link is to type the URL into your browser yourself. For example, if an email says you need to log in to eBay, manually type in <em style="italic">www.ebay.com</em>.
+				</p>
+				<p id="fa75ac822d384c21870e3a244ba86881">Chrome and other major browsers have an ongoing effort to detect and warn users about phishing sites in real time, but you cannot rely on always being warned. If you see a phishing site, look for the &quot;Report web forgery&quot; option in your browser to report the site and contribute to the effort against cyber attacks.</p>
+			</body>
+		</section>
+		<section id="f17fe3a6f9474610ac81d8516009aed7">
+			<title>HTTPS</title>
+			<body>
+				<p id="aa8cfbf7f669442d8bf1586b54c2750f">HTTPS is the secure HTTP variant: https://www.ebay.com/. When your browser connects to an HTTPS site, the browser will display a little lock icon by the URL. For HTTPS, the web server must hold a certificate, which is verified by a Certificate Authority, ensuring that the server represents a trusted site, such as www.ebay.com. A fee and paperwork is required to get an HTTPS certificate, so it is more difficult for attackers to fake.</p>
+			</body>
+		</section>
+		<section id="b38f145afe5c49debf2696dd169a6a02">
+			<title>Encryption vs. Malicious Packet Eavesdropping</title>
+			<body>
+				<p id="d1ef459ea44d469c8dd44f76d58d1dc8">
+					<em style="italic">Encryption</em> is a way of scrambling data before it is sent out in packets so that even if intercepted, the data is meaningless. HTTPS provides encryption in addition to its URL-verification feature.</p>
+			</body>
+		</section>
+		<section id="f9187918a77d476f84f37b8aa5bc04df">
+			<title>Example: Using Free Wi-Fi</title>
+			<body>
+				<p id="ec9ee49c8949461aacc89c10bba19119">Suppose you went to Starbucks and logged in to its free Wi-Fi. Then you went to the www.schwab.com home page, which uses HTTPS, and logged in with your username and password. Your password would be sent out in Wi-Fi packets from your laptop to the Starbucks router and on to www.schwab. These packets could be intercepted by all the other labtops at Starbucks at that moment. Probably several laptops at Starbucks were infected with malware, and malware often specifically targets financial sites like Schwab.</p>
+				<p id="fb51b7e73baa43b2823721a80dc1ec9c">Could malware at Starbucks sharing the Wi-Fi with you have gotten your password out of a packet? No, because HTTPS encrypted all the packets before they were sent from your laptop. Note that if your machine had malware on it, it could steal your password as you typed it in. HTTPS only takes care of the networking.</p>
+				<p id="fb504e90c3964b789e906f8079c4a9ee">
+					<image id="bb5c84db27ef46ce858e6a046ed5f671" src="../webcontent/security-starbucks-https.jpg" alt="logging into schwab.com at Starbucks to show https" style="inline" vertical-align="middle">
+						<caption />
+						<popout enable="false"></popout>
+					</image>
+				</p>
+			</body>
+		</section>
+		<wb:inline idref="a_07ae216f8ba44c16a20690195f448373"/>
+		<wb:inline idref="a_3cecde2127a64aa9a7a217b6889e8f9a"/>
+		<wb:inline idref="a_0180ddc4e0c24c10a369f53b51e9f51e"/>
+
+	</body>
+</workbook_page>

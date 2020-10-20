@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_0ca662a912184b4ca7cc664712255ec7">
+   <title>tutor</title>
+   <question id="aQ_0ca662a912184b4ca7cc664712255ec7">
+      <body>
+         <p>Each of the following if statements is meant to test for names starting with A or starting with B. Which one does not have a syntax error?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>if (row.getField("name").startsWith("A") || row.getField("name").startsWith("B") {</code>
+         </choice>
+         <choice value="1">
+            <code>if (row.getField("name").startsWith("A") || .startsWith("B") {</code>
+         </choice>
+         <choice value="2">
+            <code>if (row.getField("name").startsWith("A" || row.getField("name").startsWith("B")) {</code>
+         </choice>
+         <choice value="3">
+            <code>if (row.getField("name").startsWith("A") || row.getField("name").startsWith("B")) {</code>
+         </choice>
+         <choice value="4">
+            <code>if (row.getField("name").startsWith("A||B")) {</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This statement is missing rightmost ).</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This statement is missing the syntax row.getField("name") for the second .startsWith</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This statement is missing a ) on the first <code>.startsWith</code>.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>Everything is in its right place.</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>This statement would select names that literarily starts with the four characters A||B.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

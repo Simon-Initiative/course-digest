@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Write code to set the pixel at (0, 0) to be violet (i.e. red and blue both 255, green left at 0).
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="10" cols="70"  class="tacode" spellcheck="false" style='min-height:12em;' meh='image\20\3D\20new\20SimpleImage\28\22x.png\22\29\3B\0Aimage.mimicZoom\28\29\3B\0Apixel\20\3D\20image.getPixel\280\2C\200\29\3B\0Apixel.setRed\28255\29\3B\0Apixel.setBlue\28255\29\3B\0Aprint\28image\29\3B\0A\0A'   
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("x.png");
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+
+</body>
+</html>

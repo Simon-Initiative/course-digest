@@ -6,6 +6,13 @@ const fs = require('fs');
 export type TagVisitor = (tag: string, attributes: Object) => void;
 export type ClosingTagVisitor = (tag: string) => void;
 
+function getPastDocType(content: string) : string {
+  if (content.indexOf('DOCTYPE') !== -1) {
+    return content.substr(content.indexOf('>', content.indexOf('DOCTYPE')) + 1);
+  }
+  return content;
+}
+
 // Visit all tags and their attributes in an XML file in a top-down
 // fashion.  This is promise based and resolves 'true' when the
 // streaming of the file completes, and resolves a string error message
@@ -21,23 +28,27 @@ export function visit(
 
     parser.on('opentag', (tag: string, attrs: Object) => {
 
-      let cleanedTag = tag.trim();
-      if (cleanedTag.endsWith('/')) {
-        cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+      if (tag !== null) {
+
+        let cleanedTag = tag.trim();
+        if (cleanedTag.endsWith('/')) {
+          cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+        }
+
+        Object.keys(attrs)
+          .forEach((k) => {
+            if ((attrs as any)[k].endsWith('/')) {
+              (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
+            }
+          });
+
+        visitor(cleanedTag, attrs);
+
       }
-
-      Object.keys(attrs)
-        .forEach((k) => {
-          if ((attrs as any)[k].endsWith('/')) {
-            (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
-          }
-        });
-
-      visitor(cleanedTag, attrs);
     });
 
     parser.on('closetag', (tag: string) => {
-      if (closingTagVisitor !== undefined) {
+      if (closingTagVisitor !== undefined && tag !== null) {
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
           cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
@@ -53,8 +64,15 @@ export function visit(
       reject(err);
     });
 
-    const stream = fs.createReadStream(file);
-    stream.pipe(parser);
+    const content : string = fs.readFileSync(file, 'utf-8', 'r+');
+    const dtdRemoved = getPastDocType(content);
+    
+    const s = new stream.PassThrough();
+    s.write(dtdRemoved);
+    s.end();
+    s.pipe(parser);
+
+
   });
 }
 
@@ -75,27 +93,31 @@ export function toJSON(xml: string) : Promise<Object> {
 
     parser.on('opentag', (tag: string, attrs: any) => {
 
-      let cleanedTag = tag.trim();
-      if (cleanedTag.endsWith('/')) {
-        cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+      if (tag !== null) {
+        let cleanedTag = tag.trim();
+        if (cleanedTag.endsWith('/')) {
+          cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
+        }
+
+        const object : any = { type: cleanedTag, children: [] };
+
+        Object.keys(attrs)
+          .forEach((k) => {
+            if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
+              (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
+            }
+          });
+        Object.keys(attrs).forEach(k => object[k] = attrs[k]);
+
+        top().children.push(object);
+        push(object);
       }
-
-      const object : any = { type: cleanedTag, children: [] };
-
-      Object.keys(attrs)
-        .forEach((k) => {
-          if ((attrs as any)[k].endsWith('/')) {
-            (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
-          }
-        });
-      Object.keys(attrs).forEach(k => object[k] = attrs[k]);
-
-      top().children.push(object);
-      push(object);
     });
 
     parser.on('closetag', (tag: string) => {
-      pop();
+      if (tag !== null) {
+        pop();
+      }
     });
 
     parser.on('text', (text: string) => {
@@ -113,28 +135,21 @@ export function toJSON(xml: string) : Promise<Object> {
       reject(err);
     });
 
+    const dtdRemoved = getPastDocType(xml);
+    
     const s = new stream.PassThrough();
-    s.write(xml);
+    s.write(dtdRemoved);
     s.end();
     s.pipe(parser);
+
   });
 }
 
 export function rootTag(file: string) : Promise<string> {
 
   return new Promise((resolve, reject) => {
-
-    const parser = new Parser();
-
-    parser.on('opentag', (tag: string, attrs: Object) => {
-      resolve(tag);
-    });
-
-    parser.on('error', (err: string) => {
-      reject(err);
-    });
-
-    const stream = fs.createReadStream(file);
-    stream.pipe(parser);
+    const content : string = fs.readFileSync(file, 'utf-8', 'r+');
+    const dtd = content.substr(content.indexOf('<!DOCTYPE'));
+    resolve(dtd.substr(0, dtd.indexOf('>') + 1));
   });
 }

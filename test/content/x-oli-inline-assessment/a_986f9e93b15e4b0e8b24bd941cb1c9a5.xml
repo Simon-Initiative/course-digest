@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_986f9e93b15e4b0e8b24bd941cb1c9a5">
+   <title>tutor</title>
+   <question id="aQ_986f9e93b15e4b0e8b24bd941cb1c9a5">
+      <body>
+         <p>What is the best way to avoid being attacked through a vulnerability?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Reboot your machine each morning. </choice>
+         <choice value="1">Avoid websites where people post personal links. </choice>
+         <choice value="2">Keep all your Internet-facing software at the latest version. </choice>
+         <choice value="3">Visit only big, brand-name websites. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Rebooting every morning is not necessary.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Personal links are not the problem.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>People trying to attack your computer often target out-of-date software that has vulnerabilities.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Limiting your visits to only well-known websites won't really protect you. Reputable sites have at times been tricked into hosting exploits.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

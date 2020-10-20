@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE package PUBLIC "-//Carnegie Mellon University//DTD Content Package Simple 2.0//EN" "http://oli.cmu.edu/dtd/oli_content_package_simple_2_0.dtd">
+<package id="kth-cs101" version="1.0">
+  <title>KTH CS101</title>
+  <description>Introduction to Programming with numerous interactive programming activities. Students will manipulate text, numbers, images, and data tables with a unique simplified coding language. This course was converted to OLI from EdX.</description>
+  <cmd:metadata xmlns:cmd="http://oli.web.cmu.edu/content/metadata/">
+    <cmd:license>http://creativecommons.org/licenses/by-nc-sa/3.0/</cmd:license>
+    <cmd:copyright />
+    <cmd:keywords />
+  </cmd:metadata>
+</package>

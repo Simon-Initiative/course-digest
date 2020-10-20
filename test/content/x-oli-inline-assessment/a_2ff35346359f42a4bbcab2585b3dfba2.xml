@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_2ff35346359f42a4bbcab2585b3dfba2">
+   <title>tutor</title>
+   <question id="aQ_2ff35346359f42a4bbcab2585b3dfba2">
+      <body>
+         <p>Which one of the following runs on the CPU without translation?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">C++ code </choice>
+         <choice value="1">JavaScript code </choice>
+         <choice value="2">Machine code </choice>
+         <choice value="3">Python code </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>C++ code runs only through translation.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>JavaScript code runs only through translation.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Machine Code runs without translation, the native language of the CPU.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Python code runs only through translation.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

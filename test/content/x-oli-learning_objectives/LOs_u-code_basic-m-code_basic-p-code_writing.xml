@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-code_basic-m-code_basic-p-code_writing">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="83f487d66b6641fc9b619d4f5c9f84d4" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-code_basic-m-code_basic-p-code_writing_LO_1">
+Learning Objective: Identify simple functions.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="d424daec651f4df69c6c818479171581" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-code_basic-m-code_basic-p-code_writing_LO_2">
+Learning Objective: Identify common code syntax errors from the error message.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="3edf0f4ec7de4157a50c80dd24b08697" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-code_basic-m-code_basic-p-code_writing_LO_3">
+Learning Objective: Edit simple syntax errors in code.
+</objective>
+</objectives>

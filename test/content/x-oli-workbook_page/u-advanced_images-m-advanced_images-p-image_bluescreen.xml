@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-advanced_images-m-advanced_images-p-image_bluescreen"><head><title>Image Bluescreen</title><objref idref="u-advanced_images-m-advanced_images-p-image_bluescreen_LO_1" /><objref idref="u-advanced_images-m-advanced_images-p-image_bluescreen_LO_2" /></head><body><image id="ccc163e1dc354a9080dad4f413db03b4" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><section id="e117f547a6364913b2d83fa46de44b8e"><title>Bluescreen Algorithm</title><body><p id="dbcdb0462186409894e5d7172ba2d7c8">In this section, we use the loop and logic code to implement the bluescreen movie special effect. We write code that manipulates two images to do the bluescreen effect (video is just a series of JPEG-like images, 20 to 60 per second).</p><p id="aa817b3d914f4607b0ce50f2ebd1c55a">Here are two images: stop.jpg and leaves.jpg.</p><image id="a1487a7665614763b4573ac71b46573e" src="../webcontent/stop.jpg" alt="stop sign" style="inline" vertical-align="middle" width="260"><caption /><popout enable="false"></popout></image><image id="b38c5d3ecb5646ab95e41c9880d00dcc" src="../webcontent/leaves.jpg" alt="leaves background texture" style="inline" vertical-align="middle" width="300"><caption /><popout enable="false"></popout></image><p id="fe0adaa489034c49abc85483b212cdc0">For our first example, we want to detect the red pixels of the stop sign, and for those pixels copy over pixels from the leaves.jpg image. The result is a neat visual effect that makes the stop sign appear to be made out of leaves.</p><image id="ca47d2c7111744658dce045032e38df7" src="../webcontent/image-bluescreen.png" alt="bluescreen image/back algorithm" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><p id="da84503705b141c9a581755625a27722">We have two images, called &quot;Image&quot; and &quot;Back.&quot; We want to select some of the pixels in Image and replace them with pixels from Back. Here is an outline of the algorithm, and below it is a working code example.</p><ul id="d0098a5e86c74c6f901eeb963509a4e5"><li><p id="c835fdfc5ad74e90a30f9a0318d59994">Two images: <em>Image</em> and <em>Back</em></p></li><li><p id="f001a8d3729b463596f5762724e37e88">Loop over Image, detecting, say, red pixels</p></li><li><p id="d1257282a0bf430db2da36f16b704e6c">For each red pixel:</p></li><li><ul id="f39eb0fe98ae4cc0b62f166657697e7c"><li><p id="a906b5ca379244119e3482730e659db3">Look at the pixel at the same x,y location in Back</p></li><li><p id="ad45d29dc2314079892a061ad36d5121">Copy that pixel from Back to Image</p></li><li><p id="e914f7a1a5f64bcd9efa2db48b645d15">To copy a pixel, copy over the values for red, green, and blue (RGB)</p></li></ul></li><li><p id="c5fa4b296728445d80c0e3267487cc3d">The result is that for red areas in Image, we copy over areas of Back</p></li></ul></body></section><section id="d7661652fa5c49239667e87e23fb3b0d"><title>Bluescreen Example Code</title><body><p id="d16c09706dc04b818be2cfa5f2cf8359">Run this code to see what it does. This code will be used as a starting point for later bluescreen problems.</p><codeblock id="f3128dfae4a04a70a855f84710305a54" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image-bluescreen-1" rows="18" cols="65" spellcheck="false" onKeyPress="return handleCR(this ,event)">
+image = new SimpleImage("stop.jpg");
+back = new SimpleImage("leaves.jpg");
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getRed() > avg * 1.5) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);</textarea>
+            <input type="button" value="Run" onClick="evaluateClear("image-bluescreen-1")"/>]]></codeblock><p id="cbb4c7f13f934d24b882e001c7022b0e" /><table id="f04629f322184da69686251ca93bf55f" summary="" rowstyle="plain"><cite id="i2e3e2bd917d74d0daa4d502135f35f4d" /><caption /><tr><th colspan="1" rowspan="1" align="left"><p id="aa1274f53a74482c96228a6cfa4fae9e">Code</p></th><th colspan="1" rowspan="1" align="left"><p id="a680d3af09644f7288aa017253fbf4bc">Explanation</p></th></tr><tr><td colspan="1" rowspan="1" align="left"><code>back = new SimpleImage(&quot;leaves.jpg&quot;);</code></td><td colspan="1" rowspan="1" align="left"><p id="bdae91090f2348a986c2fddce872e966">Opens a </p><p id="da5fdc19642d4258b37b6c3c51f65602">image and stores it in the variable </p><code>back</code><p id="b3dba8df196041418e0e3a1e410adaa8">(thus far we&apos;ve only opened one image at a time).</p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel2 = back.getPixel(pixel.getX(), pixel.getY());</code></td><td colspan="1" rowspan="1" align="left"><p id="cf7d0604ccf8470586987e616162cadf">Say we are looking at pixel x=27 y=14 in the main image. The code </p><code>pixel.getX()</code><p id="ac7c2d9f524c4086bbdda8e40c9468d5">and </p><code>pixel.getY()</code><p id="f32012211a9546c58332ca5b667d7b6f">retrieves those values from the pixel. This line gets a pixel from the </p><p id="e261a00dbe8a432fb3ba093ede7ce9b4">, but at the same x,y location as our pixel, and stores it in the variable </p><code>pixel2</code><p id="b6dc947dd17347aeb1da32c81f6dc2f4">. </p></td></tr><tr><td colspan="1" rowspan="1" align="left"><code>pixel.setRed(pixel2.getRed());</code></td><td colspan="1" rowspan="1" align="left"><p id="f290fd3ab5104b00ab1ea1dd9379f2a3">Copies the red value from </p><code>pixel2</code><p id="b8d90260219743008921605f2512e2d5">to </p><code>pixel</code><p id="b8815939a46f4eb29c7a9b2db51ab0bc">. Also do this for the other two channels. In effect, for the x,y location, this copies the pixel from Back to Image.</p></td></tr></table><p id="b7dc9f8c3f5e4169b609fe13b9e41cae">The code inside the if statement just copies pixels from Back to Image. Often, those lines can be reused without any change.</p></body></section><p id="cb100c32f39d4fceb090c97f4422e3f2" /><p id="e042d03a083b4ddcb4827aa93bc09a0b">The problems below use the stop sign bluescreen code as a starting point.</p><codeblock id="d9c502c0b87d4b7da60f2d8cc91511a5" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="0ada24f808d74fa2abfd0df811ced817" xblock-family="xblock.v1" display_name="Learn By Doing Stop-1" hints="Hint (1 of 3): Change the if statement to detect blue pixels instead of red. Use the least restrictive adjustment factor.
+Hint (2 of 3): Detect the blue pixels with <code>(pixel.getBlue() > avg * ..something..)</code>.
+Hint (3 of 3): The code inside the if statement does not need to change at all, still copying pixels from Back to Image." tolerance="5" body="<p>This problem starts with the unchanged code from the stop sign bluescreen example.
+
+<br><img src="../webcontent/stop.jpg" alt="red stop sign">
+
+<p>Change the code to place leaves in the blue sky instead of the red sign. Most of the starter code can be used as it is.
+" regex="" starter_code="image = new SimpleImage("stop.jpg");
+back = new SimpleImage("leaves.jpg");
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getRed() > avg * 1.5) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);" solution_code="image = new SimpleImage("stop.jpg");
+back = new SimpleImage("leaves.jpg");
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getBlue() > avg * 1.1) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);"/>
+    ]]></codeblock><codeblock id="e2c1c3c11fb24adf92a3fd19293c532a" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="1295c0f6224944a6acdeaa7c728a2c59" xblock-family="xblock.v1" display_name="Learn By Doing Stop-2" hints="In the code, change leaves.jpg to pebbles.jpg." tolerance="5" body="<p>One quirk of the bluescreen code is that the colors in the Back image do not matter. We can use different Back images without changing the loop or if statement logic at all.
+
+<p>Here is  the stop.jpg image:
+<br><img src="../webcontent/stop.jpg" alt="red stop sign">
+
+<p>Here is  the pebbles.jpg image:
+<br><img src="../webcontent/pebbles.jpg" width=600 alt="cement with pebbles">
+
+<p>This problem starts with the unchanged code from the stop sign bluescreen example. Make a small change to the code so it replaces the red sign pixels with pixels from pebbles.jpg instead of leaves.jpg.
+
+" regex="" starter_code="image = new SimpleImage("stop.jpg");
+back = new SimpleImage("leaves.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getRed() > avg * 1.5) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);" solution_code="image = new SimpleImage("stop.jpg");
+back = new SimpleImage("pebbles.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getRed() > avg * 1.5) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);"/>
+    ]]></codeblock><codeblock id="d170026507384d418dfeee198cc66096" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="9cb47628d81e4a328f0e0e246ab8e12a" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): Detect the blue pixels with <code>(pixel.getBlue() > avg * 0.92)</code>.
+Hint (2 of 2): The body code inside the if statement is the same as the example code." tolerance="" body="<p>Now we'll do one just like Hollywood. First we film the movie star in front of a blue screen.
+
+<p>Here is our monkey movie star:
+<br><img src="../webcontent/monkey.jpg" alt="monkey shown in front of blue background">
+
+<p>Here is our background, the famous Apollo 8 photo of the earth shown rising above the moon's horizon.
+
+<br><img src="../webcontent/moon.jpg">
+
+<p>Write code to detect the blue parts of the monkey image using the <code>avg</code> technique, and copy over pixels from the "back" moon image. The result is that it appears that the monkey is on the moon." regex="" starter_code="image = new SimpleImage("monkey.jpg");
+back = new SimpleImage("moon.jpg");
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+
+print(image);" solution_code="image = new SimpleImage("monkey.jpg");
+back = new SimpleImage("moon.jpg");
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // your code here
+  if (pixel.getBlue() > avg * 0.92) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+
+print(image);"/>
+    ]]></codeblock><codeblock id="ea011f176ef74aa289e823aed9ea5eeb" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="0701ac39583141ccb485bfaa16fd4682" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Detect the red fence with code such as <code> if (pixel.getRed() > ..something..) {</code>." tolerance="5" body="<p>For this problem, we work with the fence-ivy.jpg image:
+
+<br><img src="../webcontent/fence-ivy.jpg" alt="red fence with green ivy">
+
+<p>and the leaves.jpg image:
+<br><img src="../webcontent/leaves.jpg" alt="green leaves">
+
+<p>Write bluescreen code to detect the red parts of the fence-ivy image using the <code>avg</code> technique, replacing those pixels with pixels from the leaves.jpg image. Adjust the detection so that all of the red fence is replaced, but two of the vertical gaps are not completely replaced. The result should be that the green ivy leaves are not changed, and behind them the red fence is replaced with little leaves.
+" regex="" starter_code="image = new SimpleImage("fence-ivy.jpg");
+back = new SimpleImage("leaves.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+      
+  
+}
+print(image);" solution_code="image = new SimpleImage("fence-ivy.jpg");
+back = new SimpleImage("leaves.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getRed() > avg * 1.1) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);
+"/>
+    ]]></codeblock><codeblock id="ea55c49e49c1432d8f5151b2aecbbf15" syntax="xml" highlight="" number="false" start=""><![CDATA[
+<image-coding url_name="821bb25a775a47028941fcb830e5bbed" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Detect the blue pylon with code such as <code>if (pixel.getBlue() > ..something..) {</code>." tolerance="5" body="<p>Here is a picture of a blue tow-away parking pylon:
+<br><img src="../webcontent/tow-away.jpg" alt="tow-away sign on blue pylon">
+
+<p>And here is some green grass:
+<br><img src="../webcontent/grass.jpg" alt="green grass" width=800>
+
+<p>Write bluescreen code to detect the blue pylon and replace it with pixels from the grass image, so the pylon appears to be made out of grass. Tighten the selection of blue pixels enough that the shadow of the blue pylon, which is a little blue, is not replaced.
+
+" regex="" starter_code="image = new SimpleImage("tow-away.jpg");
+back = new SimpleImage("grass.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+      
+ 
+}
+print(image);" solution_code="image = new SimpleImage("tow-away.jpg");
+back = new SimpleImage("grass.jpg");
+//back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  if (pixel.getBlue() > avg * 1.2) {
+    pixel2 = back.getPixel(pixel.getX(), pixel.getY());
+    pixel.setRed(pixel2.getRed());
+    pixel.setGreen(pixel2.getGreen());
+    pixel.setBlue(pixel2.getBlue());
+  }
+}
+print(image);"/>
+    ]]></codeblock></body></workbook_page>

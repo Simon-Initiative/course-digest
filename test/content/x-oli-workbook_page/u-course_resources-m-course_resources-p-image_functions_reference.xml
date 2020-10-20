@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-course_resources-m-course_resources-p-image_functions_reference">
+   <head>
+      <title>Image Functions Reference</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="18105f2dbfd34774a5c65b8f292a8ac6" display_name="Image Functions Reference" editor="raw"/>--><!--<h1>Image Functions Reference</h1>--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><!--The .xml file paired with the source html file read:
+<html filename="6e886fae87b24196a473b4ec2b2f08d4" display_name="Image Functions Reference" editor="raw"/>--><!--<link rel="stylesheet" href="../webcontent/style-edx.css" type="text/css">--><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><p>For reference, here are all the functions to manipulate images used in this course. Also, Mozilla Developer Network (MDN) provides a comprehensive repository of JavaScript references: <link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">MDN Javascript reference</link>
+      </p>
+      <table>
+         <tr>
+            <td>
+               <code>image = new SimpleImage("flowers.jpg");</code>
+            </td>
+            <td>Set the variable <em style="italic">image</em> to hold the "flowers.jpg" image</td>
+         </tr>
+         <tr>
+            <td>
+               <code>image.setZoom(5);</code>
+            </td>
+            <td>Set the image to print at 5x size on screen. Useful to make changes on very small images such as "x.png" visible.</td>
+         </tr>
+         <tr>
+            <td>
+               <code>print(image);</code>
+            </td>
+            <td>Print the image to the screen.</td>
+         </tr>
+         <tr>
+            <td>
+               <code>pixel = image.getPixel(0, 0);</code>
+            </td>
+            <td>Retrieve the pixel at x,y (0, 0) (i.e. the upper left pixel) and store it in a variable named <em style="italic">pixel</em>. Changes on that pixel, e.g. <code>pixel.setRed(255);</code>, change the pixel in the original image.</td>
+         </tr>
+         <tr>
+            <td>
+               <code>print(pixel);</code>
+            </td>
+            <td>Print the values for one pixel, in the format "r:200 g:12 b:166"</td>
+         </tr>
+         <tr>
+            <td>
+               <code>pixel.setRed(<em style="italic">number</em>);
+							</code>
+            </td>
+            <td>Change the pixel's red value to be 255 (we can specify any value 0..255 within the parenthesis). There are analogous functions <code>pixel.setGreen(<em style="italic">number</em>);
+							</code> and <code>pixel.setBlue(<em style="italic">number</em>);
+							</code>for the other two colors. If the number is outside the range 0..255, it is automatically limited to 0 or 255. 
+						</td>
+         </tr>
+         <tr>
+            <td>
+               <code>red = pixel.getRed();</code>
+            </td>
+            <td>Retrieve the red value from a pixel (a number in the range 0..255), and store it in a variable named <em style="italic">red</em>. There are analogous functions <code>pixel.getGreen()</code> and <code>pixel.getBlue()</code>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <code>image.getWidth()</code>,					<code>image.getHeight()</code>
+            </td>
+            <td>Retrieve the width and height of an image.</td>
+         </tr>
+         <tr>
+            <td>
+               <code>image.setSize(width, height);</code>
+            </td>
+            <td>Scale an image up or down in size so it has the given width and height.</td>
+         </tr>
+         <tr>
+            <td>
+               <code>image.setSameSize(<em style="italic">other_image</em>);
+							</code>
+            </td>
+            <td>Scale an image up or down in size, keeping its proportions, so it is at least as big as the <em style="italic">other_image</em> specified. Useful for bluescreen code where we want to make the background at least as big as the foreground.</td>
+         </tr>
+      </table>
+      <p>Mozilla Developer Network (MDN) provides a comprehensive repository of JavaScript references: <link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">MDN Javascript reference</link>
+      </p>
+      <section>
+         <title>Code Area</title>
+         <body>
+            <p>Here's a scratch area to try out code. Some available images: flowers.jpg banana.jpg monkey.jpg moon.jpg</p>
+            <!-- CODE -->
+            <codeblock syntax="text">&lt;textarea id="image-loop-1"
+                      rows="12"
+                      cols="50"
+                      spellcheck="false"
+                      onKeyPress="return handleCR(this ,event)"&gt;
+image = new SimpleImage("flowers.jpg");
+
+print(image);
+
+
+
+
+
+
+
+				&lt;/textarea&gt;
+            &lt;input type="button" value="Run" onClick="evaluateClear(&#34;image-loop-1&#34;)"/&gt;</codeblock>
+            <!-- OUTPUT -->
+            <p> </p>
+         </body>
+      </section>
+      <!--A License section was here:<html filename="56230999ac874b1a814c59d8aa882a82" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

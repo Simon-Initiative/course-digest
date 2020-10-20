@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-advanced_images-m-advanced_images-p-image_logic">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="81bb45b428be4deda6e585197ce73b62" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-image_logic_LO_1">
+Learning Objective: Apply the if statement code syntax and operation—where the test goes and what it does, where the body code goes and what it does. <!--If statements require both a test and a body, so these two concepts go together.-->
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="17f921a7bf934b0f8ef9290793c1d97a" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-image_logic_LO_2">
+Learning Objective: Identify how a color cast such as "reddish" corresponds to the numerical relationship between the red value and the average.<!--avg color test concept:-->
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="91d4ab1510e948d79c530392b03b0404" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-image_logic_LO_3">
+Learning Objective: Write if statement code to select part of an image with the "avg" technique.<!-- (this is the summary-skill, so this could be the only objective if we wanted).-->
+</objective>
+</objectives>

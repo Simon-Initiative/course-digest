@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_d210ec0817484344a95a0eb4309ef1b7">
+   <title>tutor</title>
+   <question id="aQ_d210ec0817484344a95a0eb4309ef1b7">
+      <body>
+         <p>Suppose we receive this noisy electrical signal, which represents 4 bits, each 0 or 1. Low voltage is represented by 0, and high voltage is represented by 1.</p>
+         <image src="../webcontent/analog-problem1.png"
+                width="300"
+                alt="signal of 4 bits"/>
+         <p>What are the 4 bits represented by the above signal as read from left to right? Write your answer as a series of 0s and 1s (e.g., 1100).</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="0101">
+            <feedback/>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>When the line is low, that's a 0, and when the line is high, it's a 1.</hint>
+         <hint>The first (leftmost) bit is 0.</hint>
+         <hint>The bits are 0101.</hint>
+      </part>
+   </question>
+</assessment>

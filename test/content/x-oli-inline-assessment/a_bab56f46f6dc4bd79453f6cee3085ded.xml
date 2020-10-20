@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_bab56f46f6dc4bd79453f6cee3085ded">
+   <title>tutor</title>
+   <question id="aQ_bab56f46f6dc4bd79453f6cee3085ded">
+      <body>
+         <p>Which one of the following is the best password?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">spork1 </choice>
+         <choice value="1">skoork </choice>
+         <choice value="2">sk,,ooork </choice>
+         <choice value="3">Sesame </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This is not a strong password since "spork" is a word (although a weird word, it must be said), it is short, and the digit-at-end pattern is common.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The misspelling of "spork" is better than a plain word, but this password is short at just 6 letters. Strong passwords are longer.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>This is strong because it is not a word, includes nonalphabet characters, and is sufficiently long.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>"Sesame" is not a strong password since it is the password from the famous tale of Ali Baba. Hackers know to guess such password puns. Avoid this sort of cleverness.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

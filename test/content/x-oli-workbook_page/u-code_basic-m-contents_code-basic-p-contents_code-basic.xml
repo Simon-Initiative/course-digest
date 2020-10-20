@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-code_basic-m-contents_code-basic-p-contents_code-basic">
+  <head>
+    <title>Contents: Code-Basic</title>
+  </head>
+  <body>
+    <ul id="c8582db92925439cba574bcdee4ec644">
+      <li>
+        <p id="f65d2d72489b4d3684de35b1aa849c4a">
+          <activity_link title="u-code_basic-m-code_basic-p-code_writing" idref="u-code_basic-m-code_basic-p-code_writing" target="new" purpose="checkpoint">Code Writing</activity_link>
+        </p>
+      </li>
+      <li>
+        <p id="f372b5a552e24ec997c6f68a7be8b16a">
+          <activity_link title="u-code_basic-m-code_basic-p-code_variables" idref="u-code_basic-m-code_basic-p-code_variables" target="new" purpose="checkpoint">Code Variables</activity_link>
+        </p>
+      </li>
+      <li>
+        <p id="bdc7b26742144af3b4a7bc5f9fe9eb2a">
+          <activity_link title="u-code_basic-m-code_basic_quiz-p-code_basic_quiz" idref="u-code_basic-m-code_basic_quiz-p-code_basic_quiz" target="new" purpose="checkpoint">Code-Basic Quiz</activity_link>
+        </p>
+      </li>
+    </ul>
+    <p id="a2c0b5bcc56c4f0989363668d1bbb0d0" />
+    <p id="aa41e9e65aea4e26a7dfabbf131be9a5" />
+  </body>
+</workbook_page>

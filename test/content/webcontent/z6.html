@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+
+<div style='border-style:dotted;border-color:lightgray'>
+
+
+
+<p>
+Write code to fix the 51020-oranges.png image which should show a box of oranges. The box itself is dull gray. The sign on the box is black, with "organic" written in light orange, and the rest of the letters are white.
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="14" cols="70"  class="tacode" spellcheck="false" style='min-height:14em;'  
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("51020-oranges.png");
+
+for (pixel: image) {
+  // your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+
+
+</div>
+</body>
+</html>
