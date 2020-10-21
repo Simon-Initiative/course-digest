@@ -49,6 +49,11 @@ function mergeTitle($: any, selector: string) {
   });
 }
 
+export function removeSelfClosing($: any) {
+  $('caption').removeAttr('___selfClosing___');
+  $('image').removeAttr('___selfClosing___');
+}
+
 export function flattenNestedSections($: any) {
 
   flattenSection($, 'section section section section section section', 'h6');

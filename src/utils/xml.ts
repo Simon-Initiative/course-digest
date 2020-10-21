@@ -66,12 +66,11 @@ export function visit(
 
     const content : string = fs.readFileSync(file, 'utf-8', 'r+');
     const dtdRemoved = getPastDocType(content);
-    
+
     const s = new stream.PassThrough();
     s.write(dtdRemoved);
     s.end();
     s.pipe(parser);
-
 
   });
 }
@@ -136,7 +135,7 @@ export function toJSON(xml: string) : Promise<Object> {
     });
 
     const dtdRemoved = getPastDocType(xml);
-    
+
     const s = new stream.PassThrough();
     s.write(dtdRemoved);
     s.end();
