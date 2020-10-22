@@ -66,11 +66,11 @@ function outputManifest(courseDir: string, outputDirectory: string) {
     type: 'Manifest',
   };
 
-  return outputFile(`${outputDirectory}/manifest.json`, manifest);
+  return outputFile(`${outputDirectory}/_project.json`, manifest);
 }
 
 function outputHierarchy(outputDirectory: string, h: TorusResource) {
-  return outputFile(`${outputDirectory}/hierarchy.json`, h);
+  return outputFile(`${outputDirectory}/_hierarchy.json`, h);
 }
 
 function outputMediaManifest(outputDirectory: string, mediaItems: MediaItem[]) {
@@ -80,7 +80,7 @@ function outputMediaManifest(outputDirectory: string, mediaItems: MediaItem[]) {
     type: 'MediaManifest',
   };
 
-  return outputFile(`${outputDirectory}/media-manifest.json`, manifest);
+  return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);
 }
 
 function outputResource(outputDirectory: string, resource: TorusResource) {

@@ -23,7 +23,7 @@ export function flattenResourceRefs($: any) {
 
   refs.each((i: any, elem: any) => {
     const id = $(elem).attr('idref');
-    $(elem).replaceWith(`<page-ref idref=${id}`);
+    $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
   });
 }
 
