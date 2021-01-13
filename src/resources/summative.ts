@@ -19,6 +19,7 @@ export class Summative extends Resource {
     const foundIds: ItemReference[] = [];
     const summary : Summary = {
       type: 'Summary',
+      subType: 'Summative',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => foundIds,

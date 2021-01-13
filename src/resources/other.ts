@@ -17,6 +17,7 @@ export class Other extends Resource {
 
     const summary : Summary = {
       type: 'Summary',
+      subType: 'Other',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => [],

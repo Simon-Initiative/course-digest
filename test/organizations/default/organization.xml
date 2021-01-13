@@ -256,7 +256,7 @@
 					</item>
 				</module>
 				<module id="u-course_resources-m-course_resources">
-					<title>Course Resources</title>
+					<title>Module Course Resources</title>
 					<item scoring_mode="default">
 						<resourceref idref="u-course_resources-m-course_resources-p-principles_of_computing_browser_checker" />
 					</item>

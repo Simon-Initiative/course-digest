@@ -5,6 +5,7 @@ import * as DOM from '../utils/dom';
 
 export interface Summary {
   type: 'Summary';
+  subType: string;
   id: string;
   elementHistogram: Histogram.ElementHistogram;
   found: () => ItemReference[];

@@ -19,6 +19,7 @@ export class Formative extends Resource {
     const foundIds: ItemReference[] = [];
     const summary : Summary = {
       type: 'Summary',
+      subType: 'Formative',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => foundIds,

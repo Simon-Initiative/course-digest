@@ -67,6 +67,7 @@ export class Organization extends Resource {
     const foundIds: ItemReference[] = [];
     const summary : Summary = {
       type: 'Summary',
+      subType: 'Organization',
       id: '',
       elementHistogram: Histogram.create(),
       found: () => foundIds,

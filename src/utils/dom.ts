@@ -27,6 +27,18 @@ export function flattenResourceRefs($: any) {
   });
 }
 
+export function convertInlineFormats($: any) {
+  const ems = $('em');
+
+  ems.each((i: any, elem: any) => {
+    const id = $(elem).attr('');
+    $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
+  });
+}
+
+
+
+
 export function rename($: any, source: string, dest: string) {
   $(source).each((i: any, item: any) => (item.tagName = dest));
 }

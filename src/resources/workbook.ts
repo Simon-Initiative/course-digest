@@ -45,7 +45,9 @@ export class WorkbookPage extends Resource {
 
         page.id = r.children[0].id;
         page.objectives = r.children[0].children[0].children.map((o: any) => o.idref);
-        page.content = { model: r.children[0].children[1].children };
+        page.content = { model:
+        [{id: 'temporary-unique-id', type: 'content',
+          children: r.children[0].children[1].children }] };
         page.title = r.children[0].title;
 
         resolve([page]);
@@ -58,6 +60,7 @@ export class WorkbookPage extends Resource {
     const foundIds: ItemReference[] = [];
     const summary : Summary = {
       type: 'Summary',
+      subType: 'WorkbookPage',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => foundIds,

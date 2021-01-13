@@ -37,7 +37,8 @@ export function visit(
 
         Object.keys(attrs)
           .forEach((k) => {
-            if ((attrs as any)[k].endsWith('/')) {
+            
+            if (typeof (attrs as any)[k] === 'string' && (attrs as any)[k].endsWith('/')) {
               (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
             }
           });
@@ -75,6 +76,10 @@ export function visit(
   });
 }
 
+function isInline(tag: string) {
+  return tag === 'em' || tag === 'sup' || tag === 'sup' || tag === 'code';
+}
+
 export function toJSON(xml: string) : Promise<Object> {
 
   const root : any = {};
@@ -98,18 +103,40 @@ export function toJSON(xml: string) : Promise<Object> {
           cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
         }
 
-        const object : any = { type: cleanedTag, children: [] };
+        if (isInline(cleanedTag)) {
 
-        Object.keys(attrs)
-          .forEach((k) => {
-            if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
-              (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
-            }
-          });
-        Object.keys(attrs).forEach(k => object[k] = attrs[k]);
+          let object;
+          if (top().type === 'text') {
+            object = top();
+          } else {
+            object = { type: 'text', children: [] };
+            top().children.push(object);
+            push(object);
+          }
 
-        top().children.push(object);
-        push(object);
+          if (attrs['style'] === 'bold') {
+            object.bold = true;
+          } else if (attrs['style'] === 'italic') {
+            object.italic = true;
+          } else {
+            object.bold = true;
+          }
+
+        } else {
+          const object : any = { type: cleanedTag, children: [] };
+
+          Object.keys(attrs)
+            .forEach((k) => {
+              if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
+                (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
+              }
+            });
+          Object.keys(attrs).forEach(k => object[k] = attrs[k]);
+
+          top().children.push(object);
+          push(object);
+        }
+
       }
     });
 

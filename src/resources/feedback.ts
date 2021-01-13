@@ -17,6 +17,7 @@ export class Feedback extends Resource {
 
     const summary : Summary = {
       type: 'Summary',
+      subType: 'Feedback',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => [],

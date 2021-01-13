@@ -17,6 +17,7 @@ export class Pool extends Resource {
 
     const summary : Summary = {
       type: 'Summary',
+      subType: 'SummativePool',
       elementHistogram: Histogram.create(),
       id: '',
       found: () => [],

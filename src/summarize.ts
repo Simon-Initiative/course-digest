@@ -24,12 +24,14 @@ export function bucketHistograms(
   .filter(s => s.type !== 'MissingResource')
   .reduce(
     (h, c) => {
-
-      if (h[c.type] === undefined) {
-        h[c.type] = (c as any).elementHistogram;
-      } else {
-        h[c.type] = Histogram.merge(h[c.type], (c as any).elementHistogram);
+      if (c.type !== 'MissingResource') {
+        if (h[c.subType] === undefined) {
+          h[c.subType] = (c as any).elementHistogram;
+        } else {
+          h[c.subType] = Histogram.merge(h[c.subType], (c as any).elementHistogram);
+        }
       }
+      
       return h;
     },
     {} as any);
