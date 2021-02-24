@@ -27,20 +27,19 @@ export function flattenResourceRefs($: any) {
   });
 }
 
-export function convertInlineFormats($: any) {
-  const ems = $('em');
-
-  ems.each((i: any, elem: any) => {
-    const id = $(elem).attr('');
-    $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
-  });
-}
-
-
-
-
 export function rename($: any, source: string, dest: string) {
   $(source).each((i: any, item: any) => (item.tagName = dest));
+}
+
+export function renameAttribute($: any, tag: string, source: string, dest: string) {
+  $(tag).each((i: any, item: any) => {
+    const value = $(item).attr(source);
+
+    if (value !== undefined && value !== null) {
+      $(item).attr(dest, value);
+      $(item).removeAttr(source);
+    }
+  });
 }
 
 export function mergeTitles($: any) {

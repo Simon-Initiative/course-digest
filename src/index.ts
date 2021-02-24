@@ -89,7 +89,8 @@ function convertAction() {
 
       processResources(Convert.convert, references, map)
       .then((converted: Resources.TorusResource[]) => {
-        Convert.output(packageDirectory, outputDirectory, hierarchy, converted);
+        const updated = Convert.updateDerivativeReferences(converted)
+        Convert.output(packageDirectory, outputDirectory, hierarchy, updated);
       });
 
     });

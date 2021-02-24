@@ -17,6 +17,7 @@ export type ResourceType = 'WorkbookPage' | 'Organization'
 export type TorusResourceType = Hierarchy | Page | Activity | Objectives;
 
 export interface TorusResource {
+  type: string;
   originalFile: string;
   id: string;
   title: string;
@@ -57,6 +58,7 @@ export interface Activity extends TorusResource {
   type: 'Activity';
   content: Object;
   objectives: Object;
+  legacyId: string;
 }
 
 export interface Objectives extends TorusResource {
