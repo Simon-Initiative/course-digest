@@ -41,7 +41,7 @@ export class Organization extends Resource {
     DOM.rename($, 'section', 'container');
   }
 
-  translate(xml: string) : Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
 
     const foundIds: ItemReference[] = [];
     const h : Hierarchy = {

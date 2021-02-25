@@ -33,3 +33,7 @@ export enum LegacyTypes {
   webcontent = 'x-oli-webcontent',
   assessment2_pool = 'x-oli-assessment2-pool',
 }
+
+export function guid() {
+  return '' + Math.floor(Math.random() * Math.floor(Math.pow(2, 32) - 1));
+}

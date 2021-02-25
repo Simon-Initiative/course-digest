@@ -1,4 +1,4 @@
-import { renameAttribute } from '../../src/utils/dom';
+import { renameAttribute, eliminateLevel } from '../../src/utils/dom';
 const cheerio = require('cheerio');
 
 describe('dom mutations', () => {
@@ -14,6 +14,20 @@ describe('dom mutations', () => {
     renameAttribute($, 'b', 'test', 'apple');
 
     expect($.xml()).toEqual('<a><b apple="v1"/><b apple="v2"/><b/><c test="v3"/></a>');
+  });
+
+  test('should elevate the children', () => {
+
+    const content = '<a><b><c/><d/></b><b><c/></b></a>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    eliminateLevel($, 'b');
+
+    expect($.xml()).toEqual('<a><c/><d/><c/></a>');
   });
 
 });

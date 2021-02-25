@@ -132,8 +132,10 @@ export function toJSON(xml: string) : Promise<Object> {
               }
             });
           Object.keys(attrs).forEach(k => object[k] = attrs[k]);
-
-          top().children.push(object);
+          if (top() !== undefined) {
+            
+            top().children.push(object);
+          }
           push(object);
         }
 

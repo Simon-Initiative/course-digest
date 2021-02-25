@@ -17,6 +17,30 @@ function flattenSection($: any, selector: string, tag: string) {
   });
 }
 
+// Eliminates a node, but elevating its children into the collection of the
+// node's parent
+//
+// <a>
+//   <b><c/><d/></b>
+//   <b><c/></b>
+// </a>
+//
+// eliminateLevel('b') would yield:
+//
+// <a>
+//   <c/><d/><c/>
+// </a>
+//
+export function eliminateLevel($: any, selector: string) {
+
+  const triple = $(selector);
+
+  triple.each((i: any, elem: any) => {
+    $(elem).replaceWith($(elem).children());
+  });
+}
+
+
 export function flattenResourceRefs($: any) {
 
   const refs = $('item resourceref');

@@ -10,7 +10,7 @@ export class Summative extends Resource {
 
   }
 
-  translate(xml: string) : Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
     return Promise.resolve(['']);
   }
 

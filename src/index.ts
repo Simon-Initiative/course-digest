@@ -19,7 +19,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
       .then((results: (string | Resources.Summary)[]) => {
 
         const seenReferences = {} as any;
-        const references: ItemReference[] = [];
+        const references: string[] = [];
 
         results.forEach((r) => {
 
@@ -28,7 +28,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
 
               if (seenReferences[i.id] === undefined) {
                 seenReferences[i.id] = true;
-                references.push(i);
+                references.push(i.id);
               }
 
             });
@@ -86,7 +86,7 @@ function convertAction() {
     Convert.convert(specificOrg)
     .then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
-
+      
       processResources(Convert.convert, references, map)
       .then((converted: Resources.TorusResource[]) => {
         const updated = Convert.updateDerivativeReferences(converted)

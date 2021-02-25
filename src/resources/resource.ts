@@ -2,6 +2,7 @@ import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
 import { visit } from '../utils/xml';
 import * as DOM from '../utils/dom';
+import { JSDocUnknownTag } from 'typescript';
 
 export interface Summary {
   type: 'Summary';
@@ -14,7 +15,7 @@ export interface Summary {
 export type ResourceType = 'WorkbookPage' | 'Organization'
 | 'Formative' | 'Summative' | 'Feedback' | 'Other';
 
-export type TorusResourceType = Hierarchy | Page | Activity | Objectives;
+export type TorusResourceType = Hierarchy | Page | Activity | Objectives | Unknown;
 
 export interface TorusResource {
   type: string;
@@ -47,6 +48,10 @@ export interface Hierarchy extends TorusResource {
   children: TorusResource[];
 }
 
+export interface Unknown extends TorusResource {
+  type: 'Unknown';
+}
+
 export interface Page extends TorusResource {
   type: 'Page';
   content: Object;
@@ -59,6 +64,7 @@ export interface Activity extends TorusResource {
   content: Object;
   objectives: Object;
   legacyId: string;
+  subType: string;
 }
 
 export interface Objectives extends TorusResource {
@@ -91,12 +97,12 @@ export abstract class Resource {
 
   restructure($: any): any {}
 
-  abstract translate(xml: string): Promise<(TorusResource | string)[]>;
+  abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;
 
   convert(file: string): Promise<(TorusResource | string)[]> {
     const $ = DOM.read(file);
     this.restructure($);
-    return this.translate($.root().html());
+    return this.translate($.root().html(), $);
   }
 
   mapElementName(element: string) : string {

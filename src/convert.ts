@@ -16,12 +16,11 @@ export function convert(file: string) : Promise<(TorusResource | string)[]> {
     .then((t: ResourceType) => {
 
       const item = create(t);
-
+      console.log(file)
       const $ = DOM.read(file);
       item.restructure($);
-
       const xml = $.html();
-      return item.translate(xml);
+      return item.translate(xml, $);
     });
 }
 
@@ -39,7 +38,7 @@ export function updateDerivativeReferences(resources: TorusResource[]) : TorusRe
   // Bucket the resources by legacy_id.  These are the items whose now individual references
   // must updated in their parent resource
   const byLegacyId : DerivedResourceMap = bucketByLegacyId(resources);
-
+  
   // Visit every resource, replacing legacy references with corresponding collection
   // of derivative references 
   return resources.map((parent: TorusResource) => updateParentReference(parent, byLegacyId));
@@ -74,12 +73,12 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
     const page = resource as Page;
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
-
+     
       if (m.type === 'activity_placeholder') {
 
         const derived = byLegacyId[m.idref];
         if (derived !== undefined) {
-          return [...entries, ...derived.map(d => d.id)];
+          return [...entries, ...derived.map(d => ({ type: 'activity-reference', activity_id: d.id }))];
         }
 
         console.log('Warning: Could not find derived resources for ' + m.idref + ' within page ' + page.id);

@@ -9,8 +9,17 @@ export class Other extends Resource {
 
   }
 
-  translate(xml: string) : Promise<(TorusResource | string)[]> {
-    return Promise.resolve(['']);
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve([{
+      type: 'Unknown',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      content: {},
+      objectives: [],
+    }]);
   }
 
   summarize(file: string): Promise<string | Summary> {

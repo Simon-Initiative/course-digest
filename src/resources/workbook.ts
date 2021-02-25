@@ -1,5 +1,5 @@
 import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
+import { ItemReference, guid } from '../utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 const cheerio = require('cheerio');
 import * as DOM from '../utils/dom';
@@ -10,6 +10,7 @@ function liftTitle($: any) {
   $('head').children().remove('title');
 }
 
+
 export class WorkbookPage extends Resource {
 
   restructure($: any) : any {
@@ -17,13 +18,13 @@ export class WorkbookPage extends Resource {
     liftTitle($);
     DOM.removeSelfClosing($);
     
-    DOM.rename($, 'wb:inline', 'activity_placeholder');
+    DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'activity', 'activity_placeholder');
-
     DOM.rename($, 'activity_link', 'link');
+
   }
 
-  translate(xml: string) : Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
 
     const page : Page = {
       type: 'Page',
@@ -37,14 +38,10 @@ export class WorkbookPage extends Resource {
       objectives: [],
     };
 
-    const $ = cheerio.load(xml, {
-      normalizeWhitespace: true,
-      xmlMode: true,
+    $('activity_placeholder').each((i: any, elem: any) => {
+      page.unresolvedReferences.push($(elem).attr('idref'));
     });
 
-    $('activity_placeholder').each((i: any, elem: any) => {
-      page.unresolvedReferences.push($(elem).attr('activity_id'));
-    });
     $('link').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
       if (idref !== undefined && idref !== null) {
@@ -52,14 +49,15 @@ export class WorkbookPage extends Resource {
       }
     });
 
+
     return new Promise((resolve, reject) => {
       XML.toJSON(xml).then((r: any) => {
 
+        const model = introduceStructuredContent(r.children[0].children[1].children)
+
         page.id = r.children[0].id;
         page.objectives = r.children[0].children[0].children.map((o: any) => o.idref);
-        page.content = { model:
-        [{id: 'temporary-unique-id', type: 'content',
-          children: r.children[0].children[1].children }] };
+        page.content = { model };
         page.title = r.children[0].title;
 
         resolve([page]);
@@ -105,3 +103,47 @@ export class WorkbookPage extends Resource {
   }
 
 }
+
+
+// Restructures the initial JSON blob of XML conversion to be formulated
+// as a collection of structured content or activity references. 
+//
+// This takes all activity_placeholder references from top-level content and
+// isolates them as stand alone elements, grouping together the
+// surrounding content elements as instances of structured content.
+// 
+// For instance, for the following collection of elements:
+//
+// { type: p, ...}
+// { type: image, ...}
+// { type: activity_placeholder ...}
+// { type: p, ...}
+//
+// This function mutates the content element collection to look like:
+//
+// { type: content, children: [{ type: p, ...}, {type: image, ...}]}
+// { type: activity_placeholder ...}
+// { type: content, children: [{ type: p, ...}]}
+//
+function introduceStructuredContent(content: any) {
+
+  const asStructured = (o: any) => ({ type: 'content', id: guid(), children: [o] });
+  
+  return content.reduce(
+    (u: any, e: any) => {
+
+      if (e.type === 'activity_placeholder') {
+        return [...u, e];
+      } else {
+        if (u.length === 0 || u[u.length - 1].type === 'activity_placeholder') {
+          return [...u, asStructured(e)];
+        } else {
+          u[u.length - 1].children.push(e);
+          return u;
+        }
+      }
+    },
+    [],
+  );
+}
+

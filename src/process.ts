@@ -1,5 +1,5 @@
 import { TorusResource } from './resources/resource';
-import { executeSerially, ItemReference } from './utils/common';
+import { executeSerially } from './utils/common';
 import { ResourceMap } from './utils/resource_mapping';
 
 // Recursive helper to process a collection of resources.
@@ -12,41 +12,38 @@ import { ResourceMap } from './utils/resource_mapping';
 function innerProcess<T>(
   processFunc: (file: string) => Promise<T | string>,
   resolve: any, reject: any,
-  itemReferences: ItemReference[],
+  itemReferences: string[],
   resourceMap: ResourceMap,
   seenReferences: { [index: string] : boolean },
   all: TorusResource[]) {
 
-  const doSummary = (ref: ItemReference) => {
-    const path = resourceMap[ref.id];
-    seenReferences[ref.id] = true;
+  const doSummary = (ref: string) => {
+    const path = resourceMap[ref];
+    seenReferences[ref] = true;
 
     if (path !== undefined) {
       return () => processFunc(path);
     }
-    return () => Promise.resolve({ type: 'MissingResource', id: ref.id });
+    return () => Promise.resolve({ type: 'MissingResource', id: ref });
   };
 
-  const summarizers = itemReferences.map((ref: ItemReference) => doSummary(ref));
+  const summarizers = itemReferences.map((ref: string) => doSummary(ref));
 
   executeSerially(summarizers)
   .then((results: TorusResource[]) => {
 
     // From this round of results, collect any new references that
     // we need to follow
-    const toFollow: ItemReference[] = [];
+    const toFollow: string[] = [];
     results.forEach((r: TorusResource) => {
       all.push(r);
-
-      if ((r as any).found !== undefined) {
-        (r as any).found().forEach((ref: ItemReference) => {
-          const id = ref.id;
-          if (seenReferences[id] === undefined) {
-            toFollow.push(ref);
-            seenReferences[id] = true;
-          }
-        });
-      }
+      
+      r.unresolvedReferences.forEach((ref: string) => {
+        if (seenReferences[ref] === undefined) {
+          toFollow.push(ref);
+          seenReferences[ref] = true;
+        }
+      });
     });
 
     // See if we are done or if there is another round of references
@@ -62,7 +59,7 @@ function innerProcess<T>(
 
 export function processResources<T>(
   processFunc: (file: string) => Promise<T | string>,
-  itemReferences: ItemReference[], resourceMap: ResourceMap) : Promise<TorusResource[]> {
+  itemReferences: string[], resourceMap: ResourceMap) : Promise<TorusResource[]> {
 
   return new Promise((resolve, reject) => {
     innerProcess(processFunc, resolve, reject, itemReferences, resourceMap, {}, []);
