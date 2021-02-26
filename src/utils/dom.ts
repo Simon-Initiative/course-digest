@@ -67,26 +67,39 @@ export function renameAttribute($: any, tag: string, source: string, dest: strin
 }
 
 export function mergeTitles($: any) {
-  mergeTitle($, 'organization');
-  mergeTitle($, 'sequence');
-  mergeTitle($, 'unit');
-  mergeTitle($, 'module');
-  mergeTitle($, 'section');
+  mergeElement($, 'organization', 'title');
+  mergeElement($, 'sequence', 'title');
+  mergeElement($, 'unit', 'title');
+  mergeElement($, 'module', 'title');
+  mergeElement($, 'section', 'title');
 }
 
-function mergeTitle($: any, selector: string) {
+export function mergeCaptions($: any) {
+  mergeElement($, 'table', 'caption');
+  mergeElement($, 'audio', 'caption');
+  mergeElement($, 'iframe', 'caption');
+  mergeElement($, 'youtube', 'caption');
+  mergeElement($, 'image', 'caption');
+  mergeElement($, 'codeblock', 'caption');
+}
+
+function mergeElement($: any, selector: string, element: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
-    const text = $(elem).children('title').text();
-    $(elem).attr('title', text);
-    $(elem).children().remove('title');
+    const text = $(elem).children(element).text();
+    $(elem).attr(element, text);
+    $(elem).children().remove(element);
   });
 }
 
 export function removeSelfClosing($: any) {
   $('caption').removeAttr('___selfClosing___');
   $('image').removeAttr('___selfClosing___');
+}
+
+export function remove($: any, element: string) {
+  $(element).remove();
 }
 
 export function flattenNestedSections($: any) {

@@ -14,14 +14,30 @@ function liftTitle($: any) {
 export class WorkbookPage extends Resource {
 
   restructure($: any) : any {
+
+    $('code').each((i: any, item: any) => $(item).attr('style', 'code'));
+    $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
+    $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
+    $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
+    
+    DOM.rename($, 'code', 'em');
+    DOM.rename($, 'var', 'em');
+    DOM.rename($, 'sub', 'em');
+    DOM.rename($, 'sup', 'em');
+
     DOM.flattenNestedSections($);
     liftTitle($);
     DOM.removeSelfClosing($);
-    
+    DOM.mergeCaptions($);
+    $('popout').remove();
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'activity', 'activity_placeholder');
-    DOM.rename($, 'activity_link', 'link');
+    DOM.rename($, 'activity_link', 'a');
+    DOM.rename($, 'image', 'img');
 
+    DOM.rename($, 'codeblock', 'code');
+    
+    $('p img').remove();
   }
 
   translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
@@ -42,7 +58,7 @@ export class WorkbookPage extends Resource {
       page.unresolvedReferences.push($(elem).attr('idref'));
     });
 
-    $('link').each((i: any, elem: any) => {
+    $('a').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
       if (idref !== undefined && idref !== null) {
         page.unresolvedReferences.push(idref);
@@ -51,7 +67,7 @@ export class WorkbookPage extends Resource {
 
 
     return new Promise((resolve, reject) => {
-      XML.toJSON(xml).then((r: any) => {
+      XML.toJSON(xml, { p: true, em: true, li: true, td: true}).then((r: any) => {
 
         const model = introduceStructuredContent(r.children[0].children[1].children)
 
@@ -127,7 +143,7 @@ export class WorkbookPage extends Resource {
 //
 function introduceStructuredContent(content: any) {
 
-  const asStructured = (o: any) => ({ type: 'content', id: guid(), children: [o] });
+  const asStructured = (o: any) => ({ type: 'content', id: guid(), children: [o], selection: { anchor: {offset: 0, path: [0, 0]}, focus: {offset: 0, path: [1, 0]}} });
   
   return content.reduce(
     (u: any, e: any) => {

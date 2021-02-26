@@ -5,11 +5,20 @@ import { Resource, TorusResource, Summary, Activity } from './resource';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 
+function ensureParagraphs(children: any) {
+  if (children.length === 1 && children[0].text !== undefined) {
+    return [{type: 'p', children }]
+  }
+  return children;
+}
+
 function buildStem(question: any) {
   //console.log(question);
   const stem = getChild(question.children, 'stem');
   return {
-    content: stem.children,
+    content: {
+      model: ensureParagraphs(stem.children),
+    }
   };
 }
 
@@ -17,7 +26,7 @@ function buildChoices(question: any) {
   const choices = getChild(question.children, 'multiple_choice').children;
 
   return choices.map((c: any) => ({
-    content: c.children,
+    content: {model: ensureParagraphs(c.children)},
     id: c.value,
   }));
 }
@@ -36,14 +45,31 @@ function buildTextPart(question: any) {
       score: r.score === undefined ? 0 : parseFloat(r.score),
       rule: `input like {${r.match}}`,
       feedback: {
-        content: r.children[0].children,
+        content: {
+          model: ensureParagraphs(r.children[0].children),
+        }
       }
     })),
-    hints: hints.map((r: any) => ({
-      content: r.children,
-    })),
+    hints: ensureThree(hints.map((r: any) => ({
+      content: {
+        model: ensureParagraphs(r.children),
+      }
+    }))),
     scoringStrategy: 'average',
   }
+}
+
+function ensureThree(hints: any) {
+  if (hints.length === 0) {
+    return [{content: {model: []}},{content: {model: []}},{content: {model: []}}]
+  }
+  if (hints.length === 1) {
+    return [...hints,{content: {model: []}},{content: {model: []}}]
+  }
+  if (hints.length === 2) {
+    return [...hints,{content: {model: []}}]
+  }
+  return hints;
 }
 
 
@@ -60,12 +86,12 @@ function buildMCQPart(question: any) {
       score: r.score === undefined ? 0 : parseFloat(r.score),
       rule: `input like {${r.match}}`,
       feedback: {
-        content: r.children[0].children,
+        content: {model: ensureParagraphs(r.children[0].children)},
       }
     })),
-    hints: hints.map((r: any) => ({
-      content: r.children,
-    })),
+    hints: ensureThree(hints.map((r: any) => ({
+      content: {model: ensureParagraphs(r.children)},
+    }))),
     scoringStrategy: 'average',
   }
 }
@@ -99,13 +125,13 @@ function buildCATAPart(question: any) {
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule,
         feedback: {
-          content: r.children[0].children,
+          content: {model: ensureParagraphs(r.children[0].children)},
         }
       };
     }),
-    hints: hints.map((r: any) => ({
-      content: r.children,
-    })),
+    hints: ensureThree(hints.map((r: any) => ({
+      content: {model: ensureParagraphs(r.children)},
+    }))),
     scoringStrategy: 'average',
   }
 }
@@ -147,10 +173,10 @@ function single_response_text(question: any) {
 }
 
 function buildModel(subType: ItemTypes, question: any) {
-  if (subType === 'mcq') {
+  if (subType === 'oli_multiple_choice') {
     return mcq(question);
   } 
-  if (subType === 'cata') {
+  if (subType === 'oli_check_all_that_apply') {
     return cata(question);
   }
   return single_response_text(question);
@@ -172,9 +198,7 @@ function toActivity(question: any, subType: ItemTypes, legacyId: string) {
   };
 
   activity.id = question.id;
-  activity.content = { 
-    model: buildModel(subType, question),
-  };
+  activity.content = buildModel(subType, question);
   return activity;
 }
 
@@ -191,7 +215,7 @@ function getChild(collection: any, named: string) {
 }
 
 
-type ItemTypes = 'mcq' | 'cata' | 'text';
+type ItemTypes = 'oli_multiple_choice' | 'oli_check_all_that_apply' | 'oli_short_answer';
 
 function determineSubType(question: any) : ItemTypes {
 
@@ -199,13 +223,13 @@ function determineSubType(question: any) : ItemTypes {
 
   if (mcq !== undefined) {
 
-    if (mcq.selection && mcq.select === 'multiple') {
-      return 'cata';
+    if (mcq.select && mcq.select === 'multiple') {
+      return 'oli_check_all_that_apply';
     } 
-    return 'mcq';
+    return 'oli_multiple_choice';
   }
 
-  return 'text';
+  return 'oli_short_answer';
 
 }
 
@@ -217,12 +241,17 @@ export class Formative extends Resource {
     DOM.eliminateLevel($, 'section');
     DOM.eliminateLevel($, 'page');
     DOM.eliminateLevel($, 'pool');
+    DOM.mergeCaptions($);
+    $('popout').remove();
+    DOM.rename($, 'image', 'img');
+    $('p img').remove();
+    DOM.rename($, 'codeblock', 'code');
   }
 
   translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
 
     return new Promise((resolve, reject) => {
-      XML.toJSON(xml).then((r: any) => {
+      XML.toJSON(xml, { p: true, em: true, li: true, td: true}).then((r: any) => {
         const legacyId = r.children[0].id;
         const activities = r.children[0].children
         .filter((item: any) => item.type === 'question')

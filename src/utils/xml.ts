@@ -1,6 +1,6 @@
 // XML related utilities
 const stream = require('stream');
-const Parser = require('node-xml-stream-parser');
+const Parser = require('./parser.js');
 const fs = require('fs');
 
 export type TagVisitor = (tag: string, attributes: Object) => void;
@@ -11,6 +11,32 @@ function getPastDocType(content: string) : string {
     return content.substr(content.indexOf('>', content.indexOf('DOCTYPE')) + 1);
   }
   return content;
+}
+
+function inlineAttrName(attrs: any) {
+  if (attrs['style'] === 'bold') {
+    return 'bold';
+  } else if (attrs['style'] === 'italic') {
+    return 'italic';
+  } else if (attrs['style'] === 'code') {
+    return 'code';
+  } else if (attrs['style'] === 'sub') {
+    return 'sub';
+  } else if (attrs['style'] === 'sup') {
+    return 'sup';
+  } else {
+    return 'bold';
+  }
+}
+
+function inlinesToObject(inlines: any) {
+  return inlines.reduce(
+    (m: any, style: any) => {
+      m[style] = true;
+      return m
+    },
+    {}
+  )
 }
 
 // Visit all tags and their attributes in an XML file in a top-down
@@ -77,10 +103,15 @@ export function visit(
 }
 
 function isInline(tag: string) {
-  return tag === 'em' || tag === 'sup' || tag === 'sup' || tag === 'code';
+  return tag === 'em';
 }
 
-export function toJSON(xml: string) : Promise<Object> {
+function all(s: string, t: string) { 
+  var re = new RegExp(t, 'g');
+  return s.replace(re, '');
+}
+
+export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
 
   const root : any = {};
   root.children = [];
@@ -91,12 +122,14 @@ export function toJSON(xml: string) : Promise<Object> {
   const pop = () => stack.pop();
   const push = (o: any) => stack.push(o);
 
+  const inlines : any = [];
+
   return new Promise((resolve, reject) => {
 
-    const parser = new Parser();
+    const parser = new Parser(preserveMap);
 
     parser.on('opentag', (tag: string, attrs: any) => {
-
+      
       if (tag !== null) {
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
@@ -104,23 +137,7 @@ export function toJSON(xml: string) : Promise<Object> {
         }
 
         if (isInline(cleanedTag)) {
-
-          let object;
-          if (top().type === 'text') {
-            object = top();
-          } else {
-            object = { type: 'text', children: [] };
-            top().children.push(object);
-            push(object);
-          }
-
-          if (attrs['style'] === 'bold') {
-            object.bold = true;
-          } else if (attrs['style'] === 'italic') {
-            object.italic = true;
-          } else {
-            object.bold = true;
-          }
+          inlines.push(inlineAttrName(attrs));
 
         } else {
           const object : any = { type: cleanedTag, children: [] };
@@ -142,17 +159,64 @@ export function toJSON(xml: string) : Promise<Object> {
       }
     });
 
+
     parser.on('closetag', (tag: string) => {
+      
+      if (isInline(tag)) {
+        inlines.pop();
+        return;
+      }
+
+      const ensureDefaultText = (e: string, text: string) => {
+        if (tag === e) {
+          if (top() && top().children.length === 0) {
+            top().children.push({ type: 'text', text});
+          }
+        }
+      };
+
+      const ensureNotEmpty = (e: string) => {
+        if (tag === e) {
+          if (top() && top().children.length === 0) {
+            top().children.push({ type: 'text', text: ' '});
+          }
+        }
+      };
+
+
       if (tag !== null) {
+
+        ensureNotEmpty('p');
+        ensureNotEmpty('th');
+        ensureNotEmpty('td');
+        ensureDefaultText('h1', 'Section Header');
+        ensureDefaultText('h2', 'Section Header');
+        ensureDefaultText('h3', 'Section Header');
+        ensureDefaultText('h4', 'Section Header');
+        ensureDefaultText('h5', 'Section Header');
+        ensureDefaultText('h6', 'Section Header');
+        ensureNotEmpty('img');
+        ensureNotEmpty('iframe');
+        ensureNotEmpty('youtube');
+        ensureNotEmpty('audio');
+        ensureNotEmpty('li');
+
+        if (top() && top().children === undefined) {
+          top().children = [];
+        }
+
         pop();
       }
     });
 
     parser.on('text', (text: string) => {
-      top().children.push({ type: 'text', text });
+     
+      const object : any = Object.assign({}, { text }, inlinesToObject(inlines));
+      top().children.push(object);
+    
     });
     parser.on('cdata', (cdata: string) => {
-      top().children.push({ type: 'text', cdata });
+      top().children.push({ text: cdata });
     });
 
     parser.on('finish', () => {
