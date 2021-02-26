@@ -1,6 +1,6 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
+import { guid, ItemReference } from '../utils/common';
 import { Resource, TorusResource, Summary, Activity } from './resource';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
@@ -42,16 +42,21 @@ function buildTextPart(question: any) {
   return {
     id: '1',
     responses: responses.map((r: any) => ({
+      id: guid(),
       score: r.score === undefined ? 0 : parseFloat(r.score),
       rule: `input like {${r.match}}`,
       feedback: {
+        id: guid(),
         content: {
+          id: guid(),
           model: ensureParagraphs(r.children[0].children),
         }
       }
     })),
     hints: ensureThree(hints.map((r: any) => ({
+      id: guid(),
       content: {
+        id: guid(),
         model: ensureParagraphs(r.children),
       }
     }))),
@@ -59,15 +64,22 @@ function buildTextPart(question: any) {
   }
 }
 
+function hint() {
+  return {
+    id: guid(),
+    content: {model: [{type: 'p', children: [{text: ''}]}]}
+  };
+}
+
 function ensureThree(hints: any) {
   if (hints.length === 0) {
-    return [{content: {model: []}},{content: {model: []}},{content: {model: []}}]
+    return [hint(), hint(), hint()];
   }
   if (hints.length === 1) {
-    return [...hints,{content: {model: []}},{content: {model: []}}]
+    return [...hints, hint(), hint()];
   }
   if (hints.length === 2) {
-    return [...hints,{content: {model: []}}]
+    return [...hints, hint()];
   }
   return hints;
 }
@@ -83,13 +95,16 @@ function buildMCQPart(question: any) {
   return {
     id: '1',
     responses: responses.map((r: any) => ({
+      id: guid(),
       score: r.score === undefined ? 0 : parseFloat(r.score),
       rule: `input like {${r.match}}`,
       feedback: {
+        id: guid(),
         content: {model: ensureParagraphs(r.children[0].children)},
       }
     })),
     hints: ensureThree(hints.map((r: any) => ({
+      id: guid(),
       content: {model: ensureParagraphs(r.children)},
     }))),
     scoringStrategy: 'average',
@@ -122,14 +137,17 @@ function buildCATAPart(question: any) {
 
 
       return {
+        id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule,
         feedback: {
+          id: guid(),
           content: {model: ensureParagraphs(r.children[0].children)},
         }
       };
     }),
     hints: ensureThree(hints.map((r: any) => ({
+      id: guid(),
       content: {model: ensureParagraphs(r.children)},
     }))),
     scoringStrategy: 'average',
