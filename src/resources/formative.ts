@@ -14,7 +14,7 @@ function ensureParagraphs(children: any) {
 }
 
 function buildStem(question: any) {
-  //console.log(question);
+  
   const stem = getChild(question.children, 'stem');
   return {
     content: {
@@ -113,32 +113,53 @@ function buildMCQPart(question: any) {
 }
 
 
-function buildCATAPart(question: any) {
+function buildCATAPart(question: any, choices: any, part: any, targeted: any, correct: any, incorrect: any) {
+
+  const choiceIds = choices.map((c: any) => c.id);
 
   const responses = getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'response');
   const hints = getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
 
-  return {
-    id: '1',
-    responses: responses.map((r: any) => {
 
-      const rule = r.match === '*'
-        ? 'input like {*}'
-        : r.match
-          .split(',')
-          .map((v: any) => `input like {${v}}`)
-          .reduce((s: any, p: any) => {
-            if (s === '') {
-              return p;
-            } 
-            return s + ' && ' + p;
-          }, '');
+  part.id = '1';
+  part.responses = responses.map((r: any) => {
 
+      const id = guid();
+
+      // Build the rule and the 'targeted' association list at the same time
+
+      let rule;
+      if (r.match === '*') {
+        rule = 'input like {.*}';
+      } else {
+
+        const presentIds =  r.match
+        .split(',')
+        .reduce((s: any, p: any) => {
+          s[p] = true;
+          return s;
+        }, {});
+
+        targeted.push([Object.keys(presentIds), id]);
+        if (r.score === '1') {
+          correct.push([Object.keys(presentIds), id]);
+        } else {
+          incorrect.push([Object.keys(presentIds), id]);
+        }
+
+        rule = choiceIds.reduce((s: any, p: any) => {
+          if (s === '') {
+            return presentIds[p] ? `input like {${p}}` : `!(input like {${p}})`;
+          } 
+          return (presentIds[p] ? `input like {${p}}` : `!(input like {${p}})`) + ' && (' + s + ')';
+        }, '');
+
+      }
 
       return {
-        id: guid(),
+        id,
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule,
         feedback: {
@@ -146,13 +167,14 @@ function buildCATAPart(question: any) {
           content: {model: ensureParagraphs(r.children[0].children)},
         }
       };
-    }),
-    hints: ensureThree(hints.map((r: any) => ({
+    });
+  
+  part.hints = ensureThree(hints.map((r: any) => ({
       id: guid(),
       content: {model: ensureParagraphs(r.children)},
-    }))),
-    scoringStrategy: 'average',
-  }
+    })));
+  part.scoringStrategy = 'average';
+  
 }
 
 function mcq(question: any) {
@@ -168,14 +190,28 @@ function mcq(question: any) {
   };
 }
 
+
 function cata(question: any) {
+
+  const choices = buildChoices(question);
+
+  const part = {};
+  const targeted : any = [];
+  const correct : any = [];
+  const incorrect : any = [];
+  buildCATAPart(question, choices, part, targeted, correct, incorrect);
+
   return {
     stem: buildStem(question),
-    choices: buildChoices(question),
+    choices,
+    type: 'TargetedCATA',
     authoring: {
-      parts: [buildCATAPart(question)],
+      parts: [part],
       transformations: [],
       previewText: '',
+      targeted,
+      correct,
+      incorrect
     }
   };
 }
