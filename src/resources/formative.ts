@@ -2,6 +2,7 @@ import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { guid, ItemReference } from '../utils/common';
 import { Resource, TorusResource, Summary, Activity } from './resource';
+import { standardContentManipulations, processCodeblock } from './common';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 
@@ -132,7 +133,7 @@ function buildCATAPart(question: any) {
             if (s === '') {
               return p;
             } 
-            return ' && ' + p;
+            return s + ' && ' + p;
           }, '');
 
 
@@ -253,17 +254,17 @@ function determineSubType(question: any) : ItemTypes {
 
 export class Formative extends Resource {
 
+  restructurePreservingWhitespace($: any): any {
+    processCodeblock($);
+  }
+
   restructure($: any) : any {
-    DOM.removeSelfClosing($);
+    standardContentManipulations($);
+
     DOM.rename($, 'question body', 'stem');
     DOM.eliminateLevel($, 'section');
     DOM.eliminateLevel($, 'page');
     DOM.eliminateLevel($, 'pool');
-    DOM.mergeCaptions($);
-    $('popout').remove();
-    DOM.rename($, 'image', 'img');
-    $('p img').remove();
-    DOM.rename($, 'codeblock', 'code');
   }
 
   translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {

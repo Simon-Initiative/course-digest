@@ -6,7 +6,8 @@ import * as DOM from './utils/dom';
 type DerivedResourceMap =  {[key: string]: TorusResource[]};
 
 const fs = require('fs');
-
+const tmp = require('tmp');
+ 
 interface MediaItem {
   file: string;
 }
@@ -17,8 +18,16 @@ export function convert(file: string) : Promise<(TorusResource | string)[]> {
 
       const item = create(t);
       console.log(file)
-      const $ = DOM.read(file);
+
+      let $ = DOM.read(file, { normalizeWhitespace: false });
+      item.restructurePreservingWhitespace($);
+
+      const tmpobj = tmp.fileSync();
+      fs.writeFileSync(tmpobj.name, $.html()); 
+      
+      $ = DOM.read(tmpobj.name);
       item.restructure($);
+      
       const xml = $.html();
       return item.translate(xml, $);
     });

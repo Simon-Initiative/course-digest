@@ -1,7 +1,21 @@
-import { renameAttribute, eliminateLevel } from '../../src/utils/dom';
+import { renameAttribute, eliminateLevel, stripElement } from '../../src/utils/dom';
 const cheerio = require('cheerio');
 
 describe('dom mutations', () => {
+
+  test('should strip the element', () => {
+
+    const content = '<p>1<b>2</b>3<b><c/></b></p>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    stripElement($, 'b');
+
+    expect($.xml()).toEqual('<p>123<c/></p>');
+  });
   test('should rename the attribute', () => {
 
     const content = '<a><b test="v1"/><b test="v2"/><b/><c test="v3"/></a>';

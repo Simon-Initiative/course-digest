@@ -111,6 +111,11 @@ function all(s: string, t: string) {
   return s.replace(re, '');
 }
 
+function replaceAll(s: string, t: string, w: string) { 
+  var re = new RegExp(t, 'g');
+  return s.replace(re, w);
+}
+
 export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
 
   const root : any = {};
@@ -209,7 +214,14 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
       }
     });
 
-    parser.on('text', (text: string) => {
+    parser.on('text', (raw: string) => {
+
+      let text = replaceAll(raw, '&quot;', '\"');
+      text = replaceAll(text, '&amp;', '&');
+      text = replaceAll(text, '&lt;', '<');
+      text = replaceAll(text, '&gt;', '>');
+      text = replaceAll(text, '&apos;', '\'');
+      text = replaceAll(text, '&#x2019;', '\'');
      
       const object : any = Object.assign({}, { text }, inlinesToObject(inlines));
       top().children.push(object);

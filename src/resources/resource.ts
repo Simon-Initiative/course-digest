@@ -95,6 +95,8 @@ export abstract class Resource {
 
   abstract summarize(file: string): Promise<Summary | string>;
 
+  restructurePreservingWhitespace($: any): any {}
+
   restructure($: any): any {}
 
   abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;

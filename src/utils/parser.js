@@ -302,7 +302,7 @@ const Parser = (function(_Writable) {
         text = text.slice(text.indexOf("[") + 1, text.lastIndexOf("]>") - 1);
         this.state = STATE.TEXT;
 
-        this.emit(EVENTS.CDATA, text);
+        this.emit(EVENTS.CDATA, text, this.tagStack);
       }
     },
     {

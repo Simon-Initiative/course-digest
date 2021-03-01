@@ -66,6 +66,21 @@ export function renameAttribute($: any, tag: string, source: string, dest: strin
   });
 }
 
+// Removes all instances of an element, but leaves its text
+// and child nodes in place:
+//
+// This:
+// <p>This <u>test</u></p>
+//
+// If called to strip <u> would be translated to:
+// <p>This test</p>
+//
+export function stripElement($: any, selector: string) {
+  $(selector).each((i: any, elem: any) => {
+    $(elem).replaceWith($(elem).html());
+  });
+}
+
 export function mergeTitles($: any) {
   mergeElement($, 'organization', 'title');
   mergeElement($, 'sequence', 'title');
@@ -112,11 +127,11 @@ export function flattenNestedSections($: any) {
   flattenSection($, 'section', 'h1');
 }
 
-export function read(file: string) {
+export function read(file: string, options = {}) {
   const content = fs.readFileSync(file, 'utf-8', 'r+');
 
-  return cheerio.load(content, {
+  return cheerio.load(content, Object.assign({}, {
     normalizeWhitespace: true,
     xmlMode: true,
-  });
+  }, options));
 }

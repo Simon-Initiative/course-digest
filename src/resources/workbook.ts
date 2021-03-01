@@ -2,6 +2,7 @@ import * as Histogram from '../utils/histogram';
 import { ItemReference, guid } from '../utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 const cheerio = require('cheerio');
+import { standardContentManipulations, processCodeblock } from './common';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 
@@ -13,31 +14,21 @@ function liftTitle($: any) {
 
 export class WorkbookPage extends Resource {
 
+  restructurePreservingWhitespace($: any): any {
+    processCodeblock($);
+  }
+
   restructure($: any) : any {
 
-    $('code').each((i: any, item: any) => $(item).attr('style', 'code'));
-    $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
-    $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
-    $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
-    
-    DOM.rename($, 'code', 'em');
-    DOM.rename($, 'var', 'em');
-    DOM.rename($, 'sub', 'em');
-    DOM.rename($, 'sup', 'em');
+    standardContentManipulations($);
 
     DOM.flattenNestedSections($);
     liftTitle($);
-    DOM.removeSelfClosing($);
-    DOM.mergeCaptions($);
-    $('popout').remove();
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'activity', 'activity_placeholder');
-    DOM.rename($, 'activity_link', 'a');
-    DOM.rename($, 'image', 'img');
-
-    DOM.rename($, 'codeblock', 'code');
     
-    $('p img').remove();
+    // Temporary
+    DOM.stripElement($, 'activity_link');
   }
 
   translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
@@ -126,33 +117,47 @@ export class WorkbookPage extends Resource {
 //
 // This takes all activity_placeholder references from top-level content and
 // isolates them as stand alone elements, grouping together the
-// surrounding content elements as instances of structured content.
+// surrounding content elements as instances of structured content. Any
+// "example" elements are also converted to structured content.
 // 
 // For instance, for the following collection of elements:
 //
 // { type: p, ...}
 // { type: image, ...}
+// { type: example, ...}
 // { type: activity_placeholder ...}
 // { type: p, ...}
 //
-// This function mutates the content element collection to look like:
+// This function returns a content element collection that is reforumulated as:
 //
 // { type: content, children: [{ type: p, ...}, {type: image, ...}]}
+// { type: content, purpose: example, children: [{ ... ]}
 // { type: activity_placeholder ...}
 // { type: content, children: [{ type: p, ...}]}
 //
+const selection = { selection: { anchor: {offset: 0, path: [0, 0]}, focus: {offset: 0, path: [1, 0]}} };
+
 function introduceStructuredContent(content: any) {
 
-  const asStructured = (o: any) => ({ type: 'content', id: guid(), children: [o], selection: { anchor: {offset: 0, path: [0, 0]}, focus: {offset: 0, path: [1, 0]}} });
+  const asStructured = (attrs: any) => 
+    Object.assign({}, { type: 'content', purpose: 'none', id: guid() }, selection, attrs);
+
+  const startNewContent = (u: any) => u.length === 0 
+    || u[u.length - 1].type === 'activity_placeholder'
+    || u[u.length - 1].purpose !== 'none';
   
   return content.reduce(
     (u: any, e: any) => {
 
       if (e.type === 'activity_placeholder') {
         return [...u, e];
+
+      } else if (e.type === 'example') {
+        return [...u, asStructured({ children: e.children, purpose: 'example' })];
+
       } else {
-        if (u.length === 0 || u[u.length - 1].type === 'activity_placeholder') {
-          return [...u, asStructured(e)];
+        if (startNewContent(u)) {
+          return [...u, asStructured({ children: [e] })];
         } else {
           u[u.length - 1].children.push(e);
           return u;
