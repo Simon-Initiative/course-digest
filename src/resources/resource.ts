@@ -2,7 +2,6 @@ import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
 import { visit } from '../utils/xml';
 import * as DOM from '../utils/dom';
-import { JSDocUnknownTag } from 'typescript';
 
 export interface Summary {
   type: 'Summary';
@@ -12,10 +11,10 @@ export interface Summary {
   found: () => ItemReference[];
 }
 
-export type ResourceType = 'WorkbookPage' | 'Organization'
+export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives'
 | 'Formative' | 'Summative' | 'Feedback' | 'Other';
 
-export type TorusResourceType = Hierarchy | Page | Activity | Objectives | Unknown;
+export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
 
 export interface TorusResource {
   type: string;
@@ -67,9 +66,8 @@ export interface Activity extends TorusResource {
   subType: string;
 }
 
-export interface Objectives extends TorusResource {
-  type: 'Objectives';
-  children: Objective[];
+export interface Objective extends TorusResource {
+  type: 'Objective';
 }
 
 const elementNameMap : { [index:string] : string } = {

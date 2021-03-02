@@ -69,6 +69,12 @@ function summaryAction() {
   .catch((err: any) => console.log(err));
 }
 
+function getLearningObjectiveIds(packageDirectory: string) {
+
+  return mapResources(packageDirectory + '/content/x-oli-learning_objectives')
+  .then(map => Object.keys(map));
+}
+
 function convertAction() {
 
   const packageDirectory = process.argv[3];
@@ -78,10 +84,12 @@ function convertAction() {
 
   executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrgId)])
+    () => collectOrgItemReferences(packageDirectory, specificOrgId),
+    () => getLearningObjectiveIds(packageDirectory)])
   .then((results: any) => {
+    
     const map = results[0];
-    const references = results.slice(1);
+    const references = [...results.slice(1), ...results.slice(2)];
 
     Convert.convert(specificOrg)
     .then((results) => {

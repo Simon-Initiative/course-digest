@@ -8,6 +8,7 @@ import * as Other from './other';
 import * as Feedback from './feedback';
 import * as Formative from './formative';
 import * as Summative from './summative';
+import * as Objectives from './objectives';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
@@ -31,6 +32,9 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag.indexOf('oli_feedback_1_2') !== -1) {
       return 'Feedback';
     }
+    if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
+      return 'Objectives';
+    }
 
     return 'Other';
   });
@@ -51,6 +55,9 @@ export function create(t: ResourceType) : Resource {
   }
   if (t === 'Feedback') {
     return new Feedback.Feedback();
+  }
+  if (t === 'Objectives') {
+    return new Objectives.Objectives();
   }
   return new Other.Other();
 }
