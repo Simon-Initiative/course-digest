@@ -1,6 +1,6 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
-import { guid, ItemReference } from '../utils/common';
+import { guid, ItemReference, replaceAll } from '../utils/common';
 import { Resource, TorusResource, Summary, Activity } from './resource';
 import { standardContentManipulations, processCodeblock } from './common';
 import { updateCATAResponseRules } from './questions/cata';
@@ -43,18 +43,21 @@ function buildTextPart(question: any) {
 
   return {
     id: '1',
-    responses: responses.map((r: any) => ({
-      id: guid(),
-      score: r.score === undefined ? 0 : parseFloat(r.score),
-      rule: `input like {${r.match}}`,
-      feedback: {
+    responses: responses.map((r: any) => {
+      const cleanedMatch = replaceAll(r.match, '\\*', '.*');
+      return {
         id: guid(),
-        content: {
+        score: r.score === undefined ? 0 : parseFloat(r.score),
+        rule: `input like {${cleanedMatch}}`,
+        feedback: {
           id: guid(),
-          model: ensureParagraphs(r.children[0].children),
+          content: {
+            id: guid(),
+            model: ensureParagraphs(r.children[0].children),
+          }
         }
-      }
-    })),
+      };
+    }),
     hints: ensureThree(hints.map((r: any) => ({
       id: guid(),
       content: {
@@ -183,9 +186,6 @@ function cata(question: any) {
       incorrect: []
     }
   };
-
-  console.log(question.id);
-  model.authoring.parts[0].responses.filter((r: any) => console.log(r.score));
 
   const correctResponse = model.authoring.parts[0].responses.filter((r: any) => r.score !== undefined && r.score !== 0)[0];  
   const correctIds = correctResponse.rule.split(',');

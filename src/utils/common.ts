@@ -8,6 +8,11 @@ export type MissingResource = {
   id: string,
 };
 
+export function replaceAll(s: string, t: string, w: string) { 
+  var re = new RegExp(t, 'g');
+  return s.replace(re, w);
+}
+
 // Take an array of functions that return promises and
 // execute them serially, resolving an array of their
 // resolutions
