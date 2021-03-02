@@ -194,6 +194,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
         ensureNotEmpty('td');
+        ensureDefaultText('code_line', ' ');
         ensureDefaultText('h1', 'Section Header');
         ensureDefaultText('h2', 'Section Header');
         ensureDefaultText('h3', 'Section Header');
