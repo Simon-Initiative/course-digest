@@ -3,6 +3,7 @@ import * as Histogram from '../utils/histogram';
 import { guid, ItemReference } from '../utils/common';
 import { Resource, TorusResource, Summary, Activity } from './resource';
 import { standardContentManipulations, processCodeblock } from './common';
+import { updateCATAResponseRules } from './questions/cata';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 
@@ -113,67 +114,33 @@ function buildMCQPart(question: any) {
 }
 
 
-function buildCATAPart(question: any, choices: any, part: any, targeted: any, correct: any, incorrect: any) {
-
-  const choiceIds = choices.map((c: any) => c.id);
+function buildCATAPart(question: any) {
 
   const responses = getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'response');
   const hints = getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
 
-
-  part.id = '1';
-  part.responses = responses.map((r: any) => {
-
+  return {
+    id: '1',
+    responses: responses.map((r: any) => {
       const id = guid();
-
-      // Build the rule and the 'targeted' association list at the same time
-
-      let rule;
-      if (r.match === '*') {
-        rule = 'input like {.*}';
-      } else {
-
-        const presentIds =  r.match
-        .split(',')
-        .reduce((s: any, p: any) => {
-          s[p] = true;
-          return s;
-        }, {});
-
-        targeted.push([Object.keys(presentIds), id]);
-        if (r.score === '1') {
-          correct.push([Object.keys(presentIds), id]);
-        } else {
-          incorrect.push([Object.keys(presentIds), id]);
-        }
-
-        rule = choiceIds.reduce((s: any, p: any) => {
-          if (s === '') {
-            return presentIds[p] ? `input like {${p}}` : `!(input like {${p}})`;
-          } 
-          return (presentIds[p] ? `input like {${p}}` : `!(input like {${p}})`) + ' && (' + s + ')';
-        }, '');
-
-      }
-
       return {
         id,
-        score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule,
+        score: r.score === undefined ? 0 : parseInt(r.score),
+        rule: r.match,
         feedback: {
           id: guid(),
           content: {model: ensureParagraphs(r.children[0].children)},
         }
       };
-    });
-  
-  part.hints = ensureThree(hints.map((r: any) => ({
+    }),
+    hints: ensureThree(hints.map((r: any) => ({
       id: guid(),
       content: {model: ensureParagraphs(r.children)},
-    })));
-  part.scoringStrategy = 'average';
+    }))),
+    scoringStrategy: 'average',
+  };
   
 }
 
@@ -194,26 +161,67 @@ function mcq(question: any) {
 function cata(question: any) {
 
   const choices = buildChoices(question);
+  const choiceIds = choices.map((c: any) => c.id);
 
-  const part = {};
-  const targeted : any = [];
-  const correct : any = [];
-  const incorrect : any = [];
-  buildCATAPart(question, choices, part, targeted, correct, incorrect);
+  const matchIds = (match: string) => match
+    .split(',')
+    .reduce((s: any, p: any) => {
+      s[p] = true;
+      return s;
+    }, {});
 
-  return {
+  const model = {
     stem: buildStem(question),
     choices,
     type: 'TargetedCATA',
     authoring: {
-      parts: [part],
+      parts: [buildCATAPart(question)],
       transformations: [],
       previewText: '',
-      targeted,
-      correct,
-      incorrect
+      targeted: [],
+      correct: [],
+      incorrect: []
     }
   };
+
+  console.log(question.id);
+  model.authoring.parts[0].responses.filter((r: any) => console.log(r.score));
+
+  const correctResponse = model.authoring.parts[0].responses.filter((r: any) => r.score !== undefined && r.score !== 0)[0];  
+  const correctIds = correctResponse.rule.split(',');
+  (model.authoring.correct as any).push(correctIds);
+  (model.authoring.correct as any).push(correctResponse.id);
+
+  const incorrectIds = choiceIds.filter((x: any) => !correctIds.includes(x));
+  const incorrectResponses = model.authoring.parts[0].responses.filter((r: any) => r.rule === '*');  
+  let incorrectResponse : any;
+  if (incorrectResponses.length === 0) {
+    const r : any = {
+      id: guid(),
+      score: 0,
+      rule: '*',
+      feedback: {
+        id: guid(),
+        content: {model: [{ type: 'p', children: [{ text: 'Incorrect', children: []}]}]},
+      }
+    };
+    model.authoring.parts[0].responses.push(r);
+    incorrectResponse = r;
+  } else {
+    incorrectResponse = incorrectResponses[0];
+  }
+  (model.authoring.incorrect as any).push(incorrectIds);
+  (model.authoring.incorrect as any).push(incorrectResponse.id);
+
+  model.authoring.parts[0].responses.forEach((r: any) => {
+    if (r.id !== correctResponse.id && r.id !== incorrectResponse.id) {
+      (model.authoring.targeted as any).push([r.rule.split(','), r.id]);
+    }
+  });
+
+  updateCATAResponseRules(model);
+
+  return model;
 }
 
 function single_response_text(question: any) {
