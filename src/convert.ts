@@ -23,7 +23,8 @@ export function convert(mediaSummary: Media.MediaSummary, file: string) : Promis
       fs.writeFileSync(tmpobj.name, $.html()); 
       
       $ = DOM.read(tmpobj.name);  
-      Media.flatten(Media.find(file, $), mediaSummary);
+
+      Media.transformToFlatDirectory(file, $, mediaSummary);
 
       item.restructure($);
       
@@ -105,6 +106,7 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
 
 
 export function output(
+  projectSlug: string,
   courseDirectory: string,
   outputDirectory: string,
   hierarchy: TorusResource,
@@ -112,7 +114,7 @@ export function output(
   mediaItems: Media.MediaItem[]) {
 
   return executeSerially([
-    () => outputManifest(courseDirectory, outputDirectory),
+    () => outputManifest(projectSlug, courseDirectory, outputDirectory),
     () => outputHierarchy(outputDirectory, hierarchy),
     () => outputMediaManifest(outputDirectory, mediaItems),
     ...converted.map(r => () => outputResource(outputDirectory, r)),
@@ -134,13 +136,14 @@ function outputFile(path: string, o: Object) : Promise<boolean> {
   });
 }
 
-function outputManifest(courseDir: string, outputDirectory: string) {
+function outputManifest(slug: string, courseDir: string, outputDirectory: string) {
 
   const $ = DOM.read(`${courseDir}/content/package.xml`);
   const title = $('package title').text();
   const description = $('package description').text();
 
   const manifest = {
+    slug,
     title,
     description,
     type: 'Manifest',
@@ -156,7 +159,7 @@ function outputHierarchy(outputDirectory: string, h: TorusResource) {
 function outputMediaManifest(outputDirectory: string, mediaItems: Media.MediaItem[]) {
 
   const manifest = {
-    mediaItems: mediaItems.map((m: Media.MediaItem) => ({ name: m.flattenedName, file: '' })),
+    mediaItems: mediaItems.map((m: Media.MediaItem) => ({ name: m.flattenedName, file: m.file, url: m.url })),
     type: 'MediaManifest',
   };
 

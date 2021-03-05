@@ -4,6 +4,9 @@ const fs = require('fs');
 export interface MediaSummary {
   mediaItems: {[k: string] : MediaItem };
   missing: MediaItemReference[];
+  projectSlug: string;
+  urlPrefix: string;
+  flattenedNames : {[k: string] : string };
 }
 
 export interface FlattenResult {
@@ -19,6 +22,7 @@ export interface MediaItemReference {
 export interface MediaItem {
   file: string;
   flattenedName: string;
+  url: string;
   references: MediaItemReference[];
 }
 
@@ -36,8 +40,24 @@ export interface UploadFailure {
 }
 
 // From a DOM object, find all media item references;
-export function find(filePath: string, $: any) : MediaItemReference[] {
-  return findFromDOM($).map(assetReference => ({ filePath, assetReference }));
+export function transformToFlatDirectory(filePath: string, $: any, summary: MediaSummary) {
+  
+  const paths = findFromDOM($);
+  Object.keys(paths).forEach((assetReference: any) => {
+
+    // Flatten this file reference into our single, virtual directory
+    const ref = { filePath, assetReference };
+    const url = flatten(ref, summary);
+
+    // Update the URL in the XML DOM
+    if (url !== null) {
+      const elem = paths[assetReference];
+      $(elem).attr('src', url);
+    }
+    
+    
+  });
+  
 }
 
 
@@ -45,41 +65,43 @@ export function find(filePath: string, $: any) : MediaItemReference[] {
 // Take a collection of media item references and flatten them into a single
 // virtual directory, being careful to account for the same name 
 // (but different file) in different directories.  
-export function flatten(mediaItemReferences: MediaItemReference[], summary: MediaSummary) : void {
+export function flatten(ref: MediaItemReference, summary: MediaSummary) : string | null {
 
   const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
-  const flattenedNames : {[k: string] : string } = {};
+  const toURL = (name: string) => summary.urlPrefix + '/' + summary.projectSlug + '/' + name;
   
-  mediaItemReferences.forEach(ref => {
-
-    const absolutePath = resolve(ref);
-    const name = getName(absolutePath);
+  const absolutePath = resolve(ref);
+  const name = getName(absolutePath);
+  
+  if (fs.existsSync(absolutePath)) {
     
-    if (fs.existsSync(absolutePath)) {
-      
-      if (summary.mediaItems[absolutePath] === undefined) {
+    // Is this the first time we have encountered this specific physical file
+    if (summary.mediaItems[absolutePath] === undefined) {
 
-        // See if we need to rename this file to avoid conflicts with an already
-        // flattened file
-        const flattenedName = (flattenedNames[name])
-          ? generateNewName(name, flattenedNames)
-          : name;
+      // See if we need to rename this file to avoid conflicts with an already
+      // flattened file
+      const flattenedName = (summary.flattenedNames[name])
+        ? generateNewName(name, summary.flattenedNames)
+        : name;
 
-        summary.mediaItems[absolutePath] = {
-          file: absolutePath,
-          flattenedName,
-          references: [ref],
-        }
-      } else {
-        summary.mediaItems[absolutePath].references.push(ref);
-      }
+      summary.mediaItems[absolutePath] = {
+        file: absolutePath,
+        flattenedName,
+        references: [ref],
+        url: toURL(flattenedName),
+      };
+
+      return flattenedName;
+
     } else {
-      summary.missing.push(ref);
+      summary.mediaItems[absolutePath].references.push(ref);
+      return summary.mediaItems[absolutePath].url;
     }
-    
-
-  });
-
+  } else {
+    summary.missing.push(ref);
+    return null;
+  }
+  
 }
 
 function generateNewName(name: string, flattenedNames: {[k: string] : string }) {
@@ -124,24 +146,27 @@ function findFromDOM($: any) : string[] {
   const paths : any = {};
 
   $('image').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = true;
+    paths[$(elem).attr('src')] = elem;
   });
 
   $('audio').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = true;
+    paths[$(elem).attr('src')] = elem;
   });
 
   $('audio source').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = true;
+    paths[$(elem).attr('src')] = elem;
   });
 
   $('audio track').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = true;
+    paths[$(elem).attr('src')] = elem;
   });
 
-  return Object
+  Object
     .keys(paths)
-    .filter((src: string) => isLocalReference(src));
+    .filter((src: string) => !isLocalReference(src))
+    .forEach((src: string) => delete paths[src]);
+
+  return paths;
 }
 
 function isLocalReference(src: string) : boolean {

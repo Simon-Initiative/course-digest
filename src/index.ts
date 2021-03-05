@@ -6,6 +6,40 @@ import * as Summarize from './summarize';
 import * as Convert from './convert';
 import * as Media from './media';
 import { processResources } from './process';
+const fs = require('fs');
+
+const optionDefinitions = [
+  { name: 'operation', type: String, defaultOption: true },
+  { name: 'outputDir', type: String },
+  { name: 'inputDir', type: String },
+  { name: 'specificOrg', type: String },
+  { name: 'specificOrgId', type: String },
+  { name: 'slug', type: String },
+  { name: 'mediaUrlPrefix', type: String },
+  { name: 'bucket', type: String }
+];
+
+const commandLineArgs = require('command-line-args');
+const options : any = commandLineArgs(optionDefinitions);
+
+function validateArgs() {
+
+  if (options.operation === 'convert') {
+
+    if (options.bucket && options.mediaUrlPrefix && options.slug && options.inputDir 
+      && options.outputDir && options.specificOrg && options.specificOrgId) {
+      
+        return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
+    }
+  } else if (options.operation === 'summarize') {
+
+    if (options.inputDir && options.outputDir) {
+      return [options.inputDir, options.outputDir].every(fs.existsSync);
+    } 
+  }
+
+  return false;
+}
 
 function collectOrgItemReferences(packageDirectory: string, id: string = '') {
 
@@ -55,9 +89,9 @@ function alongWith(promiseFunc: any, ...along: any) {
 
 function summaryAction() {
 
-  const packageDirectory = process.argv[3];
-  const outputDirectory = process.argv[4];
-  const specificOrg = process.argv.length === 6 ? process.argv[5] : '';
+  const packageDirectory = options.inputDir;
+  const outputDirectory = options.outputDir;
+  const specificOrg = options.specificOrg ? options.specificOrg : '';
 
   executeSerially([
     () => mapResources(packageDirectory),
@@ -78,10 +112,11 @@ function getLearningObjectiveIds(packageDirectory: string) {
 
 function convertAction() {
 
-  const packageDirectory = process.argv[3];
-  const outputDirectory = process.argv[4];
-  const specificOrg = process.argv[5];
-  const specificOrgId = process.argv[6];
+  const packageDirectory = options.inputDir;
+  const outputDirectory = options.outputDir;
+  const specificOrg = options.specificOrg;
+  const specificOrgId = options.specificOrgId;
+  const projectSlug = options.slug;
 
   executeSerially([
     () => mapResources(packageDirectory),
@@ -93,9 +128,12 @@ function convertAction() {
     const references = [...results.slice(1), ...results.slice(2)];
 
     const mediaSummary : Media.MediaSummary = {
+      projectSlug,
       mediaItems: {},
-      missing: []
-    }
+      missing: [],
+      urlPrefix: options.mediaUrlPrefix,
+      flattenedNames: {}
+    };
 
     Convert.convert(mediaSummary, specificOrg)
     .then((results) => {
@@ -108,7 +146,7 @@ function convertAction() {
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
 
         Convert.output(
-          packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
+          projectSlug, packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
       });
 
     });
@@ -120,24 +158,26 @@ function convertAction() {
 function helpAction() {
   console.log('OLI Legacy Course Package Digest Tool');
   console.log('-------------------------------------\n');
-  console.log('Supported actions:\n');
+  console.log('Usage:\n');
   console.log('Summarizing a course package current OLI DTD element usage:');
-  console.log('npm run start summarize <course package dir> <outdir dir> [<organization id>]\n');
-  console.log('Convert an OLI course package to the Torus digest format:');
-  console.log('npm run start convert <course package dir> <outdir dir> [<organization id>]\n');
+  console.log('npm run start --operation [summarize | convert] --inputDir <course package dir> --outputDir <outdir dir> [--specificOrgId <organization id> --specificOrg <org path>]\n');
+  console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
 function main() {
 
-  const action = process.argv[2];
+  if (validateArgs()) {
 
-  if (action === 'summarize') {
-    summaryAction();
-  } else if (action === 'convert') {
-    convertAction();
-  } else {
-    helpAction();
+    if (options.operation === 'summarize') {
+      summaryAction();
+    } else if (options.operation === 'convert') {
+      convertAction();
+    } else {
+      helpAction();
+    }
+
   }
+
 }
 
 main();
