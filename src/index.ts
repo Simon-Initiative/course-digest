@@ -1,9 +1,10 @@
 import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
-import { executeSerially, ItemReference, MissingResource } from './utils/common';
+import { executeSerially } from './utils/common';
 import { mapResources } from './utils/resource_mapping';
 import * as Summarize from './summarize';
 import * as Convert from './convert';
+import * as Media from './media';
 import { processResources } from './process';
 
 function collectOrgItemReferences(packageDirectory: string, id: string = '') {
@@ -87,18 +88,27 @@ function convertAction() {
     () => collectOrgItemReferences(packageDirectory, specificOrgId),
     () => getLearningObjectiveIds(packageDirectory)])
   .then((results: any) => {
-    
+
     const map = results[0];
     const references = [...results.slice(1), ...results.slice(2)];
 
-    Convert.convert(specificOrg)
+    const mediaSummary : Media.MediaSummary = {
+      mediaItems: {},
+      missing: []
+    }
+
+    Convert.convert(mediaSummary, specificOrg)
     .then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
-      
-      processResources(Convert.convert, references, map)
+
+      processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
       .then((converted: Resources.TorusResource[]) => {
-        const updated = Convert.updateDerivativeReferences(converted)
-        Convert.output(packageDirectory, outputDirectory, hierarchy, updated);
+
+        const updated = Convert.updateDerivativeReferences(converted);
+        const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
+
+        Convert.output(
+          packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
       });
 
     });

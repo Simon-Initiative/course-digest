@@ -1,8 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
- 
-import * as DOM from './utils/dom';
+export interface MediaSummary {
+  mediaItems: {[k: string] : MediaItem };
+  missing: MediaItemReference[];
+}
 
 export interface FlattenResult {
   mediaItems: MediaItem[];
@@ -33,40 +35,29 @@ export interface UploadFailure {
   error: string;
 }
 
-// From a collection of OLI course project XML files, find all
-// referenced media items
-export function find(files: string[]) : MediaItemReference[] {
-
-  return files.reduce(
-    (m: any, filePath: any) => {
-      const $ = DOM.read(filePath);
-      return [...m, ...findFromDOM($).map(assetReference => ({ filePath, assetReference }))]
-    },
-    []
-  );
-
+// From a DOM object, find all media item references;
+export function find(filePath: string, $: any) : MediaItemReference[] {
+  return findFromDOM($).map(assetReference => ({ filePath, assetReference }));
 }
+
+
 
 // Take a collection of media item references and flatten them into a single
 // virtual directory, being careful to account for the same name 
 // (but different file) in different directories.  
-export function flatten(mediaItemReferences: MediaItemReference[]) : FlattenResult {
+export function flatten(mediaItemReferences: MediaItemReference[], summary: MediaSummary) : void {
 
   const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
-
-  // Find the unique set of absolute references, tracking their references
-  const mediaItemsMap : {[k: string] : MediaItem } = {};
-  const missing : MediaItemReference[] = [];
   const flattenedNames : {[k: string] : string } = {};
-
+  
   mediaItemReferences.forEach(ref => {
 
     const absolutePath = resolve(ref);
     const name = getName(absolutePath);
-
-    if (fs.existsSync(path)) {
-
-      if (mediaItemsMap[absolutePath] === undefined) {
+    
+    if (fs.existsSync(absolutePath)) {
+      
+      if (summary.mediaItems[absolutePath] === undefined) {
 
         // See if we need to rename this file to avoid conflicts with an already
         // flattened file
@@ -74,27 +65,21 @@ export function flatten(mediaItemReferences: MediaItemReference[]) : FlattenResu
           ? generateNewName(name, flattenedNames)
           : name;
 
-        mediaItemsMap[absolutePath] = {
+        summary.mediaItems[absolutePath] = {
           file: absolutePath,
           flattenedName,
           references: [ref],
         }
       } else {
-        mediaItemsMap[absolutePath].references.push(ref);
+        summary.mediaItems[absolutePath].references.push(ref);
       }
     } else {
-      missing.push(ref);
+      summary.missing.push(ref);
     }
     
 
   });
 
-  const mediaItems = Object.keys(mediaItemsMap).map((k: string) => mediaItemsMap[k]);
-
-  return {
-    missing,
-    mediaItems,
-  };
 }
 
 function generateNewName(name: string, flattenedNames: {[k: string] : string }) {
@@ -121,7 +106,7 @@ function generateNewName(name: string, flattenedNames: {[k: string] : string }) 
 // XML document, into a reference that is relative to the root directory
 // of the project
 export function resolve(reference: MediaItemReference) : string {
-  return path.resolve(reference.filePath, reference.assetReference);
+  return path.resolve(path.dirname(reference.filePath), reference.assetReference);
 }
 
 // Uploads a collection of media items to an S3 bucket, staging them for
@@ -136,10 +121,9 @@ export function stage(
 
 function findFromDOM($: any) : string[] {
 
-  // img, audio
   const paths : any = {};
 
-  $('img').each((i: any, elem: any) => {
+  $('image').each((i: any, elem: any) => {
     paths[$(elem).attr('src')] = true;
   });
 
@@ -161,6 +145,6 @@ function findFromDOM($: any) : string[] {
 }
 
 function isLocalReference(src: string) : boolean {
-  return !(src.startsWith('http://') || src.startsWith('https://'));
+  return src.startsWith('.');
 }
 

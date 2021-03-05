@@ -1,6 +1,7 @@
 import { TorusResource, ResourceType, Page, Activity } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, ItemReference } from './utils/common';
+import * as Media from './media';
 import * as DOM from './utils/dom';
 
 type DerivedResourceMap =  {[key: string]: TorusResource[]};
@@ -8,11 +9,7 @@ type DerivedResourceMap =  {[key: string]: TorusResource[]};
 const fs = require('fs');
 const tmp = require('tmp');
  
-interface MediaItem {
-  file: string;
-}
-
-export function convert(file: string) : Promise<(TorusResource | string)[]> {
+export function convert(mediaSummary: Media.MediaSummary, file: string) : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
 
@@ -25,7 +22,9 @@ export function convert(file: string) : Promise<(TorusResource | string)[]> {
       const tmpobj = tmp.fileSync();
       fs.writeFileSync(tmpobj.name, $.html()); 
       
-      $ = DOM.read(tmpobj.name);
+      $ = DOM.read(tmpobj.name);  
+      Media.flatten(Media.find(file, $), mediaSummary);
+
       item.restructure($);
       
       const xml = $.html();
@@ -109,9 +108,8 @@ export function output(
   courseDirectory: string,
   outputDirectory: string,
   hierarchy: TorusResource,
-  converted: TorusResource[]) {
-
-  const mediaItems: MediaItem[] = [];
+  converted: TorusResource[],
+  mediaItems: Media.MediaItem[]) {
 
   return executeSerially([
     () => outputManifest(courseDirectory, outputDirectory),
@@ -155,10 +153,10 @@ function outputHierarchy(outputDirectory: string, h: TorusResource) {
   return outputFile(`${outputDirectory}/_hierarchy.json`, h);
 }
 
-function outputMediaManifest(outputDirectory: string, mediaItems: MediaItem[]) {
+function outputMediaManifest(outputDirectory: string, mediaItems: Media.MediaItem[]) {
 
   const manifest = {
-    mediaItems,
+    mediaItems: mediaItems.map((m: Media.MediaItem) => ({ name: m.flattenedName, file: '' })),
     type: 'MediaManifest',
   };
 
