@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-digital_images">
+	<head>
+		<title>Digital Images</title>
+		<objref idref="u-images-m-images-p-digital_images_LO_1" />
+		<objref idref="u-images-m-images-p-digital_images_LO_2" />
+	</head>
+	<body>
+		<image id="dabd51c03e144cc68164a6e7fc5680c4" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption>
+				<p id="a4ba238feab947c0af29a8b6cb7abadf" />
+			</caption>
+			<popout enable="false"></popout>
+		</image>
+		<section id="b9c623b60388444498f4d5afc993f983">
+			<title>Features of Digital Images</title>
+			<body>
+				<p id="b80e221f0cb14df3bb367aee4a2fdf13">In this section, we look at the basic features of digital images. You see images on computers and phones all the time. We look behind the curtain to see how images are put together. What looks like an ordinary image on your device&apos;s display is actually a file consisting of many numbers.</p>
+				<section id="d7ad2579877f4a6bb687aad209f507f8">
+					<title>Pixels</title>
+					<body>
+						<p id="bc8d72ba25874a54a70cf78501f6d915">Here is an image of some yellow flowers:</p>
+						<image id="b9136a297165401aaa7cf45295436ebc" src="../webcontent/flowers.jpg" alt="yellow flowers" style="inline" vertical-align="middle">
+							<caption>
+								<p id="a04ee6d40d1942bb80a1421fc92fa50a" />
+							</caption>
+							<popout enable="false"></popout>
+						</image>
+						<p id="f2e07e631fc94aa895b9e415e9b1f5f5">Zooming in on the upper-left flower, we can see that it is actually made of many tiny square <em style="italic">pixels</em>, each showing just one color. Looking at the image normally, we see the whole scene. By zooming, we see the tiny, artificial-looking, one-color pixels that make up the image.</p>
+						<image id="a4eaf4d4f140424fb7dcd865af2e02be" src="../webcontent/flowers-pixels.png" alt="zoom in to see pixels" style="inline" vertical-align="middle">
+							<caption>
+								<p id="c611dcaec5ce4158b6ea7915568dfa95" />
+							</caption>
+							<popout enable="false"></popout>
+						</image>
+						<p id="abdaad3f694a429cb5cd7ca6f9bcb4ef">The size of an image can be expressed in pixels; for example, an image might be 800 pixels wide by 600 pixels high. The total number of pixels is just the product: 800 * 600 = 480,000. A <em style="italic">megapixel</em> is 1 million pixels, so 480,000 pixels is about 0.5 megapixels. Digital cameras today produce images with several megapixels per image, say 8000 × 6000, for about 48 megapixels.</p>
+					</body>
+				</section>
+				<section id="dabcb83a8a3d40ca9355ea9cc3037ec2">
+					<title>Pixel x,y Coordinates</title>
+					<body>
+						<p id="cc31462028914525955c3ffb212cc66f">We do not work extensively with individual x,y coordinates. You just need to see that there is an x,y grid covering the image, so every pixel has its own x,y coordinate.</p>
+						<p id="ea1a60096d7a42108dd2a69ce07204a4">The <em style="italic">origin</em> pixel is x=0, y=0, which is at the upper-left of the image. The <em style="italic">x</em> numbers increase going to the right of the origin, so x=1, y=0 is one pixel to the right. Coordinates such as x=1, y=0 are often just written in parenthesis, like so: (1, 0). The <em style="italic">y</em> numbers increase going down from the origin, so y=0 is the top row, y=1 is the next row down, and so on.</p>
+						<image id="fb17006424e24e518c4ac7988dc53931" src="../webcontent/image-diagram1.png" alt="grid of pixels with x,y coordinates" style="inline" vertical-align="middle">
+							<caption>
+								<p id="ba2df1943cd1445ab56d0d334bce4a67" />
+							</caption>
+							<popout enable="false"></popout>
+						</image>
+						<p id="b075cec1d5f54752aa1fecfb6ab12f4d">The key point is that there is an x,y grid, and every pixel has its own x,y coordinates within the grid. The (0, 0) pixel is at the upper left.</p>
+					</body>
+				</section>
+			</body>
+		</section>
+		<wb:inline idref="a_5f49b7ed82504b88827eb0db47b04ec7"/>
+		<wb:inline idref="a_97c696803f634d51aaed17dc20850de5"/>
+		<wb:inline idref="a_5a31922cb6344ac3832866d50372fb3a"/>
+		<p id="c8c31e51af154445babb00705028d219" />
+		<section id="dc2fdf9971a4433090e79ed6b6e65c89">
+			<title>Newton&apos;s Color Prism</title>
+			<body>
+				<p id="c3a60481641c443a9ad91cb227392b35" />
+				<image id="e2ab6b7c703f4a14b46749194468ec99" src="../webcontent/newton-prism.jpg" alt="newton prism experiment" style="inline" vertical-align="middle">
+					<caption>
+						<p id="e71e6c58b12f490d9f741e4e8bde172a" />
+					</caption>
+					<popout enable="false"></popout>
+				</image>
+				<p id="bb271bab622540ba917dd47b09993b85">Sir Isaac Newton did the famous prism experiment, showing that white light is made up of a spectrum of pure colored light. The photograph above shows a triangular prism. White sunlight is coming from the left into the prism, which splits up (<em style="italic">defracts</em>) the light. Coming out of the prism is a continuous range of pure colors, seven of which are commonly named as the colors of the rainbow: red, orange, yellow, green, blue, indigo, violet (ROY G BIV). Imagine running the experiment backwards: combining various colored lights to form white light. We will do this later.</p>
+				<section id="dc2304d11ba3455d8a52b3ef4136bb88">
+					<title>RGB Color Scheme: Red, Green, Blue</title>
+					<body>
+						<p id="a45efebb574f438086618bac5da05d6e">Each pixel shows a single color. How is a single color represented?</p>
+						<p id="f4752062a402427d810820318f2008e7">The red, green, blue (RGB) scheme is a common way to represent a single color, and that&apos;s what we use here. The idea is that any desired color can be formed by combining red, green, and blue light, varying the brightness of each to produce the desired color.</p>
+						<section id="c4d23ae56d4b4fa4810c4d8f465265fa">
+							<title>RGB Explorer</title>
+							<body>
+								<p id="c56b0150c390442891eb900b102d2398">The best way to see how RGB works is to try it with this <activity_link title="u-course_resources-m-course_resources-p-rgb_explorer" idref="u-course_resources-m-course_resources-p-rgb_explorer" target="self" purpose="checkpoint">RGB Explorer</activity_link> page. The page has three sliders, one each for red, green, and blue. Move the sliders around to see how levels of red, green, and blue can produce any color.</p>
+								<p id="c957abb9cb6041ca9b6dd24d0b577f99">The RGB scheme is based on combining three types of colored <em style="italic">light</em>. This is different from the paint-combining techniques you may have used. Forming colors with light works differently than it does with paint, and light-forming is what we&apos;re doing here.</p>
+							</body>
+						</section>
+						<section id="fbb65c4326624c7eac325d797894d804">
+							<title>RGB: Three Numbers</title>
+							<body>
+								<p id="e98644e25e0648c880d8cda32f7984ee">In RGB, a color is defined as a mixture of pure red, green, and blue lights of various strengths. Each of the red, green, and blue light levels is encoded as a number in the range 0 through 255, with 0 meaning zero light and 255 meaning maximum light.</p>
+								<p id="e13f92dbe1f7422d88215e21765b2c38">For example, red=255, green=100, blue=0 defines a color in which red is maximum, green is medium, and blue is not present at all, resulting in a shade of orange. In this way, any color can be produced by specifying the brightness in the range 0 through 255 for the red, blue, and green components of the pixel.</p>
+								<p id="e1c5525491d846ab90a24c36ae3fc9c9">The table below shows a few common colors and how they are represnted by RGB numbers.</p>
+								<table id="ff0c886bb61b4bb2ad19544d78e706f9" summary="" rowstyle="plain">
+									<cite id="ic495c838222946198447a63157fe2a6a" />
+									<caption>
+										<p id="f2ebb547b67f4516a927e10b1af92b4a" />
+									</caption>
+									<tr>
+										<th colspan="1" rowspan="1" align="left">
+											<p id="fa226b648a9f486f9e6190f77480bf49">Color</p>
+										</th>
+										<th colspan="1" rowspan="1" align="left">
+											<p id="b13564fc6a064808a099f8829729ecda" />
+										</th>
+										<th colspan="1" rowspan="1" align="left">
+											<p id="a082537c035d487ea19d570e7dcf65ea">Red Number</p>
+										</th>
+										<th colspan="1" rowspan="1" align="left">
+											<p id="fe1417f722b24abf814644794d001454">Green Number</p>
+										</th>
+										<th colspan="1" rowspan="1" align="left">
+											<p id="dc3b96cef158486db81de6006a5346e3">Blue Number</p>
+										</th>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="e8f52d77182245858b80b830495309d3">Red</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c882f4b5392c42f5b040820ee5d44e90"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c09a8b83a6f647fc900415a174e27958">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="f9638ec1988f4bf48c891118388b68fc">0</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="cfbd4951fb1e493ea5eac980a05326cd">0</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c23cc1f098d44f3bad384e59c078bd74">Purple (red+blue)</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="a1ede2ad7750498a93d91400c509cc7d"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="cdee096d2b714bc5a2f9ff25cb0d46a6">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="b8da2ff2d3af447cb46fec3416d51be9">0</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c538176413f24edeb00333445062d8a9">255</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="ee4252e597c04336bb5ed2100216ce8d">Yellow (red+green)</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="aa85a0eb493b4b2ba913dd1cb55cdbf7"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="e4098158a3794af5936b9cfb67cb3240">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c93f43c50436431aa1f0cf5a96b0324b">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="aa9ddd69a7174f2f9a651a4dc926b691">0</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="eb33caafd5744f56a74ebf24d0edcbbd">Darker Yellow</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="eb5628de9d4d49bb9b7920cbc9e997e6"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="a94e197a74dc415aba23fff4caf660fa">192</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="d67d38a6bdda46089ce686645fe1285a">192</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="b71b151688924b1c9608dd35c95a96e8">0</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="a8aed8eb7449419cb9c7a95af37b756b">White (all 255)</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="c6929dfef15e4a7ba91cc749d5df574a"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="a51a80a7ca334bd4bc941c5f38234cf9">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="ed3cb48673df4e209734a3171981dd8d">255</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="b701c3d665914e01a1deea97cff7c744">255</p>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="bca28aa14c1944fcbfd9a2ae4c610356">Black (all 0)</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="edbc9f0fbe7a4ffeb973585a690917b2"></p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="d0078917f236476394ada45b18a8c3e0">0</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="e01a9838eeb44d79bc2d0f19d90dbd2f">0</p>
+										</td>
+										<td colspan="1" rowspan="1" align="left">
+											<p id="a2c0d725bb554379854f12e71eb110a9">0</p>
+										</td>
+									</tr>
+								</table>
+							</body>
+						</section>
+					</body>
+				</section>
+				<section id="d4c0ab7165cb4cc9aa722d4f111aab6d">
+					<title>Image Diagram with RGB</title>
+					<body>
+						<p id="b4941d04b0774f7392fddc2bbd853dc6">Now we have all the elements to represent an digital image as numbers. The image is made of many pixels. Each pixel has five numbers:</p>
+						<ul id="f4263e5edd8444c5b9488ed6628d88d2">
+							<li>
+								<p id="a5017dab58964db1ab54e04cbb11ab98">
+									<em>x,y numbers:</em> The location of every pixel is defined by its <em style="italic">two</em> x,y numbers.</p>
+							</li>
+							<li>
+								<p id="b22fda336fb444e48c7a2bbb3dd394d5">
+									<em>RGB numbers:</em> The color shown by every pixel is defined by its <em style="italic">three</em> RGB numbers.</p>
+							</li>
+						</ul>
+						<image id="dad45b23dfb04ed8b07a84b4a9183fc8" src="../webcontent/image-diagram2.png" alt="grid of pixels with x,y coordinates and RGB numbers" style="inline" vertical-align="middle">
+							<caption>
+								<p id="c3f10a070b1e4d58b27583bbea0ca000" />
+							</caption>
+							<popout enable="false"></popout>
+						</image>
+					</body>
+				</section>
+				<section id="bb4445fb256d47f6a5d157954d38a53f">
+					<title>Digital Atomization</title>
+					<body>
+						<p id="c38414f5ca5948928ce2702334d377a4">We have seen how a digital image is represented in the computer: the image is broken down into tiny pixels. Then each pixel is broken down into its three RGB numbers, each in the range 0 to 255. So ultimately, the whole image is represented as a mass of little numbers. This &quot;atomization&quot;, representing something big by a mass of little numbers, is a common pattern in computer systems.</p>
+					</body>
+				</section>
+			</body>
+		</section>
+		<wb:inline idref="a_2b3a586672b644d4b3fa8b6c54051945"/>
+		<wb:inline idref="a_d41df3e2d5ae422784ef4693bdac4558"/>
+		<wb:inline idref="a_f55e21646eaa41a1bfb0b3d2c13451c9"/>
+	</body>
+</workbook_page>

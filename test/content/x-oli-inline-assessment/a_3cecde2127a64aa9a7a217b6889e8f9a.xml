@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_3cecde2127a64aa9a7a217b6889e8f9a">
+   <title>tutor</title>
+   <question id="aQ_3cecde2127a64aa9a7a217b6889e8f9a">
+      <body>
+         <p>When asked for your password on a website, what do you check to determine whether the website is a phishing site?</p>
+         <p>     </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Check that the icons and colors of the page look right. </choice>
+         <choice value="1">Check that the logo and images are right. </choice>
+         <choice value="2">Check that the date of the page is current. </choice>
+         <choice value="3">Check that the URL at the top of the browser is correct. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Someone can easily copy the colors from the real website.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Someone can easily copy the logo and images from the real site.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>The date can be correct on the phishing site too.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>Check that the URL is, for example, www.ebay.com, not a phishing domain such as log.in.now.ebay.baddyguy.ru.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-code_basic-m-code_basic_quiz-p-code_basic_quiz">
+	<head>
+		<title>Code Basic Quiz</title>
+	</head>
+	<body>
+		<image id="ee813a7b32214e8da212968c6b35d658" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<codeblock id="a42363a5ca3a47dd9b11d6118f18667e" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;1a62304746e94fe1813c3995f3db36ef&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 1&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Edit the starter code so that it prints the following when run:
+
+&lt;pre&gt;
+1 money
+2 show
+&lt;/pre&gt;&quot; regex=&quot;1\smoney\s2\sshow&quot; starter_code=&quot;print(1, &quot;money&quot;);
+print(2);&quot; solution_code=&quot;&quot;/&gt;
+		</codeblock>
+		<codeblock id="b284229b62b545dd839faaeb8761b761" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;df1894c4f0aa44a896ec26fbb3f49a8a&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 2&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Change the code so it produces the following output, featuring the word &quot;chocolate&quot; instead of &quot;vanilla.&quot; This can be done by changing only 1 line.&lt;/p&gt;
+
+&lt;pre&gt;
+chocolate yes
+chocolate now
+chocolate chocolate
+&lt;/pre&gt;
+&quot; regex=&quot;chocolate\syes\schocolate\snow\schocolate\schocolate&quot; starter_code=&quot;x = &quot;vanilla&quot;;
+print(x, &quot;yes&quot;);
+print(x, &quot;now&quot;);
+print(x, x);&quot; solution_code=&quot;&quot;/&gt;
+		</codeblock>
+	</body>
+</workbook_page>

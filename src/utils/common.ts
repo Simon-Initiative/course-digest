@@ -3,6 +3,16 @@ export type ItemReference = {
   id: string,
 };
 
+export type MissingResource = {
+  type: 'MissingResource',
+  id: string,
+};
+
+export function replaceAll(s: string, t: string, w: string) { 
+  var re = new RegExp(t, 'g');
+  return s.replace(re, w);
+}
+
 // Take an array of functions that return promises and
 // execute them serially, resolving an array of their
 // resolutions
@@ -27,4 +37,8 @@ export enum LegacyTypes {
   skills_model = 'x-oli-skills_model',
   webcontent = 'x-oli-webcontent',
   assessment2_pool = 'x-oli-assessment2-pool',
+}
+
+export function guid() {
+  return '' + Math.floor(Math.random() * Math.floor(Math.pow(2, 32) - 1));
 }

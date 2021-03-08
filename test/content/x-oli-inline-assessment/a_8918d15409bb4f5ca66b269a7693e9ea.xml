@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_8918d15409bb4f5ca66b269a7693e9ea">
+   <title>tutor</title>
+   <question id="aQ_8918d15409bb4f5ca66b269a7693e9ea">
+      <body>
+         <p>Is the following an effective and efficient strategy for Joe to use?</p>
+         <p>Jump straight to the first activity and if he cannot answer it, go  back to the beginning of the unit to read the text.</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> yes  </choice>
+         <choice value="1"> no  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="1">
+            <feedback>  If Joe has some previous experience with programming, this may be the most efficient and effective strategy for him. The good thing about this strategy is that Joe uses the  activities as a way to assess his own capabilities and then adjusts his  approach accordingly. Moreover, by deciding to go back to read the preceding  text, Joe is giving himself a chance to practice independent  learning. </feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>  If Joe has some previous experience with programming, this may be the most efficient and effective strategy for him. The good thing about this strategy is that Joe uses the  activities as a way to assess his own capabilities and then adjusts his  approach accordingly. Moreover, by deciding to go back to read the preceding  text, Joe is giving himself a chance to practice independent  learning. </feedback>
+         </response>
+         <hint> Think about which of these different strategies will be most likely to give  Joe (a) all the information he needs for the final exam and (b) opportunities to  practice applying the information and checking his understanding. </hint>
+      </part>
+   </question>
+</assessment>

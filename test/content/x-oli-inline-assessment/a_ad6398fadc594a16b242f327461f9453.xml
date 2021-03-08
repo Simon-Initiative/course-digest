@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_ad6398fadc594a16b242f327461f9453">
+   <title>tutor</title>
+   <question id="aQ_ad6398fadc594a16b242f327461f9453">
+      <body>
+         <p>Suppose we have a video camera that produces video data at the rate of 2 GB per hour. Recording for 15 minutes creates about how many megabytes of data?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="500">
+            <feedback>2 GB per hour per hour is equal to 2000 MB per hour. 15 minutes is a quarter of an hour, so 15 minutes produces 500 MB.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

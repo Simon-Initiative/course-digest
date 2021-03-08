@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_affb920167ad4b69b508c3f07d79a6cf">
+   <title>tutor</title>
+   <question id="aQ_affb920167ad4b69b508c3f07d79a6cf">
+      <body>
+         <p>Which of the following best describes Moore's law?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">The speed of a transistor doubles every 18 to 24 months. </choice>
+         <choice value="1">The number of platters in a hard drive doubles every 18 to 24 months. </choice>
+         <choice value="2">The number of transistors that can fit on an area of chip doubles every 18 to 24 months. </choice>
+         <choice value="3">The cost for transistors reduces by half every 18 to 24 months. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Moore's law is about transistors, but it is not exactly about speed.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Moore's law is not about platters in hard drives.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Moore's law is about fitting more transistors per area of chip.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Moore's law is not about cost reduction.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

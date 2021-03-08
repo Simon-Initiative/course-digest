@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_6ecf15fefa92430db9436404f8c5aede">
+   <title>tutor</title>
+   <question id="aQ_6ecf15fefa92430db9436404f8c5aede">
+      <body>
+         <p>Is the following an effective and efficient strategy for Joe to use?</p>
+         <p>Jump straight to the activities without reading the text. For each  activity, select different answer choices to see if they’re right or wrong and  read the feedback that appears.</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> yes  </choice>
+         <choice value="1"> no  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>  Learning by doing can be a good idea. However, Joe should  keep in mind that the feedback for correct and incorrect answers is not as  complete as the preceding text, so he might be missing important  information. </feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>  Learning by doing can be a good idea. However, Joe should  keep in mind that the feedback for correct and incorrect answers is not as  complete as the preceding text, so he might be missing important  information. </feedback>
+         </response>
+         <hint> Think about which of these different strategies will be most likely to give  Joe (a) all the information he needs for the final exam and (b) opportunities to  practice applying the information and checking his understanding. </hint>
+      </part>
+   </question>
+</assessment>

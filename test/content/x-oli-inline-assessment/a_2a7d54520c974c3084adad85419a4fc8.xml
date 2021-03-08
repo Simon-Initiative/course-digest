@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_2a7d54520c974c3084adad85419a4fc8">
+   <title>tutor</title>
+   <question id="aQ_2a7d54520c974c3084adad85419a4fc8">
+      <body>
+         <p>Suppose there are 10 folders, and each folder contains 500 MB of images. What is the total number of gigabytes of all the images?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="5">
+            <feedback>Ten folders of 500 MB each is 5 GB</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>Ten folders of 500 MB each is 5000 MB total.</hint>
+         <hint>1000 MB is 1 GB.</hint>
+         <hint>5000 MB is 5 GB.</hint>
+      </part>
+   </question>
+</assessment>

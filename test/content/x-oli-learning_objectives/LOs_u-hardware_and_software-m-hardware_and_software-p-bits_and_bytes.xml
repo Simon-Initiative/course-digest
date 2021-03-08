@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-hardware_and_software-m-hardware_and_software-p-bits_and_bytes">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="34f920dce0884d3e986ca3ac7d0fcb76" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-hardware_and_software-m-hardware_and_software-p-bits_and_bytes_LO_1">
+Learning Objective: Identify bits and bytes.
+<!--<h1>Bits and Bytes</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objectives</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+<li>Identify the number of values a bit can hold.<!basic number-of-patterns of bits and bytes.</li>
+  <li>Identify the number of possible bit patterns in a byte.</li>
+  <li>Describe the relation between bits and bytes.</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>-->
+</objective>
+</objectives>

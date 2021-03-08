@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_1e455c1ceea64a99bbf1da2d560052a6">
+   <title>tutor</title>
+   <question id="aQ_1e455c1ceea64a99bbf1da2d560052a6">
+      <body>
+         <p>A silicon chip most often contains millions of which of the following?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Pixels </choice>
+         <choice value="1">Transistors </choice>
+         <choice value="2">Hard drives </choice>
+         <choice value="3">Platters </choice>
+         <choice value="4">Resistors </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A pixel is a colored dot in a picture, not a hardware component.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>Transistors are a key electrical component etched onto chips.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A hard drive is a unit where data/bytes are stored for a long period of time.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>A hard drive platter (or disk) is the circular disk on which magnetic data is stored in a hard drive.</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>Resistors are avoided as they generate heat.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

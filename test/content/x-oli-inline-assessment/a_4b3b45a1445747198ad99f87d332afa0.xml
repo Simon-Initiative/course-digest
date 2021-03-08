@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_4b3b45a1445747198ad99f87d332afa0">
+   <title>tutor</title>
+   <question id="aQ_4b3b45a1445747198ad99f87d332afa0">
+      <body>
+         <p>Which of the following best describes the role of an IP address?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Identify a web page. </choice>
+         <choice value="1">Prioritize which computer has access to the network. </choice>
+         <choice value="2">Identify a computer on a network. </choice>
+         <choice value="3">Encrypt all packets before they are sent. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>You need more than the IP address to identify a web page.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The IP address is part of networking but is not part of prioritization.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>The IP address, much like a street address, identifies a computer to send and receive packets.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The IP address is part of networking but generally not part of encryption.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

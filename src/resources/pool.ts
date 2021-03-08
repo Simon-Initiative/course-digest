@@ -1,28 +1,42 @@
 
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
-import { HasHistogram } from './common';
+import { Resource, TorusResource, Summary } from './resource';
 
-export interface PoolSummary extends HasHistogram {
-  type: 'PoolSummary';
-}
+export class Pool extends Resource {
 
-// Summarize an organization
-export function summarize(file: string) : Promise<PoolSummary | string> {
+  restructure($: any) : any {
 
-  const summary : PoolSummary = {
-    type: 'PoolSummary',
-    elementHistogram: Histogram.create(),
-  };
+  }
 
-  return new Promise((resolve, reject) => {
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve(['']);
+  }
 
-    visit(file, (tag: string, attrs: Object) => {
-      Histogram.update(summary.elementHistogram, tag, attrs);
-    })
-    .then((result) => {
-      resolve(summary);
-    })
-    .catch(err => reject(err));
-  });
+  summarize(file: string): Promise<string | Summary> {
+
+    const summary : Summary = {
+      type: 'Summary',
+      subType: 'SummativePool',
+      elementHistogram: Histogram.create(),
+      id: '',
+      found: () => [],
+    };
+
+    return new Promise((resolve, reject) => {
+
+      visit(file, (tag: string, attrs: Object) => {
+        Histogram.update(summary.elementHistogram, tag, attrs);
+
+        if (tag === 'pool') {
+          summary.id = (attrs as any)['id'];
+        }
+
+      })
+      .then((result) => {
+        resolve(summary);
+      })
+      .catch(err => reject(err));
+    });
+  }
 }

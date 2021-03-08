@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_97c696803f634d51aaed17dc20850de5">
+   <title>tutor</title>
+   <question id="aQ_97c696803f634d51aaed17dc20850de5">
+      <body>
+         <p> How many colors can a single pixel show at one time? Type your answer as a whole number.</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="1">
+            <feedback> Just one color at time. Images only look reasonable because the pixels are so tiny.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>A pixel is very small.</hint>
+         <hint>A pixel shows just 1 color.</hint>
+      </part>
+   </question>
+</assessment>

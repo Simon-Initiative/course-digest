@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_1ab8f26368c4411c9e496f5626bc0782">
+   <title>tutor</title>
+   <question id="aQ_1ab8f26368c4411c9e496f5626bc0782">
+      <body>
+         <p>Is the following an effective and efficient strategy for Joe to use?</p>
+         <p>Jump straight to the activities, and after realizing that he has  no idea how to answer the first few, quit and plan to attend recitation that  week.</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> yes  </choice>
+         <choice value="1"> no  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>  This approach is unlikely to be effective, since Joe will  not know what questions to ask at the recitation. By seeking help before  trying to learn the material himself, Joe misses the chance to practice  learning independently. </feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>  This approach is unlikely to be effective, since Joe will  not know what questions to ask at the recitation. By seeking help before  trying to learn the material himself, Joe misses the chance to practice  learning independently. </feedback>
+         </response>
+         <hint> Think about which of these different strategies will be most likely to give  Joe (a) all the information he needs for the final exam and (b) opportunities to  practice applying the information and checking his understanding. </hint>
+      </part>
+   </question>
+</assessment>

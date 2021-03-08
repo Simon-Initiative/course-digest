@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>This problem is titled "Fish Dreams of Paris". This problem will use paris.jpg:
+
+<br></br><img src="paris.jpg" alt="eiffel tower in paris">
+
+<p>
+And striped-fish-blue.jpg:
+<br></br><img src="striped-fish-blue.jpg" alt="toy fish with blue background">
+
+<p>Here the striped fish is facing right in front of a blue background. Parts of the fish itself are blue-the eye and the vertical stripe in the middle. For this problem, we'll let the background image replace those two blue areas as well.
+
+<p>Write bluescreen code to place striped-fish-blue.jpg in front of paris.jpg. In particular, adjust the code so that the blue background, the blue middle stripe, and blue eye of the fish all show the paris.jpg pixels. Adjust the code so the blue towel background below the fish is almost completely replaced.
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="18" cols="70"  class="tacode" spellcheck="false" style='min-height:18em;' meh='image\20\3D\20new\20SimpleImage\28\22striped-fish-blue.jpg\22\29\3B\0Aback\20\3D\20new\20SimpleImage\28\22paris.jpg\22\29\3B\0Aback.setSameSize\28image\29\3B\0A\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20avg\20\3D\20\28pixel.getRed\28\29\20\2B\20pixel.getGreen\28\29\20\2B\20pixel.getBlue\28\29\29/3\3B\0A\20\20//\20your\20code\20here\0A\20\20if\20\28pixel.getBlue\28\29\20\3E\20avg\20\2A\200.7\29\20\7B\0A\20\20\20\20pixel2\20\3D\20back.getPixel\28pixel.getX\28\29\2C\20pixel.getY\28\29\29\3B\0A\20\20\20\20pixel.setRed\28pixel2.getRed\28\29\29\3B\0A\20\20\20\20pixel.setGreen\28pixel2.getGreen\28\29\29\3B\0A\20\20\20\20pixel.setBlue\28pixel2.getBlue\28\29\29\3B\0A\20\20\7D\0A\7D\0A\0Aprint\28image\29\3B\0A\0A'    tol='12' 
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("striped-fish-blue.jpg");
+back = new SimpleImage("paris.jpg");
+back.setSameSize(image);
+
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

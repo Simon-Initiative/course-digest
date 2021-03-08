@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Here is the curb.jpg image:
+
+<br></br><image src="curb.jpg" alt="red curb">
+
+<p>The goal for this problem is to change the curb to look blue. Detect the red pixels of the curb using the avg technique. For each pixel, change its red and green values to be half the average value, and change its blue value to 1.2 times the average value. In effect, this sets red and green low and blue high, making it look kind of blue. Note that the blue effect will apply to the reddish plants off to the right as well-now they are blueish plants.
+
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="60"  class="tacode" spellcheck="false" style='min-height:12em;' meh='image\20\3D\20new\20SimpleImage\28\22curb.jpg\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20avg\20\3D\20\28pixel.getRed\28\29\20\2B\20pixel.getGreen\28\29\20\2B\20pixel.getBlue\28\29\29/3\3B\0A\20\20if\20\28pixel.getRed\28\29\20\3E\20avg\20\2A\201.2\29\20\7B\0A\20\20\20\20pixel.setRed\28avg\20/\202\29\3B\0A\20\20\20\20pixel.setGreen\28avg\20/\202\29\3B\0A\20\20\20\20pixel.setBlue\28avg\20\2A\201.2\29\3B\0A\20\20\7D\0A\7D\0Aprint\28image\29\3B\0A\0A'    tol='12' 
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("curb.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

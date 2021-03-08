@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-introduction-m-learning_strategies-p-developing_skills_for_independent_learning">
+	<head>
+		<title>Developing Skills for Independent Learning</title>
+	</head>
+	<body>
+		<section id="b659972b69df4a8192c3378eb7ca91c2">
+			<title>Completing This Course Efficiently and Effectively</title>
+			<body>
+				<p id="fba51d10d7c744c3ad3196a19e4e3186">When starting an online course, most people neglect to plan, opting instead to jump in and begin working. While this might seem efficient (after all, who wants to spend time planning when they could be doing?), it can ultimately be inefficient. In fact, one of the characteristics that distinguishes experts from novices is that experts spend far more time planning their approach to a task and less time actually completing it; while novices do the reverse: rushing through the planning stage and spending far more time overall.</p>
+				<p id="bd69449e9eb9413ebffc13046c7ee903">In this course, we want to help you work as efficiently and effectively as possible, given what you already know. Some of you have already taken a programming course and are familiar with many of the concepts. You may not need to work through all of the activities in the course; just enough to make sure that you&apos;ve &quot;got it.&quot; For others, this is your first exposure to programming, and you will want to do more of the activities, since you are learning these concepts for the first time.</p>
+				<p id="fb75bfb91cf849a1889396bc5ea81053">Improving your planning skills as you work through the material in the course will help you to become a more strategic and thoughtful learner and will enable you to more effectively plan your approach to assignments, exams and projects in other courses.</p>
+			</body>
+		</section>
+		<section id="c40cf5da84cc402f8d401394adb4de5a">
+			<title>Metacognition</title>
+			<body>
+				<p id="cafb91eab63b43d49c47fc4602ea20ac">This idea of planning your approach to the course before you start is called <em style="italic">metacognition</em>. 
+				</p>
+				<dl id="f25c161705dd49ddbccd114f0dd196bd">
+					<dt>
+						<p id="cae0b7f83cea4854861bfb4eded11a8c">Metacognition</p>
+					</dt>
+					<dd>
+						<p id="edbf82234bd140e7b73312e2461148fe">(Definition) </p>
+						<p id="e869dbf01759412fb261d7d3035968a4">Metacognition, or “thinking about thinking,” refers to your awareness of yourself as a learner and your ability to regulate your own learning.</p>
+					</dd>
+				</dl>
+				<p id="b8b98e905e144885b47aafef09be0651">Metacognition involves five distinct skills:</p>
+				<ol id="c688759d9f0d4cc4a500db06701904f9">
+					<li>
+						<p id="e39a0096028b4b4a97f4ba97c60055f0">
+							<em>Assess the task</em>—Get a handle on what is involved in completing a task (the steps or components required for success) and any constraints (time, resources).</p>
+					</li>
+					<li>
+						<p id="f11601a3f5eb442ea57ef7ae070e79c4">
+							<em>Evaluate your strengths and weaknesses</em>—Evaluate your own skills and knowledge in relation to a task.</p>
+					</li>
+					<li>
+						<p id="a27b689d4e9244e394ffd56db2459ffd">
+							<em>Plan an approach</em>—Take into account your assessment of the task and your evaluation of your own strengths and weaknesses in order to devise an appropriate plan.</p>
+					</li>
+					<li>
+						<p id="d60e893dc2e74c93acc2c8a8915e8374">
+							<em>Apply strategies and monitor your performance</em>—Continually monitor your progress as you are working on a task, comparing where you are to the goal you want to achieve.</p>
+					</li>
+					<li>
+						<p id="d5c7b369cc0942028c356c82f2c0e30d">
+							<em>Reflect and adjust if needed</em>—Look back on what worked and what didn&apos;t work so that you can adjust your approach next time and, if needed, start the cycle again.</p>
+					</li>
+				</ol>
+				<p id="b5ef4a43c35f4ff394938e67b7c9aaaa">These five skills are applied over and over again in a cycle—within the same course as well as from one course to another:</p>
+				<p id="eb38206e4a644fd2a96a2bfa300a074a">
+					<image id="f130af5891c248c1b0516bde7421ef80" src="../c4x/OLI/ProbStat/asset/introduction_learningstrategies_metcognition_skills.jpg" alt="Image displaying the five distinct skills involved in metacognition." style="inline" vertical-align="middle" height="432" width="578">
+						<caption>
+							<p id="e2d907df42aa478b88031c2d65923a1e" />
+						</caption>
+						<popout enable="false"></popout>
+					</image>
+				</p>
+			</body>
+		</section>
+		<section id="b11c0bb8bc3a4b7ab31f9d1bb48c420e">
+			<title>EXAMPLE: METACOGNITION IN ACTION</title>
+			<body>
+				<p id="d7f8933e8fde450490a4afcef758f396">You get an assignment and ask yourself: “What exactly does this assignment involve and what have I learned in this course that is relevant to it?”</p>
+				<p id="b3762cb6dac34650b4ffded0e89717b2">You are exercising metacognitive skills (1) and (2) by assessing the task and evaluating your strengths and weaknesses in relation to it.</p>
+				<p id="e75424b0fa374666a56c7cdd19ebc545">If you think about what steps you need to take to complete the assignment and determine when it is reasonable to begin, you are exercising skill (3) by planning.</p>
+				<p id="bf82889c50264ed19de1f6d3d2eec407">If you start in on your plan and realize that you are working more slowly than you anticipated, you are putting skill (4) to work by applying a strategy and monitoring your performance.</p>
+				<p id="e43f8d01b9ac40f8811f6238e813060b">Finally, if you reflect on your performance in relation to your timeframe for the task, and discover an equally effective but more efficient way to work, you are engaged in skill (5); reflecting and adjusting your approach as needed.</p>
+				<p id="b16331608d5a484f90a286e2ce6ab5f2" />
+			</body>
+		</section>
+		<section id="b7e46356760a4e2e9ba6727cb2cb819b">
+			<title>Scenario: Joe&apos;s Learning Strategies</title>
+			<body>
+				<p id="bab1784fd1b9411bbbe226d82c7cc7bf">Joe has just started doing work in the Principles of Computing course. He wants to get through it as quickly as possible while still making sure he is prepared to do well on the Quiz in two weeks. He sees a bunch of text with some activities sprinkled throughout, and is trying to decide how to proceed.</p>
+				<p id="d44c2737f7154814b441b61dab94abf4" />
+				<p id="f383afcc22ba410685e2c4044f33df9d" />
+			</body>
+		</section>
+
+		<wb:inline idref="a_6ecf15fefa92430db9436404f8c5aede"/>
+
+		<wb:inline idref="a_8918d15409bb4f5ca66b269a7693e9ea"/>
+
+		<wb:inline idref="a_1ab8f26368c4411c9e496f5626bc0782"/>
+
+		<wb:inline idref="a_dac9c2e8afcd40f2ac76a4caf28442f8"/>
+
+		<wb:inline idref="a_de0e48766b0547d19f7530ef6fb06c5c"/>
+		<p id="e2bf1a07eeeb4a53a10611d88aad9838">Metacognition is not rocket science. In some respects, it is fairly ordinary and intuitive. Yet you’d be surprised how often people lack strong metacognitive skills; and you’d be amazed by how much weak metacognitive skills can undermine performance.</p>
+		<p id="b539d7f8c83d400ca5c92b47e5b0fae1" />
+	</body>
+</workbook_page>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-advanced_images-m-advanced_images-p-grayscale_images">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="7e5cca97373e426fb20d6f777ce3c59f" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-grayscale_images_LO_1">
+		
+Learning Objective: Identify the code to compute the average color value.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="22d5b180b1054408a4a743a23757e96c" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-grayscale_images_LO_2">
+Learning Objective: Identify what makes a pixel grayscale.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="1e4bff9eb7f2498fb9a0e92aa8ef68e8" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-grayscale_images_LO_3">
+Learning Objective: Identify the code to change a pixel to grayscale.
+</objective>
+</objectives>

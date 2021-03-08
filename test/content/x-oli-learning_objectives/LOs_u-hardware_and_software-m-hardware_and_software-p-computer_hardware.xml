@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-hardware_and_software-m-hardware_and_software-p-computer_hardware">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="7ba495c43fe2450d94ca7609a8c5805c" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-hardware_and_software-m-hardware_and_software-p-computer_hardware_LO_1">
+Learning Objective: Identify the major parts of a computer and their functions.
+<!--<h1>Computer Hardware</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+<li>Identify the major parts of a computer and their functions.<!roles.</li>
+
+</ul>
+</ul>
+</div>
+&#xA0;</div>
+-->
+</objective>
+</objectives>

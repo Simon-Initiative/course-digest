@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_13fc8f51d6a54969a9ae6f1838ab6347">
+   <title>tutor</title>
+   <question id="aQ_13fc8f51d6a54969a9ae6f1838ab6347">
+      <body>
+         <p>Which one of the following types of code runs on the CPU directly?</p>
+         <p>     </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">C++ code </choice>
+         <choice value="1">JavaScript code </choice>
+         <choice value="2">Machine code </choice>
+         <choice value="3">Python code </choice>
+         <choice value="4">C code </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>C++ is a high-level language. It works via translation instead of running on the CPU directly.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>JavaScript is a high-level language. It works via translation instead of running on the CPU directly.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Machine code is the native language of the CPU.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Python is a high-level language. It works via translation instead of running on the CPU directly.</feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>C is a high-level language. It works via translation instead of running on the CPU directly.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

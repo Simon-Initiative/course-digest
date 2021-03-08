@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_538034ea2ad1403197d7c7e26f9d4f03">
+   <title>tutor</title>
+   <question id="aQ_538034ea2ad1403197d7c7e26f9d4f03">
+      <body>
+         <p>None of the following passwords is great. Which one is the best?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">password </choice>
+         <choice value="1">rabbit </choice>
+         <choice value="2">kitten6 </choice>
+         <choice value="3">123456789 </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This is a very popular password on the list of widely used passwords. A widely used password is a weak password.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>It's a word with no other characters, so is not the best of the options.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Of the options listed, this one is the best. It is not fantastic, since it's just a word with a digit after it, but it is not too weak. A hacker will have to do quite a lot of guessing to get to this one.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>This number sequence a very popular password on the list of widely used passwords. A widely used password is a weak password.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

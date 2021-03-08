@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>The image below, golden-gate-red.jpg, shows the golden gate bridge, but all of the data is in the red  values.
+
+<br></br><img src="golden-gate-red.jpg" alt="golden gate bridge, shown in red">
+
+<p>Write code that for each pixel copies the red value over to be the green and blue value. The result will be to change the image to grayscale which will look better.
+
+
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="60"  class="tacode" spellcheck="false" style='min-height:12em;' meh='image\20\3D\20new\20SimpleImage\28\22golden-gate-red.jpg\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20pixel.setGreen\28pixel.getRed\28\29\29\3B\0A\20\20pixel.setBlue\28pixel.getRed\28\29\29\3B\0A\0A\7D\0Aprint\28image\29\3B\0A\0A'   
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("golden-gate-red.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:450-->
+
+
+
+</body>
+</html>

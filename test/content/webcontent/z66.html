@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Write code to fix the 51020-stop-sky.png image which should show a red stop sign front with a background of a light blue sky and green tree leaves.
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="70"  class="tacode" spellcheck="false" style='min-height:15em;' meh='image\20\3D\20new\20SimpleImage\28\2251020-stop-sky.png\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20pixel.setRed\28pixel.getRed\28\29\20\2A\2020\29\3B\0A\20\20pixel.setGreen\28pixel.getGreen\28\29\20\2A\2010\29\3B\0A\20\20pixel.setBlue\28pixel.getBlue\28\29\20\2A\205\29\3B\0A\0A\7D\0Aprint\28image\29\3B\0A\0A'   
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("51020-stop-sky.png");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

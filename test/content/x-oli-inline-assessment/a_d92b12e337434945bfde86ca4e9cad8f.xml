@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_d92b12e337434945bfde86ca4e9cad8f">
+   <title>tutor</title>
+   <question id="aQ_d92b12e337434945bfde86ca4e9cad8f">
+      <body>
+         <p>Which of the following best describes the role of a router?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">A router compares packets between networks, looking for a match. 
+</choice>
+         <choice value="1">A router connects to a networks, adding 1-bits as needed. 
+</choice>
+         <choice value="2">A router removes excess packets from a network. 
+</choice>
+         <choice value="3">A router forwarding packets from one network to another. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A router works with packets, but not for comparison.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>A router connects networks, but not to add 1-bits.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A router works with packets, but not to remove them.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>A router forwards packets from one network to the next.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

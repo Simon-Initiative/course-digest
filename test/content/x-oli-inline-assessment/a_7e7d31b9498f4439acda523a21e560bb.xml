@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_7e7d31b9498f4439acda523a21e560bb">
+   <title>tutor</title>
+   <question id="aQ_7e7d31b9498f4439acda523a21e560bb">
+      <body>
+         <p>In the RGB scheme, using only the values 0 and 255, what are the RGB numbers to make bright yellow? Please type in the red, green, and blue numbers separated by spaces like this: 0 255 255</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="255\s+255\s+0">
+            <feedback>Yellow is made with red and green 255, leaving blue at 0.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

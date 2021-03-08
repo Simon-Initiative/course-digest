@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-advanced_images-m-advanced_images-p-image_bluescreen">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="ffc05c18688144c39d801b5ab1016d32" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-image_bluescreen_LO_1">
+Learning Objective: Identify the color test to separate the foreground from the background in a bluescreen image.
+<!--<h1>Image Bluescreen</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+  <li>Identify the color test to separate the foreground from the background in a bluescreen image.</li>
+  <li>define the bluescreen copy-pixel algorithm (this larger algorithm is made up of a series of get/set color operations)</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>-->
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="25aaab5bf05f45bf90056eb5dbae4c82" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-advanced_images-m-advanced_images-p-image_bluescreen_LO_2">
+Learning Objective: Identify the bluescreen copy-pixel algorithm.
+<!--<h1>Image Bluescreen</h1>
+<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+  <li>Identify the color test to separate the foreground from the background in a bluescreen image.</li>
+  <li>Define the bluescreen copy-pixel algorithm (this larger algorithm is made up of a series of get/set color operations)</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>-->
+</objective>
+</objectives>

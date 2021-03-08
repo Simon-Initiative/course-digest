@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-analog_and_digital-m-analog_and_digital-p-analog_and_digital">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="b3a3a9b953924a2da229cc86a9e64a9e" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-analog_and_digital-m-analog_and_digital-p-analog_and_digital_LO_1">
+Learning Objective: Identify basics of digitization.
+</objective>
+</objectives>

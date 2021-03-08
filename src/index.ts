@@ -1,104 +1,48 @@
 import * as Resources from './resources/resource';
 import * as Orgs from './resources/organization';
-import * as Histogram from './utils/histogram';
-import { executeSerially, ItemReference } from './utils/common';
+import { executeSerially } from './utils/common';
+import { mapResources } from './utils/resource_mapping';
+import * as Summarize from './summarize';
+import * as Convert from './convert';
+import * as Media from './media';
+import { processResources } from './process';
+import { upload } from './utils/upload';
+const fs = require('fs');
 
-type MissingResource = {
-  type: 'MissingResource',
-  id: string,
-};
+const optionDefinitions = [
+  { name: 'operation', type: String, defaultOption: true },
+  { name: 'mediaManifest', type: String },
+  { name: 'outputDir', type: String },
+  { name: 'inputDir', type: String },
+  { name: 'specificOrg', type: String },
+  { name: 'specificOrgId', type: String },
+  { name: 'slug', type: String },
+  { name: 'mediaUrlPrefix', type: String }
+];
 
-type SummaryResult = Resources.Summary | MissingResource;
+const commandLineArgs = require('command-line-args');
+const options : any = commandLineArgs(optionDefinitions);
 
-// Bucket and merge the histograms by resource type
-function bucketHistograms(summaries: SummaryResult[]) : Promise<Histogram.BucketedHistograms> {
+function validateArgs() {
 
-  return summaries
-  .filter(s => s.type !== 'MissingResource')
-  .reduce(
-    (h, c) => {
+  if (options.operation === 'convert') {
 
-      if (h[c.type] === undefined) {
-        h[c.type] = (c as any).elementHistogram;
-      } else {
-        h[c.type] = Histogram.merge(h[c.type], (c as any).elementHistogram);
-      }
-      return h;
-    },
-    {} as any);
-}
-
-function outputDigest(
-  outputDirectory: string,
-  resourceSummaries: SummaryResult[],
-  bucketedHistograms: Histogram.BucketedHistograms) {
-
-  return executeSerially([() => Histogram.outputCSV(outputDirectory, bucketedHistograms)]);
-}
-
-// Recursive helper to read a collection of resources and produce summaries.
-// Resources can reference other resources in a chain (e.g. Workbook page ->
-// Assessment -> Pool) so this function operates on resource summarization
-// asynchronously, in batches, and then recursively follows
-// references that it finds in each batch of summaries.  We need to be careful
-// to avoid circular references and processing duplicates so we track the references
-// that we have seen along the way.
-function innerProduceSummaries(
-  resolve: any, reject: any,
-  itemReferences: ItemReference[],
-  resourceMap: Resources.ResourceMap,
-  seenReferences: { [index: string] : boolean },
-  allSummaries: SummaryResult[]) {
-
-  const doSummary = (ref: ItemReference) => {
-    const path = resourceMap[ref.id];
-    seenReferences[ref.id] = true;
-    if (path !== undefined) {
-      return () => Resources.summarize(path);
+    if (options.mediaUrlPrefix && options.slug && options.inputDir 
+      && options.outputDir && options.specificOrg && options.specificOrgId) {
+      
+        return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
     }
-    return () => Promise.resolve({ type: 'MissingResource', id: ref.id });
-  };
+  } else if (options.operation === 'summarize') {
 
-  const summarizers = itemReferences.map((ref: ItemReference) => doSummary(ref));
+    if (options.inputDir && options.outputDir) {
+      return [options.inputDir, options.outputDir].every(fs.existsSync);
+    } 
+  } else if (options.operation === 'upload') {
 
-  executeSerially(summarizers)
-  .then((results: SummaryResult[]) => {
+    return options.slug && options.mediaManifest && fs.existsSync(options.mediaManifest);
+  }
 
-    // From this round of results, collect any new references that
-    // we need to follow
-    const toFollow: ItemReference[] = [];
-    results.forEach((r: SummaryResult) => {
-      allSummaries.push(r);
-
-      if ((r as any).found !== undefined) {
-        (r as any).found().forEach((ref: ItemReference) => {
-          const id = ref.id;
-          if (seenReferences[id] === undefined) {
-            toFollow.push(ref);
-            seenReferences[id] = true;
-          }
-        });
-      }
-    });
-
-    // See if we are done or if there is another round of references
-    // to follow and summarize
-    if (toFollow.length === 0) {
-      resolve(allSummaries);
-    } else {
-      innerProduceSummaries(resolve, reject, toFollow, resourceMap, seenReferences, allSummaries);
-    }
-
-  });
-}
-
-function produceResourceSummaries(
-  itemReferences: ItemReference[], resourceMap: Resources.ResourceMap) : Promise<SummaryResult[]> {
-
-  return new Promise((resolve, reject) => {
-    innerProduceSummaries(resolve, reject, itemReferences, resourceMap, {}, []);
-  });
-
+  return false;
 }
 
 function collectOrgItemReferences(packageDirectory: string, id: string = '') {
@@ -107,19 +51,23 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
     Orgs.locate(packageDirectory)
     .then((orgs) => {
 
-      executeSerially(orgs.map(o => () => Orgs.summarize(o)))
-      .then((results: (string | Orgs.OrganizationSummary)[]) => {
+      executeSerially(orgs.map(file => () => {
+        const o = new Orgs.Organization();
+        return o.summarize(file);
+      }))
+      .then((results: (string | Resources.Summary)[]) => {
 
         const seenReferences = {} as any;
-        const references: ItemReference[] = [];
+        const references: string[] = [];
 
         results.forEach((r) => {
+
           if (typeof(r) !== 'string' && (id === '' || id === r.id)) {
-            r.itemReferences.forEach((i) => {
+            r.found().forEach((i) => {
 
               if (seenReferences[i.id] === undefined) {
                 seenReferences[i.id] = true;
-                references.push(i);
+                references.push(i.id);
               }
 
             });
@@ -143,21 +91,121 @@ function alongWith(promiseFunc: any, ...along: any) {
   });
 }
 
-function main() {
+function summaryAction() {
 
-  const packageDirectory = process.argv[2];
-  const outputDirectory = process.argv[3];
-  const specificOrg = process.argv.length === 5 ? process.argv[4] : '';
+  const packageDirectory = options.inputDir;
+  const outputDirectory = options.outputDir;
+  const specificOrg = options.specificOrg ? options.specificOrg : '';
 
   executeSerially([
-    () => Resources.mapResources(packageDirectory),
+    () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => produceResourceSummaries(results.slice(1), results[0]))
-  .then((summaries: SummaryResult[]) => alongWith(
-    () => Promise.resolve(bucketHistograms(summaries)), summaries))
-  .then((results: any[]) => outputDigest(outputDirectory, results[0], results[1]))
+  .then((results: any) => processResources(Summarize.summarize, results.slice(1), results[0]))
+  .then((summaries: Summarize.SummaryResult[]) => alongWith(
+    () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
+  .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
   .then((results: any) => console.log('Done!'))
   .catch((err: any) => console.log(err));
+}
+
+function getLearningObjectiveIds(packageDirectory: string) {
+
+  return mapResources(packageDirectory + '/content/x-oli-learning_objectives')
+  .then(map => Object.keys(map));
+}
+
+function uploadAction() {
+
+  const mediaManifest = options.mediaManifest;
+  const slug = options.slug;
+
+  const raw = fs.readFileSync(mediaManifest);
+  const manifest = JSON.parse(raw);
+
+  const uploaders = manifest.mediaItems.map((m: any) => {
+    return () => { 
+      console.log('Uploading ' + m.file);
+      return upload(m.file, m.name, slug);
+    };
+  });
+
+  return executeSerially(uploaders);
+
+}
+
+function convertAction() {
+
+  const packageDirectory = options.inputDir;
+  const outputDirectory = options.outputDir;
+  const specificOrg = options.specificOrg;
+  const specificOrgId = options.specificOrgId;
+  const projectSlug = options.slug;
+
+  executeSerially([
+    () => mapResources(packageDirectory),
+    () => collectOrgItemReferences(packageDirectory, specificOrgId),
+    () => getLearningObjectiveIds(packageDirectory)])
+  .then((results: any) => {
+
+    const map = results[0];
+    const references = [...results.slice(1), ...results.slice(2)];
+
+    const mediaSummary : Media.MediaSummary = {
+      projectSlug,
+      mediaItems: {},
+      missing: [],
+      urlPrefix: options.mediaUrlPrefix,
+      flattenedNames: {}
+    };
+
+    Convert.convert(mediaSummary, specificOrg)
+    .then((results) => {
+      const hierarchy = results[0] as Resources.TorusResource;
+
+      processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
+      .then((converted: Resources.TorusResource[]) => {
+
+        const updated = Convert.updateDerivativeReferences(converted);
+        const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
+
+        Convert.output(
+          projectSlug, packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
+      });
+
+    });
+
+  });
+
+}
+
+function helpAction() {
+  console.log('OLI Legacy Course Package Digest Tool');
+  console.log('-------------------------------------\n');
+  console.log('Usage:\n');
+  console.log('Summarizing a course package current OLI DTD element usage:');
+  console.log('npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> [--specificOrgId <organization id> --specificOrg <org path>]\n');
+  console.log('\nNote: All files and directories must exist ahead of usage');
+}
+
+function main() {
+
+  require('dotenv').config();
+
+  if (validateArgs()) {
+
+    if (options.operation === 'summarize') {
+      summaryAction();
+    } else if (options.operation === 'convert') {
+      convertAction();
+    } else if (options.operation === 'upload') {
+      uploadAction().then((r: any) => console.log('Done!'));
+    } else {
+      helpAction();
+    }
+
+  } else {
+    helpAction();
+  }
 
 }
 

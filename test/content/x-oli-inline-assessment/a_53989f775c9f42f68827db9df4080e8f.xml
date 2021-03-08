@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_53989f775c9f42f68827db9df4080e8f">
+   <title>tutor</title>
+   <question id="aQ_53989f775c9f42f68827db9df4080e8f">
+      <body>
+         <p>Which one of the following hardware components provides temporary storage, losing its bytes when the power is turned off?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">CPU </choice>
+         <choice value="1">Hard drive </choice>
+         <choice value="2">RAM </choice>
+         <choice value="3">Heat sink </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The CPU performs computation but not storage.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>The hard drive provides long-term persistent storage, not temporary storage.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>RAM is the fast, temporary storage in the computer. RAM is not persistent.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The heat sink manages heat on the chips. It has nothing to do with bytes.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

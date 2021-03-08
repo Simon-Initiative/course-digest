@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_f421911138014e41b7cbefb5ba716a6d">
+   <title>tutor</title>
+   <question id="aQ_f421911138014e41b7cbefb5ba716a6d">
+      <body>
+         <p>What is the best way to keep your computer safe from vulnerabilities?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Delete unused files frequently 
+</choice>
+         <choice value="1">Avoid websites with lots of images. 
+</choice>
+         <choice value="2">Quickly update your Internet-facing software, such as your brower, when a new version is released. 
+</choice>
+         <choice value="3">Visit only famous, brand-name websites. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Deleting files is not necessary.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Image files are not the problem.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>People trying to attack your computer often target out-of-date software that has vulnerabilities.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Limiting your visits to only well-known websites helps only a little, as reputable sites have at times been tricked into hosting exploits.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

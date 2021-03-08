@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_6b07d00fd8db487b8594116cfc1916d4">
+   <title>tutor</title>
+   <question id="aQ_6b07d00fd8db487b8594116cfc1916d4">
+      <body>
+         <p>Each of the following if statements is meant to test for names starting with Z and ending with y. Which one does not have a syntax error?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>if (row.getField("name").startsWith("Z") &amp; row.getField("name").endsWith("y")) {</code>
+         </choice>
+         <choice value="1">
+            <code>if (row.getField("name").startsWith("Z") &amp;&amp; row.getField("name").endsWith("y") {</code>
+         </choice>
+         <choice value="2">
+            <code>if (row.getField("name").startsWith("Z" &amp;&amp; row.getField("name").endsWith("y")) {</code>
+         </choice>
+         <choice value="3">
+            <code>if (row.getField("name").startsWith("Z") &amp;&amp; row.getField("name").endsWith("y")) {</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This statement is missing one &amp;.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This statement is missing the final parenthesis.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This statement is missing the ) after the syntax .startsWith("Z"</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>This statement is correct with every ampersand, parenthesis, and quotation mark in its right place.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

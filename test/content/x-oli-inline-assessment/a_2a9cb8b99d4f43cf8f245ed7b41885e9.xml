@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_2a9cb8b99d4f43cf8f245ed7b41885e9">
+   <title>tutor</title>
+   <question id="aQ_2a9cb8b99d4f43cf8f245ed7b41885e9">
+      <body>
+         <p>Which one of the following best describes digitization of sound?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Many times per second convert the signal into a frequency with low voltage for low frequencies and high voltage for high frequencies. </choice>
+         <choice value="1">Many times per second, convert the signal into a number representing the signal's height from the midline. </choice>
+         <choice value="2">Many times per second, convert the signal into a number representing the frequency of the signal. Use high numbers for high frequency, low numbers for low frequency. </choice>
+         <choice value="3">Many times per second, convert the signal into a number, recording the difference between this signal and the previous number. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Sampling (digitization) does not convert signals into frequencies using voltage.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>Sampling (digitization) measures the signal moment to moment as a number.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>Sampling (digitization) does measure the signal as a number, but not representing frequency.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Sampling (digitization) does measure the signal as a number, but does not record the difference between numbers.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

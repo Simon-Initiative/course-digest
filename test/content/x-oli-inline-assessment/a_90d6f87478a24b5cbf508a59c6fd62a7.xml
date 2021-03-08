@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_90d6f87478a24b5cbf508a59c6fd62a7">
+   <title>tutor</title>
+   <question id="aQ_90d6f87478a24b5cbf508a59c6fd62a7">
+      <body>
+         <p>Which of the following code runs via translation? Check all that apply. </p>
+      </body>
+      <multiple_choice select="multiple" shuffle="false">
+         <choice value="0">C++ code
+      </choice>
+         <choice value="1">JavaScript code
+      </choice>
+         <choice value="2">Machine code
+      </choice>
+         <choice value="3">Python code
+      </choice>
+         <!--<compoundhint value="A B">It is correct that C++ and JavaScript run via translation, but there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="A C">It is correct that C++ runs via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU. Also, there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="A D">It is correct that C++ and Python run via translation, but there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="B C">It is correct that JavaScript runs via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU. Also, there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="B D">It is correct that JavaScript and Python run via translation, but there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="C D">It is correct that Python runs via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU. Also, there is at least one other code that runs via translation.</compoundhint>
+         <compoundhint value="A B C">It is correct that C++ and JavaScript run via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU.</compoundhint>
+         <compoundhint value="A B D">C++, JavaScript, and Python run via translation.</compoundhint>
+         <compoundhint value="A C D">It is correct that C++ and Python run via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU.</compoundhint>
+         <compoundhint value="B C D">It is correct that JavaScript and Python run via translation, but machine code is the native language of the CPU, so it does not run via translation on the CPU.</compoundhint>
+         <compoundhint value="A B C D">Not all of these languages run via translation.</compoundhint>-->
+      </multiple_choice>
+      <part>
+         <response match="0,1,3" score="1">
+            <feedback>
+                    Correct.
+                </feedback>
+         </response>
+         <response match="*" score="0">
+            <feedback>
+                    Incorrect.
+                </feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

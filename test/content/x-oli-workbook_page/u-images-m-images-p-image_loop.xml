@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-image_loop"><head><title>Image Loop</title><objref idref="u-images-m-images-p-image_loop_LO_1" /><objref idref="u-images-m-images-p-image_loop_LO_2" /></head><body><image id="e454216ba3974da59888bfc94d9a41db" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><section id="dede7526a9a84687b54f2aea79631023"><title>Loops: A Box Analogy</title><body><p id="fb6ff64c8c2348f4b26155395867d198">This section introduces the very powerful <em style="italic">loop</em> feature, which enables you to operate on thousands or millions of pixels with just a few lines of code.</p><p id="b579e9b5873e4fc09285749c44022df1">First, an analogy: Suppose you have a robot and 5,000 cardboard boxes in a warehouse. You want the robot to move all the boxes over to the corner. The robot is a dumb computer, so you explain how to move one box in great detail, and it works. Then you want to say &quot;Repeat those same steps <em style="italic">for all of the boxes</em>.&quot; That&apos;s basically how loops work: you write code to do an operation, and the loop takes care of doing that operation again and again.</p><section id="b490fa0184464a6d89b93ddb108f46e7"><title>Flowers</title><body><image id="a131992392e642479d4a345e2615478c" src="../webcontent/flowers.jpg" alt="yellow flowers" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><p id="d199095adcb442a384f628ff0c09a011">The flowers.jpg image above is 457 pixels wide by 360 pixels high, which is 164,520 pixels total. Accessing one pixel at a time—for example, the pixel at (0, 0), then the pixel at (1, 0), and so on—is not a good way to work on an image that may have 100,000 or more pixels. We&apos;d like to say something like &quot;For each pixel, do this,&quot; and let the computer fiddle with the details of going through all the (x, y) values to look at each pixel once.</p><p id="bdbbd3f790544bd2ab5495506911286a">The powerful loop structure provides exactly this capability. The loop takes a few lines of code and runs them repeatedly, once for each pixel in the image.</p></body></section></body></section><section id="c2d8ab11183e4159a6cdddb3b60a9f2b"><title>Example 1: For-Loop</title><body><p id="acec53e7f0e240b2b1f198e8d52fad4c">Run this code to see what it does.</p><codeblock id="c4615e4ac316455bb7ab904382484406" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image-loop-1" rows="12" cols="50" spellcheck="false" onKeyPress="return handleCR(this ,event)">
+							image = new SimpleImage("flowers.jpg");
+
+							for (pixel: image) {
+								pixel.setRed(255);
+								pixel.setGreen(255);
+								pixel.setBlue(0);
+							}
+
+							print(image);
+						</textarea>
+            <input type="button" value="Run" onClick="evaluateClear("image-loop-1")"/>]]></codeblock><p id="c9376475c340426fac16365ca7d08359" /><p id="bf7b3e58298d4dce8c3455be5ed3b612">For each pixel, the loop sets the red, green, and blue values to 255, 255, 0. The color values of every pixel are changed, leaving none of the original flower data.</p><p id="eab1bc8d4bb54ffe85042459ac8755b4">The for-loop syntax is a little weird, but it&apos;s the same every time. When we want the same operation to be performed on every pixel, we use a for-loop. The for-loop has two parts:</p><ol id="c6ac72c1addf41349f90fe111afd44a0"><li><code>for (pixel: image) {</code><p id="c1a382e074134d538acdc5ae712442aa">, which starts the for-loop</p></li><li><p id="aa6df73c34ee4b63b54957b558f71c49">The &quot;body&quot; containing lines of code within curly braces: </p><code>{ }</code></li></ol><p id="a3bd4d23e8394e95b0d870a162b5e3ec">The lines of code in the body run again and again, once for each pixel. Therefore, a line of code inside the body, inside the curly braces { }, will run thousands or millions of times. In contrast, the lines of code outside the body just run once. Inside the body, &quot;pixel&quot; refers to a different pixel for each run of the body.</p></body></section><wb:inline idref="a_fbc939a9347d4e08b1d5e7b9c81d6d6b" purpose="learnbydoing" /><section id="c602b69acdb24162bfde2109c03df67e"><title>For-Loop Structure</title><body><image id="ff651a751fc3480db54c4bb07a18d9f0" src="../webcontent/image-for.png" alt="parts of the for-loop" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><p id="f224bf08c8664169b41f103e866fd486" /></body></section><section id="d1a8e159a90741d5beee0c4a1085dac6"><title>Example 2: For-Loop</title><body><p id="c52a427a6502413391418f7af7482288">Look again at flowers.jpg and think about the yellow flowers. Yellow is made of red + green light, so we know that the yellow pixels in the image have high red and green values. What happens if, for each pixel, we set red to 0? This will leave just the green light on for those pixels, so the yellow flowers are changed to look green.</p><image id="bbcd3f48f51d414f9dff75d32c1d23ea" src="../webcontent/flowers.jpg" alt="yellow flowers" style="inline" vertical-align="middle"><caption /><popout enable="false"></popout></image><p id="d8c489abd94b4bf4994afb14ed2535e1">Below is our for-loop structure with the line <code>pixel.setRed(0);</code> added inside the loop body. Run the code to see what it does.</p><codeblock id="ed086f3f4ce947778281e0dd013af988" syntax="text" highlight="" number="false" start=""><![CDATA[<textarea id="image-loop-2" rows="11" cols="50" spellcheck="false" onKeyPress="return handleCR(this ,event)">
+							image = new SimpleImage("flowers.jpg");
+
+							for (pixel: image) {
+
+								pixel.setRed(0);
+							}
+
+							print(image);
+						</textarea>
+            <input type="button" value="Run" onClick="evaluateClear("image-loop-2")"/>]]></codeblock><p id="da7847680f41468791aa3ec831bb72a8" /><p id="d98df7c970a247f691207f2118351966">The body code <code>pixel.setRed(0);</code> is run by the loop again and again, once for each pixel in the image. Since the yellow flowers are made with red and green light, setting the red to 0 for each pixel &quot;erases&quot; the red, leaving only the green to show in the image. Therefore, the yellow flowers are changed to green flowers. </p></body></section><codeblock id="fa2c00c47cf849048ba46ba323230ffa" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="988cb42762964b1481818142375ad385" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint: (1 of 3) Look at the pixel.xxx lines.
+Hint: (2 of 3) <code>pixel.setreed</code> is misspelled.
+Hint: (3 of 3) <code>pixel.setBlue(0);</code> needs a final parenthesis, and a semicolon." tolerance="" body="<p>The following code is intended to set the red and blue values of every pixel to 0. The code includes two syntax errors, so it does not work. Fix the errors so the code runs correctly.  When the code runs, it shows just the green light of the image.</p>" regex="" starter_code="image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  // Your code here
+  pixel.setreed(0);
+  pixel.setBlue(0
+  
+}
+
+print(image);" solution_code="image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  // Your code here
+  pixel.setRed(0);
+  pixel.setBlue(0);
+  
+}
+
+print(image);"/>
+		]]></codeblock><codeblock id="e55b3b12fa8c4b3484a7fa9ba41bcd54" syntax="xml" highlight="" number="false" start=""><![CDATA[
+			<image-coding url_name="4e5fed8f22ba4a21867ca7602b709c71" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint: (1 of 2) Inside the loop, set the green value of each pixel to 0.
+Hint: (2 of 2) Use <code>pixel.setGreen(0);</code>" tolerance="" body="<p>Add code inside the loop to modify flowers.jpg like this: Set each pixel to have green of 0, leaving red and blue unchanged. The result should be that the flowers look red, since the yellow was made of red and green light.</p>" regex="" starter_code="image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);" solution_code="image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  // Your code here
+  pixel.setGreen(0);
+  
+}
+
+print(image);"/>
+		]]></codeblock></body></workbook_page>

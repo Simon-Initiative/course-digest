@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-tables-m-tables-p-tables_startswith_and_endswith">
+   <head>
+      <title>Tables: startsWith and endsWith</title>
+      <objref idref="u-tables-m-tables-p-tables_startswith_and_endswith_LO_1"/>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="cf664f9763744bb4ae3631c3335d7929" display_name="Tables: startsWith and endsWith" editor="raw"/>--><!--<h1>Tables: startsWith and endsWith</h1>--><!--<div style="margin: 10px; background: #EFEDE7;">
+<h2 style="margin: 4px 10px; padding-top: 1px;">Learning Objective</h2>
+<div style="background: white; margin: 0px 6px -14px 6px; padding: 5px;">
+<ul style="list-style: none;">
+<ul style="list-style: none;">
+<li>LO WAS HERE</li>
+</ul>
+</ul>
+</div>
+&#xA0;</div>--><!--The .xml file paired with the source html file read:
+<html filename="z189" display_name="Using .startsWith and .endsWith" editor="raw"/>--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><section>
+         <title>Using .startsWith and .endsWith</title>
+         <body>
+            <p>Previously, we used if-tests on a row with the operators <code>==</code> and <code>&amp;lt;</code>, like this:</p>
+            <codeblock syntax="java">
+  if (row.getField("name") == "Alice") {
+				</codeblock>
+            <p>In this section, we add <code>.startsWith</code> and <code>.endsWith</code>, which test which letters are at the start or end of a string. Here is an if statement testing whether a row name starts with the string <code>"Ab"</code>:
+				</p>
+            <codeblock syntax="java">
+  if (row.getField("name").startsWith("Ab")) {
+				</codeblock>
+            <p>The left part of the test gets the name, just as before: </p>
+            <codeblock syntax="java">
+  row.getField("name")
+				</codeblock>
+            <p>Then the <code>.startsWith("Ab")</code> is added on the right side, like this: </p>
+            <codeblock syntax="java">
+  row.getField("name").startsWith("Ab")
+				</codeblock>
+            <p>There is also an <code>.endsWith("zz")</code> test (in this case testing whether a string ends in <code>"zz"</code>).
+				</p>
+            <p>
+The <code>.startsWith</code> and <code>.endsWith</code> tests work nicely with the baby name data. Here we can look at all the names beginning with <em style="italic">Ab</em>. Click <em style="bold">Run</em> to see what this snippet does.</p>
+            <!-- CODE -->
+            <codeblock syntax="text">&lt;textarea id="table1-5"
+                      rows="10"
+                      cols="70"
+                      spellcheck="false"
+                      onKeyPress="return handleCR(this ,event)"&gt;
+table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name").startsWith("Ab")) {
+    print(row);
+  }
+}&lt;/textarea&gt;
+            &lt;input type="button" value="Run" onClick="evaluateClear(&#34;table1-5&#34;)"/&gt;</codeblock>
+            <!-- OUTPUT -->
+            <p> </p>
+            <p>As usual, the loop body runs once for each row (once for each of the 2000 names in the baby-2010.csv file). The if-test runs each time, printing out the row when the test is true—that is, when the name starts with <em style="italic">Ab</em>.
+					</p>
+         </body>
+      </section>
+      <wb:inline idref="a_141dcf5779774070b5ac38a3f9f25b98"/>
+			<wb:inline idref="a_da56ade51807469cbec4861278203c31"/>
+
+      <codeblock syntax="xml">
+				<!-- !!!vertical-->
+&lt;image-coding url_name="10b4f8cc65964969949e1849281ec6af" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): Use &lt;code&gt;.startsWith&lt;/code&gt;.
+Hint (2 of 2): Use &lt;code&gt;.startsWith("Ya")&lt;/code&gt;." tolerance="" body="&lt;p&gt;The starter code is mostly complete with the missing bit marked "..something..". Edit the code to print all the rows where the name starts with Ya. &lt;/p&gt;" regex="Yaretzi.*(.*\n)+Yair.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name") ..something.. ) {
+    print(row);
+  }
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name").startsWith("Ya")) {
+	print(row);
+  }
+}
+"/&gt;
+			</codeblock>
+      <codeblock syntax="xml">
+				<!-- !!!vertical-->
+&lt;image-coding url_name="fc719e94f9d74e92b73b6e15ec48cf2f" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 2): Use &lt;code&gt;.endsWith&lt;/code&gt; with &lt;code&gt;"w"&lt;/code&gt; (lowercase w).
+Hint (2 of 2): Use &lt;code&gt;.endsWith("w")&lt;/code&gt;." tolerance="" body="&lt;p&gt;Edit the code to print all the rows where the name &lt;b&gt;ends&lt;/b&gt; with w (lowercase w).&lt;/p&gt;" regex="Andrew.*(.*\n)+Crew.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name") ..something.. ) {
+    print(row);
+  }
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  if (row.getField("name").endsWith("w")) {
+	print(row);
+  }
+}
+"/&gt;
+			</codeblock>
+      <!--A License section was here:<html filename="d4db6cc94aec4676af5941bf8f5fc512" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

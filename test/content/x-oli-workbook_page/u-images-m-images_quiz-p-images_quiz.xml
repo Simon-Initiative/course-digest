@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images_quiz-p-images_quiz">
+  <head>
+    <title>Images Quiz</title>
+  </head>
+  <body>
+    <image id="e65a972560ea42769103cd2b70bcd53a" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <wb:inline idref="a_c3c75c2282254333b8b168483bd1adc3"/>
+    <wb:inline idref="a_7e7d31b9498f4439acda523a21e560bb"/>
+    <codeblock id="b94372b7abe442c8b5ad2b04afb4152c" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;4a6b39b6e6d3461db48ce503f546a068&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 3&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Write code to set the pixel at (0, 0) to have green and blue value 255, resulting in turquoise.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;x.png&quot;);
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+// Your code here
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;x.png&quot;);
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+pixel.setGreen(255);
+pixel.setBlue(255);
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="c3ea1cf876484d85803d9d574105543c" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;97e7f3b10d35403a9b348477c487899a&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 4&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Write code to set the pixel at (0, 0) to have green value 255.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;x.png&quot;);
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+// Your code here
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;x.png&quot;);
+image.setZoom(20);
+pixel = image.getPixel(0, 0);
+
+pixel.setGreen(255);
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="be218bb2f4e84d2c83bdbd6122b0029e" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;5334be5c6c874c168ed852c32b5742f9&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 5&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Add code inside the loop to modify flowers.jpg like this: set each pixel to have blue of 255, leaving red and green unchanged. The result should be that the flowers still look a bit white, since they had high red and green values already.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+  // Your code here
+  pixel.setBlue(255);
+  
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="ae0da8f08e834c83a1150c896eec6f7c" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;2ee0dc514854487a90c3f4eff2c378e6&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 6&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Add code inside the loop to modify flowers.jpg like this: set the red, green, and blue value of each pixel to 0, so the image is changed to be pure black.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+
+for (pixel: image) {
+  // Your code here
+  pixel.setRed(0);
+  pixel.setGreen(0);
+  pixel.setBlue(0);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+    <codeblock id="d8607865189f42daa3ccfbea5c108031" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;829e07fe0ae44c878d2e4e325d6f19b7&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Question 7&quot; hints=&quot;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The original image shows a red stop sign with a background of a light blue sky and green tree leaves.
+
+&lt;p&gt;Write code to fix the 51020-stop-sky.png image, experimenting to figure out which number (5, 10, or 20) should be used to multiply the RGB values to fix the image, using each number once.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;51020-stop-sky.png&quot;);
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;51020-stop-sky.png&quot;);
+
+for (pixel: image) {
+  // Your code here
+  pixel.setRed(pixel.getRed() * 20);
+  pixel.setGreen(pixel.getGreen() * 10);
+  pixel.setBlue(pixel.getBlue() * 5);
+}
+
+print(image);&quot;/&gt;
+    </codeblock>
+  </body>
+</workbook_page>

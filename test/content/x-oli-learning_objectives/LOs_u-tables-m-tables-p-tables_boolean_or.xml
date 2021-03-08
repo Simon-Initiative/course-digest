@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-tables-m-tables-p-tables_boolean_or">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="4453698bbdb1494c8a958e37fa96e3e5" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-tables-m-tables-p-tables_boolean_or_LO_1">
+Learning Objective: Write table query code.
+</objective>
+</objectives>

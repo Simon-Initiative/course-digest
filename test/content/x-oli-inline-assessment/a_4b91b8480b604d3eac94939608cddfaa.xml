@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_4b91b8480b604d3eac94939608cddfaa">
+   <title>tutor</title>
+   <question id="aQ_4b91b8480b604d3eac94939608cddfaa">
+      <body>
+         <p>Suppose we are using the following checksum scheme: add all the bytes and take just the last two digits of the sum. What is the checksum of the following bytes: 101, 202, 103, 100, 210, 120?</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="36">
+            <feedback/>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>Add up all the bytes: 101 + 202 + ...</hint>
+         <hint>The sum of all the bytes is 836.</hint>
+         <hint>You need the last two digits of the sum.<!--The sum is 836, so the checksum is 36.--></hint>
+      </part>
+   </question>
+</assessment>

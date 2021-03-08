@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+        xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+        xmlns:m="http://www.w3.org/1998/Math/MathML"
+        xmlns:pref="http://oli.web.cmu.edu/preferences/"
+        xmlns:theme="http://oli.web.cmu.edu/presentation/"
+        xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-code_basic-m-code_basic-p-code_variables">
+        <head>
+                <title>Code Variables</title>
+        </head>
+        <body>
+                <image id="ab477289fb474331b741e8bc277453a8" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+                        <caption>
+                                <p id="daca13e6f3364b55a09ad1eb6a477c84" />
+                        </caption>
+                        <popout enable="false"></popout>
+                </image>
+                <section id="cec562e95eb5411ab4a9131560b912b4">
+                        <title>Simple Variable Code</title>
+                        <body>
+                                <p id="fedcbbc2d2734a1f9321e8f6957e8d83">In this section, we add the idea of a <em style="italic">variable</em> in code. A variable is like a box that holds one value the code puts there. Here is a line of code that stores the value 7 in a variable, <em style="italic">x</em>: 
+                                </p>
+                                <codeblock id="f06a6af1956647908b64104bc8d92fdc" syntax="java" highlight="" number="false" start="">
+x = 7;
+                                </codeblock>
+                                <p id="efc7a5bcaa6f4f82bb88a3dcc1d25fda">The variable <em style="italic">x</em> is like a box, holding whatever value is stored in it. Later uses of <em style="italic">x</em> in the code retrieve the value from the variable. Storing a value in a variable in JavaScript requires using the equal sign (=).</p>
+                                <p id="a54c989aa60144da8a8c442fe84841b7" />
+                                <image id="cb42fe698a16491fa77381a7cb9dc82a" src="../webcontent/code-variable.png" alt="variable x as a box holding the value 7" style="inline" vertical-align="middle">
+                                        <caption>
+                                                <p id="a2fca45c38c247a89ce94ec3ecdb9c58" />
+                                        </caption>
+                                        <popout enable="false"></popout>
+                                </image>
+                        </body>
+                </section>
+                <section id="eb55bffc8aa541439c3f715d067de41a">
+                        <title>Example: Variables in Principles of Computing</title>
+                        <body>
+                                <p id="fdffab8b1e064df8a27bc338391e91b3">For Principles of Computing, we use variables in a simple way. One line, like the example above, will store a value into a variable. Later lines can use the variable to retrieve the stored value. Run this example to see what it does.</p>
+                                <codeblock id="d6bd7362a4884c05ba3711e2b64bee88" syntax="text" highlight="" number="false" start=""></codeblock>
+                                <wb:inline idref="d9bd71f02ca144bf9246d0631cb2d086" purpose="learnbydoing" />
+                                <p id="c16296db96c748ca8e43757b564be4f8">
+                                        <em>Try it yourself:</em> Change the 7 to 14, and then run it to see the changed output.</p>
+                                <p id="cbf3472b2e3a4526a5e23859c4bcfa96">Variables used in this way work as a shorthand. The code uses = to store a value into a variable, and then uses that variable on later lines to retrieve that value. In the simplest case, this just works to avoid the work of repeatedly typing in a value. All computer languages have some form of variable used for storing and retrieving values.</p>
+                        </body>
+                </section>
+                <codeblock id="dcdcbea827784548a6bc4305ff669b97" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;75184af7b83f43cc983628cd3cfab3fd&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 2) Think about the value stored in x.
+Hint (2 of 2) Change the first line of code to store 99 into the variable: &lt;code&gt;x = 99;&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Change the code so it produces the following output. This can be done by changing only 1 line.&lt;/p&gt;
+
+&lt;pre&gt;
+99
+99 99
+99 99 99
+&lt;/pre&gt;&quot; regex=&quot;99\s99\s99\s99\s99\s99&quot; starter_code=&quot;x = 1;
+print(x);
+print(x, x);
+print(x, x, x);&quot; solution_code=&quot;&quot;/&gt;
+                </codeblock>
+        </body>
+</workbook_page>

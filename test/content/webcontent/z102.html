@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+<p>Here is the fence-ivy.jpg image:
+
+<br></br><img src="fence-ivy.jpg" alt="green ivy leaves in front of a red fence">
+
+<p>Write code that picks out the pixels of the green leaves in the image (using the &gt; avg * factor technique, as in lecture). For each green pixel identified, set its green value to 0. The result is that the green leaves are changed to a sort of weird purple color, since setting green to 0, we just have red and blue contributing.
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="60"  class="tacode" spellcheck="false" style='min-height:12em;' meh='image\20\3D\20new\20SimpleImage\28\22fence-ivy.jpg\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20avg\20\3D\20\28pixel.getRed\28\29\20\2B\20pixel.getGreen\28\29\20\2B\20pixel.getBlue\28\29\29/3\3B\0A\20\20if\20\28pixel.getGreen\28\29\20\3E\20avg\20\2A\200.95\29\20\7B\0A\20\20\20\20pixel.setGreen\280\29\3B\0A\20\20\7D\0A\7D\0Aprint\28image\29\3B\0A\0A'    tol='8' 
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("fence-ivy.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

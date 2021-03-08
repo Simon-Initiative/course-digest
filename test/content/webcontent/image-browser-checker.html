@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Principles of Computing Browser Checker</title>
+<link rel=stylesheet href=style-edx.css type="text/css">
+
+</head>
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+<!--endhead-->
+<h1>Principles of Computing Browser Checker</h1>
+
+<p>&lt; <a href="/courses/Engineering/Principles of Computing/Summer2014/info">Principles of Computing - Course Info</a>
+
+
+<p>Use this page to verify that your computer and browser can run the code for Principles of Computing. Clicking the Run button should produce an image of green flowers in the page. If you see the green flowers, the code is working on your computer. If instead of the green flowers, you get an error message or nothing, then you need to try a different browser or computer. Details below for the curious.
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="image-loop-1" rows="12" cols="50"  class="tacode" spellcheck="false" style='min-height:15em;'   
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  pixel.setRed(0);
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("image-loop-1")'>
+</div>
+<!-- OUTPUT -->
+<div id="image-loop-1-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+<p>Details for the curious: the text above the Run button is image manipulation code. Clicking the Run button tries to run that code in your browser. The code uses newish HTML features that may not be supported by older browsers.
+
+<p>In Principles of Computing, we will learn all about phrases like "pixel.setRed(0);" and what they mean. For today, just know that you want to see the green flowers.
+
+
+
+</body></html>
+
+

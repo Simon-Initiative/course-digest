@@ -1,5 +1,3 @@
-import { access } from "fs/promises";
-
 export type AttributeHistogram = { [index:string] : number };
 export type ElementDetails = { element: string, count: number, attributes: AttributeHistogram };
 export type ElementHistogram = { [index:string] : ElementDetails };

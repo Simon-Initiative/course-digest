@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_38bd807d1de94e04a180ef527bed0f09">
+   <title>tutor</title>
+   <question id="aQ_38bd807d1de94e04a180ef527bed0f09">
+      <body>
+         <p>Pablo has a busy semester, and he does not want to give too much time to Principles of Computing.  So he puts off working through the course, figuring that he’ll spend a couple of weeks at the end of the semester  doing it all at once. In the end, he fails the final exam. His principal  mistake was that he did not </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> properly assess the task.  </choice>
+         <choice value="1"> accurately evaluate his own strengths and weaknesses.  </choice>
+         <choice value="2"> plan an effective strategy for working through the  course.  </choice>
+         <choice value="3"> successfully monitor his own performance.  </choice>
+         <choice value="4"> adjust his approach.  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="1">
+            <feedback>  Pablo underestimated the task, and left himself too little  time to prepare for the final exam. This underestimation is reflected in his  strategy; because he did not properly assess the task, he did not plan  appropriately. </feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>  Because Pablo did not bother to assess the task, he never  had the opportunity to evaluate his own strengths and weaknesses in relation  to the learning objectives. </feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>  Pablo’s plan for working through the course did not allow  sufficient time, but that was mostly because of his inaccurate assessment of  the task. </feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>  Pablo had limited opportunity to monitor his own  performance because he failed to assess the task accurately, and thus left  all his work until the last minute. </feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>  The problem is not that Pablo didn't reflect back on his  approach; the problem is that he failed to properly assess the  task. </feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+
+<div style='border-style:dotted;border-color:lightgray'>
+
+
+
+
+<p>Change just one line of the code below so it produces the following output when run.
+
+
+<codeblock syntax="java">
+xyz123
+xyz123 xyz123
+xyz123 xyz123 xyz123
+</codeblock>
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="7" cols="70"  class="tacode" spellcheck="false" style='min-height:7em;'   re='/5E/5Cs/2A/28xyz123/5Cs/2A/29/7B6/2C6/7D/24'
+onKeyPress='return handleCR(this ,event)'>
+x = "hi";
+print(x);
+print(x, x);
+print(x, x, x);&lt;/textarea&gt;</codeblock>
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> 
+
+
+
+</div>
+</body>
+</html>

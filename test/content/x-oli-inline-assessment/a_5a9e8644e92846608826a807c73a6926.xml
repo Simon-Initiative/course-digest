@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_5a9e8644e92846608826a807c73a6926">
+   <title>tutor</title>
+   <question id="aQ_5a9e8644e92846608826a807c73a6926">
+      <body>
+         <p>What is the most dangerous type of file to open on your computer?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">A JPG image file </choice>
+         <choice value="1">A text file </choice>
+         <choice value="2">A GIF image file </choice>
+         <choice value="3">A program file </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A JPG file is not risky: you just see the contents.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>A text file is not risky: you just see the contents.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A GIF file is not risky: you just see the contents.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>A program file is very risky. The program may copy data or install further malware.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

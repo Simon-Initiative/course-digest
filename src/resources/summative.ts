@@ -2,36 +2,46 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
+import { Resource, TorusResource, Summary } from './resource';
 
-import { HasReferences, HasHistogram } from './common';
+export class Summative extends Resource {
 
-export interface SummativeSummary extends HasReferences, HasHistogram {
-  type: 'SummativeSummary';
-}
+  restructure($: any) : any {
 
-// Summarize an organization
-export function summarize(file: string) : Promise<SummativeSummary | string> {
+  }
 
-  const foundIds: ItemReference[] = [];
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve(['']);
+  }
 
-  const summary : SummativeSummary = {
-    type: 'SummativeSummary',
-    found: () => foundIds,
-    elementHistogram: Histogram.create(),
-  };
+  summarize(file: string): Promise<string | Summary> {
 
-  return new Promise((resolve, reject) => {
+    const foundIds: ItemReference[] = [];
+    const summary : Summary = {
+      type: 'Summary',
+      subType: 'Summative',
+      elementHistogram: Histogram.create(),
+      id: '',
+      found: () => foundIds,
+    };
 
-    visit(file, (tag: string, attrs: Object) => {
-      Histogram.update(summary.elementHistogram, tag, attrs);
+    return new Promise((resolve, reject) => {
 
-      if (tag === 'poolref') {
-        foundIds.push({ id: (attrs as any)['idref'] });
-      }
-    })
-    .then((result) => {
-      resolve(summary);
-    })
-    .catch(err => reject(err));
-  });
+      visit(file, (tag: string, attrs: Object) => {
+        Histogram.update(summary.elementHistogram, tag, attrs);
+
+        if (tag === 'assessment') {
+          summary.id = (attrs as any)['id'];
+        }
+        if (tag === 'poolref') {
+          foundIds.push({ id: (attrs as any)['idref'] });
+        }
+
+      })
+      .then((result) => {
+        resolve(summary);
+      })
+      .catch(err => reject(err));
+    });
+  }
 }

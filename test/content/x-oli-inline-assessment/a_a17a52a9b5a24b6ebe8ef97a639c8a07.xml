@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_a17a52a9b5a24b6ebe8ef97a639c8a07">
+   <title>tutor</title>
+   <question id="aQ_a17a52a9b5a24b6ebe8ef97a639c8a07">
+      <body>
+         <p>When asked for your password on a website, what do you check to determine whether the website is a phishing site?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Check that the page colors are correct. 
+</choice>
+         <choice value="1">Check that the URL at the top of the browser is correct. 
+</choice>
+         <choice value="2">Check that the text headline is correct. 
+</choice>
+         <choice value="3">Check that the copyright notice is correct. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>The page colors are easily copied, and so mean nothing.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>Check that the URL is, for example, www.ebay.com, not a phishing domain such as log.in.now.ebay.baddyguy.ru</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>The text headline is easily copied, so it means nothing.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>The copyright notice is easily copied, so it means nothing.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

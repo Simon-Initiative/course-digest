@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_bcbfda78355e44a9b3865051a9c177e2">
+   <title>tutor</title>
+   <question id="aQ_bcbfda78355e44a9b3865051a9c177e2">
+      <body>
+         <p>Suppose you want to log in to facebook.com and not a phishing site. Which of the following URLs looks right? </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">login.now.at.face.com 
+</choice>
+         <choice value="1">login.facebook.com 
+</choice>
+         <choice value="2">accounts.facebook.meh.ru 
+</choice>
+         <choice value="3">login.fracebook.com 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>face.com is not the correct domain.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>A domain ending in facebook.com, like this one, is correct.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>meh.ru is not the correct domain.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>fracebook.com is not the correct domain.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

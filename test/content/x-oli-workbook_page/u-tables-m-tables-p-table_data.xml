@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-tables-m-tables-p-table_data">
+   <head>
+      <title>Table Data</title>
+      <objref idref="u-tables-m-tables-p-table_data_LO_1"/>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="81cd387b68e4421491f15bcccbac2379" display_name="Table Data" editor="raw"/>--><!--<h1>Table Data</h1>--><!--The .xml file paired with the source html file read:
+<html filename="e1d2190ac28947129605f186ebeef258" display_name="Table Data" editor="raw"/>--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><section>
+         <title>Table Data</title>
+         <body>
+            <p>A <em style="italic">table</em> is a common way to organize strings, numbers, dates, and other information in a tabulated structure. We start examining tables using data from the Social Security Administration's <link href="http://www.ssa.gov/oact/babynames/">baby name</link> site.</p>
+         </body>
+      </section>
+      <section>
+         <title>Social Security Baby Name Example</title>
+         <body>
+            <p>In the United States, the Social Security Administration keeps track of the names given to babies each year. A sample of the baby-name data is shown below, organized as a table.</p>
+            <p>The complete table consists of 2000 <em style="italic">rows</em> (containing the top 1000 boy names and top 1000 girl names), and each row represents the data pertaining to one name. Each row is divided into four <em style="italic">fields</em>, and each field has its own string name: <code>"name"</code>,					<code>"rank"</code>,					<code>"gender"</code>, and <code>"year"</code> in this example. We can think of the fields as forming the table columns.</p>
+            <p>
+               <image src="../webcontent/table.png" alt="table organized as fields and rows"/>
+            </p>
+            <p> </p>
+            <section>
+               <title>Tables Are Very Common</title>
+               <body>
+                  <p>Much of the information stored on computers uses this table structure. Each item we want to store—a baby name, someone's contact information, a craigslist advertisement—is one row. The number of fields that make up a row is usually fairly small. For example, one craigslist advertisement (stored in one row) has a few fields: a short description, a long description, a price, a seller, and so on.				</p>
+                  <p>The number of fields is small, but the number of rows can be quite large—sometimes thousands or millions. A database is built on the basic idea of a table. Similarly, spreadsheets use a table structure to store data. Both databases and spreadsheets enable users to manipulate the data they contain.					</p>
+               </body>
+            </section>
+            <section>
+               <title>Table Code</title>
+               <body>
+                  <p>The code used to work with tables is similar to image code. The file below, baby-top20-2010.csv, holds the top 20 boy names and top 20 girl names of the 2010 baby table. The <em style="italic">.csv</em> at the end of the filename stands for "comma separated values," a simple and widely used standard format for storing a table as text in a file.</p>
+                  <p>With images, the loop ran once for each pixel. With tables, the loop runs once for each row. The following code has the line <code>print(row);</code> as the loop body. Since the loop body runs once for each row, in effect, this just prints all the rows. Here, <code>SimpleTable</code> is analogous to <code>SimpleImage</code>, which we used for images. Run the code to see what it does.</p>
+                  <!-- CODE -->
+                  <codeblock syntax="text">&lt;textarea id="table1-1"
+                            rows="9"
+                            cols="60"
+                            spellcheck="false"
+                            onKeyPress="return handleCR(this ,event)"&gt;
+								table = new SimpleTable("baby-top20-2010.csv");
+
+								for (row: table) {
+									print(row);
+								}
+							&lt;/textarea&gt;
+                  &lt;input type="button" value="Run" onClick="evaluateClear(&#34;table1-1&#34;)"/&gt;</codeblock>
+                  <!-- OUTPUT -->
+                  <p> </p>
+               </body>
+            </section>
+            <section>
+               <title>Table Query Logic</title>
+               <body>
+                  <p>Very often, we want pick out certain rows from among all the rows. This action is sometimes called a <em style="italic">query</em> of the table. Inside the loop, the row has a <code>row.getField("field-name")</code> function, which returns the data for one field out of the row. Each field has a name—either "name", "rank", "gender", or "year" in this case. This name is passed in to <code>getField()</code> to indicate which field we want; for example, <code>row.getField("rank")</code> would retrieve the rank field of that row.</p>
+                  <p>An if statement inside the loop can test a particular field of each row, and if the test is true, take an action such as printing the row. The examples below use the file baby-2010.csv, which contains all 2000 rows, not just the top 20. Run this code to see what it does. </p>
+                  <!-- CODE -->
+                  <codeblock syntax="text">&lt;textarea id="table1-2"
+                            rows="9"
+                            cols="60"
+                            spellcheck="false"
+                            onKeyPress="return handleCR(this ,event)"&gt;
+								table = new SimpleTable("baby-2010.csv");
+								for (row: table) {
+									if (row.getField("name") == "Alice") {
+										print(row);
+									}
+								}
+							&lt;/textarea&gt;
+                  &lt;input type="button" value="Run" onClick="evaluateClear(&#34;table1-2&#34;)"/&gt;</codeblock>
+                  <!-- OUTPUT -->
+                  <p> </p>
+                  <p>In JavaScript, you can test whether two values are equal by using the equality operator <code>==</code> (two equal signs with no space between them). The if statement above tests each row with <code>(row.getField("name") == "Alice")</code>, which is true when the row's name field is equal to "Alice." The loop runs this if-test 2000 times, once for each row. It is true just one time, and that row is printed.</p>
+                  <p>Note that a <em style="italic">single</em> equal sign, <code>=</code>, performs variable assignment and not comparison. A common mistake is to type in one equal sign for a test instead of the required two equal signs. For this class, the <em style="bold">Run</em> button will detect an accidental use of a single = in an if-test and give an error message. Other operators that allow you to test the equality or relation between values include the following:</p>
+                  <ul>
+                     <li>
+                        <code>&amp;lt;</code> (less than)</li>
+                     <li>
+                        <code>&amp;gt;</code> (greater than)</li>
+                     <li>
+                        <code>&amp;lt;=</code> (less than or equal to)</li>
+                     <li>
+                        <code>&amp;gt;=</code> (greater than or equal to)</li>
+                     <li>
+                        <code>!=</code> (not equal to)</li>
+                  </ul>
+                  <p>The following code does a test on each row's rank. Run it to see what it does.</p>
+                  <!-- CODE -->
+                  <codeblock syntax="text">&lt;textarea id="table1-3"
+                            rows="10"
+                            cols="60"
+                            spellcheck="false"
+                            onKeyPress="return handleCR(this ,event)"&gt;
+									table = new SimpleTable("baby-2010.csv");
+									for (row: table) {
+										if (row.getField("rank") 8) {
+											print(row);
+										}
+									}
+							&lt;/textarea&gt;
+ &lt;input type="button" value="Run" onClick="evaluateClear(&#34;table1-3&#34;)"/&gt;</codeblock>
+                  <!-- OUTPUT -->
+                  <p> </p>
+                  <p>In the above code, the if-test checks if the row's rank is &amp;lt;  8—that is, 1 through 7—and prints the row. For the baby name data, the result is 14 rows: 7 rows of boy's names and 7 rows of girl's names.</p>
+               </body>
+            </section>
+         </body>
+      </section>
+      <wb:inline idref="a_e496bcac48ca416d8d71fe58b8771d81"/>
+      <codeblock syntax="xml">
+			<!-- !!!vertical-->
+			&lt;image-coding url_name="74820292477a4fb182824708c60d01e9" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): Add an if-statement in the loop, testing if the name field is == "Atticus". Inside the if-statement, print the row.
+Hint (2 of 3): The if-test looks like &lt;code&gt;if (row.getField("name") == "Atticus") {&lt;/code&gt;
+Hint (3 of 3): The body code inside the if statement is &lt;code&gt;print(row);&lt;/code&gt;" tolerance="" body="&lt;p&gt;Edit the code to print out the row for the name Atticus.&lt;/p&gt;" regex="Atticus.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+	if (row.getField("name") == "Atticus") {
+	print(row);
+  }
+}
+"/&gt;
+		</codeblock>
+      <codeblock syntax="xml">
+			<!-- !!!vertical-->
+			&lt;image-coding url_name="414c65a93fd1410bb46dc6f13b65498c" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): Add an if statement in the loop, testing if the name field is == "Monica". Inside the if statement, print the row.
+Hint (2 of 3): The test looks like &lt;code&gt;if (row.getField("name") == "Monica") {&lt;/code&gt;
+Hint (3 of 3): The body code inside the if-statement is &lt;code&gt;print(row);&lt;/code&gt;" tolerance="" body="&lt;p&gt;Edit the code to print out the row for the name Monica.&lt;/p&gt;" regex="Monica.*363.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  	if (row.getField("name") == "Monica") {
+	print(row);
+  }
+}
+"/&gt;
+		</codeblock>
+      <codeblock syntax="xml">
+			<!-- !!!vertical-->
+			&lt;image-coding url_name="b7752826c67243a98f4cf9954035d364" xblock-family="xblock.v1" display_name="Learn By Doing" hints="Hint (1 of 3): Add an if statement in the loop, testing if the name field is == "River" and printing the row if true.
+Hint (2 of 3): The test looks like &lt;code&gt;if (row.getField("name") == "River") {&lt;/code&gt;
+Hint (3 of 3): The body code inside the if-statement is &lt;code&gt;print(row);&lt;/code&gt;." tolerance="" body="&lt;p&gt;Edit the code to print the rows for the name River. In this case, there are two such rows, but the same basic code pattern as for question 1 works. This snippet shows how the loop really is just testing every row.
+&lt;/p&gt;" regex="River.*\nRiver.*\n" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  
+}" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  	if (row.getField("name") == "River") {
+	print(row);
+  }
+}
+"/&gt;
+		</codeblock>
+      <codeblock syntax="xml">
+			<!-- !!!vertical-->
+			&lt;image-coding url_name="153ce7d178f54fd59cad0791edb01f0c" xblock-family="xblock.v1" display_name="Did I Get This?" hints="" tolerance="" body="&lt;p&gt;Write code to print the rows where the rank is less than (&lt;) 10 (i.e., ranks 1 through 9).&lt;/p&gt;" regex="Jacob.*\n(.*\n)+Chloe.*\n$" starter_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  }
+}
+" solution_code="table = new SimpleTable("baby-2010.csv");
+for (row: table) {
+  // Your code here
+  if (row.getField("rank") &lt; 10) {
+	print(row);
+  }
+}
+"/&gt;
+		</codeblock>
+      <!--A License section was here:<html filename="3e3312ebff2d44559808b5e63419761c" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

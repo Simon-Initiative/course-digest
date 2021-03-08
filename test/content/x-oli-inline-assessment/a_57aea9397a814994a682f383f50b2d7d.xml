@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_57aea9397a814994a682f383f50b2d7d">
+   <title>tutor</title>
+   <question id="aQ_57aea9397a814994a682f383f50b2d7d">
+      <body>
+         <p>Which of the following best describes the role of a domain name?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Define the supervisory computer on a LAN. 
+</choice>
+         <choice value="1">Define a shorthand name for an IP address. 
+</choice>
+         <choice value="2">Define a shorthand name for certain files. 
+</choice>
+         <choice value="3">Define the preferred network route for packets. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A domain name is not about roles on a LAN.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>A domain name provides a shorthand name for an IP address.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>A domain name is a name for something other than a file.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>A domain name is not about routing.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

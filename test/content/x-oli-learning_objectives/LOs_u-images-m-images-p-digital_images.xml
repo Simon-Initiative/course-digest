@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-images-m-images-p-digital_images">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="85678d5c24f641dba177c4f6a7e1a073" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-digital_images_LO_1">
+Learning Objective: Recognize features and characteristics of a digital image. 
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="995af4953eaf4861a75a4ffc47acd33f" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-digital_images_LO_2">
+Learning Objective: Identify the number values of red, green, and blue (RGB) that specify the color of a pixel.
+</objective>
+</objectives>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-introduction-m-learning_strategies-p-applying_learning_strategies">
+	<head>
+		<title>Applying Learning Strategies</title>
+	</head>
+	<body>
+		<section id="f2cec362d53b42a0ab6eef849809b898">
+			<title>Learn By Doing</title>
+			<body>
+				<p id="ab8880e8d5dd4b8ca619f6aae4beb636">Now take the opportunity to practice the concepts you&apos;ve been learning by doing these two Learn By Doing activities. Read each of the scenarios below and identify which metacognitive skill the student is struggling with. If you need help, remember that you can ask for a hint.</p>
+				<p id="d9b2c3a208ef4f3989de53c13d645e4d" />
+			</body>
+		</section>
+		<wb:inline idref="a_038d8de0ae904fb596be7b523ddd337d"/>
+		<wb:inline idref="a_39d9ad52cce943649b57bd3460f5fb08"/>
+		<section id="eb0d1414c68c47659a7363ff82f0a2aa">
+			<title>Did I Get This?</title>
+			<body>
+				<p id="cc8c3eafe7fa472b95eacff27f4b59f2">You&apos;ve now read through the explanatory content in this unit, and you&apos;ve had a chance to practice the concepts. Take a moment to reflect on your understanding. Do you feel like you are &quot;getting it&quot;? Use these next two activities to find out.</p>
+				<p id="d65bac59d83c421e92f10ede10ed7d36" />
+			</body>
+		</section>
+		<wb:inline idref="a_0962d22ad2fe4c94a81d97a2db357c6e"/>
+		<wb:inline idref="a_38bd807d1de94e04a180ef527bed0f09"/>
+		<p id="b8e2222a83dc46e3bf1ea276aeae81ef">Strong metacognitive skills are essential for independent learning, so use the experience of monitoring your own learning in Principles of Computing as an opportunity to hone these skills for other classes and tasks.</p>
+		<p id="b5bd58c16f2b46a8b4be854df28d959c" />
+		<section id="a84cb91a85944f3f90ddaec2b7735ea6">
+			<title>References</title>
+			<body>
+				<p id="d88cb48d6efd4dca93ff68e567d0c42e">Ambrose, S. A., Bridges, M. W., DiPietro, M., Lovett, M. C., &amp; Norman, M. K. (2010).<em style="italic">How learning works: 7 research-based principles for smart teaching.</em>San Francisco: Jossey-Bass.</p>
+				<p id="d0ee6af67b3842e4a29c5782d31cd404">Chi, M. T. H., Bassock, M., Lewis, M. W., Reimann, P., &amp; Glaser, R. (1989). &quot;Self-explanations: How students study and use examples in learning to solve problems.&quot;<em style="italic">Cognitive Science</em>, 13, 145-182.</p>
+				<p id="bc53144cad234cba8f109aed60d6c00d">Dunning, D. (2007).<em style="italic">Self-insight: Roadblocks and detours on the path to knowing thyself</em>. New York: Taylor and Francis.</p>
+				<p id="d1c2e2cc58664cdba2582a8399753b40">Hayes, J. R., &amp; Flower, L. S. (1986). &quot;Writing research and the writer.&quot;<em style="italic">American Psychologist Special Issue: Psychological Science and Education</em>, 41, 1106-1113.</p>
+				<p id="c403007eec60489a8f825c0640e62b6f">Schoenfeld, A. H (1987). &quot;Whats all the fuss about metacognition?&quot; In A. H. Schoenfeld (Ed.),<em style="italic">Cognitive science and mathematics education</em>. (pp.189-215). Hillsdale, NJ: Erlbaum.</p>
+				<p id="bf52aa38187246b3bbe414695ffbb7cb" />
+			</body>
+		</section>
+	</body>
+</workbook_page>

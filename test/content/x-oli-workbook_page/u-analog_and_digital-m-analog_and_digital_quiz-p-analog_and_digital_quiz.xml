@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+   xmlns:bib="http://bibtexml.sf.net/"
+   xmlns:pref="http://oli.web.cmu.edu/preferences/"
+   xmlns:theme="http://oli.web.cmu.edu/presentation/"
+   xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-analog_and_digital-m-analog_and_digital_quiz-p-analog_and_digital_quiz">
+   <head>
+      <title>Analog and Digital Quiz</title>
+   </head>
+   <body>      <!--The .xml file paired with the source html file read:
+<html filename="96c851599b904b818e293ed10092cc8c" display_name="Analog and Digital Quiz" editor="raw"/>-->      <!--<h1>Analog and Digital Quiz</h1>-->
+      <image src="../webcontent/1x1.png"/>
+      <!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>-->      <!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>-->
+      <wb:inline idref="a_fd13a924cebc4be1be0915b498e86d22"/>
+      <wb:inline idref="a_815ec3ca43354b43ad0c06bdcab63953"/>
+      <!--A License section was here:<html filename="1f9f3ba24f514b329f02333b773056a2" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

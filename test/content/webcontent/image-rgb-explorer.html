@@ -1,0 +1,120 @@
+<html>
+  <head>
+    <title>Principles of Computing RGB Explorer</title>
+    <style type="text/css">
+      #drawing {
+        border: 2px solid black;
+        background-color: black;
+      }
+      #color {
+        font-family: monospace;
+        font-size: 14pt;
+        margin: 4ex 0ex;
+      }
+      #controls {
+        padding: 10px;
+      }
+      .slider {
+        width: 300px;
+      }
+      p {
+        max-width:650px;
+      }
+    </style>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+      function hex(k) {
+        var s = k.toString(16);
+        if (k < 16) { s = '0' + s; }
+        return s;
+      }
+
+      function colorChange(event, ui) {
+        var r = $("#red").slider("value");
+        var g = $("#green").slider("value");
+        var b = $("#blue").slider("value");
+        $("#color").text("red:" + r + " green:" + g + " blue:" + b);
+        doDraw(hex(r), hex(g), hex(b));
+      }
+
+      function initSlider(id) {
+        $(id).slider({max: 255, slide: colorChange, change: colorChange});
+      }
+
+      function doDraw(r, g, b) {
+        var dc = document.getElementById('drawing');
+        if(dc && dc.getContext) {
+          var cxt = dc.getContext('2d');
+
+          cxt.clearRect(0, 0, dc.width, dc.height);
+          cxt.globalCompositeOperation = 'lighter';
+          cxt.strokeStyle = "#000000";
+
+
+          // red
+          cxt.fillStyle = "#"+r+"0000";
+          cxt.fillRect(0, 0, dc.width*7/8, dc.height*7/8);  // xywh
+
+          // green
+          cxt.fillStyle = "#00"+g+"00";
+          cxt.fillRect(dc.width/8, 0, dc.width*6/8, dc.height);  // xywh
+
+          // blue
+          cxt.fillStyle = "#0000"+b;
+          cxt.fillRect(dc.width/8, 0, dc.width*7/8, dc.height*7/8);  // xywh
+        }
+      }
+
+      $(document).ready(function() {
+        initSlider("#red");
+        initSlider("#green");
+        initSlider("#blue");
+      })
+    </script>
+  </head>
+
+<body>
+
+<h1>Principles of Computing RGB Explorer</h1>
+
+<p>&lt; <a href="/courses/Engineering/Principles of Computing/Summer2014/info">Principles of Computing - Course Info</a>
+
+<p>
+<!-- standards based: <input id=red class=slider type="range" name="points" min="0" max="255" oninput="f()" onchange="f()">  -->
+<table>
+<tr><td><div id="controls">
+  <br></br>red:<div class="slider" id="red"></div>
+  <br></br>green:<div class="slider" id="green"></div>
+  <br></br>blue:<div class="slider" id="blue"></div>
+  <div id="color">red:0 green:0 blue:0</div>
+</div></td>
+<td>
+<canvas id="drawing" width="400" height="400">
+  Sorry, this page requires HTML5 canvas support
+</canvas>
+</td>
+</tr>
+</table>
+
+
+<p>
+This pages lets you play with the RGB scheme, combining red, green, and blue light to make any color. The sliders control the red green and blue lights, each ranging from 0 (off) to 255 (maximum). The intersecting rectangles show the result of adding the red, green, and blue light together-any color can be created in this way.
+
+<p>To make pure red, green, or blue light, just turn up that color, leaving the other two at 0. A few other common combinations:
+<ul>
+ <li>All at max (255) &rarr; white
+ <li>All at min (0) &rarr; black
+ <li>red + green &rarr; yellow
+ <li>red + blue  &rarr; purple
+ <li>green + blue &rarr; turquoise 
+ <li>Dark yellow-make yellow, then reduce both red and green
+ <li>Orange-make yellow, but more red, less green
+ <li>Light, pastel green-make pure green, then turn up both red and blue some equally (going towards white)
+ <li>Light gray-make white, then turn all three down a bit equally
+</ul>
+
+</body>
+</html>

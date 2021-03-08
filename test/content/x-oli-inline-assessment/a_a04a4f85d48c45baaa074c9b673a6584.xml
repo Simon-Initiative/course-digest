@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_a04a4f85d48c45baaa074c9b673a6584">
+   <title>tutor</title>
+   <question id="aQ_a04a4f85d48c45baaa074c9b673a6584">
+      <body>
+         <p>Which one of the following best describes how data is sent on a network?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Data is sent one byte at a time. 
+</choice>
+         <choice value="1">Data is sent one bit at a time. 
+</choice>
+         <choice value="2">Data is sent in packet groups of bytes. 
+</choice>
+         <choice value="3">Data is sent one typed letter at a time. 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Data is sent in a grouping much larger than one byte.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Data is sent in a grouping much larger than one bit.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>Data is sent in a group of bytes called a "packet".</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Data is sent in a grouping much larger than a single typed letter.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_f17c899cbfdf40cab5114c988270d3a6">
+   <title>tutor</title>
+   <question id="aQ_f17c899cbfdf40cab5114c988270d3a6">
+      <body>
+         <p>Which one of the following is the best password?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">password 
+</choice>
+         <choice value="1">hamsters 
+</choice>
+         <choice value="2">123456789 
+</choice>
+         <choice value="3">puppies4 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>"password" is on the list of commonly chosen passwords, and so is a weak password.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>A plain word is a weak password.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This number appears on the list of commonly chosen passwords, and so is a weak password.</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>This is a medium-quality password, extending a word with a number.  It is the best password within this group.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

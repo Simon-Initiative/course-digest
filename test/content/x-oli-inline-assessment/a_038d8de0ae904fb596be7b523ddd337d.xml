@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_038d8de0ae904fb596be7b523ddd337d">
+   <title>tutor</title>
+   <question id="aQ_038d8de0ae904fb596be7b523ddd337d">
+      <body>
+         <p>Rudolfo anticipates a very busy semester, so he completes the entire Principles of Computing course in the first month of the semester, passing each Checkpoint  easily. While this frees up his time for other courses, he finds that when he goes  to take the final exam a few months later, he has forgotten a lot of what he  learned. Rudolfo failed to  </p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0"> properly assess the task.  </choice>
+         <choice value="1"> accurately evaluate his own strengths and weaknesses.  </choice>
+         <choice value="2"> plan an effective strategy for working through the  course.  </choice>
+         <choice value="3"> successfully monitor his own performance.  </choice>
+         <choice value="4"> adjust his approach.  </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>  Rudolfo successfully completed the work, so apparently he  assessed the task accurately. It was his plan to complete the work too far  in advance of the final exam that proved to be ineffective. </feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>  It's possible that Rudolfo overestimated his ability to  remember material he had studied weeks earlier. However, it was primarily  his plan to complete the work so far in advance of the final exam that  proved ineffective. </feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>  Rudolfo’s plan to complete the work so far in advance of the  final exam proved ineffective. Because he left five weeks between studying and  taking the final exam, the material was not fresh in his mind when he took  the final. </feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>  Rudolfo’s performance throughout the course was fine, so  monitoring his performance was not his problem. It was his plan to complete  the work too far in advance of the final exam that proved to be ineffective. </feedback>
+         </response>
+         <response match="4" score="0">
+            <feedback>  By the time Rudolfo realized his approach was unsuccessful,  it was too late to adjust. This was because his plan to complete the work  too far in advance of the final exam proved to be ineffective. </feedback>
+         </response>
+         <hint> Look back at the definition for each skill outlined in the section on  Metacognition to see if one looks like a match. </hint>
+         <hint> Consider, for example, that Rudolfo would have been better prepared for the  final exam if he had scheduled regular work on the Principles of Computing course  throughout the semester. </hint>
+      </part>
+   </question>
+</assessment>

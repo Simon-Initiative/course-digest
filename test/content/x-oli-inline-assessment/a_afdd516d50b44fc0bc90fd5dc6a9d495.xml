@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_afdd516d50b44fc0bc90fd5dc6a9d495">
+   <title>tutor</title>
+   <question id="aQ_afdd516d50b44fc0bc90fd5dc6a9d495">
+      <body>
+         <p>Which one of the following is the best password?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">fish 
+</choice>
+         <choice value="1">alphabet1 
+</choice>
+         <choice value="2">balpabet6 
+</choice>
+         <choice value="3">blorking 
+</choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>A weak password since it is a word, and it is short at 4 letters.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>Not a great  password since it is a word and the 1-at-end pattern is common.</feedback>
+         </response>
+         <response match="2" score="1">
+            <feedback>The best password here: non-word, plus a random digit.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Pretty strong passwword with a non-word, but not the best on this list.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

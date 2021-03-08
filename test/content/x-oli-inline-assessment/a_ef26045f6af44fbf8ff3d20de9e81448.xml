@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_ef26045f6af44fbf8ff3d20de9e81448">
+   <title>tutor</title>
+   <question id="aQ_ef26045f6af44fbf8ff3d20de9e81448">
+      <body>
+         <p>Suppose you have 10 image files, each taking up 300 KB. About how many megabytes of space do they take up in total? Enter your answer as a number without units, such as 42.</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="3">
+            <feedback>10 * 300 KB is 3000 KB. 3000 KB is 3 MB.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

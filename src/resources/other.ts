@@ -1,28 +1,46 @@
 
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
-import { HasHistogram } from './common';
+import { Resource, TorusResource, Summary } from './resource';
 
-export interface OtherSummary extends HasHistogram {
-  type: 'OtherSummary';
-}
+export class Other extends Resource {
 
-// Summarize an organization
-export function summarize(file: string) : Promise<OtherSummary | string> {
+  restructure($: any) : any {
 
-  const summary : OtherSummary = {
-    type: 'OtherSummary',
-    elementHistogram: Histogram.create(),
-  };
+  }
 
-  return new Promise((resolve, reject) => {
+  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+    return Promise.resolve([{
+      type: 'Unknown',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      content: {},
+      objectives: [],
+    }]);
+  }
 
-    visit(file, (tag: string, attrs: Object) => {
-      Histogram.update(summary.elementHistogram, tag, attrs);
-    })
-    .then((result) => {
-      resolve(summary);
-    })
-    .catch(err => reject(err));
-  });
+  summarize(file: string): Promise<string | Summary> {
+
+    const summary : Summary = {
+      type: 'Summary',
+      subType: 'Other',
+      elementHistogram: Histogram.create(),
+      id: '',
+      found: () => [],
+    };
+
+    return new Promise((resolve, reject) => {
+
+      visit(file, (tag: string, attrs: Object) => {
+        Histogram.update(summary.elementHistogram, tag, attrs);
+      })
+      .then((result) => {
+        resolve(summary);
+      })
+      .catch(err => reject(err));
+    });
+  }
 }

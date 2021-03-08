@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-tables-m-tables-p-tables_boolean_and">
+  <head>
+    <title>Tables: Boolean AND</title>
+    <objref idref="u-tables-m-tables-p-tables_boolean_and_LO_1" />
+  </head>
+  <body>
+    <image id="fddf9d6bc68d4a91a0a3925184156d15" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <section id="c60a84425201482b87c888cd00032b31">
+      <title>Boolean AND</title>
+      <body>
+        <p id="e5440d154a4c4daeaf110fd5303026b3">In this section, we extend our if statement tests with <em style="italic">Boolean logic</em>, using <em style="italic">and</em>/          <em style="italic">or</em> to combine multiple true-or-false tests.</p>
+      </body>
+    </section>
+    <section id="e9cecff73cee46348a4179a1ba4929cb">
+      <title>Boolean And: &amp;&amp;</title>
+      <body>
+        <p id="eea5113f17f74d99814e3db71d6f1c9a">We want to be able to combine two tests, such as &quot;all the names that start with <em style="italic">D</em> and end with <em style="italic">y</em>.&quot; In code, that test looks like this:</p>
+        <codeblock id="e109c28053e64d1a829f0729fc46f3de" syntax="java" highlight="" number="false" start="">
+  if (row.getField(&quot;name&quot;).startsWith(&quot;D&quot;) &amp;&amp; row.getField(&quot;name&quot;).endsWith(&quot;y&quot;)) {
+        </codeblock>
+        <p id="f5687577fb55425999d15618f57e30f5">The key addition here is two ampersands, which means &quot;and&quot; in the code: <code>&amp;&amp;</code>
+        </p>
+        <p id="f426200c0d794a1f8ec31d4b1b37ce75">The <code>&amp;&amp;</code> combines two independent tests, requiring that both be true for the whole query to be true. Run this code to see what it does.</p>
+        <codeblock id="e0830fa7a57c48ea9a518e361346f78d" syntax="text" highlight="" number="false" start="">&lt;textarea id=&quot;table3-1&quot; rows=&quot;11&quot; cols=&quot;70&quot; spellcheck=&quot;false&quot; onKeyPress=&quot;return handleCR(this ,event)&quot;&gt;
+table = new SimpleTable(&quot;baby-2010.csv&quot;);
+for (row: table) {
+  if (row.getField(&quot;name&quot;).startsWith(&quot;D&quot;) &amp;&amp;
+      row.getField(&quot;name&quot;).endsWith(&quot;y&quot;)) {
+    print(row);
+  }
+}&lt;/textarea&gt;
+            &lt;input type=&quot;button&quot; value=&quot;Run&quot; onClick=&quot;evaluateClear(&quot;table3-1&quot;)&quot;/&gt;</codeblock>
+        <p id="f5cebf458cc04b9e812965af021999bb"></p>
+        <p id="fc02876fd8124e2f827a4deb733399ad">The &amp;&amp; joins a <code>startsWith</code> test and an <code>endsWith</code> test. The whole test is written across two lines so it is not all crowded on one line (optional). Note that the tests joined by &amp;&amp; are syntactically complete tests on their own, then joined with &amp;&amp;.</p>
+        <p id="e20cd16ee5fd4f31b3beebf25a1a7c92">The following form looks reasonable but <em style="italic">does not work</em> on the computer:</p>
+        <codeblock id="cbc3e8aca8154869bf7ae5fb442e721b" syntax="java" highlight="" number="false" start="">
+  if (row.getField(&quot;name&quot;).startsWith(&quot;A&quot;) &amp;&amp; endsWith(&quot;y&quot;)) {
+        </codeblock>
+        <p id="c272ebd1be8a4fde9e684ad3c49edb96">Here is the correct form with both of the individual tests fully spelled out:</p>
+        <codeblock id="a6db8831ef134130a82bc5ddca8b8ff0" syntax="java" highlight="" number="false" start="">
+  if (row.getField(&quot;name&quot;).startsWith(&quot;A&quot;) &amp;&amp; row.getField(&quot;name&quot;).endsWith(&quot;y&quot;)) {
+        </codeblock>
+      </body>
+    </section>
+    <wb:inline idref="a_20c50810ea4c4b6680811eaa710f8d09"/>
+    <codeblock id="ac3b3ead935b45ffbc6c823a04aef580" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;6123cabc765949e08957df009c134e2b&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 2): Change the &lt;code&gt;startsWith&lt;/code&gt; to use &lt;code&gt;&quot;B&quot;&lt;/code&gt;.
+Hint (2 of 2): After the first test, add &lt;code&gt;&amp;&amp; row.getField(&quot;name&quot;).endsWith(&quot;t&quot;)&lt;/code&gt;
+Hint (3 of 3): &lt;code&gt;if (row.getField(&quot;name&quot;).startsWith(&quot;A&quot;) &amp;&amp; row.getField(&quot;name&quot;).endsWith(&quot;t&quot;))&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The starter code prints all the rows in which the name starts with Q. Edit the code so it prints rows in which the name starts with B and ends with t (lowercase t). For this sort of problem, it&apos;s easy to check your solution by looking at the output. Do the names shown have the desired first and last letters?
+&lt;/p&gt;&quot; regex=&quot;Bennett.*(.*\n)+Brent.*\n$&quot; starter_code=&quot;table = new SimpleTable(&quot;baby-2010.csv&quot;);
+for (row: table) {
+  if (row.getField(&quot;name&quot;).startsWith(&quot;Q&quot;)) {
+    print(row);
+  }
+}&quot; solution_code=&quot;table = new SimpleTable(&quot;baby-2010.csv&quot;);
+for (row: table) {
+  if (row.getField(&quot;name&quot;).startsWith(&quot;B&quot;) &amp;&amp; row.getField(&quot;name&quot;).endsWith(&quot;t&quot;)) {
+	print(row);
+  }
+}
+&quot;/&gt;
+    </codeblock>
+    <p id="fe2bd1e8c1754f618d490f64c6f40405"></p>
+    <section id="a4fd029c45284e6ab90a02de2a1fcc7a">
+      <title>Boolean &amp;&amp; with Operator</title>
+      <body>
+        <p id="e840c7bfa5754eaba63a2c3d8c8a3b17">This example uses <code>&amp;&amp;</code> to show rows where the row name starts with <em style="italic">A</em> and the rank is &amp;lt; 20. Run the code to see what it does. Notice that it prints the rows of names starting with <em style="italic">A</em> but only so long as the rank is less than (&amp;lt;) 20.</p>
+        <codeblock id="eb11b652d61f461b9e5cbed4f76ac641" syntax="text" highlight="" number="false" start="">&lt;textarea id=&quot;table3-2&quot; rows=&quot;10&quot; cols=&quot;70&quot; spellcheck=&quot;false&quot; onKeyPress=&quot;return handleCR(this ,event)&quot;&gt;
+							table = new SimpleTable(&quot;baby-2010.csv&quot;);
+							for (row: table) {
+								if (row.getField(&quot;name&quot;).startsWith(&quot;A&quot;) &amp;&amp; row.getField(&quot;rank&quot;)  20) {
+									print(row);
+								}
+							}
+						&lt;/textarea&gt;
+            &lt;input type=&quot;button&quot; value=&quot;Run&quot; onClick=&quot;evaluateClear(&quot;table3-2&quot;)&quot;/&gt;</codeblock>
+        <p id="bc49232463db4259ba542bd030ce1caf"></p>
+      </body>
+    </section>
+    <wb:inline idref="a_6b07d00fd8db487b8594116cfc1916d4"/>
+
+    <codeblock id="c5216282ea2040e0b12e5c72398ae261" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;6cc163243af2435f9f124d67bdfe2d33&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): Change the &lt;code&gt;startsWith&lt;/code&gt; to use &lt;code&gt;&quot;Z&quot;&lt;/code&gt;.
+Hint (2 of 3): After the first test, add &lt;code&gt;&amp;&amp; row.getField(&quot;rank&quot;) &amp;gt; 800&lt;/code&gt;.
+Hint (3 of 3): &lt;code&gt;if (row.getField(&quot;name&quot;).startsWith(&quot;Z&quot;) &amp;&amp; row.getField(&quot;rank&quot;) &amp;gt; 800) {&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The starter code prints all the rows in which the name starts with Q. Edit the code so it prints rows in which the name starts with Z and the &quot;rank&quot; field is greater than 800. 
+&lt;/p&gt;&quot; regex=&quot;Zaria.*(.*\n)+Zuri.*\n$&quot; starter_code=&quot;table = new SimpleTable(&quot;baby-2010.csv&quot;);
+for (row: table) {
+  if (row.getField(&quot;name&quot;).startsWith(&quot;Q&quot;)) {
+    print(row);
+  }
+}&quot; solution_code=&quot;table = new SimpleTable(&quot;baby-2010.csv&quot;);
+for (row: table) {
+  if (row.getField(&quot;name&quot;).startsWith(&quot;Z&quot;) &amp;&amp; row.getField(&quot;rank&quot;) &gt; 800) {
+	print(row);
+  }
+}
+
+&quot;/&gt;
+    </codeblock>
+  </body>
+</workbook_page>

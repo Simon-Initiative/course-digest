@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-networking-m-networking-p-computer_networking">
+	<head>
+		<title>Computer Networking</title>
+		<objref idref="u-networking-m-networking-p-computer_networking_LO_1" />
+	</head>
+	<body>
+		<image id="a10293da0f3943f09c815f271321d7a8" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<p id="cd0b4cbc4e5f4ec7976b503718955d74">The details of networking can be quite complicated, but the basic concepts are surprisingly simple. A network is like a phone system for computers, providing a way for them to send data to each other. In this section we&apos;ll look at small networks, and later we&apos;ll scale up the ideas to the word-wide internet.</p>
+		<section id="efe0ba6b4f084ebab5147eafa7bfcb12">
+			<title>Local Area Network</title>
+			<body>
+				<p id="a920dd724e484923b3d3accef8311a0e">A local area network (LAN) is used to connect two or more computers that are physically near each other, such as within a house or one floor of an office building. Ethernet and Wi-Fi are two very common LAN technolgoies. Ethernet uses wires, while Wi-Fi is wireless.</p>
+			</body>
+		</section>
+		<section id="ef720178ed874717816f393f4c11d659">
+			<title>Packets: From Here to There</title>
+			<body>
+				<p id="ef644b03d3404df4b13dcac89b4e3c62">We start with the simplest case of two computer connected by an ethernet cable, and we want to send a 50KB jpeg image file from one computer to the other. Later we&apos;ll scale this up to the full Internet case of two computers on separate sides of the world. How are the bytes of the image file on one computer sent to the other computer over the ethernet cable?</p>
+				<p id="f361cbee0fa1487497e65c487307256b">For transmission, the 50KB of the image is divided into <em style="italic">packets</em>. All data networking is organized around sending relatively small packets of data. If each packet is about 1500 bytes (a typical packet size), then the bytes of the 50KB image can be divided into about 32 packets of around 1500 bytes each. It is not required that all the packets be the same size, just that every byte of the image is sent in one packet or another. </p>
+				<image id="ec7d1ff7a4964cd1af13c946df252e7a" src="../webcontent/Flowers.png" alt="How files are transmitted in packets" style="inline" vertical-align="middle">
+					<caption />
+					<popout enable="false"></popout>
+				</image>
+				<p id="dfd2008ce19f48e2859a5b34db1ec0b0">diagram by C. Lallier</p>
+				<p id="f85e590141dc4896a49c72ad74f2fb32">The 0s and 1s that make up each packet are sent on the wire (detailed below). The receiving computer puts the packets together to reassemble the original image.</p>
+			</body>
+		</section>
+		<section id="d4d254dabd334635ac5839b83ad80d81">
+			<title>Example: How are 0s and 1s Sent?</title>
+			<body>
+				<p id="e0452e89b44a49de8e9d815565053484">In our example, each packet is about 1500 bytes. With 8 bits per byte, that makes 12,000 bits, and each bit is 0 or 1. One way to send the bits is to say that 3 volts represents a 1, and 0 volts represents a 0. The sending computer goes through the 12,000 bits changing the voltage on the wire for each 1 and 0. You can imagine the pattern of electricity going down the wire, like a wave.</p>
+				<p id="b48885af132a45919018b1fcb7d64a7f">
+					<image id="c9e6a642a6a84eaa8285cb0a9c4d88b4" src="../webcontent/network-signaling.png" alt="bits being sent on a wire" style="inline" vertical-align="middle">
+						<caption />
+						<popout enable="false"></popout>
+					</image>
+				</p>
+				<p id="a2d23b8ae3a949eeb27147b33f61f788">The receiving computer observes the pattern of 3 volts and 0 volts on the wire and reconstructs the 1s and 0s of each byte, putting the 1500 bytes together to make the whole packet. In reality, ethernet and Wi-Fi represent 1s and 0s similarly to this but with a more complicated scheme.</p>
+			</body>
+		</section>
+		<p id="a513af661460439eaf4f07e27f3e5247" />
+		<section id="a99ec0faae294f0d8a74b459db4dc2d8">
+			<title>Packet Errors: Checksum, Resend</title>
+			<body>
+				<p id="d31652f6c4094e5c82e70c068bb4fd25">Errors sometimes occur in the transmission of the 1s and 0s, caused, for example, by a power surge or other electrical interference. Therefore, a packet often includes an error-detection scheme such as a <em style="italic">checksum</em>. A checksum can detect whether a packet was corrupted in transmission. A simple example checksum scheme is this: For each packet sent, the sending computer adds all of its bytes and calculates their sum, taking the last two digits of the sum as the checksum of the packet. The sending computer appends the checksum in a byte at the end of the packet.</p>
+				<image id="e5e1fd8459414b268b3d9abfe1ab1831" src="../webcontent/network-checksum.png" alt="Bytes of packet are added and checksum is calculated" style="inline" vertical-align="middle">
+					<caption />
+					<popout enable="false"></popout>
+				</image>
+				<p id="da895f2f8c28429fbec94b3834163319">The receiving computer adds the bytes received, checking that the checksum matches. If the checksum does not match, then some part of the data was corrupted in transmission. Typically, for a corrupt packet, the receiver requests that the packet be sent again. In this way, eventually, all the packets can be sent error-free. Ethernet, USB, and Wi-Fi all have some sort of checksum scheme, so that copies can be made perfectly. The checksum schemes are more complicated than our simple add-up-the-bytes example here.</p>
+				<p id="a37422aae999498c8ec099b255b3acda">The checksum scheme will very likely detect data corruption, but it is not perfect. Two transmission errors could cancel out in such a way that the checksum still matches, but the probability of this happening is miniscule.</p>
+			</body>
+		</section>
+		<wb:inline idref="a_b00782de699f423b9b5c311e65ad2f51"/>
+		<wb:inline idref="a_4b91b8480b604d3eac94939608cddfaa"/>
+		<wb:inline idref="a_67c70e6f7cd245ef975f1d7888eb8e2a"/>
+
+	</body>
+</workbook_page>

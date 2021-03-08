@@ -1,0 +1,316 @@
+/****************************************************************************************************
+*   OLI Theming File
+*
+*   Contains all the theme color definitions for the Stanford Open Learning Initiative Project
+*
+****************************************************************************************************/
+
+.home > header .title{
+    width:60%;
+    margin-left:20%;
+}
+
+.home > header .title > hgroup{
+    padding:0px 0px;
+}
+
+.home > header .title img{
+    width:100%;
+}
+
+.home > header .outer-wrapper{
+    padding-top:130px;
+}
+
+
+h1.oli_page_title{
+    background-color:#3399cc !important;
+    font-size:25px !important;
+    color:white !important;
+    padding-left: 35px !important;
+    padding-top:15px !important;
+    padding-bottom:15px !important;
+    padding-right:15px !important;
+    border-radius:10px !important;
+}
+
+h1.oli_quiz_title{
+    background-color: #663399 !important;
+    font-size:25px !important;
+    color:white !important;
+    padding-left: 35px !important;
+    padding-top:8px !important;
+    padding-bottom:8px !important;
+    padding-right:15px !important;
+    border-radius:10px !important;
+}
+
+/*div.oli_objective{
+background-color:white !important;
+    font-size:18px !important;
+    color:#009900 !important;
+    border-color:#EFEDE7 !important;   
+    border-width:5px !important;
+    padding:15px !important;
+    border-radius:10px !important;
+    
+ } */  
+
+h3.oli_objective{
+    background-color:white !important;
+    font-size:18px !important;
+    color:#009900 !important;
+    border-style:solid !important;
+    border-width:2px !important;
+    padding:15px !important;
+    border-radius:10px !important;
+}
+
+div.oli_example_box{
+    background-color:#efede7 !important;
+    font-size:18px !important;
+    color:#47331c !important;
+    padding:15px !important;
+    border-radius:10px !important;
+   
+}
+
+/*h2.oli_example_header{
+    font-size:18px !important;
+    text-transform: uppercase !important;
+    font-weight: bold !important;
+
+}*/  
+   
+    
+h2.oli_example_title{
+font-size:18px !important;
+    color:#3399cc !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    padding-top: 8px !important;
+}    
+h4{
+ color:#3399cc !important;
+  }
+
+h2.oli_section_title{
+font-size:18px !important;
+    color:#3399cc !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    padding-top: 8px !important;
+}
+
+h3{
+    color:#3399cc !important;
+}
+
+tr.oli_table:nth-child(odd) { 
+    background: #e2e2e2; 
+}
+
+th {
+    background-color:#3399cc !important;
+    color:white !important;
+}
+
+a.rollover{
+    outline:none;
+    border-bottom:2px dotted #069;
+    color:#009900 !important;
+}
+a.rollover strong{
+    line-height:30px;
+}
+a.rollover:hover{
+    text-decoration:none;
+}
+a.rollover span{
+    z-index:10;
+    display:none;
+    padding:14px 20px;
+    margin-top:-30px;
+    margin-left:28px;
+    width:300px;
+    line-height:16px;
+}
+a.rollover:hover span{
+    display:inline;
+    position:absolute;
+    color:#111;
+    border:1px solid #DCA;
+    background:#fffAF0;
+}
+.callout{
+    z-index:20;
+    position:absolute;
+    top:30px;
+    border:0;
+    left:-12px;
+}
+a.rollover span
+{
+    border-radius:4px;
+    box-shadow:5px 5px 8px #CCC;
+}
+
+/*----- Tabs -----*/
+.oli_tabs{
+    width:100%;
+    display:inline-block;
+    padding-bottom: 25px;
+}
+
+/*----- Tab Links -----*/
+/* Clearfix */
+.oli_tab_links:after{
+    display:block;
+    clear:both;
+    content:'';
+}
+
+.oli_tab_links li{
+    /*margin:0px 5px;*/
+    margin-bottom:0px !important;
+    float:left;
+    list-style:none;
+}
+
+.oli_tab_links a{
+    padding:9px 15px;
+    display:inline-block;
+    border-radius:3px 3px 0px 0px;
+    background:#bad7eb;
+    font-size:16px;
+    font-weight:600;
+    color:#4c4c4c;
+    transition:all linear 0.15s;
+}
+
+.oli_tab_links a:hover{
+    background:#a7cce5;
+    text-decoration:none;
+}
+
+.oli_tab_links{
+    margin-bottom:0px !important;
+}
+
+li.oli_tab_active a,
+li.oli_tab_active a:hover{
+    background:#eee;
+    color:#4c4c4c;
+}
+
+/*----- Content of Tabs -----*/
+.oli_tab_content{
+    padding:15px;
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0, 0, 0, 0.15);
+    background:#eee;
+}
+
+.oli_tab{
+    display:none;
+}
+
+.oli_tab.active{
+    display:block;
+}
+
+/*----- Change navigational ribbon hover to display title only */
+.xmodule_display.xmodule_SequenceModule .sequence-nav ol li a p {
+	color: #333333 !important;
+	height: 37px !important;
+	line-height: 0 !important;
+	text-shadow: none !important;
+}
+
+.xmodule_display.xmodule_SequenceModule .sequence-nav ol li a p::first-line {
+	color: #ffffff !important;
+	visibility:visible !important;
+	line-height: 2em !important;
+}
+
+/*----- Remove box around images in problem components */
+.xmodule_display.xmodule_CapaModule div.problem center {
+    border: 0px !important;
+}
+
+/*----- Term -----*/
+strong.oli_term{
+    font-weight:bold !important;
+    color:#709E30 !important;
+    font-style: italic !important;
+}
+
+/*----- Definition -----*/
+.oli_definition{
+    max-width: 50em;
+    margin: 1.5em 0;
+}
+
+.oli_definition dl {
+    margin: 22px 0px 22px 55px;
+}
+
+.oli_definition dt {
+    color: #709E30;
+    font-size: 1.2em;
+    font-weight: normal;
+    margin: 0px 0px 7px 0px;
+}
+
+.oli_definition dd {
+    color: #59595A;
+}
+
+.oli_definition .def-lbl {
+    text-transform: lowercase;
+    float: left;
+    padding: 4px 6px 0px 0px;
+    line-height: 1em;
+    font-size: 0.9em;
+}
+
+.oli_definition dl dd .def-lbl {
+    font-style: italic;
+}
+
+.oli_definition dl dd div, dl dd p {
+    display: inline;
+}
+
+/*----- Inquiry -----*/
+.oli_inquiry {
+    margin: 1em 0px;
+}
+
+.oli_inquiry div {
+    margin: 0.25em 0.5em 0.25em 34px;
+}
+
+.oli_inquiry .answer {
+    color: #595959;
+    padding: 5px 0px 0px 24px;
+}
+
+/*----- Pullout -----*/
+.oli_pullout{
+    margin: 55px 55px;
+}
+
+.oli_pullout .pullout-lbl {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+ul.unstyled {
+   list-style:none !important;
+}
+
+img.popimg {
+    cursor: pointer;
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-networking-m-contents_networking-p-contents_networking">
+   <head>
+      <title>Contents: Networking</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="c703fa0908fa4d93861827cb2fae38ce" display_name="Contents: Networking"/>--><!--<h1>Contents: Networking</h1>--><ul>
+         <li>
+            <activity_link idref="u-networking-m-networking-p-computer_networking"
+                           title="u-networking-m-networking-p-computer_networking">Computer Networking</activity_link>
+         </li>
+         <li>
+            <activity_link idref="u-networking-m-networking-p-the_internet"
+                           title="u-networking-m-networking-p-the_internet">The Internet</activity_link>
+         </li>
+         <li>
+            <activity_link idref="u-networking-m-networking_quiz-p-networking_quiz"
+                           title="u-networking-m-networking_quiz-p-networking_quiz">Networking Quiz</activity_link>
+         </li>
+      </ul>
+      <p/>
+      <p/>
+      <!--A License section was here:<html filename="ac261b2ce02748aab4879fef0cd28007" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

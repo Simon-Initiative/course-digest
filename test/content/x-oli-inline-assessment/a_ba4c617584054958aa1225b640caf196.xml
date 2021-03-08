@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_ba4c617584054958aa1225b640caf196">
+   <title>tutor</title>
+   <question id="aQ_ba4c617584054958aa1225b640caf196">
+      <body>
+         <p>Which line of code increments the value in <code>count</code> by 1?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">
+            <code>count = + 1;</code>
+         </choice>
+         <choice value="1">
+            <code>count = count + 1;</code>
+         </choice>
+         <choice value="2">
+            <code>count = count * 1;</code>
+         </choice>
+         <choice value="3">
+            <code>count = count − 1;</code>
+         </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>More than "+ 1" is needed on the right.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>count = count + 1; increments the value in count by 1.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>Close, but * is not the right operator.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Close, but − is not the right operator.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

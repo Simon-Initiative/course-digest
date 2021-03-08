@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+	xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	xmlns:m="http://www.w3.org/1998/Math/MathML"
+	xmlns:pref="http://oli.web.cmu.edu/preferences/"
+	xmlns:theme="http://oli.web.cmu.edu/presentation/"
+	xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-hardware_and_software-m-hardware_and_software-p-kilobytes_megabytes_and_gigabytes">
+	<head>
+		<title>Kilobytes, Megabytes, and Gigabytes</title>
+		<objref idref="u-hardware_and_software-m-hardware_and_software-p-kilobytes_megabytes_and_gigabytes_LO_1" />
+	</head>
+	<body>
+		<image id="f1dff14fca1a4246b1d0d6d2e667fddc" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+			<caption />
+			<popout enable="false"></popout>
+		</image>
+		<section id="e1381eb0225b4d128359d1441ec92138">
+			<title>Kilobytes, Megabytes, Gigabytes, and More</title>
+			<body>
+				<p id="d228aaaf60404b14a320300d22f99627">A byte by itself is quite small, so we have terms such as <em style="italic">kilobyte</em>,					<em style="italic">megabyte</em>, and <em style="italic">gigabyte</em> to measure larger collections of bytes. These terms are used to measure, for example, the size of a JPEG file or the capacity of a thumb drive.</p>
+				<section id="fc8c0e366b8b4fa795034723a21261cf">
+					<title>Kilobyte</title>
+					<body>
+						<p id="b781ab557aef420da03ee7b5ae0d562f">One kilobyte (kB) is about 1000 bytes (see below for why the word &quot;about&quot; is necessary here). So for example 5,000 bytes is about 5 kB.</p>
+						<p id="e8a6b818dea9483bb312d2912b42b544">One page of ordinary alphabetic text takes about 2 kB to store (about 1 byte per letter, as in the previous section). A typical short email also takes up just 1 or 2 kB. Text is very compact, requiring few bytes compared to images and sound and video.</p>
+					</body>
+				</section>
+				<section id="ed627bd9936348d9b5fa83709ef19d1b">
+					<title>Megabyte</title>
+					<body>
+						<p id="ef0f77b80f5e4b1e8ff87f70df0ca741">One megabyte (MB) is about 1 million bytes (or equivalently, about 1000 KB). A rule of thumb for MP3 audio is that 1 minute of audio requires about 1 MB. A high-quality digital image is, on average, 2 to 5 MB. Audio and image and video data typically are stored in <em style="italic">compressed</em> form.</p>
+					</body>
+				</section>
+				<section id="b0932eff1f4849518b4486c02398f476">
+					<title>Gigabyte</title>
+					<body>
+						<p id="ec53e25782e94e8d94ccccc0b9a5320f">One gigabyte (GB) is about 1 billion bytes, or 1000 MB. <em style="italic">Gigabyte</em> was once a rarely used term, but as technology advanced, increasing the speed and storage capacities of computers, it has become a commonly used unit. In 2017, a computer might have 8 or 16 GB of RAM and 256 or 512 GB of persistent storage. A BluRay video disk can store about 50 GB.</p>
+					</body>
+				</section>
+				<section id="dcf5c300ddb54c738e6dcc2b5991d983">
+					<title>Terabyte</title>
+					<body>
+						<p id="cdf6f82797e141c3b6789ca36ffdd00e">One terabyte (TB) is about 1 trillion bytes, or 1000 GB. In 2017, 10 TB is about the largest consumer hard drive available.</p>
+					</body>
+				</section>
+			</body>
+		</section>
+		<section id="d900e058c5a44f3ca8f41b757280f918">
+			<title>Kilobyte, Megabyte, Gigabyte Word Problems</title>
+			<body>
+				<p id="db57c65c5d964b8981beb7514c1afb51">It&apos;s useful to be able to solve simple word problems about kilobytes, megabytes, and gigabytes. Mostly this involves using the number 1000 to translate between units. Here is one example problem:</p>
+				<p id="c9357f0a0f5b479dbf7bda8ae6fb08c6">
+					<em>Problem:</em> Alice has 100 small images, each of which is 500 kB. How much total space do they take up in megabytes (MB)?</p>
+				<p id="d3fa62f8a08f4221985595d8751f03c9">
+					<em>Solution:</em> There are 100 images, and each image is 500 kB. So the total size is 100 × 500 kB = 50,000 kB. 1000 kB is 1 MB, so 50,000 kB is 50 MB. The answer is 50 MB.</p>
+				<section id="d36eb2c5c21f4d95a9722b26bab96725">
+					<title>About 1000</title>
+					<body>
+						<p id="b205b293a5bb4b1ba3925ca588ad74f3">The text above says that 1 kB is about 1000 bytes. Why is the word <em style="italic">about</em> needed? For units such as kilobytes and megabytes, there are two systems. The 1000 system uses a factor of 1000 between kilobytes, megabytes, and so on, as is common with the SI metric system. Our word problems will use this simple 1000 system. There is also a 1024 system that uses a factor of 1024 between units. This is because computers are based on the binary system and memory is measured in powers of 2. In the 1024 system, 1 KB is equal to 2<sup>10</sup> or 1024 bytes. Deep within the computer, grouping things by factors of 1024 is convenient, which is why the 1024 system exists.</p>
+						<p id="fee49d4a3940476882e5db6a4c555816">In an attempt to fix the confusion between the 1000 and 1024 systems, the terms <em style="italic">kibibyte</em>,							<em style="italic">mebibyte</em>,							<em style="italic">gibibyte</em>, and <em style="italic">tebibyte</em> have been introduced to specifically mean the 1024-based units (see <link href="http://en.wikipedia.org/wiki/Kibibyte" target="new" internal="false">Kibibyte</link> on Wikipedia). These terms do not seem to have caught on very strongly yet.</p>
+					</body>
+				</section>
+			</body>
+		</section>
+
+		<wb:inline idref="a_bf3964797e7b4fc3b1e7f378aa1dcafc"/>
+
+		<wb:inline idref="a_2a7d54520c974c3084adad85419a4fc8"/>
+
+		<wb:inline idref="a_c0e9e0a69cba4931967143bf72ac2dd8"/>
+
+		<wb:inline idref="a_db3eed584363420da9f46e4c0a6ddf0c"/>
+
+	</body>
+</workbook_page>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-analog_and_digital-m-contents_analog_and_digital-p-contents_analog_and_digital">
+   <head>
+      <title>Contents: Analog and Digital</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="1c6e822559ad447e9253af8b7caaf9e2" display_name="Contents: Analog and Digital" editor="raw"/>--><!--<h1>Contents: Analog and Digital</h1>--><ul>
+         <li>
+            <ul>
+               <li>
+                  <activity_link idref="u-analog_and_digital-m-analog_and_digital-p-analog_and_digital"
+                                 title="u-analog_and_digital-m-analog_and_digital-p-analog_and_digital">Analog and Digital</activity_link>
+               </li>
+               <li>
+                  <activity_link idref="u-networking-m-networking_quiz-p-networking_quiz"
+                                 title="u-networking-m-networking_quiz-p-networking_quiz">Analog and Digital Quiz</activity_link>
+               </li>
+            </ul>
+         </li>
+      </ul>
+      <p/>
+      <p/>
+      <!--A License section was here:<html filename="ca84fecbadc041ab995fa0713451f2ea" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

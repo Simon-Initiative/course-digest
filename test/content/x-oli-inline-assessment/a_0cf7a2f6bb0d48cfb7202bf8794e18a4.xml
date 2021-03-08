@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_0cf7a2f6bb0d48cfb7202bf8794e18a4">
+   <title>tutor</title>
+   <question id="aQ_0cf7a2f6bb0d48cfb7202bf8794e18a4">
+      <body>
+         <p>Which one of the following emails looks like a Trojan attack?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">This is a very important message from your bank. We have reason to believe your account has been corrupted. Please email us your password so we can verify it. </choice>
+         <choice value="1">Please visit www.scwhab.bad-guy.ru and log in with your regular password because the standard login page is broken today. </choice>
+         <choice value="2">I have 27 million dollars here in Spain. If you will send me your contact information to help me transfer the money to your account, I will be happy to give you 10% of it. Please help me—you're my only hope! </choice>
+         <choice value="3">We have detected a virus on your computer. Please download and run this program to remove it: SuperVirusChecker.exe. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>This message is a phishing attempt.</feedback>
+         </response>
+         <response match="1" score="0">
+            <feedback>This message is a phishing attempt.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>This is just a scam, known as the "419 scam."</feedback>
+         </response>
+         <response match="3" score="1">
+            <feedback>An email that asks you to download an executable file is a Trojan. Do not run it!</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

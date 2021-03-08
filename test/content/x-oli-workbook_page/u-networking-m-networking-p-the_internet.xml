@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-networking-m-networking-p-the_internet">
+   <head>
+      <title>The Internet</title>
+      <objref idref="u-networking-m-networking-p-the_internet_LO_1"/>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+			<html filename="2ec9b1b4243b4b61bf9e96e857d5ddcb" display_name="The Internet" editor="raw"/>--><!--<h1>The Internet</h1>--><!--The .xml file paired with the source html file read:
+			<html filename="19cb5cd10ca1438ba5bb2f796c99d154" display_name="The Internet: TCP/IP Standards" editor="raw"/>--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><p>Previously, we looked at LAN networks that can connect all the computers in a room. Now we scale the process up to send packets between any two computers on earth.</p>
+      <p>The Internet is built on the TCP/IP family of standards (Transmission Control Protocol/Internet Protocol), which solves the larger problem of sending packets between computers across the Internet. These are free and open, vendor-neutral standards, which is probably the reason they have been so incredibly successful.</p>
+      <section>
+         <title>IP Address</title>
+         <body>
+            <image src="../webcontent/computers_with_ip.png"
+                   alt="computers with ip addresses"/>
+            <p>Every computer on the Internet has an <em style="italic">IP address</em> that identifies it (like a phone number). The most common form of IP address is 4 bytes, separated by dots, such as 171.64.2.3. In order to exchange packets on the Internet, a computer must have its own IP address to identify it. </p>
+            <p>Like a telephone area code, the left part of the IP address is specific to where the computer is on Internet. For example, any 171.64.(anything) is part of Stanford campus. More specifically, in the Computer Science building on Stanford campus, all the IP addresses begin 171.64.64.(anything), varying only in that last byte.</p>
+         </body>
+      </section>
+      <section>
+         <title>Example: Sandra Bullock Blooper</title>
+         <body>
+            <p>
+               <link href="https://www.youtube.com/watch?v=uHkRda6w-ik">Blooper video: The Net</link>
+            </p>
+            <p>There is a blooper in the movie <em style="italic">The Net</em> where the IP address 75.748.86.91 is shown. This IP address is not valid because each of the four numbers in an IP address is one byte. The number 748 is too large, since the largest possible byte value is 255. Also, do you notice a problem with the second IP address shown in the video clip: 23.75.345.200? Oops!</p>
+         </body>
+      </section>
+      <p/>
+      <section>
+         <title>IPv6</title>
+         <body>
+            <p>While IP addresses with 4 bytes, called Internet Version 4 or IPv4, are still used to route most Internet traffic, Internet Protocol Version 6, or IPv6, is the next generation Internet Protocol that is starting to gain broader adoption. IPv6 was first introduced in the mid-2000s to address the impending shortage of IPv4 network addresses. The primary improvement with IPv6 is that it uses IP addresses that are lengthened from 32 bits to 128 bits. Additionally, while an IPv4 address is written in decimal as four numbers separated by periods, an IPV6 address is written in hexadecimal and separated by colons. A hexadecimal system uses sixteen distinct symbols, most often the symbols 0–9 to represent values zero to nine, and A, B, C, D, E, F (or alternatively a, b, c, d, e, f) to represent values ten to fifteen. An IPv6 address could look like this: 3ffe:1900:85a3:0002:0400:8a2e:fe21:7334. IPv4 and IPV6 addresses currently coexist and will for the foreseeable future.</p>
+         </body>
+      </section>
+      <section>
+         <title>Domain Names</title>
+         <body>
+            <p>IP addresses are used to send packets on the Internet, but they are not easy to remember or type in. A <em style="italic">domain name</em> is a easy to remember and type in as a shorthand name for an IP address. So, for example, www.stanford.edu is the domain name for the IP address of the computer that is Stanford's website.</p>
+            <p>When a user types in a domain name, the system looks up that name to get the associated IP address. Then packets can be sent to that IP address. All packet communication is done with IP addresses. Domain names are just a convenient set of shorthand names for IP addresses. The early Internet had just a few top-level domain name categories, such as .com, .org, and .edu, and since then, the number of possible top-level domains has greatly increased. It costs about $30 a year to buy a .com domain name.</p>
+         </body>
+      </section>
+      <section>
+         <title>Router</title>
+         <body>
+            <p>The inside of the Internet is made of many interconnected <em style="italic">routers</em>. A router takes in a packet and forwards it one hop closer to its final destination. To get an Internet connection, your computer connects to an <em style="italic">upstream</em> router to handle your computer's packets. Often, a router is combined with Wi-Fi, so when you connect to that Wi-Fi network, it acts as your upstream router for the duration of the connection.</p>
+            <p>This diagram shows the computer 171.64.64.16 connecting to the Internet by its upstream router 171.64.64.1. Often, a router's IP address ends in 1. Notice that the left parts of those two IP addresses are the same, since the computer and the router are in the same part of the Internet.</p>
+            <image src="../webcontent/network-routers.png" alt="internet made of routers"/>
+         </body>
+      </section>
+      <section>
+         <title>Packet Routing: Hop, Hop, Hop</title>
+         <body>
+            <p>Suppose 171.64.64.16 has a packet it wants to send to another computer on the Internet. First, the packet is sent to the router 171.64.64.1 for handling, the first <em style="italic">hop</em>. That router, in turn, sends the packet to the next router, one hop closer to the packet's destination. By a series of such router-to-router hops, the packet makes its way across the Internet, eventually to its destination computer. When you are surfing on the Internet, the packets of data for each web page typically travel 10 to 20 hops to get to your computer.</p>
+         </body>
+      </section>
+      <wb:inline idref="a_644b0dbf8d304c1aa906ac1f83f704d5"/>
+		<wb:inline idref="a_4b3b45a1445747198ad99f87d332afa0"/>
+		<wb:inline idref="a_c620d9298bd343d0b4f7106eaeab2047"/>
+		<wb:inline idref="a_99c75d1d047449d2a3f7cfaf55753e0e"/>
+
+      <!--The .xml file paired with the source html file read:
+			<html filename="806a006d418f45389436155d28e59e13" display_name="What Is an Internet Connection?" editor="raw"/>-->
+      <!--
+			<section>
+			<h1>Optional: What Is an Internet Connection?</h1>-->
+      <section>
+         <title>Special Local IP Addresses</title>
+         <body>
+            <p>The IP address forms 10.x.x.x and 192.168.x.x are special local IP addresses. These special local addresses may be handed out, for example, by a Wi-Fi router. These addresses work within an organization but not out on the Internet at large. Packets using local IP addresses are automatically translated to a real IP address at the border where the packet makes its way on to the Internet. These special addresses are kind of an oddball case, but they are mentioned here because you may see them if you look at the IP address of your computer or phone.</p>
+         </body>
+      </section>
+      <section>
+         <title>What Does It Mean to Be on the Internet?</title>
+         <body>
+            <p>Say your laptop connects to a Wi-Fi router to get on the Internet. How does that work?</p>
+            <ol>
+               <li>Your laptop connects to an upstream combination Wi-Fi/router to handle its packets.</li>
+               <li>The router typically gives the computer a temporary IP address to use. This may be a local IP address such as 192.168.x.x or 10.x.x.x, as described above.</li>
+               <li>The laptop cannot pick an arbitrary IP address out of the air to use, since the left part of the address depends on the location on the Internet, details known by the router. Also, it's important to pick an IP address that no other computer is using.</li>
+               <li>Dynamic Host Configuration Protocol (DHCP) is a protocol for the router to send the needed network configuration settings down to the computer to use. Computers very often use this feature to get needed network configuration from the router automatically.</li>
+            </ol>
+         </body>
+      </section>
+      <section>
+         <title>Networking Config Exercise</title>
+         <body>
+            <p>To see IP addresses in action, look up the IP address of your computer.</p>
+            <ul>
+               <li>Bring up the networking control panel. Look for the following things:
+						IP address of your computer
+						IP address of your router (upstream)</li>
+            </ul>
+         </body>
+      </section>
+      <section>
+         <title>Networking Config Screenshot</title>
+         <body>
+            <p>Here is a screenshot of the current network configuration for a personal laptop. The IP address the laptop is using is 192.168.8.171. The upstream router is 192.168.8.1. DHCP is enabled, so that's how the router passed this configuration down to the laptop. Here we see the IPv6 address is not being used and is blank.</p>
+            <image src="../webcontent/network-config.png"
+                   alt="networking config window of a laptop"/>
+         </body>
+      </section>
+      <wb:inline idref="a_4f6c372ef2024facb76c7001029ee537"/>
+
+      <!--The .xml file paired with the source html file read:
+	<html filename="5175a19946954985abc1d669f1b12bfb" display_name="Optional Demos/Activities" editor="raw"/>-->
+      <!--
+			<section>
+		<h1>Optional Demos/Activities</h1>-->
+      <section>
+         <title>Ping</title>
+         <body>
+            <p>
+               <em style="italic">Ping</em> is an old and very simple Internet utility. Your computer sends a ping packet to any computer on the Internet, and the computer responds with a ping reply (not all computers respond to ping). In this way, you can check if the other computer is functioning and if the network path between you and it works. As a verb, ping has now entered regular English usage, meaning a quick check-in with someone.</p>
+            <p>
+               <em style="bold">Experiment:</em> Most computers have a ping utility, or you can try "ping" on the command line. To open the command line in Windows, press <em style="italic">Win+R</em>,  then type <em style="italic">cmd</em> or <em style="italic">cmd.exe</em>, and press <em style="italic">Enter</em>. For macOS, open Spotlight by clicking on the magnifying glass at the top right corner of the screen or pressing <em style="italic">Command + Space</em>. Type <em style="italic">terminal</em> into the search box. Double-click the Terminal application to open the command prompt.</p>
+            <p>Here we run the ping program for www.bbc.com:</p>
+            <image src="../webcontent/ping_bbc.png" alt="Ping results for www.bbc.com"/>
+            <p/>
+         </body>
+      </section>
+      <section>
+         <title>Traceroute</title>
+         <body>
+            <p>Traceroute is a program that attempts to identify all the routers between you and some other computer on the Internet. Most computers have some sort of traceroute utility available if you want to try it yourself (not required). Some routers are visible to traceroute and some are not, so it does not provide completely reliable output. However, it is a neat reflection of the hop-hop-hop quality of the Internet. Here's an example traceroute from an office computer at Stanford:</p>
+            <codeblock syntax="java">
+						$						&lt;em style="bold"&gt;traceroute -q 1 codingbat.com&lt;/em&gt;   # I type in a command here
+						traceroute to codingbat.com (173.255.219.70), 64 hops max, 52 byte packets
+						1  yoza-vlan70 (171.64.70.2)  2.039 ms
+						2  bbra-rtr-a (171.64.255.129)  0.932 ms
+						3  boundarya-rtr (172.20.4.2)  3.174 ms
+						4  dca-rtr (68.65.168.51)  27.085 ms
+						5  dc-svl-agg1--stanford-10ge.cenic.net (137.164.50.157)  2.485 ms
+						6  dc-oak-core1--svl-agg1-10ge.cenic.net (137.164.47.123)  3.262 ms
+						7  dc-paix-px1--oak-core1-ge.cenic.net (137.164.47.174)  4.046 ms
+						8  hurricane--paix-px1-ge.cenic.net (198.32.251.70)  14.252 ms
+						9  10gigabitethernet1-2.core1.fmt1.he.net (184.105.213.65)  9.117 ms
+						10  linode-llc.10gigabitethernet2-3.core1.fmt1.he.net (64.62.250.6)  4.975 ms
+						11  li229-70.members.linode.com (173.255.219.70)  4.761 ms
+						$						&lt;em style="bold"&gt;traceroute -q 1 poland.pl&lt;/em&gt;
+						traceroute to poland.pl (193.59.194.101), 64 hops max, 52 byte packets
+						1  yoza-vlan70 (171.64.70.2)  1.573 ms
+						2  bbra-rtr-a (171.64.255.129)  1.106 ms
+						3  boundarya-rtr (172.20.4.2)  32.970 ms
+						4  dca-rtr (68.65.168.51)  1.530 ms
+						5  dc-svl-agg1--stanford-10ge.cenic.net (137.164.50.157)  1.359 ms
+						6  dc-svl-core1--svl-agg1-10ge.cenic.net (137.164.47.121)  1.967 ms
+						7  dc-svl-isp1--svl-core1-10ge.cenic.net (137.164.47.132)  1.728 ms
+						8  xe-4-1-2.edge1.sanjose1.level3.net (4.53.16.185)  1.687 ms
+						9  vlan60.csw1.sanjose1.level3.net (4.69.152.62)  2.210 ms
+						10  ae-61-61.ebr1.sanjose1.level3.net (4.69.153.1)  1.637 ms
+						11  ae-2-2.ebr2.newyork1.level3.net (4.69.135.186)  70.263 ms
+						12  ae-72-72.csw2.newyork1.level3.net (4.69.148.38)  72.573 ms
+						13  ae-91-91.ebr1.newyork1.level3.net (4.69.134.77)  72.235 ms
+						14  ae-42-42.ebr2.london1.level3.net (4.69.137.69)  139.832 ms
+						15  ae-58-223.csw2.london1.level3.net (4.69.153.138)  146.678 ms
+						16  ae-21-52.car1.london1.level3.net (4.69.139.98)  172.864 ms
+						17  212.113.16.110 (212.113.16.110)  139.842 ms
+						18  ae1-0.ams-koo-score-1-re0.interoute.net (84.233.190.57)  169.460 ms
+						19  ae0-0.ams-koo-score-2-re0.interoute.net (84.233.190.2)  182.792 ms
+						20  ae1-0.ber-alb-score-1-re0.interoute.net (84.233.190.22)  168.766 ms
+						21  gi1-0.waw-002-access-1002.interoute.net (84.233.213.33)  168.403 ms
+						22  po6-0.waw-002-access-1001.interoute.net (84.233.213.45)  170.038 ms
+						23  195.81.72.214 (195.81.72.214)  168.413 ms
+						24  pkp-gw-ae0-100.core.nask.pl (195.187.255.156)  179.974 ms
+						25  pw-gw0-ae1-100.core.nask.pl (195.187.255.152)  168.538 ms
+						26  helm-at2-0-1.nask.waw.pl (194.92.0.158)  169.701 ms
+						27  193.59.194.101 (193.59.194.101)  169.830 ms
+					</codeblock>
+            <p>The numbers down the left side are the number of hops to that machine. The <em style="italic">ms</em> figures are the number of milliseconds (1 ms = 1/1000 second) it took for the send/reply. Notice that as the hops get further away, it takes slightly more milliseconds. The first few hops are Stanford addresses, then the route goes over some provider until it arrives at Linode, which is the company that provides the hardware where codingbat.com currently lives. Small mystery: it seems like the first hop should be 171.64.64.1, which is the first router from the office computer; apparently, that router is invisible to traceroute.</p>
+            <p>Note: In Windows, <code>tracert</code> is the command to run a traceroute.</p>
+         </body>
+      </section>
+      <!--A License section was here:<html filename="f065686091cd4744b7204c11ef54f734" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

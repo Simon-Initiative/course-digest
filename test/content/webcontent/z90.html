@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>JSInput</title>
+<link rel="stylesheet" href="style-edx.css" type="text/css">
+</head>
+
+<body>
+<script type="text/javascript" src="cs101-edx.js"></script>
+<script type="text/javascript" src="cs101-table-edx.js"></script>
+
+
+
+
+Here is the banana.jpg image:
+
+<br></br><image src="banana.jpg" alt="a yellow banana">
+
+<p>Write code to change the banana.jpg image to be grayscale. Reminder: here is the line used in the loop to compute the average of the red/green/blue values and store that value in a variable named "avg".
+
+<codeblock syntax="java">
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+</codeblock>
+
+
+<div class="runparent">
+<!-- CODE -->
+<div class="runcode">
+<codeblock syntax="text">&lt;textarea id="jsinputid" rows="12" cols="60"  class="tacode" spellcheck="false" style='min-height:15em;' meh='image\20\3D\20new\20SimpleImage\28\22banana.jpg\22\29\3B\0Afor\20\28pixel\3A\20image\29\20\7B\0A\20\20avg\20\3D\20\28pixel.getRed\28\29\20\2B\20pixel.getGreen\28\29\20\2B\20pixel.getBlue\28\29\29/3\3B\0A\20\20pixel.setRed\28avg\29\3B\0A\20\20pixel.setGreen\28avg\29\3B\0A\20\20pixel.setBlue\28avg\29\3B\0A\7D\0Aprint\28image\29\3B\0A\0A'   
+onKeyPress='return handleCR(this ,event)'>
+image = new SimpleImage("banana.jpg");
+
+for (pixel: image) {
+  // Your code here
+  
+}
+
+print(image);&lt;/textarea&gt;</codeblock>
+
+<br></br><input type="button" style='width:220px;height:40px;background-color:lightgray'
+value="Run" onClick='evaluateClear("jsinputid")'>
+</div>
+<!-- OUTPUT -->
+<div id="jsinputid-output" class="runout"></div>
+</div>
+<p style="clear: both;">&nbsp;</p> <!-- stop being floaty --> <!--height:600-->
+
+
+
+</body>
+</html>

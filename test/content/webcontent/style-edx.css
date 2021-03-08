@@ -1,0 +1,87 @@
+/*
+I care about:
+small font for text
+max width
+font/size for pre/code etc.
+
+Could have NO max width specs, just apply to p and li
+
+scheme for table.run to look ok, get wide
+
+scheme for slide table
+scheme for regular data tables (rare)
+
+hmm: maybe just make table classes, don't mess with default
+
+goal: move styling to .css, not in style= in source
+
+output just needs to work reasonably
+*/
+
+
+/* apparently body and td are separate! */
+body, td, th {
+font-size: small;
+font-family: verdana, arial,  helvetica, sans-serif;
+}
+
+/*
+ If max-width is put in body, cannot make table wide. Therefore
+ limit p/li individually + have p.run for the table
+*/
+/*p, li { max-width:650px; }  /* 2014: wider is nice, but lowers paragraph readability */
+/* p.run { max-width:1200px; }  no longer used with run-css style */
+/* none vs. 1200px here. Wraps the code table, makes print-wide work. */
+/* p.run is the class around the code/output table*/
+
+/*table.run { max-width:none; }  */ /* 2014 add ... doesn't help */
+/* struggled to get chrome to allow the output area to be wide.
+Firefox seems to just get it right. */
+
+/* css powered run-textarea-output system */
+/*div.runparent { width: 1600px; } /* helps wide output, err messages */
+/*div.runcode { float: left; padding-right: 10px; } /* left div with ta-code */
+/*div.runout { float: left;  } /* right output div */
+
+/* courier all around, spec "medium" size just for pre/tacode */
+/*code, pre, textarea.tacode, div.runout {
+  font-family: courier, monospace;
+}
+
+textarea.tacode {
+  /* height: auto !important;  */ /* edx lms forces this to 35px, which is stupid */
+  /* height: reset !important; */
+  /* min-height: 4em; */
+ /* padding-bottom: 10px;  /* fend off the Run button a little */
+  /*resize: both !important;  /* yes, I want the user to be able to resize vs. edx setting
+}*/
+/* select medium size in the regular html-should be overridden to small for the edx runtime */
+/*pre, textarea.tacode, div.runout {
+  font-size: medium;
+}
+/* pre/code inside li .. use inherited size */
+/*li pre, li code {
+  font-size:inherit;
+}
+
+
+/* green slide */
+/* OLI-remove ul.slide { max-width:650px; font-size:20px ; border:5px solid darkgreen; } */
+
+/* table class=tab to actually tabulate data */
+/*table.tab, table.tab tr, table.tab td, table.tab th {
+ border: 2px solid black;
+ border-collapse:collapse;
+ min-width: 100px;
+ font-size: medium;
+}
+
+
+
+
+
+/* style-mods for edx 
+pre, textarea.tacode, div.runout {
+  font-size: small !important;
+}*/
+

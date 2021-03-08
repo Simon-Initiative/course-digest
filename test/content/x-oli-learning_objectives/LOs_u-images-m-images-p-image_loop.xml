@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE objectives
+  PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="LOs_u-images-m-images-p-image_loop">
+   <title>LOs</title>
+   <!--The .xml file paired with the source html file read:
+<html filename="85b4c44aeecd432f867542fa49de6fb9" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_loop_LO_1">
+Learning Objective: Identify loop code.
+</objective>
+   <!--The .xml file paired with the source html file read:
+<html filename="2123de0b51b34df9b82581a125ece3db" display_name="Learning Objective" editor="raw"/>-->
+   <objective id="u-images-m-images-p-image_loop_LO_2">
+Learning Objective: Write color settings for each pixel using a loop.
+</objective>
+</objectives>

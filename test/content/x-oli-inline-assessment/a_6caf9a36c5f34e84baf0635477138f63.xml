@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_6caf9a36c5f34e84baf0635477138f63">
+   <title>tutor</title>
+   <question id="aQ_6caf9a36c5f34e84baf0635477138f63">
+      <body>
+         <p>Which one of the following best describes the role of persistent storage?</p>
+      </body>
+      <multiple_choice shuffle="false">
+         <choice value="0">Store bytes temporarily for the CPU while it is running. </choice>
+         <choice value="1">Store bytes long term, even when the power is off. </choice>
+         <choice value="2">Store bytes on their way to the network. </choice>
+         <choice value="3">Store bytes for the virus-checker. </choice>
+      </multiple_choice>
+      <part>
+         <response match="0" score="0">
+            <feedback>Persistent storage is not temporary.</feedback>
+         </response>
+         <response match="1" score="1">
+            <feedback>Persistent storage stores bytes permanently.</feedback>
+         </response>
+         <response match="2" score="0">
+            <feedback>Persistent storage is not part of networking.</feedback>
+         </response>
+         <response match="3" score="0">
+            <feedback>Anti-virus is not the focus of persistent storage.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

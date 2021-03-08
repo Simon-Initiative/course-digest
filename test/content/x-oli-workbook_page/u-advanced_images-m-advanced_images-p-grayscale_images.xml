@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-advanced_images-m-advanced_images-p-grayscale_images">
+  <head>
+    <title>Grayscale Images</title>
+    <objref idref="u-advanced_images-m-advanced_images-p-grayscale_images_LO_1" />
+    <objref idref="u-advanced_images-m-advanced_images-p-grayscale_images_LO_2" />
+    <objref idref="u-advanced_images-m-advanced_images-p-grayscale_images_LO_3" />
+  </head>
+  <body>
+    <image id="f835c578f224404f82a55f5acde39636" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <section id="ecc007d1f4ed49a3b98d4f955ebe3294">
+      <title>Color Image to Grayscale</title>
+      <body>
+        <p id="d61640d60a3f4c7a9e69fa1c5e84dfd4">In this section, we look at the RGB values that make a color image versus a grayscale image and the code to convert a color image to grayscale. </p>
+      </body>
+    </section>
+    <section id="cbad537b8cba4b298abb93f9cd3cbc96">
+      <title>Gray among the RGB</title>
+      <body>
+        <p id="a5b3fbc606c74b9193fe2b8f20513601">A <em style="italic">grayscale</em> color is a color on the black/white spectrum that contains no non-gray hue. In the RGB system, a grayscale color is formed by setting the red, green, and blue values to one number. For example, red=50, green=50, blue=50 is dark gray; red=190, green=190, blue=190 is light gray. Making all the numbers equal drains any bias toward red, green, or blue from the color.</p>
+        <p id="f936ddbc2e3e462ca3f91259657c3a0c">Activity: Visit the <activity_link title="u-course_resources-m-course_resources-p-rgb_explorer" idref="u-course_resources-m-course_resources-p-rgb_explorer" target="self" purpose="checkpoint">RGB Explorer</activity_link> and try form the gray color like red=50, green=50, blue=50.</p>
+        <p id="b71b855c6fb64337a161c77ff9cafd95">Following are examples of gray colors in RGB:</p>
+        <table id="e9ebf7b4953e4e5e895b63dfbf6b05d4" summary="" rowstyle="plain">
+          <cite id="i155f2791fdd5433486277dbc4ea74543" />
+          <caption />
+          <tr>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="d0f5174881164af1835bd85c3121f1de">Red</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="b753dffd40da4a4c8abb805f90082931">Green</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="a72a37c04df44347a010da9fff936a47">Blue</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="d826403aa6934a998aa11c1c1fe3d697">Color</p>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c0689bab3ce64406a1fa090795a7db49">50</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c51e2b82bae044198061ee0c676bd1c6">50</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="e85916f7d75e49669f9234bf42de9c42">50</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="cc5453ac8bf74e6092602b21378dfd6e">Dark gray</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c08ade8856bb4f58924cf24bfba5fb58">120</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="da1bb594edc54886be1a97672a89d601">120</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="aeaf1487da0f49c4928ac67585346d10">120</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d7e1423e250e4cb5b381c48387839123">Medium gray</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="b0bc7f83e65f4a5897ca188683d84fb7">200</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="da1bdacdb4e04a7894c7dde20b4fc1ee">200</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d338a01a5e014136827b4c350949c64c">200</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="e8fc2de8b7de411bb29c779bccde1d70">Light gray</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="f5a0590d29414db99253fd3a513585b8">The original pure black-and-white colors fit this all-equal pattern too, using just the values 0 and 255.</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d44eedf7a43d492997bb870d34f153e6">0</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="f18dff4c5f5c40b2a52f58015f363efc">0</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="a40562f1524c4086bf49051da98eab51">0</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="f4fcedf938bc4338a8f6f1f8b7ffa9d2">Pure black</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="da7deb2030584c099ad27b0d17c6cfd4">255</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d1165251160f4eee822f88fef81b4d5d">255</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="e7c90a59e2ea428d8452059daac07f87">255</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c63d4f9ac7214b74b4b7c92f66b69d0d">Pure white</p>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </section>
+    <codeblock id="d8cec1aae37d4ae592dfc17dd0f27f32" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;1d41ab8fe04840408e16989bf5dd7b16&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3): Set the green and blue values to be the same as the red value.
+Hint (2 of 3): To set green to be the same as red, use code like &lt;code&gt;pixel.setGreen( .. something .. )&lt;/code&gt;
+Hint (3 of 3): To set green to be the same as red, use the line: &lt;code&gt;pixel.setGreen(pixel.getRed());&lt;/code&gt;&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;The liberty-red.jpg image has only red values; the green and blue values are 0.
+
+&lt;p&gt;&lt;img src=&quot;../webcontent/liberty-red.jpg&quot; alt=&quot;liberty-red image with all data in the red values&quot;&gt;
+
+&lt;p&gt;Write code to convert this image to grayscale so it does not look red. For each pixel, set the green and blue values to be the same as the red value. The result should be a grayscale image, since for each pixel, the red, green, and blue values will be the same number.&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;liberty-red.jpg&quot;);
+for (pixel: image) {
+  // Your code here
+  
+  
+}
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;liberty-red.jpg&quot;);
+for (pixel: image) {
+  // Your code here
+  pixel.setGreen(pixel.getRed());
+  pixel.setBlue(pixel.getRed());
+  
+}
+print(image);&quot;/&gt;
+    </codeblock>
+    <section id="afa984d6bf7c4684a0ffb97323c6716a">
+      <title>Converting Color to Grayscale</title>
+      <body>
+        <image id="d94106a5c25142b1a6977dacac4921a6" src="../webcontent/flowers.jpg" alt="the yellow flowers.jpg image" style="inline" vertical-align="middle">
+          <caption />
+          <popout enable="false"></popout>
+        </image>
+        <p id="b130ba8240ae4c7ebbdeade5265e8e36">How do we convert an RGB color image to grayscale? Essentially, we want to make each color pixel into a grayscale pixel. The grayscale pixel should be appropriately light or dark grayscale. How dark or light should it be? Below we have a few pixels out of flowers.jpg, each in its own row.</p>
+        <table id="ce861f184bc74b7297726595bdeb0220" summary="" rowstyle="plain">
+          <cite id="id8e0e91833de4de7a08164156939de9e" />
+          <caption />
+          <tr>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="cb2c81abf23a490a9b673209e98267ec">Red</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="e97e047db3a945a6809d043b1c2513cf">Green</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="fe958b6a9169496c859a752fc9963957">Blue</p>
+            </th>
+            <th colspan="1" rowspan="1" align="left">
+              <p id="fb14f37c5d834db08a9eba28db793648">Average</p>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p></p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p></p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p></p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="a847d937937e44e382de325bcec387b4">average = (red + green + blue) / 3</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="e629ce37b206407dba2c406e6314f973">200</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="a4d5b347a13a45c5b206bf268cc104d0">50</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c60e52403d37453380fd5258bda2e6be">50</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="eff51bf4360f4344a49eefa3d97cc90e">100 (medium bright)</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d1c12e1d953d4d89a97bd408ab8aadd7">0</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d5bfb1aa25c24e278ebcfb288d7bfda1">75</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="b652b3babccf40ad94c0b5b01eff04ea">75</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="be66ff59d90740c9ad60e142808b9b31">50 (darkest)</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c18b26dad20f4ec585c4385a8e8b0bb5">100</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="f397bbf42b204dc99864ce3d67496285">250</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="c0a9df098b52436a839781ad3b9e0e31">250</p>
+            </td>
+            <td colspan="1" rowspan="1" align="left">
+              <p id="d17fdb07ac6c4296b3282be588469bcf">200 (brightest)</p>
+            </td>
+          </tr>
+        </table>
+        <p id="f281db00f3824045a1e05c40915bd538">Looking at just red or blue or green in isolation, it&apos;s hard to tell how light or dark the pixel is. The <em style="italic">average</em> combines and summarizes the three color values into one number from 0 to 255. The formula for averaging the three color values is (red + green + blue)/3. The average is a reasonable indication of how bright the pixel is, ignoring hue: 0 = totally dark, 255 = totally bright, with intermediate average values corresponding to intermediate brightnesses. More complicated brightness measures are possible, but average is simple and works fine for our purposes.</p>
+      </body>
+    </section>
+    <section id="ab33b4c9c8fd4bf1ae684dcb350c04f8">
+      <title>Grayscale Conversion Algorithm</title>
+      <body>
+        <p id="a1df5a810c5c4b73a02389035cb34764">To convert a color image to grayscale, for each pixel, compute the average of the red, green, and blue values. Then set the red, green, and blue all to be that average value.</p>
+        <p id="caf319052f6747999f3de2eb6e5ffc19">The code to compute the average value of a pixel is</p>
+        <codeblock id="c904d2a24b414cf0a2c3d9f2b5315b91" syntax="java" highlight="" number="false" start="">
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+        </codeblock>
+      </body>
+    </section>
+    <section id="e59cd21b51e84f13877c4ccec73ca8f6">
+      <title>Grayscale Summary</title>
+      <body>
+        <p id="e13b488636c24ca88cfd97082140c367">When RGB values are all equal, the pixel is a shade of gray. To change an image to grayscale, compute the average of red, green, and blue, and then set each color to that value.</p>
+      </body>
+    </section>
+    <codeblock id="f43ded78198c4ef28076c601b89825b3" syntax="xml" highlight="" number="false" start="">
+&lt;image-coding url_name=&quot;ef732de92b474ea7857cb987cc9df1f0&quot; xblock-family=&quot;xblock.v1&quot; display_name=&quot;Learn By Doing&quot; hints=&quot;Hint (1 of 3). Change each of red/green/blue to be the avg value.
+Hint (2 of 3): Use a line like &lt;code&gt;pixel.setRed(.. something..);&lt;/code&gt; and likewise for green and blue.
+Hint (3 of 3): Use &lt;code&gt;pixel.setRed(avg);&lt;/code&gt; and likewise for green and blue.&quot; tolerance=&quot;&quot; body=&quot;&lt;p&gt;Write code to change the flowers.jpg image to grayscale. The starter code includes the line to compute the average for each pixel.&lt;/p&gt;&quot; regex=&quot;&quot; starter_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  
+}
+print(image);&quot; solution_code=&quot;image = new SimpleImage(&quot;flowers.jpg&quot;);
+for (pixel: image) {
+  avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+  // Your code here
+  pixel.setRed(avg);
+  pixel.setGreen(avg);
+  pixel.setBlue(avg);
+  
+}
+print(image);&quot;/&gt;
+    </codeblock>
+  </body>
+</workbook_page>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page
+  PUBLIC "-//Carnegie Mellon University//DTD Workbook Page 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_3_8.dtd">
+<workbook_page xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+               xmlns:bib="http://bibtexml.sf.net/"
+               xmlns:pref="http://oli.web.cmu.edu/preferences/"
+               xmlns:theme="http://oli.web.cmu.edu/presentation/"
+               xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+               id="u-course_resources-m-course_resources-p-principles_of_computing_browser_checker">
+   <head>
+      <title>Principles of Computing Browser Checker</title>
+   </head>
+   <body><!--The .xml file paired with the source html file read:
+<html filename="151b0e4908a14438b1fa8aba41f038b1" display_name="Principles of Computing Browser Checker" editor="raw"/>--><!--<h1>Principles of Computing Browser Checker</h1>--><!--The .xml file paired with the source html file read:
+<html filename="41b66983b82f4ccc834ad0ca3e252a36" display_name="Principles of Computing Browser Checker" editor="raw"/>--><!--<link rel="stylesheet" href="../webcontent/style-edx.css" type="text/css">--><image src="../webcontent/1x1.png"/><!--<script type="text/javascript" src="../webcontent/cs101-edx.js"/>--><!--<script type="text/javascript" src="../webcontent/cs101-table-edx.js"/>--><p>Use this page to verify that your computer and browser can run the code for Principles of Computing. Clicking the Run button should produce an image of green flowers in the page. If you see the green flowers, the code is working on your computer. If instead of the green flowers, you get an error message or nothing, then you need to try a different browser or computer.</p>
+      <!-- CODE -->
+      <codeblock syntax="text">&lt;textarea id="image-loop-1"
+                rows="12"
+                cols="50"
+                spellcheck="false"
+                onKeyPress="return handleCR(this ,event)"&gt;
+image = new SimpleImage("flowers.jpg");
+
+for (pixel: image) {
+  pixel.setRed(0);
+}
+
+print(image);&lt;/textarea&gt;
+      &lt;input type="button" value="Run" onClick="evaluateClear(&#34;image-loop-1&#34;)"/&gt;</codeblock>
+      <!-- OUTPUT -->
+      <p> </p>
+      <!-- stop being floaty -->
+      <p>Details for the curious: the text above the Run button is computer code which produces the green flowers image. Clicking the Run button tries to run that code in your browser. The code uses newish web browser features that may not be supported by older browsers.</p>
+      <p>In Principles of Computing, we will play around with phrases of code like the above to get a feel for how computers work,  so ultimately you will learn what phrases like "pixel.setRed(0);" mean. For today, just know that you want to see the green flowers!</p>
+      <!--A License section was here:<html filename="9989ed4fc0654d20a734a0bad2006707" display_name="Licensing" editor="raw"/>-->
+   </body>
+</workbook_page>

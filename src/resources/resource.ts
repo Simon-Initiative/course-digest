@@ -1,89 +1,132 @@
-const glob = require('glob');
-import { rootTag } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
+import { visit } from '../utils/xml';
+import * as DOM from '../utils/dom';
 
-// Build a map of resource ids to the full path of the resource for all resources
-// found in the project directory
+export interface Summary {
+  type: 'Summary';
+  subType: string;
+  id: string;
+  elementHistogram: Histogram.ElementHistogram;
+  found: () => ItemReference[];
+}
 
-import * as WB from './workbook';
-import * as Org from './organization';
-import * as Other from './other';
-import * as Feedback from './feedback';
-import * as Formative from './formative';
-import * as Summative from './summative';
-
-export type Summary = WB.WorkbookPageSummary | Org.OrganizationSummary 
-  | Feedback.FeedbackSummary | Formative.FormativeSummary | Summative.SummativeSummary 
-  | Other.OtherSummary;
-
-export type ResourceType = 'WorkbookPage' | 'Organization'
+export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives'
 | 'Formative' | 'Summative' | 'Feedback' | 'Other';
 
-export type ResourceMap = { [index:string] : string };
-export function mapResources(directory: string) : Promise<ResourceMap> {
-  return new Promise((resolve, reject) => {
-    glob(`${directory}/**/*.xml`, {}, (err: any, files: any) => {
+export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
 
-      const result = files.reduce(
-        (p: any, c: string) => {
-
-          const filename = c.substr(c.lastIndexOf('/') + 1);
-          const id = filename.substr(0, filename.lastIndexOf('.xml'));
-          p[id] = c;
-          return p;
-        },
-        {});
-
-      resolve(result);
-    });
-  });
+export interface TorusResource {
+  type: string;
+  originalFile: string;
+  id: string;
+  title: string;
+  tags: string[];
+  unresolvedReferences: string[];
 }
 
-function determineResourceType(file: string) : Promise<ResourceType> {
-  return rootTag(file)
-  .then((tag: string) => {
-
-    if (tag === 'organization') {
-      return 'Organization';
-    }
-    if (tag.indexOf('oli_workbook_page_3_8') !== -1 
-      || tag.indexOf('oli_workbook_page_mathml_3_8') !== -1) {
-      return 'WorkbookPage';
-    }
-    if (tag.indexOf('oli_inline_assessment_1_4') !== -1
-      || tag.indexOf('oli_inline_assessment_mathml_1_4') !== -1) {
-      return 'Formative';
-    }
-    if (tag.indexOf('oli_assessment_2_4') !== -1
-      || tag.indexOf('oli_assessment_mathml_2_4') !== -1) {
-      return 'Summative';
-    }
-    if (tag.indexOf('oli_feedback_1_2') !== -1) {
-      return 'Feedback';
-    }
-
-    return 'Other';
-  });
+export interface Container {
+  id: string;
+  title: string;
+  tags: string[];
+  children: (Container | PageReference)[];
 }
 
-export function summarize(file: string): Promise<Summary | string> {
+export interface PageReference {
+  id: string;
+}
 
-  return new Promise((resolve, reject) => {
-    determineResourceType(file)
-    .then((t: ResourceType) => {
-      if (t === 'WorkbookPage') {
-        resolve(WB.summarize(file));
-      } else if (t === 'Organization') {
-        resolve(Org.summarize(file));
-      } else if (t === 'Formative') {
-        resolve(Formative.summarize(file));
-      } else if (t === 'Summative') {
-        resolve(Summative.summarize(file));
-      } else if (t === 'Feedback') {
-        resolve(Feedback.summarize(file));
-      } else {
-        resolve(Other.summarize(file));
+export interface Objective {
+  id: string;
+  title: string;
+  children: Objective[];
+}
+
+export interface Hierarchy extends TorusResource {
+  type: 'Hierarchy';
+  children: TorusResource[];
+}
+
+export interface Unknown extends TorusResource {
+  type: 'Unknown';
+}
+
+export interface Page extends TorusResource {
+  type: 'Page';
+  content: Object;
+  isGraded: boolean;
+  objectives: Object;
+}
+
+export interface Activity extends TorusResource {
+  type: 'Activity';
+  content: Object;
+  objectives: Object;
+  legacyId: string;
+  subType: string;
+}
+
+export interface Objective extends TorusResource {
+  type: 'Objective';
+}
+
+const elementNameMap : { [index:string] : string } = {
+  img: 'image',
+};
+
+const attributeNameMap : { [index:string] : Object } = {
+  img: {
+    href: 'src',
+  },
+};
+
+const attributeValueMap : { [index:string] : Object } = {
+  img: {
+    target: {
+      self: null,
+      new: '_blank',
+    },
+  },
+};
+
+export abstract class Resource {
+
+  abstract summarize(file: string): Promise<Summary | string>;
+
+  restructurePreservingWhitespace($: any): any {}
+
+  restructure($: any): any {}
+
+  abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;
+
+  convert(file: string): Promise<(TorusResource | string)[]> {
+    const $ = DOM.read(file);
+    this.restructure($);
+    return this.translate($.root().html(), $);
+  }
+
+  mapElementName(element: string) : string {
+    return elementNameMap[element] === undefined ? element : elementNameMap[element];
+  }
+
+  mapAttributeName(element: string, attribute: string) : string {
+    if (attributeNameMap[element] !== undefined) {
+      if ((attributeNameMap[element] as any)[attribute] !== undefined) {
+        return (attributeNameMap[element] as any)[attribute];
       }
-    });
-  });
+    }
+    return attribute;
+  }
+
+  mapAttributeValue(element: string, attribute: string, value: string) : string {
+    if (attributeValueMap[element] !== undefined) {
+      if ((attributeValueMap[element] as any)[attribute] !== undefined) {
+        if ((((attributeValueMap[element] as any)[attribute]) as any)[value] !== undefined) {
+          return ((((attributeValueMap[element] as any)[attribute]) as any)[value]);
+        }
+      }
+    }
+    return value;
+  }
+
 }

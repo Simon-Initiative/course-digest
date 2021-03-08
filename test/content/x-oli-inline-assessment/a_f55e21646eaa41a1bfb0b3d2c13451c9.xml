@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="a_f55e21646eaa41a1bfb0b3d2c13451c9">
+   <title>tutor</title>
+   <question id="aQ_f55e21646eaa41a1bfb0b3d2c13451c9">
+      <body>
+         <p>In the RGB scheme, using only the values 0 and 255, what are the RGB numbers to make bright purple? Please type in the red, green, and blue numbers separated by spaces, like this: 0 255 255</p>
+      </body>
+      <text name="field"
+            size="medium"
+            whitespace="trim"
+            case_sensitive="false"/>
+      <part>
+         <response score="1" match="255\s+0\s+255">
+            <feedback>Purple is made with red and blue 255, leaving green at 0.</feedback>
+         </response>
+         <response match="*">
+            <feedback>
+                    Try Again.
+                </feedback>
+         </response>
+         <hint>Green should be 0. What about red and blue?</hint>
+         <hint>To make bright purple, red and blue are 255 and green is 0, i.e. 255 0 255</hint>
+      </part>
+   </question>
+</assessment>
