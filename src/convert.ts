@@ -159,7 +159,7 @@ function outputHierarchy(outputDirectory: string, h: TorusResource) {
 function outputMediaManifest(outputDirectory: string, mediaItems: Media.MediaItem[]) {
 
   const manifest = {
-    mediaItems: mediaItems.map((m: Media.MediaItem) => ({ name: m.flattenedName, file: m.file, url: m.url })),
+    mediaItems: mediaItems.map((m: Media.MediaItem) => ({ name: m.flattenedName, file: m.file, url: m.url, fileSize: m.fileSize, mimeType: m.mimeType, md5: m.md5 })),
     type: 'MediaManifest',
   };
 

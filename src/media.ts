@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const mime = require('mime-types');
+const md5File = require('md5-file');
 
 export interface MediaSummary {
   mediaItems: {[k: string] : MediaItem };
@@ -23,6 +25,9 @@ export interface MediaItem {
   file: string;
   flattenedName: string;
   url: string;
+  mimeType: string;
+  fileSize: number;
+  md5: string;
   references: MediaItemReference[];
 }
 
@@ -86,7 +91,10 @@ export function flatten(ref: MediaItemReference, summary: MediaSummary) : string
 
       summary.mediaItems[absolutePath] = {
         file: absolutePath,
+        fileSize: getFilesizeInBytes(absolutePath),
         flattenedName,
+        md5: md5File.sync(absolutePath),
+        mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
         references: [ref],
         url: toURL(flattenedName),
       };
@@ -102,6 +110,12 @@ export function flatten(ref: MediaItemReference, summary: MediaSummary) : string
     return null;
   }
   
+}
+
+function getFilesizeInBytes(filename: string) {
+  var stats = fs.statSync(filename);
+  var fileSizeInBytes = stats.size;
+  return fileSizeInBytes;
 }
 
 function generateNewName(name: string, flattenedNames: {[k: string] : string }) {

@@ -27,7 +27,7 @@ function validateArgs() {
 
   if (options.operation === 'convert') {
 
-    if (options.bucket && options.mediaUrlPrefix && options.slug && options.inputDir 
+    if (options.mediaUrlPrefix && options.slug && options.inputDir 
       && options.outputDir && options.specificOrg && options.specificOrgId) {
       
         return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
@@ -198,7 +198,7 @@ function main() {
     } else if (options.operation === 'convert') {
       convertAction();
     } else if (options.operation === 'upload') {
-      uploadAction();
+      uploadAction().then((r: any) => console.log('Done!'));
     } else {
       helpAction();
     }
