@@ -14,9 +14,11 @@
   "license": "MIT",
   "dependencies": {
     "@types/jest": "^26.0.13",
+    "aws-sdk": "^2.858.0",
     "cheerio": "^1.0.0-rc.3",
     "command-line-args": "^5.1.1",
     "csv-writer": "^1.6.0",
+    "dotenv": "^8.2.0",
     "glob": "^7.1.6",
     "jest": "^26.6.3",
     "node": "^14.8.0",

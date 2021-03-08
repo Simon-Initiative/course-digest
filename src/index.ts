@@ -6,17 +6,18 @@ import * as Summarize from './summarize';
 import * as Convert from './convert';
 import * as Media from './media';
 import { processResources } from './process';
+import { upload } from './utils/upload';
 const fs = require('fs');
 
 const optionDefinitions = [
   { name: 'operation', type: String, defaultOption: true },
+  { name: 'mediaManifest', type: String },
   { name: 'outputDir', type: String },
   { name: 'inputDir', type: String },
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
   { name: 'slug', type: String },
-  { name: 'mediaUrlPrefix', type: String },
-  { name: 'bucket', type: String }
+  { name: 'mediaUrlPrefix', type: String }
 ];
 
 const commandLineArgs = require('command-line-args');
@@ -36,6 +37,9 @@ function validateArgs() {
     if (options.inputDir && options.outputDir) {
       return [options.inputDir, options.outputDir].every(fs.existsSync);
     } 
+  } else if (options.operation === 'upload') {
+
+    return options.slug && options.mediaManifest && fs.existsSync(options.mediaManifest);
   }
 
   return false;
@@ -110,6 +114,25 @@ function getLearningObjectiveIds(packageDirectory: string) {
   .then(map => Object.keys(map));
 }
 
+function uploadAction() {
+
+  const mediaManifest = options.mediaManifest;
+  const slug = options.slug;
+
+  const raw = fs.readFileSync(mediaManifest);
+  const manifest = JSON.parse(raw);
+
+  const uploaders = manifest.mediaItems.map((m: any) => {
+    return () => { 
+      console.log('Uploading ' + m.file);
+      return upload(m.file, m.name, slug);
+    };
+  });
+
+  return executeSerially(uploaders);
+
+}
+
 function convertAction() {
 
   const packageDirectory = options.inputDir;
@@ -160,11 +183,13 @@ function helpAction() {
   console.log('-------------------------------------\n');
   console.log('Usage:\n');
   console.log('Summarizing a course package current OLI DTD element usage:');
-  console.log('npm run start --operation [summarize | convert] --inputDir <course package dir> --outputDir <outdir dir> [--specificOrgId <organization id> --specificOrg <org path>]\n');
+  console.log('npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> [--specificOrgId <organization id> --specificOrg <org path>]\n');
   console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
 function main() {
+
+  require('dotenv').config();
 
   if (validateArgs()) {
 
@@ -172,10 +197,14 @@ function main() {
       summaryAction();
     } else if (options.operation === 'convert') {
       convertAction();
+    } else if (options.operation === 'upload') {
+      uploadAction();
     } else {
       helpAction();
     }
 
+  } else {
+    helpAction();
   }
 
 }
