@@ -5,6 +5,7 @@ const cheerio = require('cheerio');
 import { standardContentManipulations, processCodeblock } from './common';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
+import { convertImageCodingActivities } from './image';
 
 function liftTitle($: any) {
   $('workbook_page').attr('title', $('head title').text());
@@ -31,7 +32,8 @@ export class WorkbookPage extends Resource {
     DOM.stripElement($, 'activity_link');
   }
 
-  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+
+  translate(originalXml: string, $: any) : Promise<(TorusResource | string)[]> {
 
     const page : Page = {
       type: 'Page',
@@ -56,6 +58,9 @@ export class WorkbookPage extends Resource {
       }
     });
 
+    const imageCodingActivities : any = [];
+    const xml : string = convertImageCodingActivities($, imageCodingActivities);
+
 
     return new Promise((resolve, reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true}).then((r: any) => {
@@ -67,7 +72,7 @@ export class WorkbookPage extends Resource {
         page.content = { model };
         page.title = r.children[0].title;
 
-        resolve([page]);
+        resolve([page, ...imageCodingActivities]);
       });
     });
   }

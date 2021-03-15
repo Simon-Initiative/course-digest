@@ -8,7 +8,7 @@ describe('cdata and codeblocks', () => {
 
     const content = 
       '<codeblock syntax="java"><![CDATA[' + 
-        'a\nb\nc]]></codeblock>';
+        'a\nb]]></codeblock>';
 
     const $ = cheerio.load(content, {
       normalizeWhitespace: false,
@@ -18,7 +18,7 @@ describe('cdata and codeblocks', () => {
     processCodeblock($);
 
     expect($.xml()).toEqual('<codeblock syntax="java">' + 
-      '<code_line>a</code_line><code_line>b</code_line><code_line>c</code_line>' + 
+      '<code_line><![CDATA[a]]></code_line><code_line><![CDATA[b]]></code_line>' + 
       '</codeblock>');
 
   });

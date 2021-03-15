@@ -111,9 +111,17 @@ function all(s: string, t: string) {
   return s.replace(re, '');
 }
 
-function replaceAll(s: string, t: string, w: string) { 
+export function replaceAll(s: string, t: string, w: string) { 
   var re = new RegExp(t, 'g');
   return s.replace(re, w);
+}
+
+export function replaceUnicodeReferences(s: string) : string {
+
+  return s.replace(/\&\#x.*;/g, (matched, index, original) => {
+    const parsed = parseInt(matched.substring(3, matched.length - 1), 16);
+    return String.fromCharCode(parsed);
+  });
 }
 
 export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
@@ -222,7 +230,8 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
       text = replaceAll(text, '&lt;', '<');
       text = replaceAll(text, '&gt;', '>');
       text = replaceAll(text, '&apos;', '\'');
-      text = replaceAll(text, '&#x2019;', '\'');
+      
+      text = replaceUnicodeReferences(text);
      
       const object : any = Object.assign({}, { text }, inlinesToObject(inlines));
       top().children.push(object);
