@@ -5,7 +5,7 @@ export function convertImageCodingActivities($: any, found: any) : string {
   $('code').each((i: any, item: any) => {  
     const content = $(item).html();
     if (content.indexOf('image-coding') >= 0 && content.indexOf('xblock') >= 0) {
-      const activity = convertXBlock($, item);
+      const activity = convertXBlock($, item, false);
       replaceWithReference($, item, activity);
       found.push(activity);
 
@@ -20,9 +20,9 @@ export function convertImageCodingActivities($: any, found: any) : string {
 
 }
 
-function convertXBlock($: any, item: any) {
+function convertXBlock($: any, item: any, example: boolean) {
 
-  const content : any = defaultContent();
+  const content : any = defaultContent(example);
   const cl = (text: string) => ({
     "type": "code_line",
     "id": guid(),
@@ -50,59 +50,56 @@ function convertXBlock($: any, item: any) {
 }
 
 function convertExample($: any, item: any) {
-  return convertXBlock($, item);
+  return convertXBlock($, item, true);
 }
 
-function defaultContent() {
+function defaultContent(example: boolean) {
   return {
+    "isExample": example,
+    "starterCode": "Sample starter code",
+    "solutionCode": "Sample solution code",
+    "imageURLs": [],
+    "tolerance": 1,
+    "regex": "",
+    "feedback": [
+      {
+        "id": "2848932877",
+        "content": {
+          "id": "2564146359",
+          "model": [
+            {
+              "type": "p",
+              "children": [
+                {
+                  "text": "Correct"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "284893177",
+        "content": {
+          "id": "256146359",
+          "model": [
+            {
+              "type": "p",
+              "children": [
+                {
+                  "text": "Wrong"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
     "authoring": {
       "parts": [
         {
           "id": "1",
-          "responses": [
-            {
-              "id": "3713976972",
-              "score": 1,
-              "rule": "input like {1}",
-              "feedback": {
-                "id": "2848932877",
-                "content": {
-                  "id": "2564146359",
-                  "model": [
-                    {
-                      "type": "p",
-                      "children": [
-                        {
-                          "text": "Correct"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "1922898198",
-              "score": 0,
-              "rule": "input like {.*}",
-              "feedback": {
-                "id": "767434587",
-                "content": {
-                  "id": "4080440981",
-                  "model": [
-                    {
-                      "type": "p",
-                      "children": [
-                        {
-                          "text": "Incorrect."
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          ],
+          "responses": [],
           "hints": [
             {
               "id": "2862983244",
@@ -176,7 +173,7 @@ function toActivity(content: any) {
     content,
     objectives: [],
     legacyId: id,
-    subType: 'oli_short_answer',
+    subType: 'oli_image_coding',
   };
 }
 
