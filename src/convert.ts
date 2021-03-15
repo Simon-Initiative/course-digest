@@ -75,6 +75,19 @@ function bucketByLegacyId(resources: TorusResource[]) : DerivedResourceMap {
 
 }
 
+function getPurpose(purpose: string) {
+
+  if (purpose === undefined || purpose === null) {
+    return 'none';
+  } else if (purpose === 'checkpoint' || purpose === 'didigetthis' || purpose === 'learnbydoing'
+  || purpose === 'manystudentswonder' || purpose === 'learnmore') {
+    return purpose;
+  } 
+
+  return 'none';
+
+}
+
 function updateParentReference(resource: TorusResource, byLegacyId: DerivedResourceMap) : TorusResource {
   
   if (resource.type === 'Page') {
@@ -87,7 +100,7 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
 
         const derived = byLegacyId[m.idref];
         if (derived !== undefined) {
-          return [...entries, ...derived.map(d => ({ type: 'activity-reference', activity_id: d.id }))];
+          return [...entries, ...derived.map(d => ({ type: 'activity-reference', activity_id: d.id, purpose: getPurpose(m.purpose) }))];
         }
 
         console.log('Warning: Could not find derived resources for ' + m.idref + ' within page ' + page.id);
