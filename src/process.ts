@@ -38,12 +38,14 @@ function innerProcess<T>(
     results.forEach((r: TorusResource) => {
       all.push(r);
       
-      r.unresolvedReferences.forEach((ref: string) => {
-        if (seenReferences[ref] === undefined) {
-          toFollow.push(ref);
-          seenReferences[ref] = true;
-        }
-      });
+      if (r.unresolvedReferences !== undefined) {
+        r.unresolvedReferences.forEach((ref: string) => {
+          if (seenReferences[ref] === undefined) {
+            toFollow.push(ref);
+            seenReferences[ref] = true;
+          }
+        });
+      }
     });
 
     // See if we are done or if there is another round of references
