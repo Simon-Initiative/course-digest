@@ -1,3 +1,4 @@
+import { replaceAll } from '../utils/xml';
 import { guid } from '../utils/common';
 
 export function convertImageCodingActivities($: any, found: any) : string {
@@ -50,7 +51,30 @@ function convertXBlock($: any, item: any, example: boolean) {
 }
 
 function convertExample($: any, item: any) {
-  return convertXBlock($, item, true);
+  const content : any = defaultContent(true);
+
+  content.stem = {
+    id: guid(),
+    content: {
+      model: [
+        { id: guid(), type: 'p', children: [{ text: ' ' }]}
+      ]
+    }
+  };
+
+  let starter = '';
+
+  $(item).children('code_line').each((i: any, c: any) => {
+    starter += $(c).text() + '\n';
+  });
+
+  starter = replaceAll(starter, '<textarea .*>', '');
+  starter = replaceAll(starter, '</textarea>', '');
+  starter = replaceAll(starter, '<input .*>', '');
+
+  content.starterCode = starter;
+
+  return toActivity(content);
 }
 
 function defaultContent(example: boolean) {
