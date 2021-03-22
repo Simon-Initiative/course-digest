@@ -37,14 +37,26 @@ function innerProcess<T>(
     const toFollow: string[] = [];
     results.forEach((r: TorusResource) => {
       all.push(r);
-      
-      if (r.unresolvedReferences !== undefined) {
-        r.unresolvedReferences.forEach((ref: string) => {
-          if (seenReferences[ref] === undefined) {
-            toFollow.push(ref);
-            seenReferences[ref] = true;
+
+      if (r.type === 'Summary') {
+        const ids = (r as any).found();
+        ids.forEach((i: any) => {
+          if (seenReferences[i.id] === undefined) {
+            toFollow.push(i.id);
+            seenReferences[i.id] = true;
           }
         });
+        
+      } else {
+      
+        if (r.unresolvedReferences !== undefined) {
+          r.unresolvedReferences.forEach((ref: string) => {
+            if (seenReferences[ref] === undefined) {
+              toFollow.push(ref);
+              seenReferences[ref] = true;
+            }
+          });
+        }
       }
     });
 
