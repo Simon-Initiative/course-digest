@@ -5,12 +5,15 @@ export function convertImageCodingActivities($: any, found: any) : string {
 
   $('code').each((i: any, item: any) => {  
     const content = $(item).html();
+
     if (content.indexOf('image-coding') >= 0 && content.indexOf('xblock') >= 0) {
       const activity = convertXBlock($, item, false);
       replaceWithReference($, item, activity);
+      
       found.push(activity);
 
-    } else if (content.indexOf('textarea') >= 0 && content.indexOf('evaluate') >= 0) {
+    } else if (content.indexOf('textarea') >= 0) {
+      
       const activity = convertExample($, item);
       replaceWithReference($, item, activity);
       found.push(activity);
@@ -82,7 +85,7 @@ function defaultContent(example: boolean) {
     "isExample": example,
     "starterCode": "Sample starter code",
     "solutionCode": "Sample solution code",
-    "imageURLs": [],
+    "resourceURLs": [],
     "tolerance": 1,
     "regex": "",
     "feedback": [
