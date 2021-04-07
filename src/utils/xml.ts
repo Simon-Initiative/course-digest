@@ -161,7 +161,9 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
                 (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
               }
             });
-          Object.keys(attrs).forEach(k => object[k] = attrs[k]);
+          Object.keys(attrs).forEach(k => {
+            object[k] = typeof attrs[k] === 'string' ? replaceUnicodeReferences(attrs[k]) : attrs[k];
+          });
           if (top() !== undefined) {
             
             top().children.push(object);

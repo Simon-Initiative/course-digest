@@ -3,6 +3,7 @@ import { determineResourceType, create } from './resources/create';
 import { executeSerially, ItemReference } from './utils/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
+import * as XML from './utils/xml';
 
 type DerivedResourceMap =  {[key: string]: TorusResource[]};
 
@@ -136,7 +137,6 @@ export function output(
 
 function outputFile(path: string, o: Object) : Promise<boolean> {
   const content = JSON.stringify(o, undefined, 2);
-
   return new Promise((resolve, reject) => {
     fs.writeFile(path, content, (err: any) => {
       // throws an error, you could also catch it here
