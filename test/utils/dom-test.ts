@@ -1,7 +1,25 @@
-import { renameAttribute, eliminateLevel, stripElement } from '../../src/utils/dom';
+import { renameAttribute, eliminateLevel, stripElement, flattenNestedSections } from '../../src/utils/dom';
 const cheerio = require('cheerio');
 
 describe('dom mutations', () => {
+
+  test('should flatten sections', () => {
+
+    const content = `
+    <body>
+      <section><title>The title</title><body><p>1</p></body></section>
+    </body>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    flattenNestedSections($);
+
+    expect($.xml()).toEqual(` <body> <h1>The title</h1><p>1</p> </body> `);
+  });
 
   test('should strip the element', () => {
 
