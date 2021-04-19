@@ -16,6 +16,21 @@ describe('dom mutations', () => {
 
     expect($.xml()).toEqual('<p>123<c/></p>');
   });
+
+  test('should strip paragraphs from lists', () => {
+
+    const content = '<ul><li><p>1</p><p>2</p></li><li><p>3</p></li></ul>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    stripElement($, 'li p');
+
+    expect($.xml()).toEqual('<ul><li>12</li><li>3</li></ul>');
+  });
+
   test('should rename the attribute', () => {
 
     const content = '<a><b test="v1"/><b test="v2"/><b/><c test="v3"/></a>';

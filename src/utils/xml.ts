@@ -6,7 +6,7 @@ const fs = require('fs');
 export type TagVisitor = (tag: string, attributes: Object) => void;
 export type ClosingTagVisitor = (tag: string) => void;
 
-function getPastDocType(content: string) : string {
+function getPastDocType(content: string): string {
   if (content.indexOf('DOCTYPE') !== -1) {
     return content.substr(content.indexOf('>', content.indexOf('DOCTYPE')) + 1);
   }
@@ -46,7 +46,7 @@ function inlinesToObject(inlines: any) {
 // executed for every tag (element) encountered in the XML document.
 export function visit(
   file: string, visitor: TagVisitor,
-  closingTagVisitor? : ClosingTagVisitor) : Promise<true | string> {
+  closingTagVisitor?: ClosingTagVisitor): Promise<true | string> {
 
   return new Promise((resolve, reject) => {
 
@@ -63,7 +63,7 @@ export function visit(
 
         Object.keys(attrs)
           .forEach((k) => {
-            
+
             if (typeof (attrs as any)[k] === 'string' && (attrs as any)[k].endsWith('/')) {
               (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
             }
@@ -91,7 +91,7 @@ export function visit(
       reject(err);
     });
 
-    const content : string = fs.readFileSync(file, 'utf-8', 'r+');
+    const content: string = fs.readFileSync(file, 'utf-8', 'r+');
     const dtdRemoved = getPastDocType(content);
 
     const s = new stream.PassThrough();
@@ -106,27 +106,27 @@ function isInline(tag: string) {
   return tag === 'em';
 }
 
-function all(s: string, t: string) { 
+function all(s: string, t: string) {
   var re = new RegExp(t, 'g');
   return s.replace(re, '');
 }
 
-export function replaceAll(s: string, t: string, w: string) { 
+export function replaceAll(s: string, t: string, w: string) {
   var re = new RegExp(t, 'g');
   return s.replace(re, w);
 }
 
-export function replaceUnicodeReferences(s: string) : string {
+export function replaceUnicodeReferences(s: string): string {
 
-  return s.replace(/\&\#x.*;/g, (matched, index, original) => {
+  return s.replace(/\&\#x.*?;/g, (matched, index, original) => {
     const parsed = parseInt(matched.substring(3, matched.length - 1), 16);
     return String.fromCharCode(parsed);
   });
 }
 
-export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
+export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
 
-  const root : any = {};
+  const root: any = {};
   root.children = [];
 
   const stack = [root];
@@ -135,14 +135,14 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
   const pop = () => stack.pop();
   const push = (o: any) => stack.push(o);
 
-  const inlines : any = [];
+  const inlines: any = [];
 
   return new Promise((resolve, reject) => {
 
     const parser = new Parser(preserveMap);
 
     parser.on('opentag', (tag: string, attrs: any) => {
-      
+
       if (tag !== null) {
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
@@ -153,7 +153,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
           inlines.push(inlineAttrName(attrs));
 
         } else {
-          const object : any = { type: cleanedTag, children: [] };
+          const object: any = { type: cleanedTag, children: [] };
 
           Object.keys(attrs)
             .forEach((k) => {
@@ -165,7 +165,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
             object[k] = typeof attrs[k] === 'string' ? replaceUnicodeReferences(attrs[k]) : attrs[k];
           });
           if (top() !== undefined) {
-            
+
             top().children.push(object);
           }
           push(object);
@@ -176,7 +176,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
 
 
     parser.on('closetag', (tag: string) => {
-      
+
       if (isInline(tag)) {
         inlines.pop();
         return;
@@ -185,7 +185,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
       const ensureDefaultText = (e: string, text: string) => {
         if (tag === e) {
           if (top() && top().children.length === 0) {
-            top().children.push({ type: 'text', text});
+            top().children.push({ type: 'text', text });
           }
         }
       };
@@ -193,7 +193,7 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
       const ensureNotEmpty = (e: string) => {
         if (tag === e) {
           if (top() && top().children.length === 0) {
-            top().children.push({ type: 'text', text: ' '});
+            top().children.push({ type: 'text', text: ' ' });
           }
         }
       };
@@ -232,12 +232,12 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
       text = replaceAll(text, '&lt;', '<');
       text = replaceAll(text, '&gt;', '>');
       text = replaceAll(text, '&apos;', '\'');
-      
+
       text = replaceUnicodeReferences(text);
-     
-      const object : any = Object.assign({}, { text }, inlinesToObject(inlines));
+
+      const object: any = Object.assign({}, { text }, inlinesToObject(inlines));
       top().children.push(object);
-    
+
     });
     parser.on('cdata', (cdata: string) => {
       top().children.push({ text: cdata });
@@ -261,10 +261,10 @@ export function toJSON(xml: string, preserveMap = {}) : Promise<Object> {
   });
 }
 
-export function rootTag(file: string) : Promise<string> {
+export function rootTag(file: string): Promise<string> {
 
   return new Promise((resolve, reject) => {
-    const content : string = fs.readFileSync(file, 'utf-8', 'r+');
+    const content: string = fs.readFileSync(file, 'utf-8', 'r+');
     const dtd = content.substr(content.indexOf('<!DOCTYPE'));
     resolve(dtd.substr(0, dtd.indexOf('>') + 1));
   });
