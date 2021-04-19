@@ -19,7 +19,7 @@ export class WorkbookPage extends Resource {
     processCodeblock($);
   }
 
-  restructure($: any) : any {
+  restructure($: any): any {
 
     standardContentManipulations($);
 
@@ -27,15 +27,13 @@ export class WorkbookPage extends Resource {
     liftTitle($);
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'activity', 'activity_placeholder');
-    
-    // Temporary
-    DOM.stripElement($, 'activity_link');
+    DOM.rename($, 'activity_link', 'a');
   }
 
 
-  translate(originalXml: string, $: any) : Promise<(TorusResource | string)[]> {
+  translate(originalXml: string, $: any): Promise<(TorusResource | string)[]> {
 
-    const page : Page = {
+    const page: Page = {
       type: 'Page',
       id: '',
       originalFile: '',
@@ -58,12 +56,12 @@ export class WorkbookPage extends Resource {
       }
     });
 
-    const imageCodingActivities : any = [];
-    const xml : string = convertImageCodingActivities($, imageCodingActivities);
+    const imageCodingActivities: any = [];
+    const xml: string = convertImageCodingActivities($, imageCodingActivities);
 
 
     return new Promise((resolve, reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true}).then((r: any) => {
+      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then((r: any) => {
 
         const model = introduceStructuredContent(r.children[0].children[1].children)
 
@@ -80,7 +78,7 @@ export class WorkbookPage extends Resource {
   summarize(file: string): Promise<string | Summary> {
 
     const foundIds: ItemReference[] = [];
-    const summary : Summary = {
+    const summary: Summary = {
       type: 'Summary',
       subType: 'WorkbookPage',
       elementHistogram: Histogram.create(),
@@ -107,10 +105,10 @@ export class WorkbookPage extends Resource {
           foundIds.push({ id: (attrs as any)['idref'] });
         }
       })
-      .then((result) => {
-        resolve(summary);
-      })
-      .catch(err => reject(err));
+        .then((result) => {
+          resolve(summary);
+        })
+        .catch(err => reject(err));
     });
   }
 
@@ -140,17 +138,17 @@ export class WorkbookPage extends Resource {
 // { type: activity_placeholder ...}
 // { type: content, children: [{ type: p, ...}]}
 //
-const selection = { selection: { anchor: {offset: 0, path: [0, 0]}, focus: {offset: 0, path: [1, 0]}} };
+const selection = { selection: { anchor: { offset: 0, path: [0, 0] }, focus: { offset: 0, path: [1, 0] } } };
 
 function introduceStructuredContent(content: any) {
 
-  const asStructured = (attrs: any) => 
+  const asStructured = (attrs: any) =>
     Object.assign({}, { type: 'content', purpose: 'none', id: guid() }, selection, attrs);
 
-  const startNewContent = (u: any) => u.length === 0 
+  const startNewContent = (u: any) => u.length === 0
     || u[u.length - 1].type === 'activity_placeholder'
     || u[u.length - 1].purpose !== 'none';
-  
+
   return content.reduce(
     (u: any, e: any) => {
 

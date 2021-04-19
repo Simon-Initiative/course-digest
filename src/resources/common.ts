@@ -11,7 +11,7 @@ export interface HasHistogram {
 }
 
 export function processCodeblock($: any) {
-  $('codeblock').each((i: any, item: any) => {  
+  $('codeblock').each((i: any, item: any) => {
 
     const h = $(item).html();
     if (h.startsWith('<![CDATA[') && h.endsWith(']]>')) {
@@ -29,7 +29,7 @@ export function processCodeblock($: any) {
         .split('\n')
         .map((r: any) => '<code_line>' + r + '</code_line>')
         .reduce((s: string, e: string) => s + e);
-        
+
       $(item).html(html);
 
     }
@@ -67,7 +67,7 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'codeblock', 'code');
   DOM.renameAttribute($, 'code', 'syntax', 'language');
   DOM.rename($, 'link', 'a');
-  
+
   // Certain elements are not currently (and some may never be) supported
   // in Torus, so we remove them.  In this respect, OLI course conversion 
   // is lossy wrt specific element constructs. 
@@ -85,6 +85,7 @@ export function standardContentManipulations($: any) {
   $('vimeo').remove();
   $('cite').remove();
 
+  DOM.stripElement($, 'li p');
   DOM.stripElement($, 'p quote');
   DOM.stripElement($, 'p formula');
   DOM.stripElement($, 'materials material');
@@ -92,17 +93,17 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'anchor');
   $('pullout title').remove();
   DOM.stripElement($, 'pullout');
-  
+
   $('p title').remove();
   $('ol title').remove();
   $('ul title').remove();
-  
+
   $('dl title').remove();
   DOM.rename($, 'dd', 'li');
   DOM.rename($, 'dt', 'li');
   DOM.rename($, 'dl', 'ul');
-  
+
   DOM.rename($, 'quote', 'blockquote');
-  
-  
+
+
 }
