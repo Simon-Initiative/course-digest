@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="u-images-m-images-p-image_expressions">
+  <head>
+    <title>Image Expressions</title>
+    <objref idref="u-images-m-images-p-image_expressions_LO_1" />
+    <objref idref="u-images-m-images-p-image_expressions_LO_2" />
+  </head>
+  <body>
+    <image id="a977decd8f594f80acb29b70c60ce118" src="../webcontent/1x1.png" alt="" style="inline" vertical-align="middle">
+      <caption />
+      <popout enable="false"></popout>
+    </image>
+    <section id="e3d3c4e481374cc8820b47d38901decd">
+      <title>Expressions</title>
+      <body>
+        <p id="feace21ea0a547a489b98f33865fd9d8">In this section, we see code <em style="italic">expressions</em>, which greatly expand what we can do in a loop. Expressions enable interesting image manipulation code and the neat 5-10-20 image puzzle.</p>
+      </body>
+    </section>
+    <section id="eec1e189823047ca91badc70bd47b5aa">
+      <title>Expressions: 1 + 1</title>
+      <body>
+        <p id="ead5e64a117e4aa5a3f4acdcf4e48720">We have seen code that calls the <code>print()</code> function, giving a value within the parentheses, such as 42 in the example below.</p>
+        <codeblock id="bff97ab4b9f44c2da7813dcccfb6d13c" syntax="java" highlight="" number="false" start="">
+  					print(42);
+        </codeblock>
+        <p id="b3cf488e404349028ece6f2d61699e98">Instead of a plain number like 42, an <em style="italic">expression</em> written in the code, such as 11 + 13, computes the value to use on the fly. Run the following to see what it does.</p>
+        <p id="ee785d863f2d47d4b60b68466723ec2b">When the line <code>print(11 + 31);</code> runs, the computer first computes the expression 11 + 31, yielding 42. Then, in effect, it calls <code>print(42)</code>, passing in the computed value. Anywhere in the code where we have used a fixed number such as 0 or 255, we can instead write an expression, letting the computer compute a value when that line runs.</p>
+      </body>
+    </section>
+  </body>
+</workbook_page>
