@@ -227,6 +227,7 @@ function cata(question: any) {
 function single_response_text(question: any) {
   return {
     stem: buildStem(question),
+    inputType: 'text',
     authoring: {
       parts: [buildTextPart(question)],
       transformations: [],
