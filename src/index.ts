@@ -17,7 +17,7 @@ const optionDefinitions = [
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
   { name: 'slug', type: String },
-  { name: 'mediaUrlPrefix', type: String }
+  { name: 'mediaUrlPrefix', type: String },
 ];
 
 const commandLineArgs = require('command-line-args');
@@ -27,16 +27,16 @@ function validateArgs() {
 
   if (options.operation === 'convert') {
 
-    if (options.mediaUrlPrefix && options.slug && options.inputDir 
+    if (options.mediaUrlPrefix && options.slug && options.inputDir
       && options.outputDir && options.specificOrg && options.specificOrgId) {
-      
-        return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
+
+      return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
 
     if (options.inputDir && options.outputDir) {
       return [options.inputDir, options.outputDir].every(fs.existsSync);
-    } 
+    }
   } else if (options.operation === 'upload') {
 
     return options.slug && options.mediaManifest && fs.existsSync(options.mediaManifest);
@@ -123,7 +123,7 @@ function uploadAction() {
   const manifest = JSON.parse(raw);
 
   const uploaders = manifest.mediaItems.map((m: any) => {
-    return () => { 
+    return () => {
       console.log('Uploading ' + m.file);
       return upload(m.file, m.name, slug);
     };
@@ -155,7 +155,7 @@ function convertAction() {
       mediaItems: {},
       missing: [],
       urlPrefix: options.mediaUrlPrefix,
-      flattenedNames: {}
+      flattenedNames: {},
     };
 
     Convert.convert(mediaSummary, specificOrg)
@@ -165,6 +165,8 @@ function convertAction() {
       processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
       .then((converted: Resources.TorusResource[]) => {
 
+        const torusResource = converted.find((r: Resources.TorusResource) => r.title === 'New REPL Activity');
+        console.log(torusResource);
         const updated = Convert.updateDerivativeReferences(converted);
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
 

@@ -1,4 +1,3 @@
-
 import { rootTag } from '../utils/xml';
 import { Resource, ResourceType } from './resource';
 
@@ -9,6 +8,7 @@ import * as Feedback from './feedback';
 import * as Formative from './formative';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
+import * as Superactivity from './superactivity';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
@@ -29,11 +29,14 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
       || tag.indexOf('oli_assessment_mathml_2_4') !== -1) {
       return 'Summative';
     }
-    if (tag.indexOf('oli_feedback_1_2') !== -1) {
+    if (tag.indexOf('oli_feedback_1_2') !== -1 || tag.indexOf('oli_feedback_1_0') !== -1) {
       return 'Feedback';
     }
     if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
       return 'Objectives';
+    }
+    if (tag.indexOf('oli-embed-activity_1.0') !== -1) {
+      return 'Superactivity';
     }
 
     return 'Other';
@@ -58,6 +61,9 @@ export function create(t: ResourceType) : Resource {
   }
   if (t === 'Objectives') {
     return new Objectives.Objectives();
+  }
+  if (t === 'Superactivity') {
+    return new Superactivity.Superactivity();
   }
   return new Other.Other();
 }

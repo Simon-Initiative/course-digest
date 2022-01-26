@@ -18,6 +18,7 @@ function innerProcess<T>(
   all: TorusResource[]) {
 
   const doSummary = (ref: string) => {
+    console.log(ref);
     const path = resourceMap[ref];
     seenReferences[ref] = true;
 
@@ -29,6 +30,7 @@ function innerProcess<T>(
 
   const summarizers = itemReferences.map((ref: string) => doSummary(ref));
 
+  // console.log(JSON.stringify(itemReferences));
   executeSerially(summarizers)
   .then((results: TorusResource[]) => {
 
@@ -46,9 +48,9 @@ function innerProcess<T>(
             seenReferences[i.id] = true;
           }
         });
-        
+
       } else {
-      
+
         if (r.unresolvedReferences !== undefined) {
           r.unresolvedReferences.forEach((ref: string) => {
             if (seenReferences[ref] === undefined) {

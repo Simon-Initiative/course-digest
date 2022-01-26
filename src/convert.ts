@@ -9,26 +9,26 @@ type DerivedResourceMap =  {[key: string]: TorusResource[]};
 
 const fs = require('fs');
 const tmp = require('tmp');
- 
+
 export function convert(mediaSummary: Media.MediaSummary, file: string) : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
 
       const item = create(t);
-      console.log(file)
+      console.log(file);
 
       let $ = DOM.read(file, { normalizeWhitespace: false });
       item.restructurePreservingWhitespace($);
 
       const tmpobj = tmp.fileSync();
-      fs.writeFileSync(tmpobj.name, $.html()); 
-      
-      $ = DOM.read(tmpobj.name);  
+      fs.writeFileSync(tmpobj.name, $.html());
+
+      $ = DOM.read(tmpobj.name);
 
       Media.transformToFlatDirectory(file, $, mediaSummary);
 
       item.restructure($);
-      
+
       const xml = $.html();
       return item.translate(xml, $);
     });
@@ -50,7 +50,7 @@ export function updateDerivativeReferences(resources: TorusResource[]) : TorusRe
   const byLegacyId : DerivedResourceMap = bucketByLegacyId(resources);
   
   // Visit every resource, replacing legacy references with corresponding collection
-  // of derivative references 
+  // of derivative references
   return resources.map((parent: TorusResource) => updateParentReference(parent, byLegacyId));
 
 }

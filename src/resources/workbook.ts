@@ -30,7 +30,6 @@ export class WorkbookPage extends Resource {
     DOM.rename($, 'activity_link', 'a');
   }
 
-
   translate(originalXml: string, $: any): Promise<(TorusResource | string)[]> {
 
     const page: Page = {
