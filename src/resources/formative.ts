@@ -9,13 +9,13 @@ import * as XML from '../utils/xml';
 
 function ensureParagraphs(children: any) {
   if (children.length === 1 && children[0].text !== undefined) {
-    return [{type: 'p', children }]
+    return [{ type: 'p', children }]
   }
   return children;
 }
 
 function buildStem(question: any) {
-  
+
   const stem = getChild(question.children, 'stem');
   return {
     content: {
@@ -28,7 +28,7 @@ function buildChoices(question: any) {
   const choices = getChild(question.children, 'multiple_choice').children;
 
   return choices.map((c: any) => ({
-    content: {model: ensureParagraphs(c.children)},
+    content: { model: ensureParagraphs(c.children) },
     id: c.value,
   }));
 }
@@ -72,7 +72,7 @@ function buildTextPart(question: any) {
 function hint() {
   return {
     id: guid(),
-    content: {model: [{type: 'p', children: [{text: ''}]}]}
+    content: { model: [{ type: 'p', children: [{ text: '' }] }] }
   };
 }
 
@@ -105,12 +105,12 @@ function buildMCQPart(question: any) {
       rule: `input like {${r.match}}`,
       feedback: {
         id: guid(),
-        content: {model: ensureParagraphs(r.children[0].children)},
+        content: { model: ensureParagraphs(r.children[0].children) },
       }
     })),
     hints: ensureThree(hints.map((r: any) => ({
       id: guid(),
-      content: {model: ensureParagraphs(r.children)},
+      content: { model: ensureParagraphs(r.children) },
     }))),
     scoringStrategy: 'average',
   }
@@ -134,17 +134,17 @@ function buildCATAPart(question: any) {
         rule: r.match,
         feedback: {
           id: guid(),
-          content: {model: ensureParagraphs(r.children[0].children)},
+          content: { model: ensureParagraphs(r.children[0].children) },
         }
       };
     }),
     hints: ensureThree(hints.map((r: any) => ({
       id: guid(),
-      content: {model: ensureParagraphs(r.children)},
+      content: { model: ensureParagraphs(r.children) },
     }))),
     scoringStrategy: 'average',
   };
-  
+
 }
 
 function mcq(question: any) {
@@ -187,22 +187,22 @@ function cata(question: any) {
     }
   };
 
-  const correctResponse = model.authoring.parts[0].responses.filter((r: any) => r.score !== undefined && r.score !== 0)[0];  
+  const correctResponse = model.authoring.parts[0].responses.filter((r: any) => r.score !== undefined && r.score !== 0)[0];
   const correctIds = correctResponse.rule.split(',');
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
   const incorrectIds = choiceIds.filter((x: any) => !correctIds.includes(x));
-  const incorrectResponses = model.authoring.parts[0].responses.filter((r: any) => r.rule === '*');  
-  let incorrectResponse : any;
+  const incorrectResponses = model.authoring.parts[0].responses.filter((r: any) => r.rule === '*');
+  let incorrectResponse: any;
   if (incorrectResponses.length === 0) {
-    const r : any = {
+    const r: any = {
       id: guid(),
       score: 0,
       rule: '*',
       feedback: {
         id: guid(),
-        content: {model: [{ type: 'p', children: [{ text: 'Incorrect', children: []}]}]},
+        content: { model: [{ type: 'p', children: [{ text: 'Incorrect', children: [] }] }] },
       }
     };
     model.authoring.parts[0].responses.push(r);
@@ -239,16 +239,16 @@ function single_response_text(question: any) {
 function buildModel(subType: ItemTypes, question: any) {
   if (subType === 'oli_multiple_choice') {
     return mcq(question);
-  } 
+  }
   if (subType === 'oli_check_all_that_apply') {
     return cata(question);
   }
   return single_response_text(question);
 }
 
-function toActivity(question: any, subType: ItemTypes, legacyId: string) {
+export function toActivity(question: any, subType: ItemTypes, legacyId: string) {
 
-  const activity : Activity = {
+  const activity: Activity = {
     type: 'Activity',
     id: '',
     originalFile: '',
@@ -281,7 +281,7 @@ function getChild(collection: any, named: string) {
 
 type ItemTypes = 'oli_multiple_choice' | 'oli_check_all_that_apply' | 'oli_short_answer';
 
-function determineSubType(question: any) : ItemTypes {
+export function determineSubType(question: any): ItemTypes {
 
   const mcq = getChild(question.children, 'multiple_choice');
 
@@ -289,12 +289,19 @@ function determineSubType(question: any) : ItemTypes {
 
     if (mcq.select && mcq.select === 'multiple') {
       return 'oli_check_all_that_apply';
-    } 
+    }
     return 'oli_multiple_choice';
   }
 
   return 'oli_short_answer';
 
+}
+
+export function performRestructure($: any) {
+  standardContentManipulations($);
+
+  DOM.rename($, 'question body', 'stem');
+  DOM.eliminateLevel($, 'section');
 }
 
 export class Formative extends Resource {
@@ -303,27 +310,22 @@ export class Formative extends Resource {
     processCodeblock($);
   }
 
-  restructure($: any) : any {
-    standardContentManipulations($);
-
-    DOM.rename($, 'question body', 'stem');
-    DOM.eliminateLevel($, 'section');
-    DOM.eliminateLevel($, 'page');
-    DOM.eliminateLevel($, 'pool');
+  restructure($: any): any {
+    performRestructure($);
   }
 
-  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
 
     return new Promise((resolve, reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true}).then((r: any) => {
+      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then((r: any) => {
         const legacyId = r.children[0].id;
         const activities = r.children[0].children
-        .filter((item: any) => item.type === 'question')
-        .map((question: any) => {
-          const subType = determineSubType(question);
-          return toActivity(question, subType, legacyId);
-        });
-        
+          .filter((item: any) => item.type === 'question')
+          .map((question: any) => {
+            const subType = determineSubType(question);
+            return toActivity(question, subType, legacyId);
+          });
+
         resolve(activities);
       });
     });
@@ -333,7 +335,7 @@ export class Formative extends Resource {
   summarize(file: string): Promise<string | Summary> {
 
     const foundIds: ItemReference[] = [];
-    const summary : Summary = {
+    const summary: Summary = {
       type: 'Summary',
       subType: 'Formative',
       elementHistogram: Histogram.create(),
@@ -351,10 +353,10 @@ export class Formative extends Resource {
         }
 
       })
-      .then((result) => {
-        resolve(summary);
-      })
-      .catch(err => reject(err));
+        .then((result) => {
+          resolve(summary);
+        })
+        .catch(err => reject(err));
     });
   }
 }

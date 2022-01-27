@@ -50,6 +50,8 @@ function innerProcess<T>(
       } else {
       
         if (r.unresolvedReferences !== undefined) {
+          console.log('Unresolved');
+          console.log(r.unresolvedReferences);
           r.unresolvedReferences.forEach((ref: string) => {
             if (seenReferences[ref] === undefined) {
               toFollow.push(ref);

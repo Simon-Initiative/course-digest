@@ -9,11 +9,14 @@ import * as Feedback from './feedback';
 import * as Formative from './formative';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
+import * as Pool from './pool';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
   .then((tag: string) => {
-
+    if (tag.indexOf('DTD Assessment Pool') !== -1) {
+      return 'Pool';
+    }
     if (tag.indexOf('organization') !== -1) {
       return 'Organization';
     }
@@ -35,7 +38,7 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
       return 'Objectives';
     }
-
+    
     return 'Other';
   });
 }
@@ -58,6 +61,9 @@ export function create(t: ResourceType) : Resource {
   }
   if (t === 'Objectives') {
     return new Objectives.Objectives();
+  }
+  if (t === 'Pool') {
+    return new Pool.Pool();
   }
   return new Other.Other();
 }

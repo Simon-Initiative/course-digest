@@ -1,4 +1,4 @@
-import { renameAttribute, eliminateLevel, stripElement } from '../../src/utils/dom';
+import { renameAttribute, eliminateLevel, stripElement, moveAttrToChildren } from '../../src/utils/dom';
 const cheerio = require('cheerio');
 
 describe('dom mutations', () => {
@@ -57,6 +57,21 @@ describe('dom mutations', () => {
     eliminateLevel($, 'b');
 
     expect($.xml()).toEqual('<a><c/><d/><c/></a>');
+  });
+
+  test('should move attribute down to children', () => {
+
+    const content = '<a test="one" test2="two"><body/><input/><input/></a>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+    $('a').each((i: any, item: any) => {
+      moveAttrToChildren($, item, "test", "input")
+    });
+
+    expect($.xml()).toEqual('<a test2="two"><body/><input test="one"/><input test="one"/></a>');
   });
 
 });

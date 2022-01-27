@@ -15,8 +15,7 @@ export function convert(mediaSummary: Media.MediaSummary, file: string) : Promis
     .then((t: ResourceType) => {
 
       const item = create(t);
-      console.log(file)
-
+     
       let $ = DOM.read(file, { normalizeWhitespace: false });
       item.restructurePreservingWhitespace($);
 
@@ -30,6 +29,7 @@ export function convert(mediaSummary: Media.MediaSummary, file: string) : Promis
       item.restructure($);
       
       const xml = $.html();
+      
       return item.translate(xml, $);
     });
 }
@@ -90,7 +90,7 @@ function getPurpose(purpose: string) {
 }
 
 function updateParentReference(resource: TorusResource, byLegacyId: DerivedResourceMap) : TorusResource {
-  
+
   if (resource.type === 'Page') {
 
     const page = resource as Page;
@@ -118,6 +118,32 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
   return resource;
 }
 
+
+export function generatePoolTags(resources: TorusResource[]) : TorusResource[] {
+  const tags : any = {};
+
+  const items = resources.filter(r => {
+
+    if (r.type === 'Activity') {
+      r.tags.forEach(t => {
+        if (tags[t] === undefined) {
+          tags[t] = {
+            type: 'Tag',
+            originalFile: null,
+            id: t,
+            title: 'Legacy Pool: ' + t,
+            tags: [],
+            unresolvedReferences: [],
+            content: {}
+          }
+        }
+      });
+    }
+    return r.type !== 'Unknown';
+  })
+
+  return [...items, ...Object.keys(tags).map(k => tags[k])];
+}
 
 export function output(
   projectSlug: string,
