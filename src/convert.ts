@@ -10,11 +10,12 @@ type DerivedResourceMap =  {[key: string]: TorusResource[]};
 const fs = require('fs');
 const tmp = require('tmp');
 
-export function convert(mediaSummary: Media.MediaSummary, file: string) : Promise<(TorusResource | string)[]> {
+export function convert(mediaSummary: Media.MediaSummary, file: string)
+    : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
 
-      const item = create(t);
+      const item = create(t, file);
       console.log(file);
 
       let $ = DOM.read(file, { normalizeWhitespace: false });
@@ -35,14 +36,14 @@ export function convert(mediaSummary: Media.MediaSummary, file: string) : Promis
 }
 
 // For a collection of TorusResources, find all derivative resources
-// and go update their parent document to include their actual references. 
+// and go update their parent document to include their actual references.
 //
 // 'Derivative resources' are a collection of Torus resources that were
 // derived from a single OLI resource.  Cases where we encounter derivations:
 // 1. Individual activity resources derived from a singular OLI assessment
 //    resource (either summative or formative)
 // 2. Individual activity resources derived from a singular question pool
-//    resource 
+//    resource
 export function updateDerivativeReferences(resources: TorusResource[]) : TorusResource[] {
 
   // Bucket the resources by legacy_id.  These are the items whose now individual references

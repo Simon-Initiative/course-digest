@@ -43,27 +43,27 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
   });
 }
 
-export function create(t: ResourceType) : Resource {
+export function create(t: ResourceType, file: string) : Resource {
   if (t === 'WorkbookPage') {
-    return new WB.WorkbookPage();
+    return new WB.WorkbookPage(file);
   }
   if (t === 'Organization') {
-    return new Org.Organization();
+    return new Org.Organization(file);
   }
   if (t === 'Formative') {
-    return new Formative.Formative();
+    return new Formative.Formative(file);
   }
   if (t === 'Summative') {
-    return new Summative.Summative();
+    return new Summative.Summative(file);
   }
   if (t === 'Feedback') {
-    return new Feedback.Feedback();
+    return new Feedback.Feedback(file);
   }
   if (t === 'Objectives') {
-    return new Objectives.Objectives();
+    return new Objectives.Objectives(file);
   }
   if (t === 'Superactivity') {
-    return new Superactivity.Superactivity();
+    return new Superactivity.Superactivity(file);
   }
-  return new Other.Other();
+  return new Other.Other(file);
 }

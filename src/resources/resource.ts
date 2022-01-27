@@ -90,6 +90,12 @@ const attributeValueMap : { [index:string] : Object } = {
 
 export abstract class Resource {
 
+  file: string;
+
+  constructor(file: string) {
+    this.file = file;
+  }
+
   abstract summarize(file: string): Promise<Summary | string>;
 
   restructurePreservingWhitespace($: any): any {}

@@ -52,7 +52,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
     .then((orgs) => {
 
       executeSerially(orgs.map(file => () => {
-        const o = new Orgs.Organization();
+        const o = new Orgs.Organization(file);
         return o.summarize(file);
       }))
       .then((results: (string | Resources.Summary)[]) => {
@@ -164,9 +164,8 @@ function convertAction() {
 
       processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
       .then((converted: Resources.TorusResource[]) => {
-
-        const torusResource = converted.find((r: Resources.TorusResource) => r.title === 'New REPL Activity');
-        console.log(torusResource);
+        // const torusResource = converted.find((r: Resources.TorusResource) => r.title === 'New REPL Activity');
+        // console.log(torusResource);
         const updated = Convert.updateDerivativeReferences(converted);
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
 
