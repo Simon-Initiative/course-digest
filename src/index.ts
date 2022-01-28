@@ -168,12 +168,9 @@ function convertAction() {
       processResources(Convert.convert.bind(undefined, mediaSummary), references,
                        orgReferences, map)
       .then((converted: Resources.TorusResource[]) => {
-        // const torusResource = converted.find((r: Resources.TorusResource) => r.title === 'New REPL Activity');
-        // console.log(torusResource);
+
         const updated = Convert.updateDerivativeReferences(converted);
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
-
-        // console.log(mediaItems);
 
         Convert.output(
           projectSlug, packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
