@@ -1,5 +1,5 @@
 import * as Histogram from '../utils/histogram';
-import {Resource, TorusResource, Summary, Page} from './resource';
+import { Resource, TorusResource, Summary, Page } from './resource';
 import { guid } from '../utils/common';
 import * as XML from '../utils/xml';
 
@@ -145,10 +145,15 @@ function determineActivityDefaults(doctype: string, file: string) : ActivityOpti
       };
     case 'linked_activity':
       return {
-        subType: 'oli_linked_activity',
-        base: 'linked',
-        src: 'linked.html',
+        subType: 'oli_embedded',
+        base: 'embedded',
+        src: 'index.html',
       };
+      // return {
+      //   subType: 'oli_linked_activity',
+      //   base: 'linked',
+      //   src: 'linked.html',
+      // };
     default:
       return null;
   }
@@ -161,7 +166,20 @@ function toActivityModel(base: string, src: string, title: string, modelXml: str
     modelXml,
     resourceBase: guid(),
     resourceURLs: [],
-    stem: '',
+    stem: {
+      id:  guid(),
+      content:  [
+        {
+          id: guid(),
+          type: 'p',
+          children:  [
+            {
+              text: '',
+            },
+          ],
+        },
+      ],
+    },
     title,
     authoring: {
       parts: [
