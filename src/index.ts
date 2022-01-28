@@ -52,7 +52,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
     .then((orgs) => {
 
       executeSerially(orgs.map(file => () => {
-        const o = new Orgs.Organization(file);
+        const o = new Orgs.Organization(file, false);
         return o.summarize(file);
       }))
       .then((results: (string | Resources.Summary)[]) => {
@@ -73,8 +73,9 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
             });
           }
         });
-
-        resolve(references);
+        const orgReferences = {} as any;
+        orgReferences['orgReferences'] = references;
+        resolve(orgReferences);
       });
     });
   });
@@ -100,7 +101,8 @@ function summaryAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => processResources(Summarize.summarize, results.slice(1), results[0]))
+  .then((results: any) => processResources(Summarize.summarize, results[1].orgReferences,
+                                           results[1].orgReferences, results[0]))
   .then((summaries: Summarize.SummaryResult[]) => alongWith(
     () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
   .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
@@ -148,7 +150,8 @@ function convertAction() {
   .then((results: any) => {
 
     const map = results[0];
-    const references = [...results.slice(1), ...results.slice(2)];
+    const orgReferences = [...results[1].orgReferences];
+    const references = [...orgReferences, ...results.slice(2)];
 
     const mediaSummary : Media.MediaSummary = {
       projectSlug,
@@ -158,16 +161,19 @@ function convertAction() {
       flattenedNames: {},
     };
 
-    Convert.convert(mediaSummary, specificOrg)
+    Convert.convert(mediaSummary, specificOrg, false)
     .then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
 
-      processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
+      processResources(Convert.convert.bind(undefined, mediaSummary), references,
+                       orgReferences, map)
       .then((converted: Resources.TorusResource[]) => {
         // const torusResource = converted.find((r: Resources.TorusResource) => r.title === 'New REPL Activity');
         // console.log(torusResource);
         const updated = Convert.updateDerivativeReferences(converted);
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
+
+        // console.log(mediaItems);
 
         Convert.output(
           projectSlug, packageDirectory, outputDirectory, hierarchy, updated, mediaItems);

@@ -10,12 +10,12 @@ type DerivedResourceMap =  {[key: string]: TorusResource[]};
 const fs = require('fs');
 const tmp = require('tmp');
 
-export function convert(mediaSummary: Media.MediaSummary, file: string)
+export function convert(mediaSummary: Media.MediaSummary, file: string, navigable: boolean)
     : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
 
-      const item = create(t, file);
+      const item = create(t, file, navigable);
       console.log(file);
 
       let $ = DOM.read(file, { normalizeWhitespace: false });

@@ -35,7 +35,8 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
       return 'Objectives';
     }
-    if (tag.indexOf('oli-embed-activity_1.0') !== -1) {
+    if (tag.indexOf('oli-embed-activity_1.0') !== -1 ||
+        tag.indexOf('oli-linked-activity_1.0') !== -1) {
       return 'Superactivity';
     }
 
@@ -43,27 +44,27 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
   });
 }
 
-export function create(t: ResourceType, file: string) : Resource {
+export function create(t: ResourceType, file: string, navigable: boolean) : Resource {
   if (t === 'WorkbookPage') {
-    return new WB.WorkbookPage(file);
+    return new WB.WorkbookPage(file, navigable);
   }
   if (t === 'Organization') {
-    return new Org.Organization(file);
+    return new Org.Organization(file, navigable);
   }
   if (t === 'Formative') {
-    return new Formative.Formative(file);
+    return new Formative.Formative(file, navigable);
   }
   if (t === 'Summative') {
-    return new Summative.Summative(file);
+    return new Summative.Summative(file, navigable);
   }
   if (t === 'Feedback') {
-    return new Feedback.Feedback(file);
+    return new Feedback.Feedback(file, navigable);
   }
   if (t === 'Objectives') {
-    return new Objectives.Objectives(file);
+    return new Objectives.Objectives(file, navigable);
   }
   if (t === 'Superactivity') {
-    return new Superactivity.Superactivity(file);
+    return new Superactivity.Superactivity(file, navigable);
   }
-  return new Other.Other(file);
+  return new Other.Other(file, navigable);
 }

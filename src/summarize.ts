@@ -11,7 +11,7 @@ export function summarize(file: string): Promise<Summary | string> {
   return new Promise((resolve, reject) => {
     determineResourceType(file)
     .then((t: ResourceType) => {
-      resolve(create(t, file).summarize(file));
+      resolve(create(t, file, false).summarize(file));
     });
   });
 }

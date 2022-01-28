@@ -91,9 +91,11 @@ const attributeValueMap : { [index:string] : Object } = {
 export abstract class Resource {
 
   file: string;
+  navigable: boolean;
 
-  constructor(file: string) {
+  constructor(file: string, navigable: boolean) {
     this.file = file;
+    this.navigable = navigable;
   }
 
   abstract summarize(file: string): Promise<Summary | string>;

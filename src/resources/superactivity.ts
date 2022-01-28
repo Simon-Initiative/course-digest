@@ -1,5 +1,5 @@
 import * as Histogram from '../utils/histogram';
-import { Resource, TorusResource, Summary } from './resource';
+import {Resource, TorusResource, Summary, Page} from './resource';
 import { guid } from '../utils/common';
 import * as XML from '../utils/xml';
 
@@ -10,6 +10,7 @@ export class Superactivity extends Resource {
 
   translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
     const file = this.file;
+    const navigable = this.navigable;
     return new Promise((resolve, reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then((r: any) => {
         const legacyId = r.children[0].id;
@@ -23,8 +24,31 @@ export class Superactivity extends Resource {
         if (!defaults) {
           resolve(['']);
         } else {
-          resolve([toActivity(toActivityModel(defaults.base, defaults.src, title, xml),
-                              legacyId, defaults.subType, title)]);
+          if (navigable) {
+            const activity = toActivity(toActivityModel(defaults.base, defaults.src, title, xml),
+                                        guid(), defaults.subType, title);
+            const model = [{
+              type: 'activity_placeholder',
+              children: [],
+              idref: activity.legacyId,
+            },
+            ];
+            const page: Page = {
+              type: 'Page',
+              id: legacyId,
+              originalFile: '',
+              title,
+              tags: [],
+              unresolvedReferences: [],
+              content: { model },
+              isGraded: true,
+              objectives: [],
+            };
+            resolve([page, activity]);
+          } else {
+            resolve([toActivity(toActivityModel(defaults.base, defaults.src, title, xml),
+                                legacyId, defaults.subType, title)]);
+          }
         }
       });
     });
@@ -71,7 +95,8 @@ function toActivity(content: any, legacyId: string, subType: string, title: stri
   };
 }
 
-type ActivityTypes = 'oli_embedded' | 'oli_ctat' | 'oli_ctat2' | 'oli_logiclab' | 'oli_bio_sim' | 'oli_repl';
+type ActivityTypes = 'oli_embedded' | 'oli_ctat' | 'oli_ctat2' | 'oli_logiclab' | 'oli_bio_sim'
+    | 'oli_repl' | 'oli_linked_activity';
 
 type ActivityOptions = {
   subType: ActivityTypes,
@@ -117,6 +142,12 @@ function determineActivityDefaults(doctype: string, file: string) : ActivityOpti
         subType: 'oli_repl',
         base: 'repl',
         src: 'repl.html',
+      };
+    case 'linked_activity':
+      return {
+        subType: 'oli_linked_activity',
+        base: 'linked',
+        src: 'linked.html',
       };
     default:
       return null;
