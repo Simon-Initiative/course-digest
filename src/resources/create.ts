@@ -1,4 +1,3 @@
-
 import { rootTag } from '../utils/xml';
 import { Resource, ResourceType } from './resource';
 
@@ -9,6 +8,7 @@ import * as Feedback from './feedback';
 import * as Formative from './formative';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
+import * as Superactivity from './superactivity';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
@@ -29,35 +29,42 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
       || tag.indexOf('oli_assessment_mathml_2_4') !== -1) {
       return 'Summative';
     }
-    if (tag.indexOf('oli_feedback_1_2') !== -1) {
+    if (tag.indexOf('oli_feedback_1_2') !== -1 || tag.indexOf('oli_feedback_1_0') !== -1) {
       return 'Feedback';
     }
     if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
       return 'Objectives';
+    }
+    if (tag.indexOf('oli-embed-activity_1.0') !== -1 ||
+        tag.indexOf('oli-linked-activity_1.0') !== -1) {
+      return 'Superactivity';
     }
 
     return 'Other';
   });
 }
 
-export function create(t: ResourceType) : Resource {
+export function create(t: ResourceType, file: string, navigable: boolean) : Resource {
   if (t === 'WorkbookPage') {
-    return new WB.WorkbookPage();
+    return new WB.WorkbookPage(file, navigable);
   }
   if (t === 'Organization') {
-    return new Org.Organization();
+    return new Org.Organization(file, navigable);
   }
   if (t === 'Formative') {
-    return new Formative.Formative();
+    return new Formative.Formative(file, navigable);
   }
   if (t === 'Summative') {
-    return new Summative.Summative();
+    return new Summative.Summative(file, navigable);
   }
   if (t === 'Feedback') {
-    return new Feedback.Feedback();
+    return new Feedback.Feedback(file, navigable);
   }
   if (t === 'Objectives') {
-    return new Objectives.Objectives();
+    return new Objectives.Objectives(file, navigable);
   }
-  return new Other.Other();
+  if (t === 'Superactivity') {
+    return new Superactivity.Superactivity(file, navigable);
+  }
+  return new Other.Other(file, navigable);
 }

@@ -10,9 +10,10 @@ import { ResourceMap } from './utils/resource_mapping';
 // to avoid circular references and processing duplicates so we track the references
 // that we have seen along the way.
 function innerProcess<T>(
-  processFunc: (file: string) => Promise<T | string>,
+  processFunc: (file: string, refFromOrg: boolean) => Promise<T | string>,
   resolve: any, reject: any,
   itemReferences: string[],
+  orgReferences: string[],
   resourceMap: ResourceMap,
   seenReferences: { [index: string] : boolean },
   all: TorusResource[]) {
@@ -20,9 +21,10 @@ function innerProcess<T>(
   const doSummary = (ref: string) => {
     const path = resourceMap[ref];
     seenReferences[ref] = true;
+    const found = orgReferences.find(orgRef => orgRef === ref);
 
     if (path !== undefined) {
-      return () => processFunc(path);
+      return () => processFunc(path, !!found);
     }
     return () => Promise.resolve({ type: 'MissingResource', id: ref });
   };
@@ -46,9 +48,9 @@ function innerProcess<T>(
             seenReferences[i.id] = true;
           }
         });
-        
+
       } else {
-      
+
         if (r.unresolvedReferences !== undefined) {
           r.unresolvedReferences.forEach((ref: string) => {
             if (seenReferences[ref] === undefined) {
@@ -65,7 +67,7 @@ function innerProcess<T>(
     if (toFollow.length === 0) {
       resolve(all);
     } else {
-      innerProcess(processFunc, resolve, reject, toFollow, resourceMap, seenReferences, all);
+      innerProcess(processFunc, resolve, reject, toFollow, [], resourceMap, seenReferences, all);
     }
 
   });
@@ -73,10 +75,10 @@ function innerProcess<T>(
 
 export function processResources<T>(
   processFunc: (file: string) => Promise<T | string>,
-  itemReferences: string[], resourceMap: ResourceMap) : Promise<TorusResource[]> {
+  itemReferences: string[], orgReferences: string[], resourceMap: ResourceMap) : Promise<TorusResource[]> {
 
   return new Promise((resolve, reject) => {
-    innerProcess(processFunc, resolve, reject, itemReferences, resourceMap, {}, []);
+    innerProcess(processFunc, resolve, reject, itemReferences, orgReferences, resourceMap, {}, []);
   });
 
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+@(#)hints.xml $Date: 2016/00/22 
+
+Copyright (c) 2016 Carnegie Mellon University.
+-->
+<root>
+    <question id="q1">
+        <part id="q1_1">
+            <answer id="q1_p1_a1" score="1">q1_answer3</answer>
+            <feedback id="q1_p1_f1" match="q1_answer3">Correct. </feedback>
+            <feedback id="q1_p1_f2" match="*">Incorrect. </feedback>
+           <!-- <hint id="q1_p1_h1">Which statement is executed repeatedly executed?</hint>
+            <hint id="q1_p1_h2">The repeatedly executed statement should be within the loop body.</hint>
+            <hint id="q1_p1_h3">The return statement is executed after the loop stops iterating.</hint>-->
+        </part>
+        <part id="q1_2">
+            <answer id="q1_p2_a1" score="1">q1_answer2</answer>
+            <feedback id="q1_p2_f1" match="q1_answer2">Correct. </feedback>
+            <feedback id="q1_p2_f2" match="*">Incorrect. </feedback>
+            <!--<hint id="q1_p2_h1">Which statement is executed repeatedly executed?</hint>
+            <hint id="q1_p2_h2">The repeatedly executed statement should be within the loop body.</hint>
+            <hint id="q1_p2_h3">The return statement is executed after the loop stops iterating.</hint>-->
+        </part>
+        <part id="q1_3">
+            <answer id="q1_p3_a1" score="1">q1_answer1</answer>
+            <feedback id="q1_p3_f1" match="q1_answer1">Correct. </feedback>
+            <feedback id="q1_p3_f2" match="*">Incorrect. </feedback>
+            <!--<hint id="q1_p2_h1">Which statement is executed repeatedly executed?</hint>
+            <hint id="q1_p2_h2">The repeatedly executed statement should be within the loop body.</hint>
+            <hint id="q1_p2_h3">The return statement is executed after the loop stops iterating.</hint>-->
+        </part>
+    </question>
+</root>

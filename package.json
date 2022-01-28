@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/jest": "^26.0.13",
+    "@types/xmldom": "^0.1.31",
     "aws-sdk": "^2.858.0",
     "cheerio": "^1.0.0-rc.3",
     "command-line-args": "^5.1.1",

@@ -1,0 +1,134 @@
+/*
+@(#)emstyles $Date: 2015/00/18 
+
+Copyright (c) 2015 Carnegie Mellon University.
+*/
+/* 
+    Created on : Dec 18, 2015, 3:18:13 PM
+    Author     : eberly
+*/
+
+#q1_target_container {  
+    margin: auto;
+    background-image: url("../images/drgdropimage_sm.png");
+    background-repeat: no-repeat;  
+    width: 540px;  
+    height: 523px;
+}
+#q1_answer1 {  
+    margin: auto;
+    background-image: url("../images/demo.png");
+    background-repeat: no-repeat;  
+    border-radius: 50%;
+    width: 135px;  
+    height: 135px;
+}
+#q1_answer2 {  
+    margin: auto;
+    background-image: url("../images/grade.png");
+    background-repeat: no-repeat;  
+	border-radius: 50%;
+    width: 135px;  
+    height: 135px;
+}
+#q1_answer3 {  
+    margin: auto;
+    background-image: url("../images/homework.png");
+    background-repeat: no-repeat;  
+    	border-radius: 50%;
+    width: 135px;  
+    height: 135px;
+}
+
+.question {  
+    margin-bottom: 10px;
+}  
+       
+.prompt {
+    /*font-weight: bold;*/
+}
+
+.target_parent {  
+    border: 3px;
+    border-style: dashed;
+    border-color: #999999; 
+    display: inline-block; 
+	border-radius: 50%;
+    position: relative;  
+}
+
+.choices
+{
+    display: inline-block;
+    min-height: 20px;
+    min-width: 40px;
+    /*background: #ffc;*/
+    text-align: center;
+    padding: 5px;
+    cursor: move;
+    border-style: solid;
+    border-width: 0px;
+   /* border-color: black;*/
+}
+
+.hints {
+    border-radius: 10px;
+    background: #fde9a2;
+    border: solid 2px;
+    border-color: #73716e;
+    padding: 4px 7px 4px 7px;
+    display: none;
+    position: relative;
+}
+.hints .next {
+    display: block;
+    position: absolute;
+    top: 31%;
+    right: 15px;
+    background: url("../images/asSprite.png") no-repeat -8px 0px;
+    text-indent: -9999px;
+    height: 15px;
+    width: 10px;
+}
+.hints .content {
+    display: inline-block;
+}
+.feedback {
+    border-radius: 10px;
+    border: solid 2px;
+    border-color: #73716e;
+    padding: 4px 7px 4px 7px;
+    display: none;
+}
+
+.hint_animate{  
+    animation: shadowThrob 0.9s infinite;
+    animation-direction: alternate;
+    -webkit-animation: shadowThrob 0.9s ease-out infinite;
+    -webkit-animation-direction: alternate;
+}
+.circleBase {
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+}
+
+.type1 {
+    width: 20px;
+    height: 20px;
+    background: #ccc;
+    border: 2px solid gray;
+    display: inline-block; 
+    position: absolute;
+    font-size: 11px;
+    font-weight: bold;
+    padding-left: 2px;
+}
+
+@keyframes shadowThrob {
+	from {box-shadow: 0 0 10px 5px rgba(255,255,51, 0.9);}
+	to {box-shadow: 0 0 10px 5px rgba(255,255,51, 0.2);}
+}
+@-webkit-keyframes shadowThrob {
+	from {box-shadow: 0 0 10px 5px rgba(255,255,51, 0.9);}
+	to {box-shadow: 0 0 10px 5px rgba(255,255,51, 0.2);}
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE linked_activity PUBLIC "-//Carnegie Mellon University//DTD Linked 1.0//EN" "http://oli.cmu.edu/dtd/oli-linked-activity_1.0.dtd">
+<linked_activity id="improvement" width="670" height="750" max_attempts="10" >
+    <title>Iterative Improvement</title>
+    <source>webcontent/improvement/js/dragdrop.js</source>
+    <assets>
+        <asset name="layout">webcontent/improvement/layout.html</asset>
+        <asset name="controls">webcontent/improvement/controls.html</asset>
+        <asset name="dndstyles">webcontent/improvement/styles/dndstyles.css</asset>
+        <asset name="questions">webcontent/improvement/xml/questions.xml</asset>
+    </assets>
+</linked_activity>
