@@ -266,6 +266,9 @@
 					<item scoring_mode="default">
 						<resourceref idref="u-course_resources-m-course_resources-p-image_functions_reference" />
 					</item>
+					<item scoring_mode="default">
+						<resourceref idref="improvement" />
+					</item>
 				</module>
 			</unit>
 			<!-- !!!course: <wiki slug="OLI.CS101.2015"/>

@@ -17,7 +17,7 @@ const optionDefinitions = [
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
   { name: 'slug', type: String },
-  { name: 'mediaUrlPrefix', type: String }
+  { name: 'mediaUrlPrefix', type: String },
 ];
 
 const commandLineArgs = require('command-line-args');
@@ -27,16 +27,16 @@ function validateArgs() {
 
   if (options.operation === 'convert') {
 
-    if (options.mediaUrlPrefix && options.slug && options.inputDir 
+    if (options.mediaUrlPrefix && options.slug && options.inputDir
       && options.outputDir && options.specificOrg && options.specificOrgId) {
-      
-        return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
+
+      return [options.inputDir, options.outputDir, options.specificOrg].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
 
     if (options.inputDir && options.outputDir) {
       return [options.inputDir, options.outputDir].every(fs.existsSync);
-    } 
+    }
   } else if (options.operation === 'upload') {
 
     return options.slug && options.mediaManifest && fs.existsSync(options.mediaManifest);
@@ -52,7 +52,7 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
     .then((orgs) => {
 
       executeSerially(orgs.map(file => () => {
-        const o = new Orgs.Organization();
+        const o = new Orgs.Organization(file, false);
         return o.summarize(file);
       }))
       .then((results: (string | Resources.Summary)[]) => {
@@ -73,8 +73,9 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
             });
           }
         });
-
-        resolve(references);
+        const orgReferences = {} as any;
+        orgReferences['orgReferences'] = references;
+        resolve(orgReferences);
       });
     });
   });
@@ -100,7 +101,8 @@ function summaryAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => processResources(Summarize.summarize, results.slice(1), results[0]))
+  .then((results: any) => processResources(Summarize.summarize, results[1].orgReferences,
+                                           results[1].orgReferences, results[0]))
   .then((summaries: Summarize.SummaryResult[]) => alongWith(
     () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
   .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
@@ -123,7 +125,7 @@ function uploadAction() {
   const manifest = JSON.parse(raw);
 
   const uploaders = manifest.mediaItems.map((m: any) => {
-    return () => { 
+    return () => {
       console.log('Uploading ' + m.file);
       return upload(m.file, m.name, slug);
     };
@@ -148,21 +150,23 @@ function convertAction() {
   .then((results: any) => {
 
     const map = results[0];
-    const references = [...results.slice(1), ...results.slice(2)];
+    const orgReferences = [...results[1].orgReferences];
+    const references = [...orgReferences, ...results.slice(2)];
 
     const mediaSummary : Media.MediaSummary = {
       projectSlug,
       mediaItems: {},
       missing: [],
       urlPrefix: options.mediaUrlPrefix,
-      flattenedNames: {}
+      flattenedNames: {},
     };
 
-    Convert.convert(mediaSummary, specificOrg)
+    Convert.convert(mediaSummary, specificOrg, false)
     .then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
 
-      processResources(Convert.convert.bind(undefined, mediaSummary), references, map)
+      processResources(Convert.convert.bind(undefined, mediaSummary), references,
+                       orgReferences, map)
       .then((converted: Resources.TorusResource[]) => {
 
         const updated = Convert.updateDerivativeReferences(converted);

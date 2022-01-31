@@ -8,8 +8,8 @@ export type MissingResource = {
   id: string,
 };
 
-export function replaceAll(s: string, t: string, w: string) { 
-  var re = new RegExp(t, 'g');
+export function replaceAll(s: string, t: string, w: string) {
+  const re = new RegExp(t, 'g');
   return s.replace(re, w);
 }
 
@@ -40,5 +40,5 @@ export enum LegacyTypes {
 }
 
 export function guid() {
-  return '' + Math.floor(Math.random() * Math.floor(Math.pow(2, 32) - 1));
+  return `${Math.floor(Math.random() * Math.floor(Math.pow(2, 32) - 1))}`;
 }

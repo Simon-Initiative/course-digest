@@ -1,6 +1,5 @@
 import * as Histogram from '../utils/histogram';
 import { ItemReference } from '../utils/common';
-import { visit } from '../utils/xml';
 import * as DOM from '../utils/dom';
 
 export interface Summary {
@@ -12,7 +11,7 @@ export interface Summary {
 }
 
 export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives' | 'Pool'
-| 'Formative' | 'Summative' | 'Feedback' | 'Other';
+| 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Other';
 
 export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
 
@@ -91,6 +90,14 @@ const attributeValueMap : { [index:string] : Object } = {
 };
 
 export abstract class Resource {
+
+  file: string;
+  navigable: boolean;
+
+  constructor(file: string, navigable: boolean) {
+    this.file = file;
+    this.navigable = navigable;
+  }
 
   abstract summarize(file: string): Promise<Summary | string>;
 
