@@ -27,7 +27,6 @@ export class Pool extends Resource {
           .map((item: any) => {
 
             if (item.type === 'pool') {
-              console.log('HEREEEEEE')
               const tagId = item.id;
                   
               item.children.forEach((c: any) => {

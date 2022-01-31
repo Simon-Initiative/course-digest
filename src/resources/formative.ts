@@ -353,7 +353,6 @@ export function processAssessmentModel(legacyId: string, children: any) {
 
         } else if (child.type === 'pool_ref') {
           tagId = child.idref;
-          console.log('pool_ref' + tagId);
           unresolvedReferences.push(tagId);
         }
 
