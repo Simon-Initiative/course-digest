@@ -93,123 +93,16 @@ export class Summative extends Resource {
 
     return new Promise((resolve, reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then((r: any) => {
-        const items: any = [];
         const legacyId = r.id;
 
-        const handleNestableItems = (item: any, pageId: string | null) => {
-          if (item.type === 'question') {
-            const subType = Formative.determineSubType(item);
-            const activity = Formative.toActivity(item, subType, legacyId);
-            items.push(activity);
-
-            const a = {
-              type: "activity-reference",
-              activity_id: activity.id,
-              purpose: "none",
-            } as any;
-
-            if (pageId !== null) {
-              a.page = pageId;
-            }
-
-            return a; 
-
-          } else if (item.type === 'selection') {
-            
-            if (item.children.length > 0) {
-
-              // track the reference for the tag that will power this selection in Torus
-              let tagId: any = null;  
-
-              const child = item.children[0];
-              if (child.type === 'pool') {
-                tagId = child.id;
-                tagId = tagId === null || tagId === undefined ? guid() : tagId;
-                
-                child.children.forEach((c: any) => {
-                  if (c.type !== 'title' && c.type !== 'content') {
-                    const subType = Formative.determineSubType(c);
-                    const pooledActivity = Formative.toActivity(c, subType, legacyId);
-                    pooledActivity.tags = [tagId];
-                    pooledActivity.scope = 'banked';
-                    items.push(pooledActivity);
-                  }
-
-                });
-
-
-              } else if (child.type === 'pool_ref') {
-                tagId = child.idref;
-                console.log('pool_ref' + tagId);
-                page.unresolvedReferences.push(tagId);
-              }
-
-              const a = {
-                type: "selection",
-                logic: {
-                  conditions: {
-                    operator: 'all',
-                    children: [{
-                      fact: 'tags',
-                      operator: 'equals',
-                      value: [tagId],
-                    }],
-                  },            
-                },
-                count: item.count,
-                purpose: "none",
-              } as any;
-
-
-              // If this activity reference is within a specific page, track that. 
-              if (pageId !== null) {
-                a.page = pageId;
-              }
-
-              return a;
-
-            }
-
-          } else if (item.type === 'introduction' || item.type === 'conclusion' || item.type === 'content') {
-
-            const content : any = Object.assign({}, { type: 'content', purpose: 'none', id: guid() }, {children: item.children});
-            if (pageId !== null) {
-              content.page = pageId;
-            }
-
-            return content;
-
-          }
-        }
-
-        const model = r.children[0].children
-          .reduce((previous: any, item: any) => {
-            if (item.type === 'title') {
-              page.title = item.children[0].text;
-            }
-            else if (item.type === 'page') {
-              let pageId: string | null = null;
-              if (item.id !== undefined) {
-                pageId = item.id;
-              } else {
-                pageId = guid();
-              }
-
-              return [...previous, ...item.children.filter((c: any) => c.type !== 'title')
-                .map((c: any) => handleNestableItems(c, pageId))];
-
-            } else {
-              return [...previous, handleNestableItems(item, null)];
-            }
-            return previous;
-
-          }, [])
-          .filter((e: any) => e !== undefined);
+        const { model, items, unresolvedReferences, title } = Formative.processAssessmentModel(legacyId, r.children[0].children);
 
         page.id = r.children[0].id;
         page.objectives = r.children[0].children[0].children.map((o: any) => o.idref);
         page.content = { model };
         page.isGraded = true;
+        page.title = title;
+        page.unresolvedReferences = unresolvedReferences;
 
         resolve([page, ...items]);
       });
