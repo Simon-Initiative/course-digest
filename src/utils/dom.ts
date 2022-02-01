@@ -40,7 +40,6 @@ export function eliminateLevel($: any, selector: string) {
   });
 }
 
-
 export function flattenResourceRefs($: any) {
 
   const refs = $('item resourceref');
@@ -49,6 +48,19 @@ export function flattenResourceRefs($: any) {
     const id = $(elem).attr('idref');
     $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
   });
+}
+
+export function moveAttrToChildren($: any, item: any, attr: string, childType: string) {
+
+  const value = $(item).attr(attr);
+  if (value !== undefined && value !== null) {
+    $(item).children().each((i: any, c: any) => {
+      if (c.tagName == childType) {
+        $(c).attr(attr, value);
+      }
+    });
+  }
+  $(item).removeAttr(attr);
 }
 
 export function rename($: any, source: string, dest: string) {

@@ -8,12 +8,15 @@ import * as Feedback from './feedback';
 import * as Formative from './formative';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
+import * as Pool from './pool';
 import * as Superactivity from './superactivity';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
   .then((tag: string) => {
-
+    if (tag.indexOf('DTD Assessment Pool') !== -1) {
+      return 'Pool';
+    }
     if (tag.indexOf('organization') !== -1) {
       return 'Organization';
     }
@@ -65,6 +68,9 @@ export function create(t: ResourceType, file: string, navigable: boolean) : Reso
   }
   if (t === 'Superactivity') {
     return new Superactivity.Superactivity(file, navigable);
+  }
+  if (t === 'Pool') {
+    return new Pool.Pool(file, navigable);
   }
   return new Other.Other(file, navigable);
 }

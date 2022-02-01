@@ -10,7 +10,7 @@ export interface Summary {
   found: () => ItemReference[];
 }
 
-export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives'
+export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives' | 'Pool'
 | 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Other';
 
 export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
@@ -63,6 +63,7 @@ export interface Activity extends TorusResource {
   objectives: Object;
   legacyId: string;
   subType: string;
+  scope?: string;
 }
 
 export interface Objective extends TorusResource {

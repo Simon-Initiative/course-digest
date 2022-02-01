@@ -170,10 +170,11 @@ function convertAction() {
       .then((converted: Resources.TorusResource[]) => {
 
         const updated = Convert.updateDerivativeReferences(converted);
+        const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
 
         Convert.output(
-          projectSlug, packageDirectory, outputDirectory, hierarchy, updated, mediaItems);
+          projectSlug, packageDirectory, outputDirectory, hierarchy, withTagsInsteadOfPools, mediaItems);
       });
 
     });

@@ -1,0 +1,379 @@
+<assessment id="_m16_assess">
+  <title>Solving Multiple Subsystems</title>
+  <multiple_choice id="mcqex1" select="single">
+    <body>The final computer released in the Apple II line was which of the following?</body>
+    <input>
+    <choice value="iigs">Apple IIgs</choice>
+    <choice value="iie">Apple IIe</choice>
+    <choice value="iic">Apple IIc</choice>
+    </input>
+    <part>
+    <response match="iigs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </multiple_choice>
+    <multiple_choice id="mcqex2" select="multiple">
+    <body>Select all of the Apple II computers which had the keyboard built into the CPU.</body>
+    <input>
+    <choice value="iigs">Apple IIgs</choice>
+    <choice value="iie">Apple IIe</choice>
+    <choice value="iic">Apple IIc</choice>
+    </input>
+    <part>
+    <response match="iie,iic" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="iie" score="5">
+    <feedback>Half right, so did the IIc</feedback>
+    </response>
+    <response match="iic" score="5">
+    <feedback>Half right, so did the IIe</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </multiple_choice>
+    <multiple_choice id="var_cause_pool1_s1_q1" select="single">
+    <body>A claim that one variable is a cause of another is relative to:</body>
+    <input shuffle="false">
+    <choice value="Res1"> The number of test pairs in the response structure </choice>
+    <choice value="Res2"> The set of all effects of the cause </choice>
+    <choice value="Res3"> A set of background conditions </choice>
+    <choice value="Res4"> The number of rows in the response structure </choice>
+    </input>
+    <part>
+    <response match="Res1" score="0">
+    <feedback> Incorrect. Causal claims are not relative to the number of test pairs in the response structure. The correct answer is C. See section 2100 for more help. </feedback>
+    </response>
+    <response match="Res2" score="0">
+    <feedback> Incorrect. Causal claims are not relative to the set of all effects of the cause. The correct answer is C. See section 2100 for more help. </feedback>
+    </response>
+    <response match="Res3" score="10">
+    <feedback> Correct. Causal generalizations are relative to background conditions and the causal system. See section 2100 for more help. </feedback>
+    </response>
+    <response match="Res4" score="0">
+    <feedback> Incorrect. Causal claims are not relative to the number of rows in the response structure. The correct answer is C. See section 2100 for more help. </feedback>
+    </response>
+    </part>
+    </multiple_choice>
+    <fill_in_the_blank id="fitbex1">
+    <body>
+    The
+    <input_ref input="apple"/>
+    was the final computer released in the Apple II line.
+    </body>
+    <input id="apple">
+    <choice value="iigs">Apple IIgs</choice>
+    <choice value="iie">Apple IIe</choice>
+    <choice value="iic">Apple IIc</choice>
+    </input>
+    <part>
+    <response match="iigs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </fill_in_the_blank>
+    <fill_in_the_blank id="fitbex2">
+    <body>
+    The ROM1 Apple IIgs shipped with
+    <input_ref input="ram"/>
+    RAM and the CPU was a
+    <input_ref input="cpu"/>
+    bit processor.
+    </body>
+    <input id="ram" shuffle="false">
+    <choice value="m128">128k</choice>
+    <choice value="m256">256k</choice>
+    <choice value="m512">512k</choice>
+    <choice value="m1024">1024k</choice>
+    </input>
+    <input id="cpu" shuffle="false">
+    <choice value="c4">4</choice>
+    <choice value="c8">8</choice>
+    <choice value="c16">16</choice>
+    </input>
+    <part id="part1">
+    <response match="m256" input="ram" score="5">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="m1024" input="ram">
+    <feedback>It was the ROM3 version that came with 1024k.</feedback>
+    </response>
+    <response match="*" input="ram">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    <part id="part2">
+    <response match="c16" input="cpu" score="5">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*" input="cpu">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </fill_in_the_blank>
+    <fill_in_the_blank id="fitbex3">
+    <body>
+    The ROM1 Apple IIgs shipped with
+    <input_ref input="ram"/>
+    RAM and the CPU was a
+    <input_ref input="cpu"/>
+    bit processor.
+    </body>
+    <input id="ram" shuffle="false">
+    <choice value="m128">128k</choice>
+    <choice value="m256">256k</choice>
+    <choice value="m512">512k</choice>
+    <choice value="m1024">1024k</choice>
+    </input>
+    <input id="cpu" shuffle="false">
+    <choice value="c4">4</choice>
+    <choice value="c8">8</choice>
+    <choice value="c16">16</choice>
+    </input>
+    <part>
+    <response_mult match_style="all" score="10">
+    <match input="ram" match="m256"/>
+    <match input="cpu" match="c16"/>
+    <feedback>Correct on both counts</feedback>
+    </response_mult>
+    <response_mult match_style="all">
+    <match input="ram" match="m1024"/>
+    <match input="cpu" match="c16"/>
+    <feedback>You appear to be thinking of the ROM3 machine</feedback>
+    </response_mult>
+    <response_mult match_style="all">
+    <match input="ram" match="*"/>
+    <match input="cpu" match="*"/>
+    <feedback>Incorrect.</feedback>
+    </response_mult>
+    </part>
+    </fill_in_the_blank>
+    <short_answer id="saex1" grading="instructor">
+    <body>Write a short statement about the nature of question writing.</body>
+    <part score_out_of="10"/>
+    </short_answer>
+    <short_answer id="saex3" grading="automatic">
+    <body>Suppose that you read an article in the newspaper that reports on a study that establishes a "link" between coffee consumption and road rage. Suppose the article reports that in a national survey, people who report drinking 4 or more cups of coffee a day also report being involved in twice as many road rage incidents as people who drink 2 cups or less. Write a paragraph or two in which you discuss the study from the perspective of observation vs. intervention.</body>
+    <part>
+    <response match="*" score="10">
+    <feedback>
+    <em>Compare your answer to ours:</em>
+    The study reports on a national survey in which people were asked about their coffee drinking habits and road rage, but not intervened upon to drink a certain amount of coffee or intervened upon to have a certain amount of road rage. This is a clear case of observation, not intervention. We might be able to predict that someone who drinks a lot of coffee is more likely to experience road rage than someone who drinks only a little coffee, but that does NOT mean we can predict what would happen if we intervened upon heavy coffee drinkers to consume only a cup a day. It might be the case that people who are just easy to enrage are also people who like to drink a lot of coffee. Or it might be that drinking a lot of coffee causes people to be more susceptible to road rage. It would be interesting to see what would happen in an experiment in which some people were forced to drink only 1 cup a day and others were forced to drink 4 cups a day. If, in that case, the heavy coffee drinkers had more road rage, then we would be in a much better position to conclude that the "link" between coffee drinking and road rage is causal.
+    </feedback>
+    </response>
+    <no_response score="0">
+    <feedback>You should attempt to answer the question.</feedback>
+    </no_response>
+    </part>
+    </short_answer>
+    <text id="textex1">
+    <body>
+    The final computer released in the Apple II line was the
+    <input_ref input="field1"/>
+    .
+    </body>
+    <part>
+    <response match="iigs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="ii gs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="apple iigs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="apple ii gs" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </text>
+    <text id="textex1.2" whitespace="normalize" case_sensitive="false">
+    <body>
+    The final computer released in the Apple II line was the
+    <input_ref input="field1"/>
+    <input_ref input="field2"/>
+    .
+    </body>
+    <part id="part1" score_out_of="5">
+    <response match="apple" input="field1" score="5">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*" input="field1">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    <part id="part2" score_out_of="5">
+    <response match="iigs" input="field2" score="5">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*" input="field2">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </text>
+    <text id="textex1.3">
+    <body>
+    Complete the sentence. The
+    <input_ref input="color"/>
+    of the sky is blue.
+    </body>
+    <input id="color" size="small"/>
+    <part>
+    <response match="/colou?r/" score="2">
+    <feedback>Good job!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </text>
+    <numeric id="numex1">
+    <body>
+    What is the weight in grams of 7.03 moles of H
+    <sub>2</sub>
+    SO
+    <sub>4</sub>
+    in grams? (Atomic weights: H:1.00794 S:32.066 O:15.9994)
+    </body>
+    <input id="wt"/>
+    <part>
+    <response match="673" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </numeric>
+    <numeric id="numex2">
+    <body>
+    What is the weight in grams of 7.03 moles of H
+    <sub>2</sub>
+    SO
+    <sub>4</sub>
+    in grams within 5%? (Atomic weights: H:1.00794 S:32.066 O: 15.9994)
+    </body>
+    <input id="wt" size="large"/>
+    <part>
+    <response match="673" score="10">
+    <feedback>Exactly correct!</feedback>
+    </response>
+    <response match="(639.35,706.65)" score="7">
+    <feedback>The exact answer is 673, you were within 5% of the answer.</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </numeric>
+    <essay id="essayex1" grading="instructor">
+    <body>Write a short essay about the nature of question writing.</body>
+    <part score_out_of="10"/>
+    </essay>
+    <essay id="essayex2" grading="instructor">
+    <body>Write a short essay about the nature of question writing.</body>
+    <part>
+    <title>Discussion of Pedagogy</title>
+    <grading_criteria score="10">
+    <p>Response should contain references to the use of negation in the wording of questions and pedagogy.</p>
+    <feedback>Correct!</feedback>
+    </grading_criteria>
+    <grading_criteria score="5">
+    <p>Response does not refer to pedagogy.</p>
+    <feedback>A complete answer requires a discussion of pedagogy.</feedback>
+    </grading_criteria>
+    </part>
+    <part>
+    <title>Spelling and Grammar</title>
+    <grading_criteria score="5">
+    <p>Student uses proper spelling and grammar.</p>
+    <feedback>Good job. You demonstrated proper spelling and grammar.</feedback>
+    </grading_criteria>
+    <grading_criteria score="3">
+    <p>Response contains 3 to 5 spelling or grammar errors.</p>
+    <feedback>Your response contains a few spelling and/or grammar errors.</feedback>
+    </grading_criteria>
+    <grading_criteria score="0">
+    <p>Response contains excessive spelling or grammar errors.</p>
+    <feedback>Your response contains numerous spelling or grammar errors</feedback>
+    </grading_criteria>
+    </part>
+    </essay>
+    <image_hotspot id="imgex1" select="single">
+    <body>Choose a body to determine the tension in the cord and the interaction between the ball and the block:</body>
+    <image_input id="diag" src="../webcontent/static_diagram.gif" height="211" width="239">
+    <hotspot value="ball" shape="circle" coords="68,112,27">Ball</hotspot>
+    <hotspot value="cord" shape="poly" coords="85,91,188,30,188,38,90,96">Cord</hotspot>
+    <hotspot value="block" shape="rect" coords="94,96,190,175">Block</hotspot>
+    </image_input>
+    <part>
+    <response match="ball" score="10">
+    <feedback>Good job!</feedback>
+    </response>
+    <response match="cord" score="0">
+    <feedback>That's not quite right. On which body do the forces of interest, the tension and the normal force between the block and ball, act?</feedback>
+    </response>
+    <response match="block" score="0">
+    <feedback>That's not quite right. On which body do the forces of interest, the tension and the normal force between the block and ball, act?</feedback>
+    </response>
+    <hint>On which body do the forces of interest, the tension and the normal force between the block and ball, act?</hint>
+    </part>
+    </image_hotspot>
+    <ordering id="oex1">
+    <body>
+    Given the following premises for a proof, order the remaining lines in the order they should appear.
+    <image src="../webcontent/proof_prem.gif"/>
+    </body>
+    <input>
+    <choice value="c">
+    <image src="../webcontent/proof_c.gif"/>
+    </choice>
+    <choice value="d">
+    <image src="../webcontent/proof_d.gif"/>
+    </choice>
+    <choice value="cd">
+    <image src="../webcontent/proof_cd.gif"/>
+    </choice>
+    </input>
+    <part>
+    <response match="*,cd" score="10">
+    <feedback>Correct!</feedback>
+    </response>
+    <response match="*">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    </ordering>
+    <fill_in_the_blank id="ph1">
+    <body>
+    Compact fluorescent lamps (CFL) save energy :
+    <input_ref input="tf"/>
+    </body>
+    <input id="tf" shuffle="false">
+    <choice value="true">True</choice>
+    <choice value="false">False</choice>
+    </input>
+    <part>
+    <response input="tf" match="true" score="10">
+    <feedback>Correct.</feedback>
+    </response>
+    <response input="tf" match="false">
+    <feedback>Incorrect.</feedback>
+    </response>
+    </part>
+    <hint>A 20-watt CFL produces as much light as a 60-watt incandescent lamp.</hint>
+    <hint>CFLs use between one fifth and one quarter of the power of an equivalent incandescent lamp.</hint>
+    </fill_in_the_blank>
+  </assessment>
