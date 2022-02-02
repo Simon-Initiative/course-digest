@@ -25,6 +25,8 @@ function buildMCQPart(question: any) {
     .children.filter((p: any) => p.type === 'response');
   const hints = Common.getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
+  const skillrefs = Common.getChild(question.children, 'part')
+    .children.filter((p: any) => p.type === 'skillref');
 
   const r = responses.map((r: any) => ({
     id: guid(),
@@ -46,7 +48,8 @@ function buildMCQPart(question: any) {
       content: { model: Common.ensureParagraphs(r.children) },
     }))),
     scoringStrategy: 'average',
-    targeted: []
+    targeted: [],
+    objectives: skillrefs.map((s: any) => s.idref),
   };
 
   if (usesSimpleModel(r)) {
@@ -86,6 +89,8 @@ function buildOrderingPart(question: any) {
     .children.filter((p: any) => p.type === 'response');
   const hints = Common.getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
+  const skillrefs = Common.getChild(question.children, 'part')
+    .children.filter((p: any) => p.type === 'skillref');
 
   return {
     id: '1',
@@ -107,6 +112,7 @@ function buildOrderingPart(question: any) {
       content: { model: Common.ensureParagraphs(r.children) },
     }))),
     scoringStrategy: 'average',
+    objectives: skillrefs.map((s: any) => s.idref),
   };
 
 }
@@ -207,7 +213,17 @@ export function toActivity(question: any, subType: ItemTypes, legacyId: string) 
 
   activity.id = question.id;
   activity.content = buildModel(subType, question);
+  activity.objectives = constructObjectives((activity.content as any).authoring.parts);
+
   return activity;
+}
+
+function constructObjectives(parts: any) : any {
+  const objectives : any = {};
+  parts.forEach((p: any) => {
+    objectives[(p as any).id] = p.objectives;
+  });
+  return objectives;
 }
 
 function countIn(collection: any, named: string) {

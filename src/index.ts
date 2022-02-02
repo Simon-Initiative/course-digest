@@ -116,6 +116,11 @@ function getLearningObjectiveIds(packageDirectory: string) {
   .then(map => Object.keys(map));
 }
 
+function getSkillIds(packageDirectory: string) {
+  return mapResources(packageDirectory + '/content/x-oli-skills_model')
+  .then(map => Object.keys(map));
+}
+
 function uploadAction() {
 
   const mediaManifest = options.mediaManifest;
@@ -146,12 +151,13 @@ function convertAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrgId),
-    () => getLearningObjectiveIds(packageDirectory)])
+    () => getLearningObjectiveIds(packageDirectory),
+    () => getSkillIds(packageDirectory)])
   .then((results: any) => {
 
     const map = results[0];
     const orgReferences = [...results[1].orgReferences];
-    const references = [...orgReferences, ...results.slice(2)];
+    const references = [...orgReferences, ...results.slice(2), ...results.slice(3)];
 
     const mediaSummary : Media.MediaSummary = {
       projectSlug,

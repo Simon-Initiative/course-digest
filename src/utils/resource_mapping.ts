@@ -11,7 +11,7 @@ export function mapResources(directory: string) : Promise<ResourceMap> {
 
       const result = files.reduce(
         (p: any, c: string) => {
-
+          
           const filename = c.substr(c.lastIndexOf('/') + 1);
           const id = filename.substr(0, filename.lastIndexOf('.xml'));
           p[id] = c;
