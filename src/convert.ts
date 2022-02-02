@@ -1,9 +1,8 @@
 import { TorusResource, ResourceType, Page, Activity } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
-import { executeSerially, ItemReference } from './utils/common';
+import { executeSerially, guid, ItemReference } from './utils/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
-import * as XML from './utils/xml';
 
 type DerivedResourceMap =  {[key: string]: TorusResource[]};
 
@@ -53,7 +52,25 @@ export function updateDerivativeReferences(resources: TorusResource[]) : TorusRe
   
   // Visit every resource, replacing legacy references with corresponding collection
   // of derivative references
-  return resources.map((parent: TorusResource) => updateParentReference(parent, byLegacyId));
+
+  const resourceActivityRefs = createResourceActivityRefs(resources);
+
+  return resources.map((parent: TorusResource) => updateParentReference(parent, byLegacyId, resourceActivityRefs));
+
+}
+
+function createResourceActivityRefs(resources: TorusResource[]) : Object {
+  return resources.reduce(
+    (m: any, r: TorusResource) => {
+      if (r.type === 'Page') {
+        const page = r as Page;
+        m[page.id] = page;
+        return m;
+      }
+      return m;
+    },
+    {},
+  );
 
 }
 
@@ -91,8 +108,33 @@ function getPurpose(purpose: string) {
 
 }
 
-function updateParentReference(resource: TorusResource, byLegacyId: DerivedResourceMap) : TorusResource {
+const selection = { selection: { anchor: { offset: 0, path: [0, 0] }, focus: { offset: 0, path: [1, 0] } } };
 
+function createContentWithLink(title: string, idref: string, purpose: string) {
+  return {
+    type: 'content',
+    purpose,
+    id: guid(),
+    selection,
+    children: [
+      {
+        type: 'p',
+        children: [
+          {
+            type: 'a',
+            children: [
+              {text: title}
+            ],
+            idref,
+          }
+        ]
+      }
+    ]
+  };
+}
+
+function updateParentReference(resource: TorusResource, byLegacyId: DerivedResourceMap, pageMap: any) : TorusResource {
+  
   if (resource.type === 'Page') {
 
     const page = resource as Page;
@@ -104,8 +146,11 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
         const derived = byLegacyId[m.idref];
         if (derived !== undefined) {
           return [...entries, ...derived.map(d => ({ type: 'activity-reference', activity_id: d.id, purpose: getPurpose(m.purpose) }))];
+        } else if (pageMap[m.idref] !== undefined) {
+          const page = pageMap[m.idref];
+          return [...entries, createContentWithLink(page.title, m.idref, m.purpose)];
         }
-
+        
         console.log('Warning: Could not find derived resources for ' + m.idref + ' within page ' + page.id);
         return entries;
       }
