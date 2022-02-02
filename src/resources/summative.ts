@@ -76,7 +76,7 @@ export class Summative extends Resource {
       tags: [],
       unresolvedReferences: [],
       content: {},
-      isGraded: false,
+      isGraded: true,
       objectives: [],
     };
 
@@ -96,7 +96,7 @@ export class Summative extends Resource {
         const legacyId = r.id;
 
         const { model, items, unresolvedReferences, title } = Formative.processAssessmentModel(legacyId, r.children[0].children);
-
+        
         page.id = r.children[0].id;
         page.objectives = r.children[0].children[0].children.map((o: any) => o.idref);
         page.content = { model };
