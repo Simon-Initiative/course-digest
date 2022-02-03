@@ -3,7 +3,7 @@ import { ItemReference } from '../utils/common';
 import { Resource, TorusResource, Summary } from './resource';
 import * as XML from '../utils/xml';
 
-export class Objectives extends Resource {
+export class Skills extends Resource {
 
   restructure($: any) : any {
 
@@ -13,8 +13,8 @@ export class Objectives extends Resource {
 
     const objectives : TorusResource[] = [];
     const map : any = {};
-
-    $('objective').each((i: any, elem: any) => {
+    
+    $('skill').each((i: any, elem: any) => {
       const id = $(elem).attr('id');
       const title = $(elem).text().trim();
 
@@ -25,20 +25,12 @@ export class Objectives extends Resource {
         title,
         tags: [],
         unresolvedReferences: [],
+        children: [],
         content: {},
         objectives: [],
       } as TorusResource;
 
-      map[o.id] = o;
-
       objectives.push(o);
-    });
-
-    $('skillref').each((i: any, elem: any) => {
-      const id = $(elem).attr('idref');
-      const parentId = $(elem).parent().attr('idref');
-      const o = map[parentId];
-      o.objectives.push(id);
     });
 
     return Promise.resolve(objectives as TorusResource[]);

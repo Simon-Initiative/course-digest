@@ -11,7 +11,7 @@ export interface Summary {
 }
 
 export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives' | 'Pool'
-| 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Other';
+| 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Skills' | 'Other';
 
 export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
 

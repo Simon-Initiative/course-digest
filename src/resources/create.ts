@@ -9,11 +9,15 @@ import * as Formative from './formative';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
 import * as Pool from './pool';
+import * as Skills from './skills';
 import * as Superactivity from './superactivity';
 
 export function determineResourceType(file: string) : Promise<ResourceType> {
   return rootTag(file)
   .then((tag: string) => {
+    if (tag.indexOf('oli_skills_model_1_0.dtd') !== -1) {
+      return 'Skills';
+    }
     if (tag.indexOf('DTD Assessment Pool') !== -1) {
       return 'Pool';
     }
@@ -71,6 +75,9 @@ export function create(t: ResourceType, file: string, navigable: boolean) : Reso
   }
   if (t === 'Pool') {
     return new Pool.Pool(file, navigable);
+  }
+  if (t === 'Skills') {
+    return new Skills.Skills(file, navigable);
   }
   return new Other.Other(file, navigable);
 }

@@ -77,6 +77,8 @@ function buildCATAPart(question: any) {
     .children.filter((p: any) => p.type === 'response');
   const hints = Common.getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
+  const skillrefs = Common.getChild(question.children, 'part')
+    .children.filter((p: any) => p.type === 'skillref');
 
   return {
     id: '1',
@@ -97,6 +99,7 @@ function buildCATAPart(question: any) {
       content: { model: Common.ensureParagraphs(r.children) },
     }))),
     scoringStrategy: 'average',
+    objectives: skillrefs.map((s: any) => s.idref),
   };
 
 }
@@ -127,7 +130,7 @@ export function cata(question: any) {
       incorrect: []
     }
   };
-
+  
   const correctResponse = model.authoring.parts[0].responses.filter((r: any) => r.score !== undefined && r.score !== 0)[0];
   const correctIds = correctResponse.rule.split(',');
   (model.authoring.correct as any).push(correctIds);

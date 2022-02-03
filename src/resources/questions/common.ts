@@ -41,6 +41,8 @@ export function buildTextPart(question: any) {
     .children.filter((p: any) => p.type === 'response');
   const hints = getChild(question.children, 'part')
     .children.filter((p: any) => p.type === 'hint');
+  const skillrefs = getChild(question.children, 'part')
+    .children.filter((p: any) => p.type === 'skillref');
 
   return {
     id: '1',
@@ -66,6 +68,7 @@ export function buildTextPart(question: any) {
         model: ensureParagraphs(r.children),
       }
     }))),
+    objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
   }
 }
