@@ -7,6 +7,7 @@ import * as Convert from './convert';
 import * as Media from './media';
 import { processResources } from './process';
 import { upload } from './utils/upload';
+import { addWebContentToMediaSummary } from './resources/webcontent';
 const fs = require('fs');
 
 const optionDefinitions = [
@@ -171,10 +172,11 @@ function convertAction() {
 
         const updated = Convert.updateDerivativeReferences(converted);
         const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
-        const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
-
-        Convert.output(
-          projectSlug, packageDirectory, outputDirectory, hierarchy, withTagsInsteadOfPools, mediaItems);
+        addWebContentToMediaSummary(packageDirectory, mediaSummary).then((results) => {
+          const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => results.mediaItems[k]);
+          Convert.output(
+            projectSlug, packageDirectory, outputDirectory, hierarchy, withTagsInsteadOfPools, mediaItems);
+        });
       });
 
     });
