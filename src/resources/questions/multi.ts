@@ -24,7 +24,7 @@ export function buildMulti(question: any) {
   }
 
   return {
-    stem: buildStem(question),
+    stem: buildStem(question, inputs),
     choices: allChoices,
     inputs, 
     authoring: {
@@ -37,27 +37,38 @@ export function buildMulti(question: any) {
 
 }
 
-function updateInputRefs(model: any) : any {
+function updateInputRefs(model: any, foundInputs: any) : any {
 
   if (model.type === 'input_ref') {
+    foundInputs[model.input] = true;
     return Object.assign({}, model, { id: model.input, children: [{text: ''}] });
   } else if (model.children !== undefined) {
-    return Object.assign({}, model, { children: updateInputRefs(model.children)})
+    return Object.assign({}, model, { children: updateInputRefs(model.children, foundInputs)})
   } else if (Array.isArray(model)) {
-    return model.map((c: any) => updateInputRefs(c))
+    return model.map((c: any) => updateInputRefs(c, foundInputs))
   }
   return model;
 }
 
 
-export function buildStem(question: any) {
+export function buildStem(question: any, inputs: any[]) {
 
   const stem = Common.getChild(question.children, 'stem');
   const model = Common.ensureParagraphs(stem.children);
+  const foundInputs : any = {};
+  const updated = updateInputRefs(model, foundInputs);
+
+  // Some multi input questions omit the input_ref.  We do not allow that in Torus, therefore we must
+  // detect that case and append an input ref for every one that is missing. 
+  inputs.forEach(input => {
+    if (foundInputs[input.id] === undefined) {
+      updated.push({ type: 'p', id: guid(), children: [{ type: 'input_ref', id: input.id, children: [{ text: ''}]}]});
+    }
+  })
 
   return {
     content: {
-      model: updateInputRefs(model)
+      model: updated,
     }
   };
 }
@@ -104,6 +115,8 @@ function buildDropdownPart(part: any, i: number) {
 
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
+  
   const id = (part.id !== undefined && part.id !== null) ? part.id + '' : guid();
 
   return {
@@ -121,6 +134,7 @@ function buildDropdownPart(part: any, i: number) {
       id: guid(),
       content: { model: Common.ensureParagraphs(r.children) },
     }))),
+    objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
   }
 }
@@ -132,6 +146,7 @@ export function buildTextPart(part: any, i: number) {
 
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
   const id = (part.id !== undefined && part.id !== null) ? part.id + '' : guid();
 
   return {
@@ -158,6 +173,7 @@ export function buildTextPart(part: any, i: number) {
         model: Common.ensureParagraphs(r.children),
       }
     }))),
+    objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
   }
 }

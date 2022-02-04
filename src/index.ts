@@ -8,6 +8,7 @@ import * as Media from './media';
 import { processResources } from './process';
 import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
+
 const fs = require('fs');
 
 const optionDefinitions = [
@@ -22,7 +23,7 @@ const optionDefinitions = [
 ];
 
 const commandLineArgs = require('command-line-args');
-const options : any = commandLineArgs(optionDefinitions);
+const options: any = commandLineArgs(optionDefinitions);
 
 function validateArgs() {
 
@@ -50,35 +51,35 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
 
   return new Promise((resolve, reject) => {
     Orgs.locate(packageDirectory)
-    .then((orgs) => {
+      .then((orgs) => {
 
-      executeSerially(orgs.map(file => () => {
-        const o = new Orgs.Organization(file, false);
-        return o.summarize(file);
-      }))
-      .then((results: (string | Resources.Summary)[]) => {
+        executeSerially(orgs.map(file => () => {
+          const o = new Orgs.Organization(file, false);
+          return o.summarize(file);
+        }))
+          .then((results: (string | Resources.Summary)[]) => {
 
-        const seenReferences = {} as any;
-        const references: string[] = [];
+            const seenReferences = {} as any;
+            const references: string[] = [];
 
-        results.forEach((r) => {
+            results.forEach((r) => {
 
-          if (typeof(r) !== 'string' && (id === '' || id === r.id)) {
-            r.found().forEach((i) => {
+              if (typeof (r) !== 'string' && (id === '' || id === r.id)) {
+                r.found().forEach((i) => {
 
-              if (seenReferences[i.id] === undefined) {
-                seenReferences[i.id] = true;
-                references.push(i.id);
+                  if (seenReferences[i.id] === undefined) {
+                    seenReferences[i.id] = true;
+                    references.push(i.id);
+                  }
+
+                });
               }
-
             });
-          }
-        });
-        const orgReferences = {} as any;
-        orgReferences['orgReferences'] = references;
-        resolve(orgReferences);
+            const orgReferences = {} as any;
+            orgReferences['orgReferences'] = references;
+            resolve(orgReferences);
+          });
       });
-    });
   });
 
 }
@@ -102,19 +103,24 @@ function summaryAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg)])
-  .then((results: any) => processResources(Summarize.summarize, results[1].orgReferences,
-                                           results[1].orgReferences, results[0]))
-  .then((summaries: Summarize.SummaryResult[]) => alongWith(
-    () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
-  .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
-  .then((results: any) => console.log('Done!'))
-  .catch((err: any) => console.log(err));
+    .then((results: any) => processResources(Summarize.summarize, results[1].orgReferences,
+                                             results[1].orgReferences, results[0]))
+    .then((summaries: Summarize.SummaryResult[]) => alongWith(
+      () => Promise.resolve(Summarize.bucketHistograms(summaries)), summaries))
+    .then((results: any[]) => Summarize.outputSummary(outputDirectory, results[0], results[1]))
+    .then((results: any) => console.log('Done!'))
+    .catch((err: any) => console.log(err));
 }
 
 function getLearningObjectiveIds(packageDirectory: string) {
 
   return mapResources(packageDirectory + '/content/x-oli-learning_objectives')
-  .then(map => Object.keys(map));
+    .then(map => Object.keys(map));
+}
+
+function getSkillIds(packageDirectory: string) {
+  return mapResources(packageDirectory + '/content/x-oli-skills_model')
+    .then(map => Object.keys(map));
 }
 
 function uploadAction() {
@@ -147,41 +153,44 @@ function convertAction() {
   executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrgId),
-    () => getLearningObjectiveIds(packageDirectory)])
-  .then((results: any) => {
+    () => getLearningObjectiveIds(packageDirectory),
+    () => getSkillIds(packageDirectory)])
+    .then((results: any) => {
 
-    const map = results[0];
-    const orgReferences = [...results[1].orgReferences];
-    const references = [...orgReferences, ...results.slice(2)];
+      const map = results[0];
+      const orgReferences = [...results[1].orgReferences];
+      const references = [...orgReferences, ...results.slice(2), ...results.slice(3)];
 
-    const mediaSummary : Media.MediaSummary = {
-      projectSlug,
-      mediaItems: {},
-      missing: [],
-      urlPrefix: options.mediaUrlPrefix,
-      flattenedNames: {},
-    };
+      const mediaSummary: Media.MediaSummary = {
+        projectSlug,
+        mediaItems: {},
+        missing: [],
+        urlPrefix: options.mediaUrlPrefix,
+        flattenedNames: {},
+      };
 
-    Convert.convert(mediaSummary, specificOrg, false)
-    .then((results) => {
-      const hierarchy = results[0] as Resources.TorusResource;
+      Convert.convert(mediaSummary, specificOrg, false)
+        .then((results) => {
+          const hierarchy = results[0] as Resources.TorusResource;
 
-      processResources(Convert.convert.bind(undefined, mediaSummary), references,
-                       orgReferences, map)
-      .then((converted: Resources.TorusResource[]) => {
+          processResources(Convert.convert.bind(undefined, mediaSummary), references,
+                           orgReferences, map)
+            .then((converted: Resources.TorusResource[]) => {
 
-        const updated = Convert.updateDerivativeReferences(converted);
-        const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
-        addWebContentToMediaSummary(packageDirectory, mediaSummary).then((results) => {
-          const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => results.mediaItems[k]);
-          Convert.output(
-            projectSlug, packageDirectory, outputDirectory, hierarchy, withTagsInsteadOfPools, mediaItems);
+              const updated = Convert.updateDerivativeReferences(converted);
+              const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+              const withoutTemporary = withTagsInsteadOfPools.filter(u => u.type !== 'TemporaryContent');
+              addWebContentToMediaSummary(packageDirectory, mediaSummary).then((results) => {
+                const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => results.mediaItems[k]);
+
+                Convert.output(
+                  projectSlug, packageDirectory, outputDirectory, hierarchy, withoutTemporary, mediaItems);
+              });
+            });
+
         });
-      });
 
     });
-
-  });
 
 }
 

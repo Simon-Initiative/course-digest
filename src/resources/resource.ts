@@ -11,7 +11,8 @@ export interface Summary {
 }
 
 export type ResourceType = 'WorkbookPage' | 'Organization' | 'Objectives' | 'Pool'
-| 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Other';
+| 'Formative' | 'Summative' | 'Feedback' | 'Superactivity' | 'Skills' | 'Other'
+| 'TemporaryContent';
 
 export type TorusResourceType = Hierarchy | Page | Activity | Objective | Unknown;
 
@@ -44,6 +45,11 @@ export interface Objective {
 export interface Hierarchy extends TorusResource {
   type: 'Hierarchy';
   children: TorusResource[];
+}
+
+export interface TemporaryContent extends TorusResource {
+  type: 'TemporaryContent';
+  content: Object;
 }
 
 export interface Unknown extends TorusResource {
