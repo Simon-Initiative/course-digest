@@ -102,12 +102,14 @@ export function mergeTitles($: any) {
 }
 
 export function mergeCaptions($: any) {
-  mergeElement($, 'table', 'caption');
-  mergeElement($, 'audio', 'caption');
-  mergeElement($, 'iframe', 'caption');
-  mergeElement($, 'youtube', 'caption');
-  mergeElement($, 'image', 'caption');
-  mergeElement($, 'codeblock', 'caption');
+
+  handleLabelledContent($, 'table');
+  handleLabelledContent($, 'audio');
+  handleLabelledContent($, 'iframe');
+  handleLabelledContent($, 'youtube');
+  handleLabelledContent($, 'image');
+  handleLabelledContent($, 'video');
+  
 }
 
 function mergeElement($: any, selector: string, element: string) {
@@ -117,6 +119,21 @@ function mergeElement($: any, selector: string, element: string) {
     const text = $(elem).children(element).text();
     $(elem).attr(element, text);
     $(elem).children().remove(element);
+  });
+}
+
+function handleLabelledContent($: any, selector: string) {
+  const items = $(selector);
+
+  items.each((i: any, elem: any) => {
+    const title = $(elem).children("title").text();
+    const caption = $(elem).children("caption").text();
+
+    const combined = (title + ' ' + caption).trim();
+
+    $(elem).attr("caption", combined);
+    $(elem).children().remove("title");
+    $(elem).children().remove("caption");
   });
 }
 
