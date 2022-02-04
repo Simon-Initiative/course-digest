@@ -15,9 +15,9 @@ function getPastDocType(content: string): string {
 
 function inlineAttrName(attrs: any) {
   if (attrs['style'] === 'bold') {
-    return 'bold';
+    return 'strong';
   } else if (attrs['style'] === 'italic') {
-    return 'italic';
+    return 'em';
   } else if (attrs['style'] === 'code') {
     return 'code';
   } else if (attrs['style'] === 'sub') {
@@ -25,7 +25,7 @@ function inlineAttrName(attrs: any) {
   } else if (attrs['style'] === 'sup') {
     return 'sup';
   } else {
-    return 'bold';
+    return 'strong';
   }
 }
 

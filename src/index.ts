@@ -177,10 +177,11 @@ function convertAction() {
 
         const updated = Convert.updateDerivativeReferences(converted);
         const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+        const withoutTemporary = withTagsInsteadOfPools.filter(u => u.type !== 'TemporaryContent')
         const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => mediaSummary.mediaItems[k]);
 
         Convert.output(
-          projectSlug, packageDirectory, outputDirectory, hierarchy, withTagsInsteadOfPools, mediaItems);
+          projectSlug, packageDirectory, outputDirectory, hierarchy, withoutTemporary, mediaItems);
       });
 
     });

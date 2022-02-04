@@ -1,7 +1,7 @@
 import { visit } from '../utils/xml';
 import * as Histogram from '../utils/histogram';
 import { guid, ItemReference, replaceAll } from '../utils/common';
-import { Resource, TorusResource, Summary, Activity } from './resource';
+import { Resource, TorusResource, Summary, Activity, TemporaryContent } from './resource';
 import { standardContentManipulations, processCodeblock } from './common';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
@@ -405,6 +405,18 @@ export function processAssessmentModel(legacyId: string, children: any) {
         content.page = pageId;
       }
 
+      items.push({
+        type: 'TemporaryContent',
+        id: content.id,
+        originalFile: '',
+        title: '',
+        tags: [],
+        unresolvedReferences: [],
+        content,
+        objectives: [],
+        legacyId,
+      } as TemporaryContent);
+    
       return content;
 
     }

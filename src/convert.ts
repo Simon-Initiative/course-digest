@@ -1,4 +1,4 @@
-import { TorusResource, ResourceType, Page, Activity } from './resources/resource';
+import { TorusResource, TemporaryContent, ResourceType, Page, Activity } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid, ItemReference } from './utils/common';
 import * as Media from './media';
@@ -78,7 +78,7 @@ function bucketByLegacyId(resources: TorusResource[]) : DerivedResourceMap {
 
   return resources.reduce(
     (m: any, r: TorusResource) => {
-      if (r.type === 'Activity') {
+      if (r.type === 'Activity' || r.type === 'TemporaryContent') {
         const activity = r as Activity;
         if (activity.legacyId !== undefined && activity.legacyId !== null) {
           if (m[activity.legacyId] === undefined) {
@@ -145,7 +145,13 @@ function updateParentReference(resource: TorusResource, byLegacyId: DerivedResou
 
         const derived = byLegacyId[m.idref];
         if (derived !== undefined) {
-          return [...entries, ...derived.map(d => ({ type: 'activity-reference', activity_id: d.id, purpose: getPurpose(m.purpose) }))];
+          return [...entries, ...derived.map(d => {
+            if (d.type === 'Activity') {
+              return { type: 'activity-reference', activity_id: d.id, purpose: getPurpose(m.purpose) };
+            } else if (d.type === 'TemporaryContent') {
+              return (d as TemporaryContent).content;
+            }
+          })];
         } else if (pageMap[m.idref] !== undefined) {
           const page = pageMap[m.idref];
           return [...entries, createContentWithLink(page.title, m.idref, m.purpose)];
