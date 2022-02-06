@@ -8,8 +8,7 @@ const md5File = require('md5-file');
 
 export function addWebContentToMediaSummary(directory: string, summary: MediaSummary)
   : Promise<MediaSummary> {
-  const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
-  const getWebcontentName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
+  const getName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
   const toURL = (name: string) => `${summary.urlPrefix}/${summary.projectSlug}/${name}`;
 
   return new Promise((resolve, reject) => {
@@ -19,7 +18,6 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
 
         const absolutePath = path.resolve(file);
         const name = getName(absolutePath);
-        const webContentName = getWebcontentName(file);
         if (summary.mediaItems[absolutePath] === undefined) {
           console.log(absolutePath);
           const flattenedName = (summary.flattenedNames[name])
@@ -33,7 +31,7 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
             md5: md5File.sync(absolutePath),
             mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
             references: [],
-            url: toURL(webContentName),
+            url: toURL(name),
           };
         }
       });
