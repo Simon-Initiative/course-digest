@@ -19,7 +19,6 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
         const absolutePath = path.resolve(file);
         const name = getName(absolutePath);
         if (summary.mediaItems[absolutePath] === undefined) {
-          console.log(absolutePath);
           const flattenedName = (summary.flattenedNames[name])
             ? generateNewName(name, summary.flattenedNames)
             : name;
