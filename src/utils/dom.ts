@@ -9,9 +9,8 @@ function flattenSection($: any, selector: string, tag: string) {
 
   triple.each((i: any, elem: any) => {
     const text = $(elem).children('title').html();
-    const body = $(elem).children('body').html();
 
-    $(elem).children('title').replaceWith(`<${tag}>${text}</${tag}>${body}`);
+    $(elem).children('title').replaceWith(`<${tag}>${text}</${tag}>`);
     $(elem).children('body').replaceWith($(elem).children('body').children());
     $(elem).replaceWith($(elem).children());
   });
