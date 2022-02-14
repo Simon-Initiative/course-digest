@@ -1,15 +1,16 @@
 const AWS = require('aws-sdk');
 const fs = require('fs');
 
-export const upload = (file: string, filename: string, slug: string) => {
+export const upload = (file: string, filename: string, mimeType: string, slug: string) => {
   // Read content from the file
   const fileContent = fs.readFileSync(file);
 
   // Setting up S3 upload parameters
   const params = {
-      Bucket: process.env.MEDIA_BUCKET_NAME,
-      Key: 'media/' + slug + '/' + filename,
-      Body: fileContent
+    Bucket: process.env.MEDIA_BUCKET_NAME,
+    Key: `media/${slug}/${filename}`,
+    Body: fileContent,
+    ContentType: mimeType,
   };
 
   const s3 = new AWS.S3({
@@ -19,7 +20,7 @@ export const upload = (file: string, filename: string, slug: string) => {
 
   // Uploading files to the bucket
   return new Promise((resolve, reject) => {
-    s3.upload(params, function(err: any, data: any) {
+    s3.upload(params, (err: any, data: any) => {
       if (err) {
         reject(err);
       }
