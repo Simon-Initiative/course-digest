@@ -198,7 +198,7 @@ function toActivity(content: any) {
     tags: [],
     unresolvedReferences: [],
     content,
-    objectives: [],
+    objectives: {},
     legacyId: id,
     subType: 'oli_image_coding',
   };
