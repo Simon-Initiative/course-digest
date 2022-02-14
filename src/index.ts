@@ -134,7 +134,7 @@ function uploadAction() {
   const uploaders = manifest.mediaItems.map((m: any) => {
     return () => {
       console.log('Uploading ' + m.file);
-      return upload(m.file, m.name, slug);
+      return upload(m.file, m.name, m.mimeType, slug);
     };
   });
 

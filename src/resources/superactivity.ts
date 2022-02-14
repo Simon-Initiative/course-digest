@@ -89,7 +89,7 @@ function toActivity(content: any, legacyId: string, subType: string, title: stri
     tags: [],
     unresolvedReferences: [],
     content,
-    objectives: [],
+    objectives: {},
     legacyId,
     subType,
   };

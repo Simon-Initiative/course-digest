@@ -1,4 +1,5 @@
 import { MediaSummary } from 'media';
+import { guid } from '../utils/common';
 
 const glob = require('glob');
 const fs = require('fs');
@@ -14,15 +15,21 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
   return new Promise((resolve, reject) => {
     glob(`${directory}/**/webcontent/**/*.*`, {}, (err: any, files: any) => {
 
-      files.forEach((file: string) => {
+      // Sort file paths by depth to ensure that shallower paths are processed first when a
+      // filename conflict, in the now relatively flatted webcontent file structure, is detected
+      files.sort((a: string, b: string) => {
+        return (a.split('/')).length - (b.split('/')).length;
+      });
 
+      files.forEach((file: string) => {
         const absolutePath = path.resolve(file);
         const name = getName(absolutePath);
         if (summary.mediaItems[absolutePath] === undefined) {
           const flattenedName = (summary.flattenedNames[name])
-            ? generateNewName(name, summary.flattenedNames)
+            ? generateNewName(name)
             : name;
 
+          summary.flattenedNames[flattenedName] = flattenedName;
           summary.mediaItems[absolutePath] = {
             file: absolutePath,
             fileSize: getFilesizeInBytes(absolutePath),
@@ -30,7 +37,7 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
             md5: md5File.sync(absolutePath),
             mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
             references: [],
-            url: toURL(name),
+            url: toURL(flattenedName),
           };
         }
       });
@@ -45,22 +52,7 @@ function getFilesizeInBytes(filename: string) {
   return fileSizeInBytes;
 }
 
-function generateNewName(name: string, flattenedNames: { [k: string]: string }) {
-
-  const buildCandidateName = (name.indexOf('.') >= 0)
-    ? (n: string, i: number): string => {
-      const parts = n.split('.');
-      return `${parts[0]}_${i}.${parts[1]}`;
-    }
-    : (n: string, i: number): string => `${name}_${i}`;
-
-  let i = 1;
-  while (true) {
-    const candidateName = buildCandidateName(name, i);
-    if (flattenedNames[candidateName] === undefined) {
-      return candidateName;
-    }
-    i++;
-  }
-
+function generateNewName(name: string) {
+  const final = name.replace('webcontent/', `webcontent/${guid()}/`);
+  return final;
 }
