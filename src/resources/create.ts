@@ -13,8 +13,8 @@ import * as Skills from './skills';
 import * as Superactivity from './superactivity';
 
 const minVersions: Record<string, string> = {
-  oli_workbook_page: '3_7',
-  oli_workbook_page_mathml: '3_7',
+  oli_workbook_page: '3_5',
+  oli_workbook_page_mathml: '3_5',
   oli_assessment: '2_3',
   oli_assessment_mathml: '2_3',
   oli_inline_assessment: '1_3',
