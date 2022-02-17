@@ -12,10 +12,28 @@ import * as Pool from './pool';
 import * as Skills from './skills';
 import * as Superactivity from './superactivity';
 
-export function determineResourceType(file: string) : Promise<ResourceType> {
-  return rootTag(file)
-  .then((tag: string) => {
-    if (tag.indexOf('oli_skills_model_1_0.dtd') !== -1) {
+const minVersions: Record<string, string> = {
+  oli_workbook_page: '3_5',
+  oli_workbook_page_mathml: '3_5',
+  oli_assessment: '2_3',
+  oli_assessment_mathml: '2_3',
+  oli_inline_assessment: '1_3',
+  oli_inline_assessment_mathml: '1_3',
+};
+
+export function determineResourceType(file: string): Promise<ResourceType> {
+  return rootTag(file).then((tag: string) => {
+    // split dtd filename to get version suffix
+    const [, dtdBase, dtdVersion] = /\/dtd\/([^\d]+)_(\d.*)\.dtd/.exec(tag) || [];
+
+    // lexicographic string comparison on version suffix suffices
+    const minVersion = minVersions[dtdBase] || '';
+    if (dtdVersion < minVersion) {
+      console.error(`unsupported DTD version: ${dtdBase} ${dtdVersion}`);
+      return 'Other';
+    }
+
+    if (tag.indexOf('oli_skills_model') !== -1) {
       return 'Skills';
     }
     if (tag.indexOf('DTD Assessment Pool') !== -1) {
@@ -24,27 +42,24 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
     if (tag.indexOf('organization') !== -1) {
       return 'Organization';
     }
-    if (tag.indexOf('oli_workbook_page_3_8') !== -1
-      || tag.indexOf('oli_workbook_page_mathml_3_8') !== -1) {
+    if (tag.indexOf('oli_workbook_page') !== -1) {
       return 'WorkbookPage';
     }
-    if (tag.indexOf('oli_inline_assessment_1_4') !== -1
-      || tag.indexOf('oli_inline_assessment_mathml_1_4') !== -1) {
+    if (tag.indexOf('oli_inline_assessment') !== -1) {
       return 'Formative';
     }
-    if (tag.indexOf('oli_assessment_2_4') !== -1
-      || tag.indexOf('oli_assessment_mathml_2_4') !== -1) {
+    if (tag.indexOf('oli_assessment') !== -1) {
       return 'Summative';
     }
-    if (tag.indexOf('oli_feedback_1_2') !== -1 || tag.indexOf('oli_feedback_1_0') !== -1) {
+    if (tag.indexOf('oli_feedback') !== -1) {
       return 'Feedback';
     }
-    if (tag.indexOf('oli_learning_objectives_2_0') !== -1) {
+    if (tag.indexOf('oli_learning_objectives') !== -1) {
       return 'Objectives';
     }
-    if (tag.indexOf('oli-embed-activity_1.0') !== -1 ||
-        tag.indexOf('oli-linked-activity_1.0') !== -1 ||
-      tag.indexOf('cmu-ctat-tutor_1.1') !== -1) {
+    if (tag.indexOf('oli-embed-activity') !== -1 ||
+        tag.indexOf('oli-linked-activity') !== -1 ||
+      tag.indexOf('cmu-ctat-tutor') !== -1) {
       return 'Superactivity';
     }
 
@@ -52,7 +67,7 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
   });
 }
 
-export function create(t: ResourceType, file: string, navigable: boolean) : Resource {
+export function create(t: ResourceType, file: string, navigable: boolean): Resource {
   if (t === 'WorkbookPage') {
     return new WB.WorkbookPage(file, navigable);
   }
