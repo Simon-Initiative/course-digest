@@ -65,29 +65,22 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
             const referencesOthers: string[] = [];
 
             results.forEach((r) => {
-
-              if (typeof (r) !== 'string' && (id === '' || id === r.id)) {
-                r.found().forEach((i) => {
-
-                  if (seenReferences[i.id] === undefined) {
-                    seenReferences[i.id] = true;
-                    references.push(i.id);
-                  }
-
-                });
-              }
-            });
-            // Add references from all other organization files that are not part of the main org
-            results.forEach((r) => {
               if (typeof (r) !== 'string') {
                 r.found().forEach((i) => {
                   if (seenReferences[i.id] === undefined) {
-                    // Ensure referenced file exists
-                    const files = glob.sync(`${packageDirectory}/**/${i.id}.xml`, {});
-                    if (files && files.length > 0) {
+                    if (id === '' || id === r.id) {
                       seenReferences[i.id] = true;
                       references.push(i.id);
-                      referencesOthers.push(i.id);
+                    } else {
+                      // Add references from all other organization files that are
+                      // not part of the main org
+                      // Ensure referenced file exists
+                      const files = glob.sync(`${packageDirectory}/**/${i.id}.xml`, {});
+                      if (files && files.length > 0) {
+                        seenReferences[i.id] = true;
+                        references.push(i.id);
+                        referencesOthers.push(i.id);
+                      }
                     }
                   }
                 });
@@ -101,7 +94,6 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
           });
       });
   });
-
 }
 
 // Helper to execute a function that returns a promise, and resolve it
