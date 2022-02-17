@@ -43,7 +43,8 @@ export function determineResourceType(file: string) : Promise<ResourceType> {
       return 'Objectives';
     }
     if (tag.indexOf('oli-embed-activity_1.0') !== -1 ||
-        tag.indexOf('oli-linked-activity_1.0') !== -1) {
+        tag.indexOf('oli-linked-activity_1.0') !== -1 ||
+      tag.indexOf('cmu-ctat-tutor_1.1') !== -1) {
       return 'Superactivity';
     }
 

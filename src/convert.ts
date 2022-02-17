@@ -3,13 +3,14 @@ import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid, ItemReference } from './utils/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
+const format  = require('xml-formatter');
 
 type DerivedResourceMap =  {[key: string]: TorusResource[]};
 
 const fs = require('fs');
 const tmp = require('tmp');
 
-export function convert(mediaSummary: Media.MediaSummary, file: string, navigable: boolean)
+export function convert(mediaSummary: Media.MediaSummary, otherOrgRefs: string[], file: string, navigable: boolean)
     : Promise<(TorusResource | string)[]> {
   return determineResourceType(file)
     .then((t: ResourceType) => {
@@ -26,11 +27,23 @@ export function convert(mediaSummary: Media.MediaSummary, file: string, navigabl
       $ = DOM.read(tmpobj.name);
 
       Media.transformToFlatDirectory(file, $, mediaSummary);
+      if (t === 'Organization') {
+        if (otherOrgRefs && otherOrgRefs.length > 0) {
+          let module: string = `<unit id="${guid()}"><title>Additional resources</title>`;
+          let items: string = '';
+          otherOrgRefs.forEach((val: string) => {
+            items = `${items}<item scoring_mode="default"><resourceref idref="${val}"/></item>`;
+          });
+          module = module + items;
+          module = `${module}</unit>`;
+          $('sequence').append(module);
+        }
+      }
 
       item.restructure($);
 
       const xml = $.html();
-      
+
       return item.translate(xml, $);
     });
 }
