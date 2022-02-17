@@ -84,6 +84,7 @@
       </table>
       <p>Mozilla Developer Network (MDN) provides a comprehensive repository of JavaScript references: <link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">MDN Javascript reference</link>
       </p>
+      <activity idref="ctat2_m1_stattutor" purpose="lab"/>
       <section>
          <title>Code Area</title>
          <body>

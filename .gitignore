@@ -5,3 +5,4 @@ out/
 .env
 /yarn-error.log
 /out.zip
+/.idea/

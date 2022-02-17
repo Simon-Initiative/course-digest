@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     height="136" width="136" viewBox="0 0 35 35" preserveAspectRatio="none">
+   <desc>Pie Chart Icon</desc>
+   <path d="M 18,18 L 3,11 A 17,17 0 0,1 35,18 Z" fill="red"/>
+   <circle cx="17.5" cy="17.5" r="17" stroke="black" fill="none"/>
+</svg>

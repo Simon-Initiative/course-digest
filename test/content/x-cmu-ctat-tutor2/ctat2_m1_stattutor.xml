@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ctat PUBLIC "-//Carnegie Mellon University//DTD CTAT 1.1//EN" "http://oli.cmu.edu/dtd/cmu-ctat-tutor_1.1.dtd">
+<ctat id="ctat2_m1_stattutor" width="900" height="750" max_attempts="9">
+    <title>Drinking Habits and Integrity of College Students</title>
+    <interface>webcontent/m1_survey/survey2.brd</interface>
+    <dataset package="problem_description.xml">webcontent/m1_survey/survey.xml</dataset>
+    <dataset package="Minitab">webcontent/m1_survey/drinking.mtw</dataset>
+    <dataset package="Excel">webcontent/m1_survey/drinking.xls</dataset>
+    <dataset package="StatCrunch">webcontent/m1_survey/drinking.xls</dataset>
+    <dataset package="R">webcontent/m1_survey/drinking.RData</dataset>
+    <dataset package="TI Calculator">webcontent/m1_survey/drinking.8xg</dataset>
+    <dataset package="json">webcontent/m1_survey/Survey2.json</dataset>
+    <asset>webcontent/StatTutor.html?module=1</asset>
+</ctat>

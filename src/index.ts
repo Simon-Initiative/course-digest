@@ -10,6 +10,7 @@ import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
 
 const fs = require('fs');
+const glob = require('glob');
 
 const optionDefinitions = [
   { name: 'operation', type: String, defaultOption: true },
@@ -61,27 +62,38 @@ function collectOrgItemReferences(packageDirectory: string, id: string = '') {
 
             const seenReferences = {} as any;
             const references: string[] = [];
+            const referencesOthers: string[] = [];
 
             results.forEach((r) => {
-
-              if (typeof (r) !== 'string' && (id === '' || id === r.id)) {
+              if (typeof (r) !== 'string') {
                 r.found().forEach((i) => {
-
                   if (seenReferences[i.id] === undefined) {
-                    seenReferences[i.id] = true;
-                    references.push(i.id);
+                    if (id === '' || id === r.id) {
+                      seenReferences[i.id] = true;
+                      references.push(i.id);
+                    } else {
+                      // Add references from all other organization files that are
+                      // not part of the main org
+                      // Ensure referenced file exists
+                      const files = glob.sync(`${packageDirectory}/**/${i.id}.xml`, {});
+                      if (files && files.length > 0) {
+                        seenReferences[i.id] = true;
+                        references.push(i.id);
+                        referencesOthers.push(i.id);
+                      }
+                    }
                   }
-
                 });
               }
             });
+
             const orgReferences = {} as any;
             orgReferences['orgReferences'] = references;
+            orgReferences['orgReferencesOthers'] = referencesOthers;
             resolve(orgReferences);
           });
       });
   });
-
 }
 
 // Helper to execute a function that returns a promise, and resolve it
@@ -114,12 +126,12 @@ function summaryAction() {
 
 function getLearningObjectiveIds(packageDirectory: string) {
 
-  return mapResources(packageDirectory + '/content/x-oli-learning_objectives')
+  return mapResources(`${packageDirectory}/content/x-oli-learning_objectives`)
     .then(map => Object.keys(map));
 }
 
 function getSkillIds(packageDirectory: string) {
-  return mapResources(packageDirectory + '/content/x-oli-skills_model')
+  return mapResources(`${packageDirectory}/content/x-oli-skills_model`)
     .then(map => Object.keys(map));
 }
 
@@ -133,7 +145,7 @@ function uploadAction() {
 
   const uploaders = manifest.mediaItems.map((m: any) => {
     return () => {
-      console.log('Uploading ' + m.file);
+      console.log(`Uploading ${m.file}`);
       return upload(m.file, m.name, m.mimeType, slug);
     };
   });
@@ -159,6 +171,7 @@ function convertAction() {
 
       const map = results[0];
       const orgReferences = [...results[1].orgReferences];
+      const orgReferencesOthers = [...results[1].orgReferencesOthers];
       const references = [...orgReferences, ...results.slice(2), ...results.slice(3)];
 
       const mediaSummary: Media.MediaSummary = {
@@ -169,11 +182,11 @@ function convertAction() {
         flattenedNames: {},
       };
 
-      Convert.convert(mediaSummary, specificOrg, false)
+      Convert.convert(mediaSummary, orgReferencesOthers, specificOrg, false)
         .then((results) => {
           const hierarchy = results[0] as Resources.TorusResource;
 
-          processResources(Convert.convert.bind(undefined, mediaSummary), references,
+          processResources(Convert.convert.bind(undefined, mediaSummary, null), references,
                            orgReferences, map)
             .then((converted: Resources.TorusResource[]) => {
 
@@ -181,10 +194,12 @@ function convertAction() {
               const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
               const withoutTemporary = withTagsInsteadOfPools.filter(u => u.type !== 'TemporaryContent');
               addWebContentToMediaSummary(packageDirectory, mediaSummary).then((results) => {
-                const mediaItems = Object.keys(mediaSummary.mediaItems).map((k: string) => results.mediaItems[k]);
+                const mediaItems =
+                  Object.keys(mediaSummary.mediaItems).map((k: string) => results.mediaItems[k]);
 
                 Convert.output(
-                  projectSlug, packageDirectory, outputDirectory, hierarchy, withoutTemporary, mediaItems);
+                  projectSlug, packageDirectory, outputDirectory, hierarchy, withoutTemporary,
+                  mediaItems);
               });
             });
 

@@ -24,10 +24,10 @@ const minVersions: Record<string, string> = {
 export function determineResourceType(file: string): Promise<ResourceType> {
   return rootTag(file).then((tag: string) => {
     // split dtd filename to get version suffix
-    var [, dtdBase, dtdVersion] = /\/dtd\/([^\d]+)_(\d.*)\.dtd/.exec(tag) || [];
+    const [, dtdBase, dtdVersion] = /\/dtd\/([^\d]+)_(\d.*)\.dtd/.exec(tag) || [];
 
     // lexicographic string comparison on version suffix suffices
-    var minVersion = minVersions[dtdBase] || '';
+    const minVersion = minVersions[dtdBase] || '';
     if (dtdVersion < minVersion) {
       console.error(`unsupported DTD version: ${dtdBase} ${dtdVersion}`);
       return 'Other';
@@ -57,7 +57,9 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (tag.indexOf('oli_learning_objectives') !== -1) {
       return 'Objectives';
     }
-    if (tag.indexOf('oli-embed-activity') !== -1 || tag.indexOf('oli-linked-activity') !== -1) {
+    if (tag.indexOf('oli-embed-activity') !== -1 ||
+        tag.indexOf('oli-linked-activity') !== -1 ||
+      tag.indexOf('cmu-ctat-tutor') !== -1) {
       return 'Superactivity';
     }
 
