@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE feedback PUBLIC "-//Carnegie Mellon University//DTD Feedback Activity 1.0//EN" "http://oli.web.cmu.edu/dtd/oli_feedback_1_0.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_workbook_page_3_7.css"?>
+<feedback id="_u3_m1_lbd1_feedback">
+    <title>Sampling</title>
+    <description>
+        <p> Please answer the questions below. Your response will not be graded, but will be
+            available for your instructor to read. Answering these questions may also shape the
+            discussions in class. </p>
+    </description>
+    <questions>
+        <open_response id="_u3_m1_lbd1_feedback_1" required="true">
+            <prompt>What is the most significant thing you learned by doing this activity?</prompt>
+        </open_response>
+        <likert_series>
+            <prompt>Evaluate your ability to perform each of the following tasks. In other words,
+                how well can you do each task? </prompt>
+            <likert_scale size="5" center="3">
+                <label value="1">not at all yet</label>
+                <label value="2">with a lot of support</label>
+                <label value="3">with some support</label>
+                <label value="4">with minimal support</label>
+                <label value="5">on my own</label>
+            </likert_scale>
+            <item id="identify_sampling_method" required="true">
+                <prompt> Identify the sampling method used in a study and discuss its
+                    implication<?oxy_insert_start author="mmyers" timestamp="20101102T192148-0400"?>s<?oxy_insert_end?>
+                    and potential limitations. </prompt>
+            </item>
+            <item id="evaluate_reliability_of_results" required="true">
+                <prompt> Critically evaluate the reliability and validity of results published in
+                    mainstream media. </prompt>
+            </item>
+        </likert_series>
+    </questions>
+</feedback>
