@@ -1,8 +1,8 @@
 // Assemble the Torus representation of a multi-input activity from
 
-import { guid, replaceAll } from "../../utils/common";
+import { guid, replaceAll } from '../../utils/common';
 
-import * as Common from "./common";
+import * as Common from './common';
 
 // a JSON representation of the Formative Legacy model of this question type
 export function buildMulti(question: any) {
@@ -33,17 +33,17 @@ export function buildMulti(question: any) {
       targeted: [],
       parts: torusParts,
       transformations: [],
-      previewText: "",
+      previewText: '',
     },
   };
 }
 
 function updateInputRefs(model: any, foundInputs: any): any {
-  if (model.type === "input_ref") {
+  if (model.type === 'input_ref') {
     foundInputs[model.input] = true;
     return Object.assign({}, model, {
       id: model.input,
-      children: [{ text: "" }],
+      children: [{ text: '' }],
     });
   }
   if (model.children !== undefined) {
@@ -58,7 +58,7 @@ function updateInputRefs(model: any, foundInputs: any): any {
 }
 
 export function buildStem(question: any, inputs: any[]) {
-  const stem = Common.getChild(question.children, "stem");
+  const stem = Common.getChild(question.children, 'stem');
   const model = Common.ensureParagraphs(stem.children);
   const foundInputs: any = {};
   const updated = updateInputRefs(model, foundInputs);
@@ -68,10 +68,10 @@ export function buildStem(question: any, inputs: any[]) {
   inputs.forEach((input) => {
     if (foundInputs[input.id] === undefined) {
       updated.push({
-        type: "p",
+        type: 'p',
         id: guid(),
         children: [
-          { type: "input_ref", id: input.id, children: [{ text: "" }] },
+          { type: 'input_ref', id: input.id, children: [{ text: '' }] },
         ],
       });
     }
@@ -89,17 +89,17 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
   let part: any = {};
   let choices: any[] = [];
 
-  if (item.type === "text") {
+  if (item.type === 'text') {
     part = buildTextPart(p, i);
-    input.inputType = "text";
-  } else if (item.type === "numeric") {
+    input.inputType = 'text';
+  } else if (item.type === 'numeric') {
     part = buildTextPart(p, i);
-    input.inputType = "numeric";
+    input.inputType = 'numeric';
   } else {
     part = buildDropdownPart(p, i);
-    input.inputType = "dropdown";
+    input.inputType = 'dropdown';
 
-    choices = Common.buildChoices({ children: [item] }, "fill_in_the_blank");
+    choices = Common.buildChoices({ children: [item] }, 'fill_in_the_blank');
     input.chiceIds = choices.map((c: any) => c.id);
   }
   input.id = item.id;
@@ -111,25 +111,25 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
 function collectItemsParts(question: any) {
   const items = question.children.filter((c: any) => {
     return (
-      c.type === "numeric" ||
-      c.type === "text" ||
-      c.type === "fill_in_the_blank"
+      c.type === 'numeric' ||
+      c.type === 'text' ||
+      c.type === 'fill_in_the_blank'
     );
   });
 
   const parts = question.children.filter((c: any) => {
-    return c.type === "part";
+    return c.type === 'part';
   });
 
   return { items, parts };
 }
 
 function buildDropdownPart(part: any, _i: number) {
-  const responses = part.children.filter((p: any) => p.type === "response");
-  const hints = part.children.filter((p: any) => p.type === "hint");
-  const skillrefs = part.children.filter((p: any) => p.type === "skillref");
+  const responses = part.children.filter((p: any) => p.type === 'response');
+  const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
-  const id = part.id !== undefined && part.id !== null ? part.id + "" : guid();
+  const id = part.id !== undefined && part.id !== null ? part.id + '' : guid();
 
   return {
     id,
@@ -149,20 +149,20 @@ function buildDropdownPart(part: any, _i: number) {
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: "average",
+    scoringStrategy: 'average',
   };
 }
 
 export function buildTextPart(part: any, _i: number) {
-  const responses = part.children.filter((p: any) => p.type === "response");
-  const hints = part.children.filter((p: any) => p.type === "hint");
-  const skillrefs = part.children.filter((p: any) => p.type === "skillref");
-  const id = part.id !== undefined && part.id !== null ? part.id + "" : guid();
+  const responses = part.children.filter((p: any) => p.type === 'response');
+  const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
+  const id = part.id !== undefined && part.id !== null ? part.id + '' : guid();
 
   return {
     id,
     responses: responses.map((r: any) => {
-      const cleanedMatch = replaceAll(r.match, "\\*", ".*");
+      const cleanedMatch = replaceAll(r.match, '\\*', '.*');
       return {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
@@ -186,6 +186,6 @@ export function buildTextPart(part: any, _i: number) {
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: "average",
+    scoringStrategy: 'average',
   };
 }

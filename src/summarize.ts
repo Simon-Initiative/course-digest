@@ -1,7 +1,7 @@
-import { Summary, ResourceType } from "./resources/resource";
-import { determineResourceType, create } from "./resources/create";
-import { MissingResource, executeSerially } from "./utils/common";
-import * as Histogram from "./utils/histogram";
+import { Summary, ResourceType } from './resources/resource';
+import { determineResourceType, create } from './resources/create';
+import { MissingResource, executeSerially } from './utils/common';
+import * as Histogram from './utils/histogram';
 
 export type SummaryResult = Summary | MissingResource;
 
@@ -18,9 +18,9 @@ export function bucketHistograms(
   summaries: SummaryResult[]
 ): Promise<Histogram.BucketedHistograms> {
   return summaries
-    .filter((s) => s.type !== "MissingResource")
+    .filter((s) => s.type !== 'MissingResource')
     .reduce((h, c) => {
-      if (c.type !== "MissingResource") {
+      if (c.type !== 'MissingResource') {
         if (h[c.subType] === undefined) {
           h[c.subType] = (c as any).elementHistogram;
         } else {

@@ -1,16 +1,16 @@
 // cheerio based DOM manipulation helpers
 
-import cheerio from "cheerio";
-import fs from "fs";
+import cheerio from 'cheerio';
+import fs from 'fs';
 
 function flattenSection($: any, selector: string, tag: string) {
   const triple = $(selector);
 
   triple.each((i: any, elem: any) => {
-    const text = $(elem).children("title").html();
+    const text = $(elem).children('title').html();
 
-    $(elem).children("title").replaceWith(`<${tag}>${text}</${tag}>`);
-    $(elem).children("body").replaceWith($(elem).children("body").children());
+    $(elem).children('title').replaceWith(`<${tag}>${text}</${tag}>`);
+    $(elem).children('body').replaceWith($(elem).children('body').children());
     $(elem).replaceWith($(elem).children());
   });
 }
@@ -38,10 +38,10 @@ export function eliminateLevel($: any, selector: string) {
 }
 
 export function flattenResourceRefs($: any) {
-  const refs = $("item resourceref");
+  const refs = $('item resourceref');
 
   refs.each((i: any, elem: any) => {
-    const id = $(elem).attr("idref");
+    const id = $(elem).attr('idref');
     $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
   });
 }
@@ -101,20 +101,20 @@ export function stripElement($: any, selector: string) {
 }
 
 export function mergeTitles($: any) {
-  mergeElement($, "organization", "title");
-  mergeElement($, "sequence", "title");
-  mergeElement($, "unit", "title");
-  mergeElement($, "module", "title");
-  mergeElement($, "section", "title");
+  mergeElement($, 'organization', 'title');
+  mergeElement($, 'sequence', 'title');
+  mergeElement($, 'unit', 'title');
+  mergeElement($, 'module', 'title');
+  mergeElement($, 'section', 'title');
 }
 
 export function mergeCaptions($: any) {
-  handleLabelledContent($, "table");
-  handleLabelledContent($, "audio");
-  handleLabelledContent($, "iframe");
-  handleLabelledContent($, "youtube");
-  handleLabelledContent($, "image");
-  handleLabelledContent($, "video");
+  handleLabelledContent($, 'table');
+  handleLabelledContent($, 'audio');
+  handleLabelledContent($, 'iframe');
+  handleLabelledContent($, 'youtube');
+  handleLabelledContent($, 'image');
+  handleLabelledContent($, 'video');
 }
 
 function mergeElement($: any, selector: string, element: string) {
@@ -131,20 +131,20 @@ function handleLabelledContent($: any, selector: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
-    const title = $(elem).children("title").text();
-    const caption = $(elem).children("caption").text();
+    const title = $(elem).children('title').text();
+    const caption = $(elem).children('caption').text();
 
-    const combined = (title + " " + caption).trim();
+    const combined = (title + ' ' + caption).trim();
 
-    $(elem).attr("caption", combined);
-    $(elem).children().remove("title");
-    $(elem).children().remove("caption");
+    $(elem).attr('caption', combined);
+    $(elem).children().remove('title');
+    $(elem).children().remove('caption');
   });
 }
 
 export function removeSelfClosing($: any) {
-  $("caption").removeAttr("___selfClosing___");
-  $("image").removeAttr("___selfClosing___");
+  $('caption').removeAttr('___selfClosing___');
+  $('image').removeAttr('___selfClosing___');
 }
 
 export function remove($: any, element: string) {
@@ -152,16 +152,16 @@ export function remove($: any, element: string) {
 }
 
 export function flattenNestedSections($: any) {
-  flattenSection($, "section section section section section section", "h6");
-  flattenSection($, "section section section section section", "h5");
-  flattenSection($, "section section section section", "h4");
-  flattenSection($, "section section section", "h3");
-  flattenSection($, "section section", "h2");
-  flattenSection($, "section", "h1");
+  flattenSection($, 'section section section section section section', 'h6');
+  flattenSection($, 'section section section section section', 'h5');
+  flattenSection($, 'section section section section', 'h4');
+  flattenSection($, 'section section section', 'h3');
+  flattenSection($, 'section section', 'h2');
+  flattenSection($, 'section', 'h1');
 }
 
 export function read(file: string, options = {}) {
-  const content = fs.readFileSync(file, "utf-8");
+  const content = fs.readFileSync(file, 'utf-8');
 
   return cheerio.load(
     content,

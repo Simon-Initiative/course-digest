@@ -1,7 +1,7 @@
-import path from "path";
-import fs from "fs";
-import mime from "mime-types";
-import md5File from "md5-file";
+import path from 'path';
+import fs from 'fs';
+import mime from 'mime-types';
+import md5File from 'md5-file';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -34,12 +34,12 @@ export interface MediaItem {
 export type UploadResult = UploadSuccess | UploadFailure;
 
 export interface UploadSuccess {
-  type: "UploadSuccess";
+  type: 'UploadSuccess';
   mediaItem: MediaItem;
 }
 
 export interface UploadFailure {
-  type: "UploadFailure";
+  type: 'UploadFailure';
   mediaItem: MediaItem;
   error: string;
 }
@@ -59,7 +59,7 @@ export function transformToFlatDirectory(
     // Update the URL in the XML DOM
     if (url !== null) {
       const elem = paths[assetReference];
-      $(elem).attr("src", url);
+      $(elem).attr('src', url);
     }
   });
 }
@@ -74,8 +74,8 @@ export function flatten(
   const absolutePath = resolve(ref);
   const md5 = md5File.sync(absolutePath);
 
-  const getName = (file: string) => file.substr(file.lastIndexOf("/") + 1);
-  const toURL = (name: string) => summary.urlPrefix + "/" + md5 + "/" + name;
+  const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
+  const toURL = (name: string) => summary.urlPrefix + '/' + md5 + '/' + name;
 
   const name = getName(absolutePath);
 
@@ -94,7 +94,7 @@ export function flatten(
         name,
         flattenedName,
         md5,
-        mimeType: mime.lookup(absolutePath) || "application/octet-stream",
+        mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
         references: [ref],
         url: toURL(flattenedName),
       };
@@ -119,12 +119,12 @@ function generateNewName(
   flattenedNames: { [k: string]: string }
 ) {
   const buildCandidateName =
-    name.indexOf(".") >= 0
+    name.indexOf('.') >= 0
       ? (n: string, i: number): string => {
-          const parts = n.split(".");
-          return parts[0] + "_" + i + "." + parts[1];
+          const parts = n.split('.');
+          return parts[0] + '_' + i + '.' + parts[1];
         }
-      : (n: string, i: number): string => name + "_" + i;
+      : (n: string, i: number): string => name + '_' + i;
 
   let i = 1;
   while (true) {
@@ -154,27 +154,27 @@ export function stage(
   _progressCallback: (mediaItem: MediaItem) => void
 ): Promise<UploadResult[]> {
   return Promise.resolve(
-    mediaItems.map((mediaItem) => ({ type: "UploadSuccess", mediaItem }))
+    mediaItems.map((mediaItem) => ({ type: 'UploadSuccess', mediaItem }))
   );
 }
 
 function findFromDOM($: any): string[] {
   const paths: any = {};
 
-  $("image").each((i: any, elem: any) => {
-    paths[$(elem).attr("src")] = elem;
+  $('image').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = elem;
   });
 
-  $("audio").each((i: any, elem: any) => {
-    paths[$(elem).attr("src")] = elem;
+  $('audio').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = elem;
   });
 
-  $("audio source").each((i: any, elem: any) => {
-    paths[$(elem).attr("src")] = elem;
+  $('audio source').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = elem;
   });
 
-  $("audio track").each((i: any, elem: any) => {
-    paths[$(elem).attr("src")] = elem;
+  $('audio track').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = elem;
   });
 
   Object.keys(paths)
@@ -185,5 +185,5 @@ function findFromDOM($: any): string[] {
 }
 
 function isLocalReference(src: string): boolean {
-  return src.startsWith(".");
+  return src.startsWith('.');
 }

@@ -1,4 +1,4 @@
-import * as csvWriter from "csv-writer";
+import * as csvWriter from 'csv-writer';
 
 export type AttributeHistogram = { [index: string]: number };
 export type ElementDetails = {
@@ -94,7 +94,7 @@ function getUniqueElements(b: BucketedHistograms) {
 
 function buildHeader(b: BucketedHistograms) {
   return [
-    { id: "element", title: "element" },
+    { id: 'element', title: 'element' },
     ...Object.keys(b).map((k: string) => {
       return {
         id: k,

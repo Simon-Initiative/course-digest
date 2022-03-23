@@ -1,10 +1,10 @@
-import * as Histogram from "../utils/histogram";
-import { ItemReference } from "../utils/common";
-import * as DOM from "../utils/dom";
-import { Maybe } from "tsmonad";
+import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
+import * as DOM from '../utils/dom';
+import { Maybe } from 'tsmonad';
 
 export interface Summary {
-  type: "Summary";
+  type: 'Summary';
   subType: string;
   id: string;
   elementHistogram: Histogram.ElementHistogram;
@@ -12,17 +12,17 @@ export interface Summary {
 }
 
 export type ResourceType =
-  | "WorkbookPage"
-  | "Organization"
-  | "Objectives"
-  | "Pool"
-  | "Formative"
-  | "Summative"
-  | "Feedback"
-  | "Superactivity"
-  | "Skills"
-  | "Other"
-  | "TemporaryContent";
+  | 'WorkbookPage'
+  | 'Organization'
+  | 'Objectives'
+  | 'Pool'
+  | 'Formative'
+  | 'Summative'
+  | 'Feedback'
+  | 'Superactivity'
+  | 'Skills'
+  | 'Other'
+  | 'TemporaryContent';
 
 export type TorusResourceType =
   | Hierarchy
@@ -58,28 +58,28 @@ export interface Objective {
 }
 
 export interface Hierarchy extends TorusResource {
-  type: "Hierarchy";
+  type: 'Hierarchy';
   children: TorusResource[];
 }
 
 export interface TemporaryContent extends TorusResource {
-  type: "TemporaryContent";
+  type: 'TemporaryContent';
   content: Record<string, unknown>;
 }
 
 export interface Unknown extends TorusResource {
-  type: "Unknown";
+  type: 'Unknown';
 }
 
 export interface Page extends TorusResource {
-  type: "Page";
+  type: 'Page';
   content: Record<string, unknown>;
   isGraded: boolean;
   objectives: any[];
 }
 
 export interface Activity extends TorusResource {
-  type: "Activity";
+  type: 'Activity';
   content: Record<string, unknown>;
   objectives: any[];
   legacyId: string;
@@ -88,16 +88,16 @@ export interface Activity extends TorusResource {
 }
 
 export interface Objective extends TorusResource {
-  type: "Objective";
+  type: 'Objective';
 }
 
 const elementNameMap: { [index: string]: string } = {
-  img: "image",
+  img: 'image',
 };
 
 const attributeNameMap: { [index: string]: Record<string, unknown> } = {
   img: {
-    href: "src",
+    href: 'src',
   },
 };
 
@@ -105,7 +105,7 @@ const attributeValueMap: { [index: string]: Record<string, unknown> } = {
   img: {
     target: {
       self: null,
-      new: "_blank",
+      new: '_blank',
     },
   },
 };
@@ -137,7 +137,7 @@ export abstract class Resource {
     return Maybe.maybe($?.root()?.html()).caseOf({
       just: (xml) => this.translate(xml, $),
       nothing: () => {
-        throw Error("Failed to convert: html element not found");
+        throw Error('Failed to convert: html element not found');
       },
     });
   }

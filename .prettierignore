@@ -1,0 +1,9 @@
+node_modules
+*~
+out/
+.DS_Store
+.env
+/yarn-error.log
+/out.zip
+/.idea/
+webcontent

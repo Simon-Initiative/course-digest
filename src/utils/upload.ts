@@ -1,5 +1,5 @@
-import AWS from "aws-sdk";
-import fs from "fs";
+import AWS from 'aws-sdk';
+import fs from 'fs';
 
 export const upload = (
   file: string,

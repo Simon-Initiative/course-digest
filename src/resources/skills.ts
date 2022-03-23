@@ -1,7 +1,7 @@
-import * as Histogram from "../utils/histogram";
-import { ItemReference } from "../utils/common";
-import { Resource, TorusResource, Summary } from "./resource";
-import * as XML from "../utils/xml";
+import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
+import { Resource, TorusResource, Summary } from './resource';
+import * as XML from '../utils/xml';
 
 export class Skills extends Resource {
   restructure(_$: any): any {
@@ -11,14 +11,14 @@ export class Skills extends Resource {
   translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
     const objectives: TorusResource[] = [];
 
-    $("skill").each((i: any, elem: any) => {
-      const id = $(elem).attr("id");
+    $('skill').each((i: any, elem: any) => {
+      const id = $(elem).attr('id');
       const title = $(elem).text().trim();
 
       const o = {
-        type: "Objective",
+        type: 'Objective',
         id,
-        originalFile: "",
+        originalFile: '',
         title,
         tags: [],
         unresolvedReferences: [],
@@ -36,10 +36,10 @@ export class Skills extends Resource {
   summarize(file: string): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
-      type: "Summary",
-      subType: "Objectives",
+      type: 'Summary',
+      subType: 'Objectives',
       elementHistogram: Histogram.create(),
-      id: "",
+      id: '',
       found: () => foundIds,
     };
 

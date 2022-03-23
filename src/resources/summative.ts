@@ -1,49 +1,49 @@
-import { visit } from "../utils/xml";
-import * as Histogram from "../utils/histogram";
-import { ItemReference } from "../utils/common";
-import { Resource, TorusResource, Summary, Page } from "./resource";
-import { processCodeblock } from "./common";
-import * as Formative from "./formative";
-import * as DOM from "../utils/dom";
-import * as XML from "../utils/xml";
+import { visit } from '../utils/xml';
+import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
+import { Resource, TorusResource, Summary, Page } from './resource';
+import { processCodeblock } from './common';
+import * as Formative from './formative';
+import * as DOM from '../utils/dom';
+import * as XML from '../utils/xml';
 
 export function convertToFormative($: any) {
-  $("multiple_choice").each((i: any, item: any) => {
-    DOM.moveAttrToChildren($, item, "select", "input");
+  $('multiple_choice').each((i: any, item: any) => {
+    DOM.moveAttrToChildren($, item, 'select', 'input');
   });
 
-  $("text").each((i: any, item: any) => {
+  $('text').each((i: any, item: any) => {
     // have to move all "whitespace" and "case_sensitive" down to inputs
-    DOM.moveAttrToChildren($, item, "whitespace", "input");
-    DOM.moveAttrToChildren($, item, "case_sensitive", "input");
+    DOM.moveAttrToChildren($, item, 'whitespace', 'input');
+    DOM.moveAttrToChildren($, item, 'case_sensitive', 'input');
   });
 
-  DOM.rename($, "multiple_choice input", "mc_temp");
-  DOM.rename($, "ordering input", "o_temp");
-  DOM.rename($, "short_answer input", "sa_temp");
-  DOM.rename($, "fill_in_the_blank input", "f_temp");
-  DOM.rename($, "numeric input", "n_temp");
-  DOM.rename($, "text input", "t_temp");
-  DOM.rename($, "essay input", "e_temp");
-  DOM.rename($, "image_hotspot input", "i_temp");
+  DOM.rename($, 'multiple_choice input', 'mc_temp');
+  DOM.rename($, 'ordering input', 'o_temp');
+  DOM.rename($, 'short_answer input', 'sa_temp');
+  DOM.rename($, 'fill_in_the_blank input', 'f_temp');
+  DOM.rename($, 'numeric input', 'n_temp');
+  DOM.rename($, 'text input', 't_temp');
+  DOM.rename($, 'essay input', 'e_temp');
+  DOM.rename($, 'image_hotspot input', 'i_temp');
 
-  DOM.rename($, "multiple_choice", "question");
-  DOM.rename($, "ordering", "question");
-  DOM.rename($, "short_answer", "question");
-  DOM.rename($, "fill_in_the_blank", "question");
-  DOM.rename($, "numeric", "question");
-  DOM.rename($, "text", "question");
-  DOM.rename($, "essay", "question");
-  DOM.rename($, "image_hotspot", "question");
+  DOM.rename($, 'multiple_choice', 'question');
+  DOM.rename($, 'ordering', 'question');
+  DOM.rename($, 'short_answer', 'question');
+  DOM.rename($, 'fill_in_the_blank', 'question');
+  DOM.rename($, 'numeric', 'question');
+  DOM.rename($, 'text', 'question');
+  DOM.rename($, 'essay', 'question');
+  DOM.rename($, 'image_hotspot', 'question');
 
-  DOM.rename($, "mc_temp", "multiple_choice");
-  DOM.rename($, "o_temp", "ordering");
-  DOM.rename($, "sa_temp", "short_answer");
-  DOM.rename($, "f_temp", "fill_in_the_blank");
-  DOM.rename($, "n_temp", "numeric");
-  DOM.rename($, "t_temp", "text");
-  DOM.rename($, "e_temp", "short_answer");
-  DOM.rename($, "i_temp", "image_hotspot");
+  DOM.rename($, 'mc_temp', 'multiple_choice');
+  DOM.rename($, 'o_temp', 'ordering');
+  DOM.rename($, 'sa_temp', 'short_answer');
+  DOM.rename($, 'f_temp', 'fill_in_the_blank');
+  DOM.rename($, 'n_temp', 'numeric');
+  DOM.rename($, 't_temp', 'text');
+  DOM.rename($, 'e_temp', 'short_answer');
+  DOM.rename($, 'i_temp', 'image_hotspot');
 }
 
 export class Summative extends Resource {
@@ -61,10 +61,10 @@ export class Summative extends Resource {
 
   translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
     const page: Page = {
-      type: "Page",
-      id: "",
-      originalFile: "",
-      title: "",
+      type: 'Page',
+      id: '',
+      originalFile: '',
+      title: '',
       tags: [],
       unresolvedReferences: [],
       content: {},
@@ -72,12 +72,12 @@ export class Summative extends Resource {
       objectives: [],
     };
 
-    $("activity_placeholder").each((i: any, elem: any) => {
-      page.unresolvedReferences.push($(elem).attr("idref"));
+    $('activity_placeholder').each((i: any, elem: any) => {
+      page.unresolvedReferences.push($(elem).attr('idref'));
     });
 
-    $("a").each((i: any, elem: any) => {
-      const idref = $(elem).attr("idref");
+    $('a').each((i: any, elem: any) => {
+      const idref = $(elem).attr('idref');
       if (idref !== undefined && idref !== null) {
         page.unresolvedReferences.push(idref);
       }
@@ -109,10 +109,10 @@ export class Summative extends Resource {
   summarize(file: string): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
-      type: "Summary",
-      subType: "Summative",
+      type: 'Summary',
+      subType: 'Summative',
       elementHistogram: Histogram.create(),
-      id: "",
+      id: '',
       found: () => foundIds,
     };
 
@@ -120,11 +120,11 @@ export class Summative extends Resource {
       visit(file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
-        if (tag === "assessment") {
-          summary.id = (attrs as any)["id"];
+        if (tag === 'assessment') {
+          summary.id = (attrs as any)['id'];
         }
-        if (tag === "poolref") {
-          foundIds.push({ id: (attrs as any)["idref"] });
+        if (tag === 'poolref') {
+          foundIds.push({ id: (attrs as any)['idref'] });
         }
       })
         .then((_result) => {

@@ -4,13 +4,13 @@ import {
   ResourceType,
   Page,
   Activity,
-} from "./resources/resource";
-import { determineResourceType, create } from "./resources/create";
-import { executeSerially, guid } from "./utils/common";
-import * as Media from "./media";
-import * as DOM from "./utils/dom";
-import fs from "fs";
-import tmp from "tmp";
+} from './resources/resource';
+import { determineResourceType, create } from './resources/create';
+import { executeSerially, guid } from './utils/common';
+import * as Media from './media';
+import * as DOM from './utils/dom';
+import fs from 'fs';
+import tmp from 'tmp';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
@@ -33,16 +33,16 @@ export function convert(
     $ = DOM.read(tmpobj.name);
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
-    if (t === "Organization") {
+    if (t === 'Organization') {
       if (otherOrgRefs && otherOrgRefs.length > 0) {
         let module = `<unit id="${guid()}"><title>Additional resources</title>`;
-        let items = "";
+        let items = '';
         otherOrgRefs.forEach((val: string) => {
           items = `${items}<item scoring_mode="default"><resourceref idref="${val}"/></item>`;
         });
         module = module + items;
         module = `${module}</unit>`;
-        $("sequence").append(module);
+        $('sequence').append(module);
       }
     }
 
@@ -84,7 +84,7 @@ function createResourceActivityRefs(
   resources: TorusResource[]
 ): Record<string, unknown> {
   return resources.reduce((m: any, r: TorusResource) => {
-    if (r.type === "Page") {
+    if (r.type === 'Page') {
       const page = r as Page;
       m[page.id] = page;
       return m;
@@ -95,7 +95,7 @@ function createResourceActivityRefs(
 
 function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
   return resources.reduce((m: any, r: TorusResource) => {
-    if (r.type === "Activity" || r.type === "TemporaryContent") {
+    if (r.type === 'Activity' || r.type === 'TemporaryContent') {
       const activity = r as Activity;
       if (activity.legacyId !== undefined && activity.legacyId !== null) {
         if (m[activity.legacyId] === undefined) {
@@ -111,19 +111,19 @@ function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
 
 function getPurpose(purpose: string) {
   if (purpose === undefined || purpose === null) {
-    return "none";
+    return 'none';
   }
   if (
-    purpose === "checkpoint" ||
-    purpose === "didigetthis" ||
-    purpose === "learnbydoing" ||
-    purpose === "manystudentswonder" ||
-    purpose === "learnmore"
+    purpose === 'checkpoint' ||
+    purpose === 'didigetthis' ||
+    purpose === 'learnbydoing' ||
+    purpose === 'manystudentswonder' ||
+    purpose === 'learnmore'
   ) {
     return purpose;
   }
 
-  return "none";
+  return 'none';
 }
 
 const selection = {
@@ -135,16 +135,16 @@ const selection = {
 
 function createContentWithLink(title: string, idref: string, purpose: string) {
   return {
-    type: "content",
+    type: 'content',
     purpose,
     id: guid(),
     selection,
     children: [
       {
-        type: "p",
+        type: 'p',
         children: [
           {
-            type: "a",
+            type: 'a',
             children: [{ text: title }],
             idref,
           },
@@ -159,24 +159,24 @@ function updateParentReference(
   byLegacyId: DerivedResourceMap,
   pageMap: any
 ): TorusResource {
-  if (resource.type === "Page") {
+  if (resource.type === 'Page') {
     const page = resource as Page;
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
-        if (m.type === "activity_placeholder") {
+        if (m.type === 'activity_placeholder') {
           const derived = byLegacyId[m.idref];
           if (derived !== undefined) {
             return [
               ...entries,
               ...derived.map((d) => {
-                if (d.type === "Activity") {
+                if (d.type === 'Activity') {
                   return {
-                    type: "activity-reference",
+                    type: 'activity-reference',
                     activity_id: d.id,
                     purpose: getPurpose(m.purpose),
                   };
                 }
-                if (d.type === "TemporaryContent") {
+                if (d.type === 'TemporaryContent') {
                   return (d as TemporaryContent).content;
                 }
               }),
@@ -211,11 +211,11 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   const tags: any = {};
 
   const items = resources.filter((r) => {
-    if (r.type === "Activity") {
+    if (r.type === 'Activity') {
       r.tags.forEach((t) => {
         if (tags[t] === undefined) {
           tags[t] = {
-            type: "Tag",
+            type: 'Tag',
             originalFile: null,
             id: t,
             title: `Legacy Pool: ${t}`,
@@ -226,7 +226,7 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
         }
       });
     }
-    return r.type !== "Unknown";
+    return r.type !== 'Unknown';
   });
 
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
@@ -263,13 +263,13 @@ function outputFile(path: string, o: any): Promise<boolean> {
 
 function outputManifest(courseDir: string, outputDirectory: string) {
   const $ = DOM.read(`${courseDir}/content/package.xml`);
-  const title = $("package title").text();
-  const description = $("package description").text();
+  const title = $('package title').text();
+  const description = $('package description').text();
 
   const manifest = {
     title,
     description,
-    type: "Manifest",
+    type: 'Manifest',
   };
 
   return outputFile(`${outputDirectory}/_project.json`, manifest);
@@ -292,7 +292,7 @@ function outputMediaManifest(
       mimeType: m.mimeType,
       md5: m.md5,
     })),
-    type: "MediaManifest",
+    type: 'MediaManifest',
   };
 
   return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);

@@ -1,14 +1,14 @@
-import * as Histogram from "../utils/histogram";
-import { ItemReference, guid } from "../utils/common";
-import { Resource, TorusResource, Summary, Page } from "./resource";
-import { standardContentManipulations, processCodeblock } from "./common";
-import * as DOM from "../utils/dom";
-import * as XML from "../utils/xml";
-import { convertImageCodingActivities } from "./image";
+import * as Histogram from '../utils/histogram';
+import { ItemReference, guid } from '../utils/common';
+import { Resource, TorusResource, Summary, Page } from './resource';
+import { standardContentManipulations, processCodeblock } from './common';
+import * as DOM from '../utils/dom';
+import * as XML from '../utils/xml';
+import { convertImageCodingActivities } from './image';
 
 function liftTitle($: any) {
-  $("workbook_page").attr("title", $("head title").text());
-  $("head").children().remove("title");
+  $('workbook_page').attr('title', $('head title').text());
+  $('head').children().remove('title');
 }
 
 export class WorkbookPage extends Resource {
@@ -21,17 +21,17 @@ export class WorkbookPage extends Resource {
 
     DOM.flattenNestedSections($);
     liftTitle($);
-    DOM.rename($, "wb\\:inline", "activity_placeholder");
-    DOM.rename($, "activity", "activity_placeholder");
-    DOM.rename($, "activity_link", "a");
+    DOM.rename($, 'wb\\:inline', 'activity_placeholder');
+    DOM.rename($, 'activity', 'activity_placeholder');
+    DOM.rename($, 'activity_link', 'a');
   }
 
   translate(originalXml: string, $: any): Promise<(TorusResource | string)[]> {
     const page: Page = {
-      type: "Page",
-      id: "",
-      originalFile: "",
-      title: "",
+      type: 'Page',
+      id: '',
+      originalFile: '',
+      title: '',
       tags: [],
       unresolvedReferences: [],
       content: {},
@@ -39,12 +39,12 @@ export class WorkbookPage extends Resource {
       objectives: [],
     };
 
-    $("activity_placeholder").each((i: any, elem: any) => {
-      page.unresolvedReferences.push($(elem).attr("idref"));
+    $('activity_placeholder').each((i: any, elem: any) => {
+      page.unresolvedReferences.push($(elem).attr('idref'));
     });
 
-    $("a").each((i: any, elem: any) => {
-      const idref = $(elem).attr("idref");
+    $('a').each((i: any, elem: any) => {
+      const idref = $(elem).attr('idref');
       if (idref !== undefined && idref !== null) {
         page.unresolvedReferences.push(idref);
       }
@@ -76,10 +76,10 @@ export class WorkbookPage extends Resource {
   summarize(file: string): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
-      type: "Summary",
-      subType: "WorkbookPage",
+      type: 'Summary',
+      subType: 'WorkbookPage',
       elementHistogram: Histogram.create(),
-      id: "",
+      id: '',
       found: () => foundIds,
     };
 
@@ -87,17 +87,17 @@ export class WorkbookPage extends Resource {
       XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
-        if (tag === "workbook_page") {
-          summary.id = (attrs as any)["id"];
+        if (tag === 'workbook_page') {
+          summary.id = (attrs as any)['id'];
         }
-        if (tag === "wb:inline") {
-          foundIds.push({ id: (attrs as any)["idref"] });
+        if (tag === 'wb:inline') {
+          foundIds.push({ id: (attrs as any)['idref'] });
         }
-        if (tag === "xref") {
-          foundIds.push({ id: (attrs as any)["idref"] });
+        if (tag === 'xref') {
+          foundIds.push({ id: (attrs as any)['idref'] });
         }
-        if (tag === "activity_link" || tag === "activity") {
-          foundIds.push({ id: (attrs as any)["idref"] });
+        if (tag === 'activity_link' || tag === 'activity') {
+          foundIds.push({ id: (attrs as any)['idref'] });
         }
       })
         .then((_result) => {
@@ -142,22 +142,22 @@ function introduceStructuredContent(content: any) {
   const asStructured = (attrs: Record<string, unknown>) =>
     Object.assign(
       {},
-      { type: "content", purpose: "none", id: guid() },
+      { type: 'content', purpose: 'none', id: guid() },
       selection,
       attrs
     );
 
   const startNewContent = (u: any) =>
     u.length === 0 ||
-    u[u.length - 1].type === "activity_placeholder" ||
-    u[u.length - 1].purpose !== "none";
+    u[u.length - 1].type === 'activity_placeholder' ||
+    u[u.length - 1].purpose !== 'none';
 
   return content.reduce((u: any, e: any) => {
-    if (e.type === "activity_placeholder") {
+    if (e.type === 'activity_placeholder') {
       return [...u, e];
     }
-    if (e.type === "example") {
-      return [...u, asStructured({ children: e.children, purpose: "example" })];
+    if (e.type === 'example') {
+      return [...u, asStructured({ children: e.children, purpose: 'example' })];
     }
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];

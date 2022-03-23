@@ -1,9 +1,9 @@
-import { visit } from "../utils/xml";
-import * as Histogram from "../utils/histogram";
-import { Resource, TorusResource, Summary } from "./resource";
-import * as Formative from "./formative";
-import * as Summative from "./summative";
-import * as XML from "../utils/xml";
+import { visit } from '../utils/xml';
+import * as Histogram from '../utils/histogram';
+import { Resource, TorusResource, Summary } from './resource';
+import * as Formative from './formative';
+import * as Summative from './summative';
+import * as XML from '../utils/xml';
 
 export class Pool extends Resource {
   restructure($: any): any {
@@ -19,11 +19,11 @@ export class Pool extends Resource {
 
           const legacyId = r.children[0].id;
           r.children.forEach((item: any) => {
-            if (item.type === "pool") {
+            if (item.type === 'pool') {
               const tagId = item.id;
 
               item.children.forEach((c: any) => {
-                if (c.type !== "title" && c.type !== "content") {
+                if (c.type !== 'title' && c.type !== 'content') {
                   const subType = Formative.determineSubType(c);
                   const pooledActivity = Formative.toActivity(
                     c,
@@ -31,7 +31,7 @@ export class Pool extends Resource {
                     legacyId
                   );
                   pooledActivity.tags = [tagId];
-                  pooledActivity.scope = "banked";
+                  pooledActivity.scope = 'banked';
                   items.push(pooledActivity);
                 }
               });
@@ -45,10 +45,10 @@ export class Pool extends Resource {
   }
   summarize(file: string): Promise<string | Summary> {
     const summary: Summary = {
-      type: "Summary",
-      subType: "SummativePool",
+      type: 'Summary',
+      subType: 'SummativePool',
       elementHistogram: Histogram.create(),
-      id: "",
+      id: '',
       found: () => [],
     };
 
@@ -56,8 +56,8 @@ export class Pool extends Resource {
       visit(file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
-        if (tag === "pool") {
-          summary.id = (attrs as any)["id"];
+        if (tag === 'pool') {
+          summary.id = (attrs as any)['id'];
         }
       })
         .then((_result) => {

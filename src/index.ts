@@ -1,20 +1,20 @@
-import * as Resources from "./resources/resource";
-import * as Orgs from "./resources/organization";
-import { executeSerially } from "./utils/common";
-import { mapResources } from "./utils/resource_mapping";
-import * as Summarize from "./summarize";
-import * as Convert from "./convert";
-import * as Media from "./media";
-import { processResources } from "./process";
-import { upload } from "./utils/upload";
-import { addWebContentToMediaSummary } from "./resources/webcontent";
-import dotenv from "dotenv";
-import fs from "fs";
-import glob from "glob";
-import readline from "readline";
-import path from "path";
-import commandLineArgs from "command-line-args";
-import { Maybe } from "tsmonad";
+import * as Resources from './resources/resource';
+import * as Orgs from './resources/organization';
+import { executeSerially } from './utils/common';
+import { mapResources } from './utils/resource_mapping';
+import * as Summarize from './summarize';
+import * as Convert from './convert';
+import * as Media from './media';
+import { processResources } from './process';
+import { upload } from './utils/upload';
+import { addWebContentToMediaSummary } from './resources/webcontent';
+import dotenv from 'dotenv';
+import fs from 'fs';
+import glob from 'glob';
+import readline from 'readline';
+import path from 'path';
+import commandLineArgs from 'command-line-args';
+import { Maybe } from 'tsmonad';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,16 +22,16 @@ const rl = readline.createInterface({
 });
 
 const defaultOrgPath = (inputDir: string) =>
-  path.join(inputDir, "organizations/default/organization.xml");
+  path.join(inputDir, 'organizations/default/organization.xml');
 
 const optionDefinitions = [
-  { name: "operation", type: String, defaultOption: true },
-  { name: "mediaManifest", type: String },
-  { name: "outputDir", type: String },
-  { name: "inputDir", type: String },
-  { name: "specificOrg", type: String },
-  { name: "specificOrgId", type: String },
-  { name: "mediaUrlPrefix", type: String },
+  { name: 'operation', type: String, defaultOption: true },
+  { name: 'mediaManifest', type: String },
+  { name: 'outputDir', type: String },
+  { name: 'inputDir', type: String },
+  { name: 'specificOrg', type: String },
+  { name: 'specificOrgId', type: String },
+  { name: 'mediaUrlPrefix', type: String },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
@@ -47,22 +47,22 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
 const options = commandLineArgs(optionDefinitions) as CmdOptions;
 
 function validateArgs() {
-  if (options.operation === "convert") {
+  if (options.operation === 'convert') {
     if (options.mediaUrlPrefix && options.inputDir && options.outputDir) {
       return [options.inputDir, options.outputDir].every(fs.existsSync);
     }
-  } else if (options.operation === "summarize") {
+  } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
       return [options.inputDir, options.outputDir].every(fs.existsSync);
     }
-  } else if (options.operation === "upload") {
+  } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
   }
 
   return false;
 }
 
-function collectOrgItemReferences(packageDirectory: string, id = "") {
+function collectOrgItemReferences(packageDirectory: string, id = '') {
   return Orgs.locate(packageDirectory).then((orgs) =>
     executeSerially(
       orgs.map((file) => () => {
@@ -75,10 +75,10 @@ function collectOrgItemReferences(packageDirectory: string, id = "") {
       const referencesOthers: string[] = [];
 
       results.forEach((r) => {
-        if (typeof r !== "string") {
+        if (typeof r !== 'string') {
           r.found().forEach((i) => {
             if (seenReferences[i.id] === undefined) {
-              if (id === "" || id === r.id) {
+              if (id === '' || id === r.id) {
                 seenReferences[i.id] = true;
                 references.push(i.id);
               } else {
@@ -101,8 +101,8 @@ function collectOrgItemReferences(packageDirectory: string, id = "") {
       });
 
       const orgReferences = {} as any;
-      orgReferences["orgReferences"] = references;
-      orgReferences["orgReferencesOthers"] = referencesOthers;
+      orgReferences['orgReferences'] = references;
+      orgReferences['orgReferencesOthers'] = referencesOthers;
 
       return orgReferences;
     })
@@ -143,7 +143,7 @@ function summaryAction() {
     .then((results: any[]) =>
       Summarize.outputSummary(outputDirectory, results[0], results[1])
     )
-    .then((_results: any) => console.log("Done!"))
+    .then((_results: any) => console.log('Done!'))
     .catch((err: any) => console.log(err));
 }
 
@@ -162,12 +162,12 @@ function getSkillIds(packageDirectory: string) {
 function uploadAction() {
   const mediaManifest =
     options.mediaManifest ||
-    path.join(options.outputDir, "_media-manifest.json");
+    path.join(options.outputDir, '_media-manifest.json');
 
   const raw = fs.readFileSync(mediaManifest);
   const manifest = JSON.parse(raw.toString());
   const bucketName = Maybe.maybe(process.env.MEDIA_BUCKET_NAME).valueOrThrow(
-    Error("MEDIA_BUCKET_NAME not set in config")
+    Error('MEDIA_BUCKET_NAME not set in config')
   );
 
   const uploaders = manifest.mediaItems.map((m: Media.MediaItem) => {
@@ -227,7 +227,7 @@ function convertAction() {
         const updated = Convert.updateDerivativeReferences(converted);
         const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
         const withoutTemporary = withTagsInsteadOfPools.filter(
-          (u) => u.type !== "TemporaryContent"
+          (u) => u.type !== 'TemporaryContent'
         );
 
         return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
@@ -257,38 +257,38 @@ const anyOf = (ans: string, ...opts: any[]) => {
 
 function suggestUploadAction() {
   return new Promise<string>((res) =>
-    rl.question("Do you want to upload media assets? [y/N] ", res)
+    rl.question('Do you want to upload media assets? [y/N] ', res)
   ).then((answer: string) => {
     rl.close();
 
-    if (anyOf(answer, "y", "yes")) {
-      return uploadAction().then((_r: any) => console.log("Done!"));
+    if (anyOf(answer, 'y', 'yes')) {
+      return uploadAction().then((_r: any) => console.log('Done!'));
     }
-    console.log("Skipping media upload.");
+    console.log('Skipping media upload.');
   });
 }
 
 function helpAction() {
-  console.log("OLI Legacy Course Package Digest Tool");
-  console.log("-------------------------------------\n");
-  console.log("Usage:\n");
-  console.log("Summarizing a course package current OLI DTD element usage:");
+  console.log('OLI Legacy Course Package Digest Tool');
+  console.log('-------------------------------------\n');
+  console.log('Usage:\n');
+  console.log('Summarizing a course package current OLI DTD element usage:');
   console.log(
-    "npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n"
+    'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n'
   );
-  console.log("\nNote: All files and directories must exist ahead of usage");
+  console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
 function main() {
   dotenv.config();
 
   if (validateArgs()) {
-    if (options.operation === "summarize") {
+    if (options.operation === 'summarize') {
       summaryAction();
-    } else if (options.operation === "convert") {
+    } else if (options.operation === 'convert') {
       convertAction().then(() => suggestUploadAction());
-    } else if (options.operation === "upload") {
-      uploadAction().then((_r: any) => console.log("Done!"));
+    } else if (options.operation === 'upload') {
+      uploadAction().then((_r: any) => console.log('Done!'));
     } else {
       helpAction();
       process.exit();

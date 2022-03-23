@@ -1,7 +1,7 @@
-import * as Histogram from "../utils/histogram";
-import { ItemReference } from "../utils/common";
-import { Resource, TorusResource, Summary } from "./resource";
-import * as XML from "../utils/xml";
+import * as Histogram from '../utils/histogram';
+import { ItemReference } from '../utils/common';
+import { Resource, TorusResource, Summary } from './resource';
+import * as XML from '../utils/xml';
 
 export class Objectives extends Resource {
   restructure(_$: any): any {
@@ -12,14 +12,14 @@ export class Objectives extends Resource {
     const objectives: TorusResource[] = [];
     const map: any = {};
 
-    $("objective").each((i: any, elem: any) => {
-      const id = $(elem).attr("id");
+    $('objective').each((i: any, elem: any) => {
+      const id = $(elem).attr('id');
       const title = $(elem).text().trim();
 
       const o = {
-        type: "Objective",
+        type: 'Objective',
         id,
-        originalFile: "",
+        originalFile: '',
         title,
         tags: [],
         unresolvedReferences: [],
@@ -32,9 +32,9 @@ export class Objectives extends Resource {
       objectives.push(o);
     });
 
-    $("skillref").each((i: any, elem: any) => {
-      const id = $(elem).attr("idref");
-      const parentId = $(elem).parent().attr("idref");
+    $('skillref').each((i: any, elem: any) => {
+      const id = $(elem).attr('idref');
+      const parentId = $(elem).parent().attr('idref');
       const o = map[parentId];
       o.objectives.push(id);
     });
@@ -45,10 +45,10 @@ export class Objectives extends Resource {
   summarize(file: string): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
-      type: "Summary",
-      subType: "Objectives",
+      type: 'Summary',
+      subType: 'Objectives',
       elementHistogram: Histogram.create(),
-      id: "",
+      id: '',
       found: () => foundIds,
     };
 

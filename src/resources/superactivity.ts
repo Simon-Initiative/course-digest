@@ -1,8 +1,8 @@
-import * as Histogram from "../utils/histogram";
-import { Resource, TorusResource, Summary, Page } from "./resource";
-import { guid } from "../utils/common";
-import * as XML from "../utils/xml";
-import { Maybe } from "tsmonad";
+import * as Histogram from '../utils/histogram';
+import { Resource, TorusResource, Summary, Page } from './resource';
+import { guid } from '../utils/common';
+import * as XML from '../utils/xml';
+import { Maybe } from 'tsmonad';
 
 export class Superactivity extends Resource {
   restructure(_$: any): any {
@@ -16,15 +16,15 @@ export class Superactivity extends Resource {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
           const legacyId = r.children[0].id;
-          let title = "Superactivity";
+          let title = 'Superactivity';
           const node = r.children[0].children[0];
-          if (node.type === "title") {
+          if (node.type === 'title') {
             title = node.children[0].text;
           }
 
           const defaults = determineActivityDefaults(r.children[0].type, file);
           if (!defaults) {
-            resolve([""]);
+            resolve(['']);
           } else {
             if (navigable) {
               const activity = toActivity(
@@ -35,15 +35,15 @@ export class Superactivity extends Resource {
               );
               const model = [
                 {
-                  type: "activity_placeholder",
+                  type: 'activity_placeholder',
                   children: [],
                   idref: activity.legacyId,
                 },
               ];
               const page: Page = {
-                type: "Page",
+                type: 'Page',
                 id: legacyId,
-                originalFile: "",
+                originalFile: '',
                 title,
                 tags: [],
                 unresolvedReferences: [],
@@ -70,15 +70,15 @@ export class Superactivity extends Resource {
 
   summarize(file: string): Promise<string | Summary> {
     const id = Maybe.maybe(
-      file.split("\\")?.pop()?.split("/")?.pop()?.split(".").shift()
+      file.split('\\')?.pop()?.split('/')?.pop()?.split('.').shift()
     ).caseOf({
       just: (id) => id,
-      nothing: () => "",
+      nothing: () => '',
     });
 
     const summary: Summary = {
-      type: "Summary",
-      subType: "Superactivity",
+      type: 'Summary',
+      subType: 'Superactivity',
       elementHistogram: Histogram.create(),
       id,
       found: () => [],
@@ -105,9 +105,9 @@ function toActivity(
   const id = guid();
 
   return {
-    type: "Activity",
+    type: 'Activity',
     id,
-    originalFile: "",
+    originalFile: '',
     title,
     tags: [],
     unresolvedReferences: [],
@@ -119,13 +119,13 @@ function toActivity(
 }
 
 type ActivityTypes =
-  | "oli_embedded"
-  | "oli_ctat"
-  | "oli_ctat2"
-  | "oli_logiclab"
-  | "oli_bio_sim"
-  | "oli_repl"
-  | "oli_linked_activity";
+  | 'oli_embedded'
+  | 'oli_ctat'
+  | 'oli_ctat2'
+  | 'oli_logiclab'
+  | 'oli_bio_sim'
+  | 'oli_repl'
+  | 'oli_linked_activity';
 
 type ActivityOptions = {
   subType: ActivityTypes;
@@ -138,48 +138,48 @@ function determineActivityDefaults(
   file: string
 ): ActivityOptions | null {
   switch (doctype) {
-    case "embed_activity":
+    case 'embed_activity':
       return {
-        subType: "oli_embedded",
-        base: "embedded",
-        src: "index.html",
+        subType: 'oli_embedded',
+        base: 'embedded',
+        src: 'index.html',
       };
-    case "ctat":
-      if (file.indexOf("x-cmu-ctat-tutor2") !== -1) {
+    case 'ctat':
+      if (file.indexOf('x-cmu-ctat-tutor2') !== -1) {
         return {
-          subType: "oli_ctat2",
-          base: "ctat2",
-          src: "tutor.html",
+          subType: 'oli_ctat2',
+          base: 'ctat2',
+          src: 'tutor.html',
         };
       }
       return {
-        subType: "oli_ctat",
-        base: "ctat",
-        src: "tutor.html",
+        subType: 'oli_ctat',
+        base: 'ctat',
+        src: 'tutor.html',
       };
-    case "logiclab":
+    case 'logiclab':
       return {
-        subType: "oli_logiclab",
-        base: "logiclab",
-        src: "logiclab.html",
+        subType: 'oli_logiclab',
+        base: 'logiclab',
+        src: 'logiclab.html',
       };
-    case "bio_sim":
+    case 'bio_sim':
       return {
-        subType: "oli_bio_sim",
-        base: "bio_simulator",
-        src: "simulator.html",
+        subType: 'oli_bio_sim',
+        base: 'bio_simulator',
+        src: 'simulator.html',
       };
-    case "repl":
+    case 'repl':
       return {
-        subType: "oli_repl",
-        base: "repl",
-        src: "repl.html",
+        subType: 'oli_repl',
+        base: 'repl',
+        src: 'repl.html',
       };
-    case "linked_activity":
+    case 'linked_activity':
       return {
-        subType: "oli_embedded",
-        base: "embedded",
-        src: "index.html",
+        subType: 'oli_embedded',
+        base: 'embedded',
+        src: 'index.html',
       };
     // return {
     //   subType: 'oli_linked_activity',
@@ -208,10 +208,10 @@ function toActivityModel(
       content: [
         {
           id: guid(),
-          type: "p",
+          type: 'p',
           children: [
             {
-              text: "",
+              text: '',
             },
           ],
         },
@@ -222,12 +222,12 @@ function toActivityModel(
       parts: [
         {
           id: guid(),
-          scoringStrategy: "average",
+          scoringStrategy: 'average',
           responses: [],
           hints: [],
         },
       ],
-      previewText: "",
+      previewText: '',
     },
   };
 }

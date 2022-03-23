@@ -12,10 +12,8 @@ export interface HasHistogram {
 
 export function processCodeblock($: any) {
   $('codeblock').each((i: any, item: any) => {
-
     const h = $(item).html();
     if (h.startsWith('<![CDATA[') && h.endsWith(']]>')) {
-
       const html = h
         .substring(9, h.length - 3)
         .split('\n')
@@ -23,7 +21,6 @@ export function processCodeblock($: any) {
         .reduce((s: string, e: string) => s + e);
 
       $(item).html(html);
-
     } else {
       const html = h
         .split('\n')
@@ -31,14 +28,11 @@ export function processCodeblock($: any) {
         .reduce((s: string, e: string) => s + e);
 
       $(item).html(html);
-
     }
-
   });
 }
 
 export function standardContentManipulations($: any) {
-
   // Convert all inline markup elements to <em> tags, this
   // greatly simplifies downstream conversionto JSON
   $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
@@ -53,7 +47,7 @@ export function standardContentManipulations($: any) {
   // <code> is a mixed element, we only want to translate the inline <code>
   // instances to <em> elements.  The block level <code> will get converted
   // to Torus code model elements.
-  ['p', 'li', 'td', 'choice', 'hint', 'feedback'].forEach(e => {
+  ['p', 'li', 'td', 'choice', 'hint', 'feedback'].forEach((e) => {
     $(`${e} code`).each((i: any, item: any) => $(item).attr('style', 'code'));
     DOM.rename($, `${e} code`, 'em');
   });
@@ -104,5 +98,4 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'dl', 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
-
 }

@@ -1,5 +1,5 @@
-import { guid } from "../../utils/common";
-import * as Common from "./common";
+import { guid } from '../../utils/common';
+import * as Common from './common';
 
 // Helper. Assumes a correct ID is given
 interface Identifiable {
@@ -90,18 +90,18 @@ export const updateCATAResponseRules = (model: any) => {
 };
 
 function buildCATAPart(question: any) {
-  const responses = Common.getChild(question.children, "part").children.filter(
-    (p: any) => p.type === "response"
+  const responses = Common.getChild(question.children, 'part').children.filter(
+    (p: any) => p.type === 'response'
   );
-  const hints = Common.getChild(question.children, "part").children.filter(
-    (p: any) => p.type === "hint"
+  const hints = Common.getChild(question.children, 'part').children.filter(
+    (p: any) => p.type === 'hint'
   );
-  const skillrefs = Common.getChild(question.children, "part").children.filter(
-    (p: any) => p.type === "skillref"
+  const skillrefs = Common.getChild(question.children, 'part').children.filter(
+    (p: any) => p.type === 'skillref'
   );
 
   return {
-    id: "1",
+    id: '1',
     responses: responses.map((r: any) => {
       const id = guid();
       return {
@@ -120,7 +120,7 @@ function buildCATAPart(question: any) {
         content: { model: Common.ensureParagraphs(r.children) },
       }))
     ),
-    scoringStrategy: "average",
+    scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
   };
 }
@@ -132,11 +132,11 @@ export function cata(question: any) {
   const model = {
     stem: Common.buildStem(question),
     choices,
-    type: "TargetedCATA",
+    type: 'TargetedCATA',
     authoring: {
       parts: [buildCATAPart(question)],
       transformations: [],
-      previewText: "",
+      previewText: '',
       targeted: [],
       correct: [],
       incorrect: [],
@@ -146,25 +146,25 @@ export function cata(question: any) {
   const correctResponse = model.authoring.parts[0].responses.filter(
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
-  const correctIds = correctResponse.rule.split(",");
+  const correctIds = correctResponse.rule.split(',');
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
   const incorrectIds = choiceIds.filter((x: any) => !correctIds.includes(x));
   const incorrectResponses = model.authoring.parts[0].responses.filter(
-    (r: any) => r.rule === "*"
+    (r: any) => r.rule === '*'
   );
   let incorrectResponse: any;
   if (incorrectResponses.length === 0) {
     const r: any = {
       id: guid(),
       score: 0,
-      rule: "*",
+      rule: '*',
       feedback: {
         id: guid(),
         content: {
           model: [
-            { type: "p", children: [{ text: "Incorrect", children: [] }] },
+            { type: 'p', children: [{ text: 'Incorrect', children: [] }] },
           ],
         },
       },
@@ -179,7 +179,7 @@ export function cata(question: any) {
 
   model.authoring.parts[0].responses.forEach((r: any) => {
     if (r.id !== correctResponse.id && r.id !== incorrectResponse.id) {
-      (model.authoring.targeted as any).push([r.rule.split(","), r.id]);
+      (model.authoring.targeted as any).push([r.rule.split(','), r.id]);
     }
   });
 

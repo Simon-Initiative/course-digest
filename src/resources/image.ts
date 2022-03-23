@@ -1,19 +1,19 @@
 import { replaceAll } from '../utils/xml';
 import { guid } from '../utils/common';
 
-export function convertImageCodingActivities($: any, found: any) : string {
-
+export function convertImageCodingActivities($: any, found: any): string {
   $('code').each((i: any, item: any) => {
     const content = $(item).html();
 
-    if (content.indexOf('image-coding') >= 0 && content.indexOf('xblock') >= 0) {
+    if (
+      content.indexOf('image-coding') >= 0 &&
+      content.indexOf('xblock') >= 0
+    ) {
       const activity = convertXBlock($, item, false);
       replaceWithReference($, item, activity);
 
       found.push(activity);
-
     } else if (content.indexOf('textarea') >= 0) {
-
       const activity = convertExample($, item);
       replaceWithReference($, item, activity);
       found.push(activity);
@@ -21,12 +21,10 @@ export function convertImageCodingActivities($: any, found: any) : string {
   });
 
   return $.html();
-
 }
 
 function convertXBlock($: any, item: any, example: boolean) {
-
-  const content : any = defaultContent(example);
+  const content: any = defaultContent(example);
   const cl = (text: string) => ({
     type: 'code_line',
     id: guid(),
@@ -40,36 +38,42 @@ function convertXBlock($: any, item: any, example: boolean) {
     id: guid(),
     content: {
       model: [
-        { id: guid(), type: 'p', children: [{ text: 'This was a converted image coding exercise' }] },
+        {
+          id: guid(),
+          type: 'p',
+          children: [{ text: 'This was a converted image coding exercise' }],
+        },
         { id: guid(), type: 'code', children: [], language: 'xml' },
         { id: guid(), type: 'p', children: [{ text: ' ' }] },
       ],
     },
   };
 
-  $(item).children('code_line').each((i: any, c: any) => {
-    content.stem.content.model[1].children.push(cl($(c).text()));
-  });
+  $(item)
+    .children('code_line')
+    .each((i: any, c: any) => {
+      content.stem.content.model[1].children.push(cl($(c).text()));
+    });
   return toActivity(content);
 }
 
 function convertExample($: any, item: any) {
-  const content : any = defaultContent(true);
+  const content: any = defaultContent(true);
 
   content.stem = {
     id: guid(),
     content: {
-      model: [
-        { id: guid(), type: 'p', children: [{ text: ' ' }] },
-      ],
+      model: [{ id: guid(), type: 'p', children: [{ text: ' ' }] }],
     },
   };
 
   let starter = '';
 
-  $(item).children('code_line').each((i: any, c: any) => {
-    starter += $(c).text() + '\n';
-  });
+  $(item)
+    .children('code_line')
+    .each((i: any, c: any) => {
+      starter += $(c).text() + '\n';
+    });
 
   starter = replaceAll(starter, '<textarea .*>', '');
   starter = replaceAll(starter, '</textarea>', '');
@@ -187,7 +191,6 @@ function defaultContent(example: boolean) {
 }
 
 function toActivity(content: any) {
-
   const id = guid();
 
   return {
@@ -205,5 +208,7 @@ function toActivity(content: any) {
 }
 
 function replaceWithReference($: any, item: any, activity: any) {
-  $(item).replaceWith(`<activity_placeholder idref="${activity.id}"></activity_placeholder>`);
+  $(item).replaceWith(
+    `<activity_placeholder idref="${activity.id}"></activity_placeholder>`
+  );
 }

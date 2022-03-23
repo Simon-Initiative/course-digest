@@ -1,23 +1,23 @@
-import { MediaSummary } from "media";
-import { guid } from "../utils/common";
-import glob from "glob";
-import fs from "fs";
-import path from "path";
-import mime from "mime-types";
-import md5File from "md5-file";
+import { MediaSummary } from 'media';
+import { guid } from '../utils/common';
+import glob from 'glob';
+import fs from 'fs';
+import path from 'path';
+import mime from 'mime-types';
+import md5File from 'md5-file';
 
 export function addWebContentToMediaSummary(
   directory: string,
   summary: MediaSummary
 ): Promise<MediaSummary> {
-  const getName = (file: string) => file.substr(file.lastIndexOf("webcontent"));
+  const getName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
 
   return new Promise((resolve, _reject) => {
     glob(`${directory}/**/webcontent/**/*.*`, {}, (err: any, files: any) => {
       // Sort file paths by depth to ensure that shallower paths are processed first when a
       // filename conflict, in the now relatively flatted webcontent file structure, is detected
       files.sort((a: string, b: string) => {
-        return a.split("/").length - b.split("/").length;
+        return a.split('/').length - b.split('/').length;
       });
 
       files.forEach((file: string) => {
@@ -38,7 +38,7 @@ export function addWebContentToMediaSummary(
             name,
             flattenedName,
             md5,
-            mimeType: mime.lookup(absolutePath) || "application/octet-stream",
+            mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
             references: [],
             url: toURL(flattenedName),
           };
@@ -56,6 +56,6 @@ function getFilesizeInBytes(filename: string) {
 }
 
 function generateNewName(name: string) {
-  const final = name.replace("webcontent/", `webcontent/${guid()}/`);
+  const final = name.replace('webcontent/', `webcontent/${guid()}/`);
   return final;
 }
