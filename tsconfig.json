@@ -2,7 +2,7 @@
   "compilerOptions": {
       "allowSyntheticDefaultImports": true,
       "module": "commonjs",
-      "target": "es5",
+      "target": "es6",
       "jsx": "preserve",
       "moduleResolution": "node",
       "emitDecoratorMetadata": true,
@@ -17,7 +17,8 @@
       "outDir": "./dist",
       "baseUrl": ".",
       "paths": {
-        "*": ["src/*"]
+        "*": ["src/*"],
+        "parser": ["types/parser"]
       },
       "lib": [
         "es2015",

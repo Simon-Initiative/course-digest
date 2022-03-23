@@ -10,7 +10,7 @@ export function getChild(collection: any, named: string) {
 
 export function ensureParagraphs(children: any) {
   if (children.length === 1 && children[0].text !== undefined) {
-    return [{ type: 'p', children }]
+    return [{ type: 'p', children }];
   }
   return children;
 }
@@ -21,7 +21,7 @@ export function buildStem(question: any) {
   return {
     content: {
       model: ensureParagraphs(stem.children),
-    }
+    },
   };
 }
 
@@ -33,7 +33,6 @@ export function buildChoices(question: any, from = 'multiple_choice') {
     id: c.value,
   }));
 }
-
 
 export function buildTextPart(question: any) {
 
@@ -57,8 +56,8 @@ export function buildTextPart(question: any) {
           content: {
             id: guid(),
             model: ensureParagraphs(r.children[0].children),
-          }
-        }
+          },
+        },
       };
     }),
     hints: ensureThree(hints.map((r: any) => ({
@@ -66,17 +65,17 @@ export function buildTextPart(question: any) {
       content: {
         id: guid(),
         model: ensureParagraphs(r.children),
-      }
+      },
     }))),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
-  }
+  };
 }
 
 export function hint() {
   return {
     id: guid(),
-    content: { model: [{ type: 'p', children: [{ text: '' }] }] }
+    content: { model: [{ type: 'p', children: [{ text: '' }] }] },
   };
 }
 

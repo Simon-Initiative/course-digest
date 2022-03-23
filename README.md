@@ -1,6 +1,6 @@
 # Course Digest
 
-This tool takes as input a full course package source tree and generates a  histogram of XML element usage, bucketed by resource type and version, captured in a single `histogram.csv` output file. 
+This tool takes as input a full course package source tree and generates a histogram of XML element usage, bucketed by resource type and version, captured in a single `histogram.csv` output file.
 
 ## Running from source
 
@@ -11,5 +11,5 @@ To generate a full course package digest using this tool from source:
 ```
 git clone <this repository>
 yarn install
-node ./node_modules/ts-node/dist/bin.js src/index.ts --operation convert --inputDir <course input dir> --outputDir ./out --specificOrg <path to specific org> --specificOrgId <specific org id> --slug <desired project slug> --mediaUrlPrefix https://torus-media-dev.s3.amazonaws.com/media
+node ./node_modules/ts-node/dist/bin.js src/index.ts --operation convert --inputDir <course input dir> --outputDir ./out --specificOrg <optional path to specific org> --specificOrgId <optional specific org id> --mediaUrlPrefix https://torus-media-dev.s3.amazonaws.com/media
 ```

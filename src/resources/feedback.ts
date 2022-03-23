@@ -1,41 +1,36 @@
-
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
-import { Resource, TorusResource, Summary } from './resource';
+import { visit } from "../utils/xml";
+import * as Histogram from "../utils/histogram";
+import { Resource, TorusResource, Summary } from "./resource";
 
 export class Feedback extends Resource {
-
-  restructure($: any) : any {
-
+  restructure(_$: any): any {
+    return;
   }
 
-  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
-    return Promise.resolve(['']);
+  translate(_xml: string, _$: any): Promise<(TorusResource | string)[]> {
+    return Promise.resolve([""]);
   }
 
   summarize(file: string): Promise<string | Summary> {
-
-    const summary : Summary = {
-      type: 'Summary',
-      subType: 'Feedback',
+    const summary: Summary = {
+      type: "Summary",
+      subType: "Feedback",
       elementHistogram: Histogram.create(),
-      id: '',
+      id: "",
       found: () => [],
     };
 
     return new Promise((resolve, reject) => {
-
-      visit(file, (tag: string, attrs: Object) => {
+      visit(file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
-        if (tag === 'feedback') {
-          summary.id = (attrs as any)['id'];
+        if (tag === "feedback") {
+          summary.id = (attrs as any)["id"];
         }
       })
-      .then((result) => {
-        resolve(summary);
-      })
-      .catch(err => reject(err));
+        .then((_result) => {
+          resolve(summary);
+        })
+        .catch((err) => reject(err));
     });
   }
-
 }

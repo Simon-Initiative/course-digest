@@ -6,15 +6,13 @@ import {
   Activity,
 } from "./resources/resource";
 import { determineResourceType, create } from "./resources/create";
-import { executeSerially, guid, ItemReference } from "./utils/common";
+import { executeSerially, guid } from "./utils/common";
 import * as Media from "./media";
 import * as DOM from "./utils/dom";
-const format = require("xml-formatter");
+import fs from "fs";
+import tmp from "tmp";
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
-
-const fs = require("fs");
-const tmp = require("tmp");
 
 export function convert(
   mediaSummary: Media.MediaSummary,
@@ -37,8 +35,8 @@ export function convert(
     Media.transformToFlatDirectory(file, $, mediaSummary);
     if (t === "Organization") {
       if (otherOrgRefs && otherOrgRefs.length > 0) {
-        let module: string = `<unit id="${guid()}"><title>Additional resources</title>`;
-        let items: string = "";
+        let module = `<unit id="${guid()}"><title>Additional resources</title>`;
+        let items = "";
         otherOrgRefs.forEach((val: string) => {
           items = `${items}<item scoring_mode="default"><resourceref idref="${val}"/></item>`;
         });
@@ -82,7 +80,9 @@ export function updateDerivativeReferences(
   );
 }
 
-function createResourceActivityRefs(resources: TorusResource[]): Object {
+function createResourceActivityRefs(
+  resources: TorusResource[]
+): Record<string, unknown> {
   return resources.reduce((m: any, r: TorusResource) => {
     if (r.type === "Page") {
       const page = r as Page;
@@ -112,7 +112,8 @@ function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
 function getPurpose(purpose: string) {
   if (purpose === undefined || purpose === null) {
     return "none";
-  } else if (
+  }
+  if (
     purpose === "checkpoint" ||
     purpose === "didigetthis" ||
     purpose === "learnbydoing" ||
@@ -174,12 +175,14 @@ function updateParentReference(
                     activity_id: d.id,
                     purpose: getPurpose(m.purpose),
                   };
-                } else if (d.type === "TemporaryContent") {
+                }
+                if (d.type === "TemporaryContent") {
                   return (d as TemporaryContent).content;
                 }
               }),
             ];
-          } else if (pageMap[m.idref] !== undefined) {
+          }
+          if (pageMap[m.idref] !== undefined) {
             const page = pageMap[m.idref];
             return [
               ...entries,
@@ -188,11 +191,9 @@ function updateParentReference(
           }
 
           console.log(
-            "Warning: Could not find derived resources for " +
-              m.idref +
-              " within page " +
-              page.id
+            `Warning: Could not find derived resources for ${m.idref} within page ${page.id}`
           );
+
           return entries;
         }
         return [...entries, m];
@@ -217,7 +218,7 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
             type: "Tag",
             originalFile: null,
             id: t,
-            title: "Legacy Pool: " + t,
+            title: `Legacy Pool: ${t}`,
             tags: [],
             unresolvedReferences: [],
             content: {},
@@ -246,7 +247,7 @@ export function output(
   ]);
 }
 
-function outputFile(path: string, o: Object): Promise<boolean> {
+function outputFile(path: string, o: any): Promise<boolean> {
   const content = JSON.stringify(o, undefined, 2);
   return new Promise((resolve, reject) => {
     fs.writeFile(path, content, (err: any) => {

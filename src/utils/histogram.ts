@@ -1,8 +1,14 @@
-export type AttributeHistogram = { [index:string] : number };
-export type ElementDetails = { element: string, count: number, attributes: AttributeHistogram };
-export type ElementHistogram = { [index:string] : ElementDetails };
+import * as csvWriter from "csv-writer";
 
-export type BucketedHistograms = { [index:string] : ElementHistogram };
+export type AttributeHistogram = { [index: string]: number };
+export type ElementDetails = {
+  element: string;
+  count: number;
+  attributes: AttributeHistogram;
+};
+export type ElementHistogram = { [index: string]: ElementDetails };
+
+export type BucketedHistograms = { [index: string]: ElementHistogram };
 
 // Create a new empty histogram
 export function create() {
@@ -12,30 +18,28 @@ export function create() {
 // MUTATES an existing histogram to incorporate the observation of a particular
 // element and its attributes
 export function update(
-  histogram: ElementHistogram, element: string, attrs: Object) : void {
-
+  histogram: ElementHistogram,
+  element: string,
+  attrs: Record<string, unknown>
+): void {
   if (histogram[element] === undefined) {
-    const attributes = Object.keys(attrs).reduce(
-      (p, c) => {
-        (p as any)[c] = 1;
-        return p;
-      },
-      {});
-    histogram[element] = { element, count: 0, attributes: {} };
+    const attributes = Object.keys(attrs).reduce((p, c) => {
+      (p as any)[c] = 1;
+      return p;
+    }, {});
+    histogram[element] = { element, count: 0, attributes: attributes };
   }
 
   const e = histogram[element];
   e.count += 1;
-  e.attributes = Object.keys(attrs).reduce(
-    (p, c) => {
-      if ((p as any)[c] === undefined) {
-        (p as any)[c] = 1;
-      } else {
-        (p as any)[c] = (p as any)[c] + 1;
-      }
-      return p;
-    },
-    e.attributes);
+  e.attributes = Object.keys(attrs).reduce((p, c) => {
+    if ((p as any)[c] === undefined) {
+      (p as any)[c] = 1;
+    } else {
+      (p as any)[c] = (p as any)[c] + 1;
+    }
+    return p;
+  }, e.attributes);
 
   return;
 }
@@ -43,11 +47,13 @@ export function update(
 // Helper function for exported 'merge'.  This merges b into
 // a, mutating a.
 function mergeAll(a: ElementHistogram, b: ElementHistogram) {
-
   Object.keys(b).forEach((element) => {
     if (a[element] === undefined) {
-      a[element] = { element, count: b[element].count,
-        attributes: Object.assign({}, b[element].attributes) };
+      a[element] = {
+        element,
+        count: b[element].count,
+        attributes: Object.assign({}, b[element].attributes),
+      };
     } else {
       a[element].count += b[element].count;
 
@@ -64,7 +70,6 @@ function mergeAll(a: ElementHistogram, b: ElementHistogram) {
 
 // Merges two histograms into one, does not mutate either of the original two
 export function merge(a: ElementHistogram, b: ElementHistogram) {
-
   const merged = create();
 
   mergeAll(merged, a);
@@ -75,32 +80,34 @@ export function merge(a: ElementHistogram, b: ElementHistogram) {
 
 // Determine the union of all elements, sort them as an array
 function getUniqueElements(b: BucketedHistograms) {
-  return Object.keys(Object.keys(b)
-    .reduce((a, c) => [...a, ...Object.keys(b[c])], [])
-    .reduce(
-      (a, c) => {
+  return Object.keys(
+    Object.keys(b)
+      .reduce((a, c) => [...a, ...Object.keys(b[c])], [])
+      .reduce((a, c) => {
         if (a[c] === undefined) {
           a[c] = true;
         }
         return a;
-      },
-      {} as any)).sort();
+      }, {} as any)
+  ).sort();
 }
 
 function buildHeader(b: BucketedHistograms) {
-  return [{ id: 'element', title: 'element' }, ...Object.keys(b).map((k: string) => {
-    return {
-      id: k,
-      title: k,
-    };
-  })];
+  return [
+    { id: "element", title: "element" },
+    ...Object.keys(b).map((k: string) => {
+      return {
+        id: k,
+        title: k,
+      };
+    }),
+  ];
 }
 
 export function outputCSV(outDir: string, b: BucketedHistograms) {
-
   // Open the CSV writer with the header row defined
-  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-  const csvWriter = createCsvWriter({
+  const createCsvWriter = csvWriter.createObjectCsvWriter;
+  const writer = createCsvWriter({
     path: `${outDir}/histogram.csv`,
     header: buildHeader(b),
   });
@@ -108,15 +115,15 @@ export function outputCSV(outDir: string, b: BucketedHistograms) {
   // For each element, in order, create a record where the columns
   // are the bucket types and their counts for that element, along with
   // and entry for the element itself
-  const records = getUniqueElements(b)
-    .map((element: string) => {
-      return Object.keys(b).reduce(
-        (a: any, t: any) => {
-          a[t] = b[t][element] === undefined ? 0 : b[t][element].count;
-          return a;
-        },
-        { element });
-    });
+  const records = getUniqueElements(b).map((element: string) => {
+    return Object.keys(b).reduce(
+      (a: any, t: any) => {
+        a[t] = b[t][element] === undefined ? 0 : b[t][element].count;
+        return a;
+      },
+      { element }
+    );
+  });
 
-  return csvWriter.writeRecords(records);
+  return writer.writeRecords(records);
 }

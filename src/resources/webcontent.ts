@@ -1,11 +1,10 @@
 import { MediaSummary } from "media";
 import { guid } from "../utils/common";
-
-const glob = require("glob");
-const fs = require("fs");
-const path = require("path");
-const mime = require("mime-types");
-const md5File = require("md5-file");
+import glob from "glob";
+import fs from "fs";
+import path from "path";
+import mime from "mime-types";
+import md5File from "md5-file";
 
 export function addWebContentToMediaSummary(
   directory: string,
@@ -13,7 +12,7 @@ export function addWebContentToMediaSummary(
 ): Promise<MediaSummary> {
   const getName = (file: string) => file.substr(file.lastIndexOf("webcontent"));
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     glob(`${directory}/**/webcontent/**/*.*`, {}, (err: any, files: any) => {
       // Sort file paths by depth to ensure that shallower paths are processed first when a
       // filename conflict, in the now relatively flatted webcontent file structure, is detected
@@ -38,7 +37,7 @@ export function addWebContentToMediaSummary(
             fileSize: getFilesizeInBytes(absolutePath),
             name,
             flattenedName,
-            md5: md5,
+            md5,
             mimeType: mime.lookup(absolutePath) || "application/octet-stream",
             references: [],
             url: toURL(flattenedName),

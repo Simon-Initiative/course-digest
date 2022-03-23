@@ -1,7 +1,7 @@
-const path = require("path");
-const fs = require("fs");
-const mime = require("mime-types");
-const md5File = require("md5-file");
+import path from "path";
+import fs from "fs";
+import mime from "mime-types";
+import md5File from "md5-file";
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -91,28 +91,26 @@ export function flatten(
       summary.mediaItems[absolutePath] = {
         file: absolutePath,
         fileSize: getFilesizeInBytes(absolutePath),
-        name: name,
+        name,
         flattenedName,
-        md5: md5,
+        md5,
         mimeType: mime.lookup(absolutePath) || "application/octet-stream",
         references: [ref],
         url: toURL(flattenedName),
       };
 
       return flattenedName;
-    } else {
-      summary.mediaItems[absolutePath].references.push(ref);
-      return summary.mediaItems[absolutePath].url;
     }
-  } else {
-    summary.missing.push(ref);
-    return null;
+    summary.mediaItems[absolutePath].references.push(ref);
+    return summary.mediaItems[absolutePath].url;
   }
+  summary.missing.push(ref);
+  return null;
 }
 
 function getFilesizeInBytes(filename: string) {
-  var stats = fs.statSync(filename);
-  var fileSizeInBytes = stats.size;
+  const stats = fs.statSync(filename);
+  const fileSizeInBytes = stats.size;
   return fileSizeInBytes;
 }
 
@@ -152,8 +150,8 @@ export function resolve(reference: MediaItemReference): string {
 // a Torus project ingestion
 export function stage(
   mediaItems: MediaItem[],
-  remotePath: string,
-  progressCallback: (mediaItem: MediaItem) => void
+  _remotePath: string,
+  _progressCallback: (mediaItem: MediaItem) => void
 ): Promise<UploadResult[]> {
   return Promise.resolve(
     mediaItems.map((mediaItem) => ({ type: "UploadSuccess", mediaItem }))

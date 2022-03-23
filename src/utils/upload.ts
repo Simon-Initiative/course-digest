@@ -1,18 +1,19 @@
-const AWS = require("aws-sdk");
-const fs = require("fs");
+import AWS from "aws-sdk";
+import fs from "fs";
 
 export const upload = (
   file: string,
   filename: string,
   mimeType: string,
-  md5: string
+  md5: string,
+  bucketName: string
 ) => {
   // Read content from the file
   const fileContent = fs.readFileSync(file);
 
   // Setting up S3 upload parameters
-  const params = {
-    Bucket: process.env.MEDIA_BUCKET_NAME,
+  const params: AWS.S3.PutObjectRequest = {
+    Bucket: bucketName,
     Key: `media/${md5}/${filename}`,
     Body: fileContent,
     ContentType: mimeType,

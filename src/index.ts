@@ -8,15 +8,21 @@ import * as Media from "./media";
 import { processResources } from "./process";
 import { upload } from "./utils/upload";
 import { addWebContentToMediaSummary } from "./resources/webcontent";
-
-const fs = require("fs");
-const glob = require("glob");
-const readline = require("readline");
+import dotenv from "dotenv";
+import fs from "fs";
+import glob from "glob";
+import readline from "readline";
+import path from "path";
+import commandLineArgs from "command-line-args";
+import { Maybe } from "tsmonad";
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
+const defaultOrgPath = (inputDir: string) =>
+  path.join(inputDir, "organizations/default/organization.xml");
 
 const optionDefinitions = [
   { name: "operation", type: String, defaultOption: true },
@@ -25,25 +31,25 @@ const optionDefinitions = [
   { name: "inputDir", type: String },
   { name: "specificOrg", type: String },
   { name: "specificOrgId", type: String },
-  { name: "slug", type: String },
   { name: "mediaUrlPrefix", type: String },
 ];
 
-const commandLineArgs = require("command-line-args");
-const options: any = commandLineArgs(optionDefinitions);
+interface CmdOptions extends commandLineArgs.CommandLineOptions {
+  operation: string;
+  mediaManifest: string;
+  outputDir: string;
+  inputDir: string;
+  specificOrg: string;
+  specificOrgId: string;
+  mediaUrlPrefix: string;
+}
+
+const options = commandLineArgs(optionDefinitions) as CmdOptions;
 
 function validateArgs() {
   if (options.operation === "convert") {
-    if (
-      options.mediaUrlPrefix &&
-      options.inputDir &&
-      options.outputDir &&
-      options.specificOrg &&
-      options.specificOrgId
-    ) {
-      return [options.inputDir, options.outputDir, options.specificOrg].every(
-        fs.existsSync
-      );
+    if (options.mediaUrlPrefix && options.inputDir && options.outputDir) {
+      return [options.inputDir, options.outputDir].every(fs.existsSync);
     }
   } else if (options.operation === "summarize") {
     if (options.inputDir && options.outputDir) {
@@ -56,52 +62,51 @@ function validateArgs() {
   return false;
 }
 
-function collectOrgItemReferences(packageDirectory: string, id: string = "") {
-  return new Promise((resolve, reject) => {
-    Orgs.locate(packageDirectory).then((orgs) => {
-      executeSerially(
-        orgs.map((file) => () => {
-          const o = new Orgs.Organization(file, false);
-          return o.summarize(file);
-        })
-      ).then((results: (string | Resources.Summary)[]) => {
-        const seenReferences = {} as any;
-        const references: string[] = [];
-        const referencesOthers: string[] = [];
+function collectOrgItemReferences(packageDirectory: string, id = "") {
+  return Orgs.locate(packageDirectory).then((orgs) =>
+    executeSerially(
+      orgs.map((file) => () => {
+        const o = new Orgs.Organization(file, false);
+        return o.summarize(file);
+      })
+    ).then((results: (string | Resources.Summary)[]) => {
+      const seenReferences = {} as any;
+      const references: string[] = [];
+      const referencesOthers: string[] = [];
 
-        results.forEach((r) => {
-          if (typeof r !== "string") {
-            r.found().forEach((i) => {
-              if (seenReferences[i.id] === undefined) {
-                if (id === "" || id === r.id) {
+      results.forEach((r) => {
+        if (typeof r !== "string") {
+          r.found().forEach((i) => {
+            if (seenReferences[i.id] === undefined) {
+              if (id === "" || id === r.id) {
+                seenReferences[i.id] = true;
+                references.push(i.id);
+              } else {
+                // Add references from all other organization files that are
+                // not part of the main org
+                // Ensure referenced file exists
+                const files = glob.sync(
+                  `${packageDirectory}/**/${i.id}.xml`,
+                  {}
+                );
+                if (files && files.length > 0) {
                   seenReferences[i.id] = true;
                   references.push(i.id);
-                } else {
-                  // Add references from all other organization files that are
-                  // not part of the main org
-                  // Ensure referenced file exists
-                  const files = glob.sync(
-                    `${packageDirectory}/**/${i.id}.xml`,
-                    {}
-                  );
-                  if (files && files.length > 0) {
-                    seenReferences[i.id] = true;
-                    references.push(i.id);
-                    referencesOthers.push(i.id);
-                  }
+                  referencesOthers.push(i.id);
                 }
               }
-            });
-          }
-        });
-
-        const orgReferences = {} as any;
-        orgReferences["orgReferences"] = references;
-        orgReferences["orgReferencesOthers"] = referencesOthers;
-        resolve(orgReferences);
+            }
+          });
+        }
       });
-    });
-  });
+
+      const orgReferences = {} as any;
+      orgReferences["orgReferences"] = references;
+      orgReferences["orgReferencesOthers"] = referencesOthers;
+
+      return orgReferences;
+    })
+  );
 }
 
 // Helper to execute a function that returns a promise, and resolve it
@@ -109,19 +114,15 @@ function collectOrgItemReferences(packageDirectory: string, id: string = "") {
 // allows an easy way to 'pass along' some number of values through a
 // promise change to keep them in scope.
 function alongWith(promiseFunc: any, ...along: any) {
-  return new Promise((resolve, reject) => {
-    promiseFunc()
-      .then((result: any) => resolve([...along, result]))
-      .catch((e: any) => reject(e));
-  });
+  return promiseFunc().then((result: any) => [...along, result]);
 }
 
 function summaryAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg ? options.specificOrg : "";
+  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
 
-  executeSerially([
+  return executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrg),
   ])
@@ -142,7 +143,7 @@ function summaryAction() {
     .then((results: any[]) =>
       Summarize.outputSummary(outputDirectory, results[0], results[1])
     )
-    .then((results: any) => console.log("Done!"))
+    .then((_results: any) => console.log("Done!"))
     .catch((err: any) => console.log(err));
 }
 
@@ -159,15 +160,22 @@ function getSkillIds(packageDirectory: string) {
 }
 
 function uploadAction() {
-  const mediaManifest = options.mediaManifest;
+  const mediaManifest =
+    options.mediaManifest ||
+    path.join(options.outputDir, "_media-manifest.json");
 
   const raw = fs.readFileSync(mediaManifest);
-  const manifest = JSON.parse(raw);
+  const manifest = JSON.parse(raw.toString());
+  const bucketName = Maybe.maybe(process.env.MEDIA_BUCKET_NAME).valueOrThrow(
+    Error("MEDIA_BUCKET_NAME not set in config")
+  );
 
   const uploaders = manifest.mediaItems.map((m: Media.MediaItem) => {
     return () => {
-      console.log(`Uploading ${m.file}`);
-      return upload(m.file, m.name, m.mimeType, m.md5);
+      console.log(`Uploading ${m.file}...`);
+      return upload(m.file, m.name, m.mimeType, m.md5, bucketName).then(
+        (location) => console.log(`${location} complete`)
+      );
     };
   });
 
@@ -177,10 +185,10 @@ function uploadAction() {
 function convertAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg;
+  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
   const specificOrgId = options.specificOrgId;
 
-  executeSerially([
+  return executeSerially([
     () => mapResources(packageDirectory),
     () => collectOrgItemReferences(packageDirectory, specificOrgId),
     () => getLearningObjectiveIds(packageDirectory),
@@ -202,39 +210,43 @@ function convertAction() {
       flattenedNames: {},
     };
 
-    Convert.convert(mediaSummary, orgReferencesOthers, specificOrg, false).then(
-      (results) => {
-        const hierarchy = results[0] as Resources.TorusResource;
+    return Convert.convert(
+      mediaSummary,
+      orgReferencesOthers,
+      specificOrg,
+      false
+    ).then((results) => {
+      const hierarchy = results[0] as Resources.TorusResource;
 
-        processResources(
-          (file: string) => Convert.convert(mediaSummary, null, file, false),
-          references,
-          orgReferences,
-          map
-        ).then((converted: Resources.TorusResource[]) => {
-          const updated = Convert.updateDerivativeReferences(converted);
-          const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
-          const withoutTemporary = withTagsInsteadOfPools.filter(
-            (u) => u.type !== "TemporaryContent"
-          );
-          addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
-            (results) => {
-              const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-                (k: string) => results.mediaItems[k]
-              );
+      return processResources(
+        (file: string) => Convert.convert(mediaSummary, null, file, false),
+        references,
+        orgReferences,
+        map
+      ).then((converted: Resources.TorusResource[]) => {
+        const updated = Convert.updateDerivativeReferences(converted);
+        const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+        const withoutTemporary = withTagsInsteadOfPools.filter(
+          (u) => u.type !== "TemporaryContent"
+        );
 
-              Convert.output(
-                packageDirectory,
-                outputDirectory,
-                hierarchy,
-                withoutTemporary,
-                mediaItems
-              );
-            }
-          );
-        });
-      }
-    );
+        return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
+          (results) => {
+            const mediaItems = Object.keys(mediaSummary.mediaItems).map(
+              (k: string) => results.mediaItems[k]
+            );
+
+            Convert.output(
+              packageDirectory,
+              outputDirectory,
+              hierarchy,
+              withoutTemporary,
+              mediaItems
+            );
+          }
+        );
+      });
+    });
   });
 }
 
@@ -250,10 +262,9 @@ function suggestUploadAction() {
     rl.close();
 
     if (anyOf(answer, "y", "yes")) {
-      uploadAction().then((r: any) => console.log("Done!"));
-    } else {
-      console.log("Skipping media upload.");
+      return uploadAction().then((_r: any) => console.log("Done!"));
     }
+    console.log("Skipping media upload.");
   });
 }
 
@@ -263,22 +274,21 @@ function helpAction() {
   console.log("Usage:\n");
   console.log("Summarizing a course package current OLI DTD element usage:");
   console.log(
-    "npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> [--specificOrgId <organization id> --specificOrg <org path>]\n"
+    "npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n"
   );
   console.log("\nNote: All files and directories must exist ahead of usage");
 }
 
 function main() {
-  require("dotenv").config();
+  dotenv.config();
 
   if (validateArgs()) {
     if (options.operation === "summarize") {
       summaryAction();
     } else if (options.operation === "convert") {
-      convertAction();
-      suggestUploadAction();
+      convertAction().then(() => suggestUploadAction());
     } else if (options.operation === "upload") {
-      uploadAction().then((r: any) => console.log("Done!"));
+      uploadAction().then((_r: any) => console.log("Done!"));
     } else {
       helpAction();
       process.exit();
