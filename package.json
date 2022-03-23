@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/ts-node/dist/bin.js src/index.ts",
+    "start": "ts-node ./node_modules/ts-node/dist/bin.js src/index.ts",
     "test": "jest -c jest.config.js",
     "test:watch": "jest --watch -c jest.config.js",
     "lint": "tslint -p . -c tslint.json 'src/**/*.ts'",
@@ -28,15 +28,15 @@
     "node-xml-stream-parser": "^1.0.12",
     "tmp": "^0.2.1",
     "ts-jest": "^26.3.0",
-    "ts-node": "^9.0.0",
+    "ts-node": "^10.7.0",
     "tslint": "^6.1.3",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^4.0.2",
+    "typescript": "^4.6.2",
     "xml-formatter": "^2.6.1",
     "xml2js": "^0.4.23",
     "xmldom": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.31"
+    "@types/node": "^17.0.22"
   }
 }
