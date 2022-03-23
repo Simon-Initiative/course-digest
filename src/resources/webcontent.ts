@@ -1,10 +1,10 @@
 import { MediaSummary } from 'media';
 import { guid } from '../utils/common';
-import glob from 'glob';
-import fs from 'fs';
-import path from 'path';
-import mime from 'mime-types';
-import md5File from 'md5-file';
+import * as glob from 'glob';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as mime from 'mime-types';
+import * as md5File from 'md5-file';
 
 export function addWebContentToMediaSummary(
   directory: string,

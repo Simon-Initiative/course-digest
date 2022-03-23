@@ -9,8 +9,8 @@ import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid } from './utils/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
-import fs from 'fs';
-import tmp from 'tmp';
+import * as fs from 'fs';
+import * as tmp from 'tmp';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 

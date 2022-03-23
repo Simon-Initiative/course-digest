@@ -1,7 +1,7 @@
 // cheerio based DOM manipulation helpers
 
-import cheerio from 'cheerio';
-import fs from 'fs';
+import * as cheerio from 'cheerio';
+import * as fs from 'fs';
 
 function flattenSection($: any, selector: string, tag: string) {
   const triple = $(selector);

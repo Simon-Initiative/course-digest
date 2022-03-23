@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "target": "es6",
@@ -18,8 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "*": ["src/*"],
-      "parser": ["types/parser"]
     },
+    "typeRoots": ["./types"],
     "lib": ["es2015", "es2016", "es2017"],
     "types": ["node"]
   },

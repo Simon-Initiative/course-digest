@@ -1,7 +1,7 @@
-import path from 'path';
-import fs from 'fs';
-import mime from 'mime-types';
-import md5File from 'md5-file';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as mime from 'mime-types';
+import * as md5File from 'md5-file';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };

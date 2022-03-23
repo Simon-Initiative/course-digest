@@ -1,7 +1,9 @@
 // XML related utilities
 import * as stream from 'stream';
-import Parser from 'parser';
 import * as fs from 'fs';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const xmlParser = require('./parser');
 
 export type TagVisitor = (tag: string, attributes: unknown) => void;
 export type ClosingTagVisitor = (tag: string) => void;
@@ -49,7 +51,7 @@ export function visit(
   closingTagVisitor?: ClosingTagVisitor
 ): Promise<true | string> {
   return new Promise((resolve, reject) => {
-    const parser = new Parser();
+    const parser = new xmlParser();
 
     parser.on('opentag', (tag: string, attrs: any) => {
       if (tag !== null) {
@@ -130,7 +132,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
   const inlines: any = [];
 
   return new Promise((resolve, reject) => {
-    const parser = new Parser(preserveMap);
+    const parser = new xmlParser(preserveMap);
 
     parser.on('opentag', (tag: string, attrs: any) => {
       if (tag !== null) {

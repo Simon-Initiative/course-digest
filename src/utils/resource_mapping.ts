@@ -1,4 +1,4 @@
-import glob from 'glob';
+import * as glob from 'glob';
 
 // Build a map of resource ids to the full path of the resource for all resources
 // found in the OLI legacy course project directory

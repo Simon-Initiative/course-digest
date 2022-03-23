@@ -1,4 +1,4 @@
-import glob from 'glob';
+import * as glob from 'glob';
 import { ItemReference } from '../utils/common';
 import * as Histogram from '../utils/histogram';
 import * as DOM from '../utils/dom';

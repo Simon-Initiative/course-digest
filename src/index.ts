@@ -8,12 +8,12 @@ import * as Media from './media';
 import { processResources } from './process';
 import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
-import dotenv from 'dotenv';
-import fs from 'fs';
-import glob from 'glob';
-import readline from 'readline';
-import path from 'path';
-import commandLineArgs from 'command-line-args';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as readline from 'readline';
+import * as path from 'path';
+import * as commandLineArgs from 'command-line-args';
 import { Maybe } from 'tsmonad';
 
 const rl = readline.createInterface({
