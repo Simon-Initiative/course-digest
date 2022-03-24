@@ -14,6 +14,7 @@ import * as glob from 'glob';
 import * as readline from 'readline';
 import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
+import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 
 const rl = readline.createInterface({
@@ -259,12 +260,40 @@ function suggestUploadAction() {
   return new Promise<string>((res) =>
     rl.question('Do you want to upload media assets? [y/N] ', res)
   ).then((answer: string) => {
-    rl.close();
-
-    if (anyOf(answer, 'y', 'yes')) {
+    if (anyOf(answer || 'n', 'y', 'yes')) {
       return uploadAction().then((_r: any) => console.log('Done!'));
     }
+
     console.log('Skipping media upload.');
+    return;
+  });
+}
+
+function zipAction() {
+  const archive = archiver('zip', { zlib: { level: 9 } });
+  const stream = fs.createWriteStream('out.zip');
+
+  return new Promise<void>((resolve, reject) => {
+    archive
+      .directory(options.outputDir, false)
+      .on('error', (err) => reject(err))
+      .pipe(stream);
+
+    stream.on('close', () => resolve());
+    archive.finalize();
+  });
+}
+
+function suggestZipAction() {
+  return new Promise<string>((res) =>
+    rl.question('Do you want to create a zip archive? [Y/n] ', res)
+  ).then((answer: string) => {
+    if (anyOf(answer || 'y', 'y', 'yes')) {
+      return zipAction().then((_r: any) => console.log('Done!'));
+    }
+
+    console.log('Skipping zip archive.');
+    return;
   });
 }
 
@@ -279,6 +308,11 @@ function helpAction() {
   console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
+function exit() {
+  rl.close();
+  return process.exit();
+}
+
 function main() {
   dotenv.config();
 
@@ -286,16 +320,19 @@ function main() {
     if (options.operation === 'summarize') {
       summaryAction();
     } else if (options.operation === 'convert') {
-      convertAction().then(() => suggestUploadAction());
+      convertAction()
+        .then(suggestZipAction)
+        .then(suggestUploadAction)
+        .then(exit);
     } else if (options.operation === 'upload') {
       uploadAction().then((_r: any) => console.log('Done!'));
     } else {
       helpAction();
-      process.exit();
+      exit();
     }
   } else {
     helpAction();
-    process.exit();
+    exit();
   }
 }
 
