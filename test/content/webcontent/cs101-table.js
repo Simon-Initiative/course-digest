@@ -149,7 +149,7 @@ SimpleTable = function(filename) {
   this.fields = splitCSV(lines[0]);
   lines.splice(0, 1);  // remove 0th element
 
-  var rows = new Array();
+  var rows = [];
   for (i in lines) {
     var parts = splitCSV(lines[i], this.fields.length);
     if (parts != null) {  // essentially we skip blank lines

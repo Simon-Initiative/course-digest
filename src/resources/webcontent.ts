@@ -1,31 +1,33 @@
 import { MediaSummary } from 'media';
 import { guid } from '../utils/common';
+import * as glob from 'glob';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as mime from 'mime-types';
+import * as md5File from 'md5-file';
 
-const glob = require('glob');
-const fs = require('fs');
-const path = require('path');
-const mime = require('mime-types');
-const md5File = require('md5-file');
-
-export function addWebContentToMediaSummary(directory: string, summary: MediaSummary)
-  : Promise<MediaSummary> {
+export function addWebContentToMediaSummary(
+  directory: string,
+  summary: MediaSummary
+): Promise<MediaSummary> {
   const getName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
-  const toURL = (name: string) => `${summary.urlPrefix}/${summary.projectSlug}/${name}`;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     glob(`${directory}/**/webcontent/**/*.*`, {}, (err: any, files: any) => {
-
       // Sort file paths by depth to ensure that shallower paths are processed first when a
       // filename conflict, in the now relatively flatted webcontent file structure, is detected
       files.sort((a: string, b: string) => {
-        return (a.split('/')).length - (b.split('/')).length;
+        return a.split('/').length - b.split('/').length;
       });
 
       files.forEach((file: string) => {
         const absolutePath = path.resolve(file);
         const name = getName(absolutePath);
+        const md5 = md5File.sync(absolutePath);
+        const toURL = (name: string) => `${summary.urlPrefix}/${md5}/${name}`;
+
         if (summary.mediaItems[absolutePath] === undefined) {
-          const flattenedName = (summary.flattenedNames[name])
+          const flattenedName = summary.flattenedNames[name]
             ? generateNewName(name)
             : name;
 
@@ -33,8 +35,9 @@ export function addWebContentToMediaSummary(directory: string, summary: MediaSum
           summary.mediaItems[absolutePath] = {
             file: absolutePath,
             fileSize: getFilesizeInBytes(absolutePath),
+            name,
             flattenedName,
-            md5: md5File.sync(absolutePath),
+            md5,
             mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
             references: [],
             url: toURL(flattenedName),

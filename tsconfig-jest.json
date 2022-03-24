@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
-      "inlineSourceMap": true,
-      "inlineSources": true,
-      "sourceMap": true
+    "module": "commonjs",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "sourceMap": true
   }
 }

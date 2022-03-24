@@ -1,10 +1,9 @@
 // cheerio based DOM manipulation helpers
 
-const cheerio = require('cheerio');
-const fs = require('fs');
+import * as cheerio from 'cheerio';
+import * as fs from 'fs';
 
 function flattenSection($: any, selector: string, tag: string) {
-
   const triple = $(selector);
 
   triple.each((i: any, elem: any) => {
@@ -31,7 +30,6 @@ function flattenSection($: any, selector: string, tag: string) {
 // </a>
 //
 export function eliminateLevel($: any, selector: string) {
-
   const triple = $(selector);
 
   triple.each((i: any, elem: any) => {
@@ -40,7 +38,6 @@ export function eliminateLevel($: any, selector: string) {
 }
 
 export function flattenResourceRefs($: any) {
-
   const refs = $('item resourceref');
 
   refs.each((i: any, elem: any) => {
@@ -49,15 +46,21 @@ export function flattenResourceRefs($: any) {
   });
 }
 
-export function moveAttrToChildren($: any, item: any, attr: string, childType: string) {
-
+export function moveAttrToChildren(
+  $: any,
+  item: any,
+  attr: string,
+  childType: string
+) {
   const value = $(item).attr(attr);
   if (value !== undefined && value !== null) {
-    $(item).children().each((i: any, c: any) => {
-      if (c.tagName == childType) {
-        $(c).attr(attr, value);
-      }
-    });
+    $(item)
+      .children()
+      .each((i: any, c: any) => {
+        if (c.tagName == childType) {
+          $(c).attr(attr, value);
+        }
+      });
   }
   $(item).removeAttr(attr);
 }
@@ -66,7 +69,12 @@ export function rename($: any, source: string, dest: string) {
   $(source).each((i: any, item: any) => (item.tagName = dest));
 }
 
-export function renameAttribute($: any, tag: string, source: string, dest: string) {
+export function renameAttribute(
+  $: any,
+  tag: string,
+  source: string,
+  dest: string
+) {
   $(tag).each((i: any, item: any) => {
     const value = $(item).attr(source);
 
@@ -101,14 +109,12 @@ export function mergeTitles($: any) {
 }
 
 export function mergeCaptions($: any) {
-
   handleLabelledContent($, 'table');
   handleLabelledContent($, 'audio');
   handleLabelledContent($, 'iframe');
   handleLabelledContent($, 'youtube');
   handleLabelledContent($, 'image');
   handleLabelledContent($, 'video');
-  
 }
 
 function mergeElement($: any, selector: string, element: string) {
@@ -125,14 +131,14 @@ function handleLabelledContent($: any, selector: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
-    const title = $(elem).children("title").text();
-    const caption = $(elem).children("caption").text();
+    const title = $(elem).children('title').text();
+    const caption = $(elem).children('caption').text();
 
     const combined = (title + ' ' + caption).trim();
 
-    $(elem).attr("caption", combined);
-    $(elem).children().remove("title");
-    $(elem).children().remove("caption");
+    $(elem).attr('caption', combined);
+    $(elem).children().remove('title');
+    $(elem).children().remove('caption');
   });
 }
 
@@ -146,7 +152,6 @@ export function remove($: any, element: string) {
 }
 
 export function flattenNestedSections($: any) {
-
   flattenSection($, 'section section section section section section', 'h6');
   flattenSection($, 'section section section section section', 'h5');
   flattenSection($, 'section section section section', 'h4');
@@ -156,10 +161,17 @@ export function flattenNestedSections($: any) {
 }
 
 export function read(file: string, options = {}) {
-  const content = fs.readFileSync(file, 'utf-8', 'r+');
+  const content = fs.readFileSync(file, 'utf-8');
 
-  return cheerio.load(content, Object.assign({}, {
-    normalizeWhitespace: true,
-    xmlMode: true,
-  }, options));
+  return cheerio.load(
+    content,
+    Object.assign(
+      {},
+      {
+        normalizeWhitespace: true,
+        xmlMode: true,
+      },
+      options
+    )
+  );
 }

@@ -4,16 +4,13 @@ import { Resource, TorusResource, Summary } from './resource';
 import * as XML from '../utils/xml';
 
 export class Skills extends Resource {
-
-  restructure($: any) : any {
-
+  restructure(_$: any): any {
+    return;
   }
 
-  translate(xml: string, $: any) : Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
+    const objectives: TorusResource[] = [];
 
-    const objectives : TorusResource[] = [];
-    const map : any = {};
-    
     $('skill').each((i: any, elem: any) => {
       const id = $(elem).attr('id');
       const title = $(elem).text().trim();
@@ -34,13 +31,11 @@ export class Skills extends Resource {
     });
 
     return Promise.resolve(objectives as TorusResource[]);
-    
   }
 
   summarize(file: string): Promise<string | Summary> {
-
     const foundIds: ItemReference[] = [];
-    const summary : Summary = {
+    const summary: Summary = {
       type: 'Summary',
       subType: 'Objectives',
       elementHistogram: Histogram.create(),
@@ -49,18 +44,13 @@ export class Skills extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-
-      XML.visit(file, (tag: string, attrs: Object) => {
-
+      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
-
       })
-      .then((result) => {
-        resolve(summary);
-      })
-      .catch(err => reject(err));
+        .then((_result) => {
+          resolve(summary);
+        })
+        .catch((err) => reject(err));
     });
   }
-
 }
-

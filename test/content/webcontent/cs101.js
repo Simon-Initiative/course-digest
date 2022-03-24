@@ -1096,7 +1096,7 @@ SimpleImage.prototype.flush = function() {
 
 // Export an image as an array of pixels for the for-loop.
 SimpleImage.prototype.toArray = function() {
-  var array = new Array();  // 1. simple-way (this is as good or faster in various browser tests)
+  var array = [];  // 1. simple-way (this is as good or faster in various browser tests)
   //var array = new Array(this.getWidth() * this.getHeight()); // 2. alloc way
   //var i = 0;  // 2.
   // nip 2012-7  .. change to cache-friendly y/x ordering
@@ -1345,7 +1345,7 @@ function retrieveCodeText(outputid, id_re) {
   if (!localStorage) return;
   if (window.storeinhibit) return;
 
-  var keys = new Array();
+  var keys = [];
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
     if (key.indexOf(storeprefix) == 0 && (!id_re || id_re.test(key))) {

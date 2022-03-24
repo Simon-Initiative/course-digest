@@ -1,33 +1,33 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
+Object.defineProperty(exports, '__esModule', {
+  value: true,
 });
 exports.EVENTS = undefined;
 
-let _createClass = (function() {
+let _createClass = (function () {
   function defineProperties(target, props) {
     for (let i = 0; i < props.length; i++) {
       let descriptor = props[i];
       descriptor.enumerable = descriptor.enumerable || false;
       descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
+      if ('value' in descriptor) descriptor.writable = true;
       Object.defineProperty(target, descriptor.key, descriptor);
     }
   }
 
-  return function(Constructor, protoProps, staticProps) {
+  return function (Constructor, protoProps, staticProps) {
     if (protoProps) defineProperties(Constructor.prototype, protoProps);
     if (staticProps) defineProperties(Constructor, staticProps);
     return Constructor;
   };
 })();
 
-const _stream = require("stream");
+const _stream = require('stream');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
+    throw new TypeError('Cannot call a class as a function');
   }
 }
 
@@ -37,15 +37,15 @@ function _possibleConstructorReturn(self, call) {
       "this hasn't been initialised - super() hasn't been called"
     );
   }
-  return call && (typeof call === "object" || typeof call === "function")
+  return call && (typeof call === 'object' || typeof call === 'function')
     ? call
     : self;
 }
 
 function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
+  if (typeof superClass !== 'function' && superClass !== null) {
     throw new TypeError(
-      "Super expression must either be null or a function, not " +
+      'Super expression must either be null or a function, not ' +
         typeof superClass
     );
   }
@@ -54,8 +54,8 @@ function _inherits(subClass, superClass) {
       value: subClass,
       enumerable: false,
       writable: true,
-      configurable: true
-    }
+      configurable: true,
+    },
   });
   if (superClass)
     Object.setPrototypeOf
@@ -95,7 +95,7 @@ function _inherits(subClass, superClass) {
  *
  */
 
-const Parser = (function(_Writable) {
+const Parser = (function (_Writable) {
   _inherits(Parser, _Writable);
 
   function Parser(preserveWhitespaceWithin = {}) {
@@ -107,20 +107,20 @@ const Parser = (function(_Writable) {
     );
 
     _this.state = STATE.TEXT;
-    _this.buffer = "";
+    _this.buffer = '';
     _this.pos = 0;
     _this.tagType = TAG_TYPE.NONE;
     _this.preserveWhitespaceWithin = preserveWhitespaceWithin;
     _this.tagStack = [];
-    
+
     return _this;
   }
 
   _createClass(Parser, [
     {
-      key: "_write",
+      key: '_write',
       value: function _write(chunk, encoding, done) {
-        chunk = typeof chunk !== "string" ? chunk.toString() : chunk;
+        chunk = typeof chunk !== 'string' ? chunk.toString() : chunk;
         for (let i = 0; i < chunk.length; i++) {
           let c = chunk[i];
           let prev = this.buffer[this.pos - 1];
@@ -129,32 +129,32 @@ const Parser = (function(_Writable) {
 
           switch (this.state) {
             case STATE.TEXT:
-              if (c === "<") this._onStartNewTag();
+              if (c === '<') this._onStartNewTag();
               break;
 
             case STATE.TAG_NAME:
-              if (prev === "<" && c === "?") {
+              if (prev === '<' && c === '?') {
                 this._onStartInstruction();
               }
-              if (prev === "<" && c === "/") {
+              if (prev === '<' && c === '/') {
                 this._onCloseTagStart();
               }
               if (
-                this.buffer[this.pos - 3] === "<" &&
-                prev === "!" &&
-                c === "["
+                this.buffer[this.pos - 3] === '<' &&
+                prev === '!' &&
+                c === '['
               ) {
                 this._onCDATAStart();
               }
               if (
-                this.buffer[this.pos - 3] === "<" &&
-                prev === "!" &&
-                c === "-"
+                this.buffer[this.pos - 3] === '<' &&
+                prev === '!' &&
+                c === '-'
               ) {
                 this._onCommentStart();
               }
-              if (c === ">") {
-                if (prev === "/") {
+              if (c === '>') {
+                if (prev === '/') {
                   this.tagType = TAG_TYPE.SELF_CLOSING;
                 }
                 this._onTagCompleted();
@@ -162,60 +162,66 @@ const Parser = (function(_Writable) {
               break;
 
             case STATE.INSTRUCTION:
-              if (prev === "?" && c === ">") this._onEndInstruction();
+              if (prev === '?' && c === '>') this._onEndInstruction();
               break;
 
             case STATE.CDATA:
-              if (this.buffer[this.pos - 3] === "]" && prev === "]" && c === ">") this._onCDATAEnd();
+              if (
+                this.buffer[this.pos - 3] === ']' &&
+                prev === ']' &&
+                c === '>'
+              )
+                this._onCDATAEnd();
               break;
 
             case STATE.IGNORE_COMMENT:
               if (
-                this.buffer[this.pos - 3] === "-" &&
-                prev === "-" &&
-                c === ">"
+                this.buffer[this.pos - 3] === '-' &&
+                prev === '-' &&
+                c === '>'
               )
                 this._onCommentEnd();
               break;
           }
         }
         done();
-      }
+      },
     },
     {
-      key: "_endRecording",
+      key: '_endRecording',
       value: function _endRecording() {
         let rec = this.buffer.slice(1, this.pos - 1);
         this.buffer = this.buffer.slice(-1); // Keep last item in buffer for prev comparison in main loop.
         this.pos = 1; // Reset the position (since the buffer was reset)
         return rec;
-      }
+      },
     },
     {
-      key: "_onStartNewTag",
+      key: '_onStartNewTag',
       value: function _onStartNewTag() {
         let rawText = this._endRecording();
         let trimmed = rawText.trim();
 
-
-
         if (rawText !== '') {
-
-          const preserve = this.tagStack.length > 0 ? this.preserveWhitespaceWithin[this.tagStack[this.tagStack.length - 1]] : false;
+          const preserve =
+            this.tagStack.length > 0
+              ? this.preserveWhitespaceWithin[
+                  this.tagStack[this.tagStack.length - 1]
+                ]
+              : false;
 
           if (preserve) {
             this.emit(EVENTS.TEXT, rawText);
           } else if (trimmed) {
             this.emit(EVENTS.TEXT, trimmed);
           }
-          
         }
         this.state = STATE.TAG_NAME;
         this.tagType = TAG_TYPE.OPENING;
-      }
+      },
     },
     {
-      key: "_onTagCompleted",
+      key: '_onTagCompleted',
       value: function _onTagCompleted() {
         let tag = this._endRecording();
 
@@ -226,7 +232,7 @@ const Parser = (function(_Writable) {
         if (name === null) {
           this.emit(
             EVENTS.ERROR,
-            new Error("Failed to parse name for tag" + tag)
+            new Error('Failed to parse name for tag' + tag)
           );
         }
 
@@ -252,24 +258,24 @@ const Parser = (function(_Writable) {
 
         this.state = STATE.TEXT;
         this.tagType = TAG_TYPE.NONE;
-      }
+      },
     },
     {
-      key: "_onCloseTagStart",
+      key: '_onCloseTagStart',
       value: function _onCloseTagStart() {
         this._endRecording();
         this.tagType = TAG_TYPE.CLOSING;
-      }
+      },
     },
     {
-      key: "_onStartInstruction",
+      key: '_onStartInstruction',
       value: function _onStartInstruction() {
         this._endRecording();
         this.state = STATE.INSTRUCTION;
-      }
+      },
     },
     {
-      key: "_onEndInstruction",
+      key: '_onEndInstruction',
       value: function _onEndInstruction() {
         this.pos -= 1; // Move position back 1 step since instruction ends with '?>'
         let inst = this._endRecording();
@@ -281,42 +287,42 @@ const Parser = (function(_Writable) {
         if (name === null) {
           this.emit(
             EVENTS.ERROR,
-            new Error("Failed to parse name for inst" + inst)
+            new Error('Failed to parse name for inst' + inst)
           );
         }
         this.emit(EVENTS.INSTRUCTION, name, attributes);
         this.state = STATE.TEXT;
-      }
+      },
     },
     {
-      key: "_onCDATAStart",
+      key: '_onCDATAStart',
       value: function _onCDATAStart() {
         this._endRecording();
         this.state = STATE.CDATA;
-      }
+      },
     },
     {
-      key: "_onCDATAEnd",
+      key: '_onCDATAEnd',
       value: function _onCDATAEnd() {
         let text = this._endRecording(); // Will return CDATA[XXX] we regexp out the actual text in the CDATA.
-        text = text.slice(text.indexOf("[") + 1, text.lastIndexOf("]>") - 1);
+        text = text.slice(text.indexOf('[') + 1, text.lastIndexOf(']>') - 1);
         this.state = STATE.TEXT;
 
         this.emit(EVENTS.CDATA, text, this.tagStack);
-      }
+      },
     },
     {
-      key: "_onCommentStart",
+      key: '_onCommentStart',
       value: function _onCommentStart() {
         this.state = STATE.IGNORE_COMMENT;
-      }
+      },
     },
     {
-      key: "_onCommentEnd",
+      key: '_onCommentEnd',
       value: function _onCommentEnd() {
         this._endRecording();
         this.state = STATE.TEXT;
-      }
+      },
 
       /**
        * Helper to parse a tag string 'xml version="2.0" encoding="utf-8"' with regexp.
@@ -325,7 +331,7 @@ const Parser = (function(_Writable) {
        */
     },
     {
-      key: "_parseTagString",
+      key: '_parseTagString',
       value: function _parseTagString(str) {
         // parse name
 
@@ -341,14 +347,14 @@ const Parser = (function(_Writable) {
             attributes[match[1]] = match[2];
             match = attributeRegexp.exec(attributesString);
           }
-          if (name[name.length - 1] === "/") {
+          if (name[name.length - 1] === '/') {
             name = name.substr(0, name.length - 1);
           }
           return { name: name, attributes: attributes };
         }
         return { name: null, attributes: {} };
-      }
-    }
+      },
+    },
   ]);
 
   return Parser;
@@ -361,21 +367,21 @@ const STATE = {
   TAG_NAME: 1,
   INSTRUCTION: 2,
   IGNORE_COMMENT: 4,
-  CDATA: 8
+  CDATA: 8,
 };
 
 const TAG_TYPE = {
   NONE: 0,
   OPENING: 1,
   CLOSING: 2,
-  SELF_CLOSING: 3
+  SELF_CLOSING: 3,
 };
 
 const EVENTS = (exports.EVENTS = {
-  ERROR: "error",
-  TEXT: "text",
-  INSTRUCTION: "instruction",
-  OPEN_TAG: "opentag",
-  CLOSE_TAG: "closetag",
-  CDATA: "cdata"
+  ERROR: 'error',
+  TEXT: 'text',
+  INSTRUCTION: 'instruction',
+  OPEN_TAG: 'opentag',
+  CLOSE_TAG: 'closetag',
+  CDATA: 'cdata',
 });

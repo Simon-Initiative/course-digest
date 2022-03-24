@@ -1,9 +1,9 @@
 node_modules
 *~
 out/
-out.zip
 .DS_Store
 .env
 /yarn-error.log
 /out.zip
 /.idea/
+webcontent

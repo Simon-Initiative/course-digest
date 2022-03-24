@@ -1,11 +1,10 @@
-
 export type ItemReference = {
-  id: string,
+  id: string;
 };
 
 export type MissingResource = {
-  type: 'MissingResource',
-  id: string,
+  type: 'MissingResource';
+  id: string;
 };
 
 export function replaceAll(s: string, t: string, w: string) {
@@ -20,8 +19,10 @@ export const executeSerially = (funcs: any) =>
   funcs.reduce(
     (promise: any, func: any) =>
       promise.then((result: any) =>
-      func().then(Array.prototype.concat.bind(result))),
-    Promise.resolve([]));
+        func().then(Array.prototype.concat.bind(result))
+      ),
+    Promise.resolve([])
+  );
 
 export enum LegacyTypes {
   package = 'x-oli-package',

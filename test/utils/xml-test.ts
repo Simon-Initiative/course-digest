@@ -7,7 +7,9 @@ describe('unicode conversion', () => {
     const r = replaceUnicodeReferences('This is a test&#x2014;');
     expect(r).toEqual('This is a test\u2014');
 
-    const t = replaceUnicodeReferences('This is a test&#x2014; with two &#x2014;');
+    const t = replaceUnicodeReferences(
+      'This is a test&#x2014; with two &#x2014;'
+    );
     expect(t).toEqual('This is a test\u2014 with two \u2014');
   });
 });
@@ -20,7 +22,7 @@ describe('xml visiting', () => {
       { tag: 'test', attributes: { a: 'a', b: 'b' } },
     ];
 
-    const visitor = (tag: string, attrs: Object) => {
+    const visitor = (tag: string, attrs: any) => {
       const last = expectedTags[expectedTags.length - 1];
       expect(tag).toEqual(last.tag);
       expect(attrs).toEqual(last.attributes);

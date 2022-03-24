@@ -1,9 +1,11 @@
 // XML related utilities
-const stream = require('stream');
-const Parser = require('./parser.js');
-const fs = require('fs');
+import * as stream from 'stream';
+import * as fs from 'fs';
 
-export type TagVisitor = (tag: string, attributes: Object) => void;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const xmlParser = require('./parser');
+
+export type TagVisitor = (tag: string, attributes: unknown) => void;
 export type ClosingTagVisitor = (tag: string) => void;
 
 function getPastDocType(content: string): string {
@@ -13,12 +15,14 @@ function getPastDocType(content: string): string {
   return content;
 }
 
-function inlineAttrName(attrs: any) {
+function inlineAttrName(attrs: Record<string, unknown>) {
   if (attrs['style'] === 'bold') {
     return 'strong';
-  } else if (attrs['style'] === 'italic') {
+  }
+  if (attrs['style'] === 'italic') {
     return 'em';
-  } else if (attrs['style'] === 'code') {
+  }
+  if (attrs['style'] === 'code') {
     return 'code';
   } else if (attrs['style'] === 'sub') {
     return 'sub';
@@ -30,13 +34,10 @@ function inlineAttrName(attrs: any) {
 }
 
 function inlinesToObject(inlines: any) {
-  return inlines.reduce(
-    (m: any, style: any) => {
-      m[style] = true;
-      return m
-    },
-    {}
-  )
+  return inlines.reduce((m: any, style: any) => {
+    m[style] = true;
+    return m;
+  }, {});
 }
 
 // Visit all tags and their attributes in an XML file in a top-down
@@ -45,32 +46,33 @@ function inlinesToObject(inlines: any) {
 // if an error is encountered.  The 'visitor' callback function will be
 // executed for every tag (element) encountered in the XML document.
 export function visit(
-  file: string, visitor: TagVisitor,
-  closingTagVisitor?: ClosingTagVisitor): Promise<true | string> {
-
+  file: string,
+  visitor: TagVisitor,
+  closingTagVisitor?: ClosingTagVisitor
+): Promise<true | string> {
   return new Promise((resolve, reject) => {
+    const parser = new xmlParser();
 
-    const parser = new Parser();
-
-    parser.on('opentag', (tag: string, attrs: Object) => {
-
+    parser.on('opentag', (tag: string, attrs: any) => {
       if (tag !== null) {
-
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
           cleanedTag = cleanedTag.substr(0, cleanedTag.length - 1);
         }
 
-        Object.keys(attrs)
-          .forEach((k) => {
-
-            if (typeof (attrs as any)[k] === 'string' && (attrs as any)[k].endsWith('/')) {
-              (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
-            }
-          });
+        Object.keys(attrs).forEach((k) => {
+          if (
+            typeof (attrs as any)[k] === 'string' &&
+            (attrs as any)[k].endsWith('/')
+          ) {
+            (attrs as any)[k] = (attrs as any)[k].substr(
+              0,
+              (attrs as any)[k].length - 1
+            );
+          }
+        });
 
         visitor(cleanedTag, attrs);
-
       }
     });
 
@@ -91,14 +93,13 @@ export function visit(
       reject(err);
     });
 
-    const content: string = fs.readFileSync(file, 'utf-8', 'r+');
+    const content: string = fs.readFileSync(file, 'utf-8');
     const dtdRemoved = getPastDocType(content);
 
     const s = new stream.PassThrough();
     s.write(dtdRemoved);
     s.end();
     s.pipe(parser);
-
   });
 }
 
@@ -106,26 +107,19 @@ function isInline(tag: string) {
   return tag === 'em';
 }
 
-function all(s: string, t: string) {
-  var re = new RegExp(t, 'g');
-  return s.replace(re, '');
-}
-
 export function replaceAll(s: string, t: string, w: string) {
-  var re = new RegExp(t, 'g');
+  const re = new RegExp(t, 'g');
   return s.replace(re, w);
 }
 
 export function replaceUnicodeReferences(s: string): string {
-
-  return s.replace(/\&\#x.*?;/g, (matched, index, original) => {
+  return s.replace(/&#x.*?;/g, (matched, _index, _original) => {
     const parsed = parseInt(matched.substring(3, matched.length - 1), 16);
     return String.fromCharCode(parsed);
   });
 }
 
-export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
-
+export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
   const root: any = {};
   root.children = [];
 
@@ -138,11 +132,9 @@ export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
   const inlines: any = [];
 
   return new Promise((resolve, reject) => {
-
-    const parser = new Parser(preserveMap);
+    const parser = new xmlParser(preserveMap);
 
     parser.on('opentag', (tag: string, attrs: any) => {
-
       if (tag !== null) {
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
@@ -151,32 +143,32 @@ export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
 
         if (isInline(cleanedTag)) {
           inlines.push(inlineAttrName(attrs));
-
         } else {
           const object: any = { type: cleanedTag, children: [] };
 
-          Object.keys(attrs)
-            .forEach((k) => {
-              if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
-                (attrs as any)[k] = (attrs as any)[k].substr(0, (attrs as any)[k].length - 1);
-              }
-            });
-          Object.keys(attrs).forEach(k => {
-            object[k] = typeof attrs[k] === 'string' ? replaceUnicodeReferences(attrs[k]) : attrs[k];
+          Object.keys(attrs).forEach((k) => {
+            if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
+              (attrs as any)[k] = (attrs as any)[k].substr(
+                0,
+                (attrs as any)[k].length - 1
+              );
+            }
+          });
+          Object.keys(attrs).forEach((k) => {
+            object[k] =
+              typeof attrs[k] === 'string'
+                ? replaceUnicodeReferences(attrs[k])
+                : attrs[k];
           });
           if (top() !== undefined) {
-
             top().children.push(object);
           }
           push(object);
         }
-
       }
     });
 
-
     parser.on('closetag', (tag: string) => {
-
       if (isInline(tag)) {
         inlines.pop();
         return;
@@ -198,9 +190,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
         }
       };
 
-
       if (tag !== null) {
-
         ensureNotEmpty('p');
         ensureNotEmpty('th');
         ensureNotEmpty('td');
@@ -226,18 +216,16 @@ export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
     });
 
     parser.on('text', (raw: string) => {
-
-      let text = replaceAll(raw, '&quot;', '\"');
+      let text = replaceAll(raw, '&quot;', '"');
       text = replaceAll(text, '&amp;', '&');
       text = replaceAll(text, '&lt;', '<');
       text = replaceAll(text, '&gt;', '>');
-      text = replaceAll(text, '&apos;', '\'');
+      text = replaceAll(text, '&apos;', "'");
 
       text = replaceUnicodeReferences(text);
 
       const object: any = Object.assign({}, { text }, inlinesToObject(inlines));
       top().children.push(object);
-
     });
     parser.on('cdata', (cdata: string) => {
       top().children.push({ text: cdata });
@@ -257,14 +245,12 @@ export function toJSON(xml: string, preserveMap = {}): Promise<Object> {
     s.write(dtdRemoved);
     s.end();
     s.pipe(parser);
-
   });
 }
 
 export function rootTag(file: string): Promise<string> {
-
-  return new Promise((resolve, reject) => {
-    const content: string = fs.readFileSync(file, 'utf-8', 'r+');
+  return new Promise((resolve, _reject) => {
+    const content: string = fs.readFileSync(file, 'utf-8');
     const dtd = content.substr(content.indexOf('<!DOCTYPE'));
     resolve(dtd.substr(0, dtd.indexOf('>') + 1));
   });
