@@ -24,7 +24,6 @@
     "jest": "^26.6.3",
     "md5-file": "^5.0.0",
     "mime-types": "^2.1.29",
-    "node": "^14.8.0",
     "node-xml-stream-parser": "^1.0.12",
     "tmp": "^0.2.1",
     "tsmonad": "^0.8.0",
