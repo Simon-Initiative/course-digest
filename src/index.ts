@@ -50,11 +50,11 @@ const options = commandLineArgs(optionDefinitions) as CmdOptions;
 function validateArgs() {
   if (options.operation === 'convert') {
     if (options.mediaUrlPrefix && options.inputDir && options.outputDir) {
-      return [options.inputDir, options.outputDir].every(fs.existsSync);
+      return [options.inputDir].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
-      return [options.inputDir, options.outputDir].every(fs.existsSync);
+      return [options.inputDir].every(fs.existsSync);
     }
   } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
@@ -305,7 +305,6 @@ function helpAction() {
   console.log(
     'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n'
   );
-  console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
 function exit() {

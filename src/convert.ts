@@ -265,9 +265,11 @@ function outputFile(path: string, o: any): Promise<boolean> {
 async function wipeAndCreateOutput(outputDir: string) {
   // delete non-empty directory and recreate
   return new Promise<void>((resolve, reject) =>
-    fs.rm(outputDir, { recursive: true }, (err) =>
-      err ? reject(err) : resolve()
-    )
+    fs.existsSync(outputDir)
+      ? fs.rm(outputDir, { recursive: true }, (err) =>
+          err ? reject(err) : resolve()
+        )
+      : resolve()
   ).then(
     () =>
       new Promise<void>((resolve, reject) =>
