@@ -22,9 +22,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const defaultOrgPath = (inputDir: string) =>
-  path.join(inputDir, 'organizations/default/organization.xml');
-
 const optionDefinitions = [
   { name: 'operation', type: String, defaultOption: true },
   { name: 'mediaManifest', type: String },
@@ -49,8 +46,14 @@ const options = commandLineArgs(optionDefinitions) as CmdOptions;
 
 function validateArgs() {
   if (options.operation === 'convert') {
-    if (options.mediaUrlPrefix && options.inputDir && options.outputDir) {
-      return [options.inputDir].every(fs.existsSync);
+    if (
+      options.mediaUrlPrefix &&
+      options.inputDir &&
+      options.outputDir &&
+      options.specificOrg &&
+      options.specificOrgId
+    ) {
+      return [options.inputDir, options.specificOrg].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
@@ -187,7 +190,7 @@ function convertAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
   const specificOrgId = options.specificOrgId;
-  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
+  const specificOrg = options.specificOrg;
 
   return executeSerially([
     () => mapResources(packageDirectory),
