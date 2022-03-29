@@ -240,6 +240,7 @@ export function output(
   mediaItems: Media.MediaItem[]
 ) {
   return executeSerially([
+    () => wipeAndCreateOutput(outputDirectory),
     () => outputManifest(courseDirectory, outputDirectory),
     () => outputHierarchy(outputDirectory, hierarchy),
     () => outputMediaManifest(outputDirectory, mediaItems),
@@ -259,6 +260,20 @@ function outputFile(path: string, o: any): Promise<boolean> {
       }
     });
   });
+}
+
+async function wipeAndCreateOutput(outputDir: string) {
+  // delete non-empty directory and recreate
+  return new Promise<void>((resolve, reject) =>
+    fs.rm(outputDir, { recursive: true }, (err) =>
+      err ? reject(err) : resolve()
+    )
+  ).then(
+    () =>
+      new Promise<void>((resolve, reject) =>
+        fs.mkdir(outputDir, (err) => (err ? reject(err) : resolve()))
+      )
+  );
 }
 
 function outputManifest(courseDir: string, outputDirectory: string) {

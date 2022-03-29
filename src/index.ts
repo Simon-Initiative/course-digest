@@ -121,11 +121,11 @@ function alongWith(promiseFunc: any, ...along: any) {
 function summaryAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
+  const specificOrgId = options.specificOrgId;
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrg),
+    () => collectOrgItemReferences(packageDirectory, specificOrgId),
   ])
     .then((results: any) =>
       processResources(
@@ -186,8 +186,8 @@ function uploadAction() {
 function convertAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
   const specificOrgId = options.specificOrgId;
+  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
 
   return executeSerially([
     () => mapResources(packageDirectory),
