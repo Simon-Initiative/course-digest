@@ -227,9 +227,11 @@ function convertAction() {
       ).then((converted: Resources.TorusResource[]) => {
         const updated = Convert.updateDerivativeReferences(converted);
         const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+
         const withoutTemporary = withTagsInsteadOfPools.filter(
           (u) => u.type !== 'TemporaryContent'
         );
+        const finalResources = Convert.remapObjectives(withoutTemporary);
 
         return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
           (results) => {
@@ -241,7 +243,7 @@ function convertAction() {
               packageDirectory,
               outputDirectory,
               hierarchy,
-              withoutTemporary,
+              finalResources,
               mediaItems
             );
           }

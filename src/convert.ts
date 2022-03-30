@@ -93,6 +93,25 @@ function createResourceActivityRefs(
   }, {});
 }
 
+export function remapObjectives(resources: TorusResource[]): TorusResource[] {
+  const idToFull = resources.reduce((m: any, r: TorusResource) => {
+    if (r.type === 'Objective') {
+      const parts = r.id.split('|');
+      m[parts[0]] = r.id;
+      return m;
+    }
+    return m;
+  }, {});
+
+  return resources.map((r: TorusResource) => {
+    if (r.type === 'Page') {
+      (r as Page).objectives = (r as Page).objectives.map((id) => idToFull[id]);
+      return r;
+    }
+    return r;
+  });
+}
+
 function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
   return resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Activity' || r.type === 'TemporaryContent') {

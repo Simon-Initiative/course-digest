@@ -19,6 +19,7 @@ const minVersions: Record<string, string> = {
   oli_assessment_mathml: '2_3',
   oli_inline_assessment: '1_3',
   oli_inline_assessment_mathml: '1_3',
+  oli_content_organization_simple: '2_3',
 };
 
 export function determineResourceType(file: string): Promise<ResourceType> {
@@ -40,9 +41,6 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (tag.indexOf('DTD Assessment Pool') !== -1) {
       return 'Pool';
     }
-    if (tag.indexOf('organization') !== -1) {
-      return 'Organization';
-    }
     if (tag.indexOf('oli_workbook_page') !== -1) {
       return 'WorkbookPage';
     }
@@ -57,6 +55,11 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     }
     if (tag.indexOf('oli_learning_objectives') !== -1) {
       return 'Objectives';
+    }
+    if (tag.indexOf('organization') !== -1) {
+      console.log('HSDFSDFKLJSD');
+      console.log(file);
+      return 'Organization';
     }
     if (
       tag.indexOf('oli-embed-activity') !== -1 ||

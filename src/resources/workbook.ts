@@ -43,6 +43,11 @@ export class WorkbookPage extends Resource {
       page.unresolvedReferences.push($(elem).attr('idref'));
     });
 
+    $('objref').each((i: any, elem: any) => {
+      page.objectives.push($(elem).attr('idref'));
+    });
+    $('objref').remove();
+
     $('a').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
       if (idref !== undefined && idref !== null) {
@@ -61,9 +66,12 @@ export class WorkbookPage extends Resource {
           );
 
           page.id = r.children[0].id;
-          page.objectives = r.children[0].children[0].children.map(
-            (o: any) => o.idref
-          );
+
+          if (page.objectives === []) {
+            page.objectives = r.children[0].children[0].children.map(
+              (o: any) => o.idref
+            );
+          }
           page.content = { model };
           page.title = r.children[0].title;
 
