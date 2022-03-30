@@ -98,8 +98,6 @@ export function flatten(
         references: [ref],
         url: toURL(flattenedName),
       };
-
-      return flattenedName;
     }
     summary.mediaItems[absolutePath].references.push(ref);
     return summary.mediaItems[absolutePath].url;

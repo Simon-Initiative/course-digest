@@ -22,9 +22,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const defaultOrgPath = (inputDir: string) =>
-  path.join(inputDir, 'organizations/default/organization.xml');
-
 const optionDefinitions = [
   { name: 'operation', type: String, defaultOption: true },
   { name: 'mediaManifest', type: String },
@@ -49,12 +46,18 @@ const options = commandLineArgs(optionDefinitions) as CmdOptions;
 
 function validateArgs() {
   if (options.operation === 'convert') {
-    if (options.mediaUrlPrefix && options.inputDir && options.outputDir) {
-      return [options.inputDir, options.outputDir].every(fs.existsSync);
+    if (
+      options.mediaUrlPrefix &&
+      options.inputDir &&
+      options.outputDir &&
+      options.specificOrg &&
+      options.specificOrgId
+    ) {
+      return [options.inputDir, options.specificOrg].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
-      return [options.inputDir, options.outputDir].every(fs.existsSync);
+      return [options.inputDir].every(fs.existsSync);
     }
   } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
@@ -121,11 +124,11 @@ function alongWith(promiseFunc: any, ...along: any) {
 function summaryAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
+  const specificOrgId = options.specificOrgId;
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrg),
+    () => collectOrgItemReferences(packageDirectory, specificOrgId),
   ])
     .then((results: any) =>
       processResources(
@@ -186,8 +189,8 @@ function uploadAction() {
 function convertAction() {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrg = options.specificOrg || defaultOrgPath(packageDirectory);
   const specificOrgId = options.specificOrgId;
+  const specificOrg = options.specificOrg;
 
   return executeSerially([
     () => mapResources(packageDirectory),
@@ -308,7 +311,6 @@ function helpAction() {
   console.log(
     'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n'
   );
-  console.log('\nNote: All files and directories must exist ahead of usage');
 }
 
 function exit() {
