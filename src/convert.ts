@@ -93,7 +93,7 @@ function createResourceActivityRefs(
   }, {});
 }
 
-// Pages will initiall have an "objectives" attribute that is an array of
+// Pages will have an "objectives" attribute that is an array of
 // objective ids (the objectives that are attached this the page). These ids
 // are the ids of only the <objective> element within the <objectives> resource,
 // and are not truly global.  The Objective TorusResource actually has ids that
