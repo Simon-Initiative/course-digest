@@ -389,7 +389,8 @@ export function processAssessmentModel(legacyId: string, children: any) {
               ],
             },
           },
-          count: item.count,
+          count: parseInt(item.count),
+          id: guid(),
           purpose: 'none',
         } as any;
 
