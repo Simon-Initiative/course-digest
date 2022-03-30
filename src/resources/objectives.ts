@@ -12,8 +12,15 @@ export class Objectives extends Resource {
     const objectives: TorusResource[] = [];
     const map: any = {};
 
+    let parentId = '';
+
+    $('objectives').each((i: any, elem: any) => {
+      parentId = $(elem).attr('id');
+    });
+
     $('objective').each((i: any, elem: any) => {
-      const id = $(elem).attr('id');
+      // This makes the id truly global
+      const id = $(elem).attr('id') + '|' + parentId;
       const title = $(elem).text().trim();
 
       const o = {
@@ -34,8 +41,8 @@ export class Objectives extends Resource {
 
     $('skillref').each((i: any, elem: any) => {
       const id = $(elem).attr('idref');
-      const parentId = $(elem).parent().attr('idref');
-      const o = map[parentId];
+      const actualParent = $(elem).parent().attr('idref') + '|' + parentId;
+      const o = map[actualParent];
       o.objectives.push(id);
     });
 
