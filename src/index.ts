@@ -231,7 +231,8 @@ function convertAction() {
         const withoutTemporary = withTagsInsteadOfPools.filter(
           (u) => u.type !== 'TemporaryContent'
         );
-        const finalResources = Convert.remapObjectives(withoutTemporary);
+        const finalResources =
+          Convert.globalizeObjectiveReferences(withoutTemporary);
 
         return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
           (results) => {

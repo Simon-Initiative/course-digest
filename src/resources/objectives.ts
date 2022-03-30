@@ -19,6 +19,7 @@ export class Objectives extends Resource {
     });
 
     $('objective').each((i: any, elem: any) => {
+      // This makes the id truly global
       const id = $(elem).attr('id') + '|' + parentId;
       const title = $(elem).text().trim();
 

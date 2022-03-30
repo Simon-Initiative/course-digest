@@ -93,8 +93,19 @@ function createResourceActivityRefs(
   }, {});
 }
 
-export function remapObjectives(resources: TorusResource[]): TorusResource[] {
-  const idToFull = resources.reduce((m: any, r: TorusResource) => {
+// Pages will initiall have an "objectives" attribute that is an array of
+// objective ids (the objectives that are attached this the page). These ids
+// are the ids of only the <objective> element within the <objectives> resource,
+// and are not truly global.  The Objective TorusResource actually has ids that
+// have, at this point, been made global.  We need to update all of the objectives
+// attributes within Pages to replace the local id with the global one.
+export function globalizeObjectiveReferences(
+  resources: TorusResource[]
+): TorusResource[] {
+  // Make a map of the local to global.  The global id is of the form:
+  // local|suffix, where local is the id of the objective, and suffix is the
+  // id of the parent <objectives> element
+  const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {
       const parts = r.id.split('|');
       m[parts[0]] = r.id;
@@ -105,7 +116,9 @@ export function remapObjectives(resources: TorusResource[]): TorusResource[] {
 
   return resources.map((r: TorusResource) => {
     if (r.type === 'Page') {
-      (r as Page).objectives = (r as Page).objectives.map((id) => idToFull[id]);
+      (r as Page).objectives = (r as Page).objectives.map(
+        (id) => localToGlobal[id]
+      );
       return r;
     }
     return r;
