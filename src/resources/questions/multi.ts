@@ -10,16 +10,18 @@ export function buildMulti(question: any) {
   const { items, parts } = collectItemsParts(question);
   const allChoices: any[] = [];
   const inputs: any[] = [];
+  const allTargeted: any[] = [];
   const torusParts: any[] = [];
 
   if (items.length === parts.length && items.length > 0) {
     for (let i = 0; i < items.length; i++) {
-      const { input, part, choices } = produceTorusEquivalents(
+      const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
         parts[i],
         i
       );
       choices.forEach((c: any) => allChoices.push(c));
+      targeted.forEach((c: any) => allTargeted.push(c));
       inputs.push(input);
       torusParts.push(part);
     }
@@ -30,7 +32,7 @@ export function buildMulti(question: any) {
     choices: allChoices,
     inputs,
     authoring: {
-      targeted: [],
+      targeted: allTargeted,
       parts: torusParts,
       transformations: [],
       previewText: '',
@@ -88,6 +90,7 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
   const input: any = {};
   let part: any = {};
   let choices: any[] = [];
+  const targeted: any[] = [];
 
   if (item.type === 'text') {
     part = buildTextPart(p, i);
@@ -100,12 +103,36 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
     input.inputType = 'dropdown';
 
     choices = Common.buildChoices({ children: [item] }, 'fill_in_the_blank');
-    input.chiceIds = choices.map((c: any) => c.id);
+    input.choiceIds = choices.map((c: any) => c.id);
+
+    if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
+      part.responses.forEach((r: any) => {
+        targeted.push([[r.legacyMatch], r.id]);
+      });
+      part.responses.push({
+        id: guid(),
+        score: 0,
+        rule: `input like {.*}`,
+        feedback: {
+          id: guid(),
+          content: {
+            id: guid(),
+            model: [
+              {
+                type: 'p',
+                children: [{ text: 'Incorrect' }],
+              },
+            ],
+          },
+        },
+      });
+    }
   }
+
   input.id = item.id;
   input.partId = part.id;
 
-  return { input, part, choices };
+  return { input, part, choices, targeted };
 }
 
 function collectItemsParts(question: any) {
@@ -133,15 +160,19 @@ function buildDropdownPart(part: any, _i: number) {
 
   return {
     id,
-    responses: responses.map((r: any) => ({
-      id: guid(),
-      score: r.score === undefined ? 0 : parseFloat(r.score),
-      rule: `input like {${r.match}}`,
-      feedback: {
+    responses: responses.map((r: any) => {
+      const m = replaceAll(r.match, '\\*', '.*');
+      return {
         id: guid(),
-        content: { model: Common.ensureParagraphs(r.children[0].children) },
-      },
-    })),
+        score: r.score === undefined ? 0 : parseFloat(r.score),
+        rule: `input like {${m}}`,
+        legacyMatch: m,
+        feedback: {
+          id: guid(),
+          content: { model: Common.ensureParagraphs(r.children[0].children) },
+        },
+      };
+    }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),

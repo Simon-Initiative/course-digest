@@ -131,14 +131,14 @@ function handleLabelledContent($: any, selector: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
-    const title = $(elem).children('title').text();
+    const title = $(elem).children('title').html();
     const caption = $(elem).children('caption').text();
 
-    const combined = (title + ' ' + caption).trim();
-
-    $(elem).attr('caption', combined);
+    $(elem).attr('caption', caption);
     $(elem).children().remove('title');
     $(elem).children().remove('caption');
+
+    $('<h5>' + title + '</h5>').insertBefore($(elem));
   });
 }
 

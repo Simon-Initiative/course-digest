@@ -135,7 +135,7 @@ export function cata(question: any) {
     type: 'TargetedCATA',
     authoring: {
       parts: [buildCATAPart(question)],
-      transformations: [],
+      transformations: question.shuffle ? [Common.shuffleTransformation()] : [],
       previewText: '',
       targeted: [],
       correct: [],

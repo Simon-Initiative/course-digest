@@ -24,6 +24,14 @@ export function buildStem(question: any) {
   };
 }
 
+export function shuffleTransformation() {
+  return {
+    id: guid(),
+    path: 'choices',
+    operation: 'shuffle',
+  };
+}
+
 export function buildChoices(question: any, from = 'multiple_choice') {
   const choices = getChild(question.children, from).children;
 
