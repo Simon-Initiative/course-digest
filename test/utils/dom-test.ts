@@ -3,6 +3,7 @@ import {
   eliminateLevel,
   stripElement,
   moveAttrToChildren,
+  mergeCaptions,
 } from '../../src/utils/dom';
 import * as cheerio from 'cheerio';
 
@@ -75,5 +76,33 @@ describe('dom mutations', () => {
     expect($.xml()).toEqual(
       '<a test2="two"><body/><input test="one"/><input test="one"/></a>'
     );
+  });
+
+  test('should mergeCaptions with title', () => {
+    const content =
+      '<a><youtube id="d74862fd549747f6b7bf366768378591" src="9ixG0YbDSSw?showinfo=0;" height="500" width="1000" controls="true"><title><p>A Wonderful Title</p></title></youtube></a>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    mergeCaptions($);
+
+    expect($.xml()).toContain('<h5><p>A Wonderful Title</p></h5>');
+  });
+
+  test('should mergeCaptions without title', () => {
+    const content =
+      '<a><youtube id="d74862fd549747f6b7bf366768378591" src="9ixG0YbDSSw?showinfo=0;" height="500" width="1000" controls="true"></youtube></a>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    mergeCaptions($);
+
+    expect($.xml()).not.toContain('<h5>null</h5>');
   });
 });

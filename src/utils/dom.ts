@@ -138,7 +138,9 @@ function handleLabelledContent($: any, selector: string) {
     $(elem).children().remove('title');
     $(elem).children().remove('caption');
 
-    $('<h5>' + title + '</h5>').insertBefore($(elem));
+    if (title) {
+      $('<h5>' + title + '</h5>').insertBefore($(elem));
+    }
   });
 }
 
