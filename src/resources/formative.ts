@@ -19,6 +19,10 @@ function usesSimpleModel(responses: any[]) {
   return hasCatchAll(responses) && responses.length <= 2;
 }
 
+function shouldUseSimpleModel(responses: any[]) {
+  return !hasCatchAll(responses) && responses.length === 2;
+}
+
 function hasCatchAll(responses: any[]) {
   return responses.some((r) => r.match === 'input like {.*}');
 }
@@ -59,6 +63,18 @@ function buildMCQPart(question: any) {
     targeted: [],
     objectives: skillrefs.map((s: any) => s.idref),
   };
+
+  // Handle the specific case where there are exactly two choices
+  // and no catch-all response
+  if (shouldUseSimpleModel(r)) {
+    const incorrect = r.filter((r: any) => r.score === 0)[0];
+    const other = r.filter((r: any) => r.score !== 0)[0];
+    incorrect.rule = 'input like {.*}';
+
+    // Ensure the catch-all is last
+    model.responses = [other, incorrect];
+    return model;
+  }
 
   if (usesSimpleModel(r)) {
     return model;
@@ -127,25 +143,32 @@ function buildOrderingPart(question: any) {
 }
 
 function mcq(question: any) {
+  const part = buildMCQPart(question);
+  const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
+
   return {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question),
     authoring: {
-      parts: [buildMCQPart(question)],
-      transformations: [],
+      parts: [part],
+      transformations:
+        shuffle === 'true' ? [Common.shuffleTransformation()] : [],
       previewText: '',
+      targeted: part.targeted,
     },
   };
 }
 
 function ordering(question: any) {
+  const shuffle = Common.getChild(question.children, 'ordering').shuffle;
   const model = {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question, 'ordering'),
     authoring: {
       version: 2,
       parts: [buildOrderingPart(question)],
-      transformations: [],
+      transformations:
+        shuffle === 'true' ? [Common.shuffleTransformation()] : [],
       previewText: '',
       correct: [],
       targeted: [],
@@ -221,7 +244,7 @@ export function toActivity(
     subType,
   };
 
-  activity.id = question.id;
+  activity.id = legacyId + '-' + question.id;
   activity.content = buildModel(subType, question);
   activity.objectives = constructObjectives(
     (activity.content as any).authoring.parts

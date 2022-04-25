@@ -10,6 +10,7 @@ import * as XML from '../utils/xml';
 export function convertToFormative($: any) {
   $('multiple_choice').each((i: any, item: any) => {
     DOM.moveAttrToChildren($, item, 'select', 'input');
+    DOM.moveAttrToChildren($, item, 'shuffle', 'input');
   });
 
   $('text').each((i: any, item: any) => {
@@ -86,7 +87,7 @@ export class Summative extends Resource {
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
-          const legacyId = r.id;
+          const legacyId = r.children[0].id;
 
           const { model, items, unresolvedReferences, title } =
             Formative.processAssessmentModel(legacyId, r.children[0].children);
