@@ -86,6 +86,15 @@ export function buildStem(question: any, inputs: any[]) {
   };
 }
 
+export function buildChoices(question: any, from = 'fill_in_the_blank') {
+  const choices = Common.getChild(question.children, from).children;
+
+  return choices.map((c: any) => ({
+    content: c.children,
+    id: c.value,
+  }));
+}
+
 function produceTorusEquivalents(item: any, p: any, i: number) {
   const input: any = {};
   let part: any = {};
@@ -102,7 +111,7 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
     part = buildDropdownPart(p, i);
     input.inputType = 'dropdown';
 
-    choices = Common.buildChoices({ children: [item] }, 'fill_in_the_blank');
+    choices = buildChoices({ children: [item] }, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);
 
     if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
