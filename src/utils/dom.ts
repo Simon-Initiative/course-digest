@@ -132,11 +132,7 @@ function handleLabelledContent($: any, selector: string) {
 
   items.each((i: any, elem: any) => {
     const title = $(elem).children('title').html();
-    const caption = $(elem).children('caption').text();
-
-    $(elem).attr('caption', caption);
     $(elem).children().remove('title');
-    $(elem).children().remove('caption');
 
     if (title) {
       $('<h5>' + title + '</h5>').insertBefore($(elem));

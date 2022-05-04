@@ -190,6 +190,26 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const elevateCaption = (parent: string) => {
+        if (tag === 'caption' && stack[stack.length - 2].type === parent) {
+          if (stack.length > 1) {
+            stack[stack.length - 2].caption = top().children;
+            stack[stack.length - 2].children = [{ type: 'text', text: ' ' }];
+          }
+        }
+      };
+
+      const elevateTableCaption = () => {
+        if (tag === 'caption' && stack[stack.length - 2].type === 'table') {
+          if (stack.length > 1) {
+            stack[stack.length - 2].caption = top().children;
+            stack[stack.length - 2].children = stack[
+              stack.length - 2
+            ].children.filter((t: any) => t.type !== 'caption');
+          }
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -206,6 +226,11 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
         ensureNotEmpty('li');
+        elevateCaption('img');
+        elevateCaption('iframe');
+        elevateCaption('youtube');
+        elevateTableCaption();
+        elevateCaption('audio');
 
         if (top() && top().children === undefined) {
           top().children = [];
