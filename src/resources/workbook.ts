@@ -22,6 +22,7 @@ export class WorkbookPage extends Resource {
     DOM.flattenNestedSections($);
     liftTitle($);
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
+    DOM.rename($, 'inline', 'activity_placeholder');
     DOM.rename($, 'activity', 'activity_placeholder');
     DOM.rename($, 'activity_link', 'a');
   }

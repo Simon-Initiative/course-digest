@@ -134,6 +134,7 @@ export function cata(question: any) {
     choices,
     type: 'TargetedCATA',
     authoring: {
+      version: 2,
       parts: [buildCATAPart(question)],
       transformations: question.shuffle ? [Common.shuffleTransformation()] : [],
       previewText: '',

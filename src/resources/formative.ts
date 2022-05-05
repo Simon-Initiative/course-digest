@@ -51,7 +51,6 @@ function buildMCQPart(question: any) {
 
   const model = {
     id: '1',
-    version: 2,
     responses: r,
     hints: Common.ensureThree(
       hints.map((r: any) => ({
@@ -150,6 +149,7 @@ function mcq(question: any) {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question),
     authoring: {
+      version: 2,
       parts: [part],
       transformations:
         shuffle === 'true' ? [Common.shuffleTransformation()] : [],
