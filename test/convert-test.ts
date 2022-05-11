@@ -34,7 +34,7 @@ it('should convert example course to valid course digest', async () => {
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
-    mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
+    mediaUrlPrefix: 'https://example-url-prefix',
   });
 
   expect(hierarchy as Hierarchy).toEqual(
