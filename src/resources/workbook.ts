@@ -1,7 +1,11 @@
 import * as Histogram from '../utils/histogram';
 import { ItemReference, guid } from '../utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
-import { standardContentManipulations, processCodeblock } from './common';
+import {
+  standardContentManipulations,
+  processCodeblock,
+  wrapContentInGroup,
+} from './common';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { convertImageCodingActivities } from './image';
@@ -136,7 +140,7 @@ export class WorkbookPage extends Resource {
 // This function returns a content element collection that is reforumulated as:
 //
 // { type: content, children: [{ type: p, ...}, {type: image, ...}]}
-// { type: content, purpose: example, children: [{ ... ]}
+// { type: content, children: [{ ... ]}
 // { type: activity_placeholder ...}
 // { type: content, children: [{ type: p, ...}]}
 //
@@ -149,12 +153,7 @@ const selection = {
 
 function introduceStructuredContent(content: any) {
   const asStructured = (attrs: Record<string, unknown>) =>
-    Object.assign(
-      {},
-      { type: 'content', purpose: 'none', id: guid() },
-      selection,
-      attrs
-    );
+    Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
 
   const startNewContent = (u: any) =>
     u.length === 0 ||
@@ -166,7 +165,10 @@ function introduceStructuredContent(content: any) {
       return [...u, e];
     }
     if (e.type === 'example') {
-      return [...u, asStructured({ children: e.children, purpose: 'example' })];
+      return [
+        ...u,
+        wrapContentInGroup([asStructured({ children: e.children })], 'example'),
+      ];
     }
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];

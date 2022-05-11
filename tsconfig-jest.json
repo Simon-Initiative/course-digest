@@ -3,6 +3,12 @@
     "module": "commonjs",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"],
+    }
+  },
+  "include": ["test/**/*"],
+  "exclude": ["node_modules"]
 }

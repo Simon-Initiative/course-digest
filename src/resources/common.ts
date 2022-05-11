@@ -1,4 +1,4 @@
-import { ItemReference } from '../utils/common';
+import { ItemReference, guid } from '../utils/common';
 import * as Histogram from '../utils/histogram';
 import * as DOM from '../utils/dom';
 
@@ -98,4 +98,34 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'dl', 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
+}
+
+function getPurpose(purpose: string) {
+  if (
+    purpose === 'checkpoint' ||
+    purpose === 'didigetthis' ||
+    purpose === 'learnbydoing' ||
+    purpose === 'manystudentswonder' ||
+    purpose === 'learnmore' ||
+    purpose === 'labactivity' ||
+    purpose === 'myresponse' ||
+    purpose === 'quiz' ||
+    purpose === 'simulation' ||
+    purpose === 'walkthrough' ||
+    purpose === 'example'
+  ) {
+    return purpose;
+  }
+
+  return 'none';
+}
+
+export function wrapContentInGroup(content: any[], purpose: string) {
+  return {
+    type: 'group',
+    id: guid(),
+    layout: 'vertical',
+    purpose: getPurpose(purpose),
+    children: content,
+  };
 }

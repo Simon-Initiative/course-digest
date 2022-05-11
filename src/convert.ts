@@ -7,6 +7,7 @@ import {
 } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid } from './utils/common';
+import { wrapContentInGroup } from './resources/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
@@ -22,7 +23,6 @@ export function convert(
 ): Promise<(TorusResource | string)[]> {
   return determineResourceType(file).then((t: ResourceType) => {
     const item = create(t, file, navigable);
-    console.log(file);
 
     let $ = DOM.read(file, { normalizeWhitespace: false });
     item.restructurePreservingWhitespace($);
@@ -33,6 +33,7 @@ export function convert(
     $ = DOM.read(tmpobj.name);
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
+
     if (t === 'Organization') {
       if (otherOrgRefs && otherOrgRefs.length > 0) {
         let module = `<unit id="${guid()}"><title>Additional resources</title>`;
@@ -141,23 +142,6 @@ function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
   }, {});
 }
 
-function getPurpose(purpose: string) {
-  if (purpose === undefined || purpose === null) {
-    return 'none';
-  }
-  if (
-    purpose === 'checkpoint' ||
-    purpose === 'didigetthis' ||
-    purpose === 'learnbydoing' ||
-    purpose === 'manystudentswonder' ||
-    purpose === 'learnmore'
-  ) {
-    return purpose;
-  }
-
-  return 'none';
-}
-
 const selection = {
   selection: {
     anchor: { offset: 0, path: [0, 0] },
@@ -166,9 +150,8 @@ const selection = {
 };
 
 function createContentWithLink(title: string, idref: string, purpose: string) {
-  return {
+  const content = {
     type: 'content',
-    purpose,
     id: guid(),
     selection,
     children: [
@@ -184,6 +167,12 @@ function createContentWithLink(title: string, idref: string, purpose: string) {
       },
     ],
   };
+
+  return hasPurpose(purpose) ? wrapContentInGroup([content], purpose) : content;
+}
+
+function hasPurpose(purpose?: string | null) {
+  return purpose !== undefined && purpose !== null;
 }
 
 function updateParentReference(
@@ -202,11 +191,14 @@ function updateParentReference(
               ...entries,
               ...derived.map((d) => {
                 if (d.type === 'Activity') {
-                  return {
+                  const activity = {
                     type: 'activity-reference',
                     activity_id: d.id,
-                    purpose: getPurpose(m.purpose),
                   };
+
+                  return hasPurpose(m.purpose)
+                    ? wrapContentInGroup([activity], m.purpose)
+                    : activity;
                 }
                 if (d.type === 'TemporaryContent') {
                   return (d as TemporaryContent).content;
