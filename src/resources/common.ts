@@ -57,18 +57,27 @@ export function standardContentManipulations($: any) {
   DOM.flattenNestedSections($);
   DOM.removeSelfClosing($);
   DOM.mergeCaptions($);
+  // Default to block images
   DOM.rename($, 'image', 'img');
+  DOM.rename($, 'link', 'a');
+  // Images "nested" inside paragraphs and links become inline images.
+  // Block images are wrapped inside figures in Torus, so even if an
+  // image in a legacy course is intended as a block semantically, with
+  // newlines before or after, converting to inline images feels like
+  // a closer mapping to the correct rendering.
+  DOM.rename($, 'p img', 'img_inline');
+  DOM.rename($, 'a img', 'img_inline');
+  // Inline images should technically be valid in any Slate model element
+  // that supports inline elements, but we're only explicitly handling
+  // converting images in paragraphs and links (anchors).
   DOM.rename($, 'codeblock', 'code');
   DOM.renameAttribute($, 'code', 'syntax', 'language');
-  DOM.rename($, 'link', 'a');
 
   // Certain elements are not currently (and some may never be) supported
   // in Torus, so we remove them.  In this respect, OLI course conversion
   // is lossy wrt specific element constructs.
   $('popout').remove();
   $('sym').remove();
-  $('p img').remove();
-  $('link img').remove();
   $('applet').remove();
   $('director').remove();
   $('flash').remove();
