@@ -276,7 +276,7 @@ it('should convert content with purpose to groups', async () => {
                 id: expect.any(String),
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    type: 'title',
+                    type: 'h2',
                     children: expect.arrayContaining([
                       expect.objectContaining({ text: 'Example Title' }),
                     ]),
@@ -336,7 +336,7 @@ it('should convert content with purpose to groups', async () => {
                   'newe6ddd6fec8f54749a037ef13abd8df93-newe6ddd6fec8f54749a037ef13abd8df93_1a',
               }),
               expect.objectContaining({
-                type: 'content-break',
+                type: 'break',
                 id: expect.any(String),
               }),
               expect.objectContaining({
@@ -359,7 +359,7 @@ it('should convert content with purpose to groups', async () => {
                   'newe6ddd6fec8f54749a037ef13abd8df93-dd4cf0fba08646cba219f424f2c6058c',
               }),
               expect.objectContaining({
-                type: 'content-break',
+                type: 'break',
                 id: expect.any(String),
               }),
               expect.objectContaining({

@@ -1,7 +1,7 @@
 import * as glob from 'glob';
-import { executeSerially } from 'utils/common';
-import * as Resources from 'resources/resource';
-import * as Orgs from 'resources/organization';
+import { executeSerially } from '../utils/common';
+import * as Resources from '../resources/resource';
+import * as Orgs from '../resources/organization';
 
 // Build a map of resource ids to the full path of the resource for all resources
 // found in the OLI legacy course project directory

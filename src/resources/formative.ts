@@ -463,7 +463,7 @@ export function processAssessmentModel(
 
   const maybeInsertContentBreak = (items: any[], index: number) =>
     index < children.length - 1
-      ? [...items, { type: 'content-break', id: guid() }]
+      ? [...items, { type: 'break', id: guid() }]
       : items;
 
   let model = children

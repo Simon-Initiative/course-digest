@@ -167,7 +167,22 @@ function introduceStructuredContent(content: any) {
     if (e.type === 'example') {
       return [
         ...u,
-        wrapContentInGroup([asStructured({ children: e.children })], 'example'),
+        wrapContentInGroup(
+          [
+            asStructured({
+              children: [
+                {
+                  children: e.children.find((c: any) => c.type === 'title')
+                    .children,
+                  id: guid(),
+                  type: 'h2',
+                },
+                ...e.children.filter((c: any) => c.type !== 'title'),
+              ],
+            }),
+          ],
+          'example'
+        ),
       ];
     }
     if (startNewContent(u)) {
