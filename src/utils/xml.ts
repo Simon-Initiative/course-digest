@@ -222,6 +222,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureDefaultText('h5', 'Section Header');
         ensureDefaultText('h6', 'Section Header');
         ensureNotEmpty('img');
+        ensureNotEmpty('img_inline');
         ensureNotEmpty('iframe');
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
