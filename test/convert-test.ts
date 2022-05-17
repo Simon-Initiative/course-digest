@@ -73,7 +73,10 @@ it('should convert example course to valid course digest', async () => {
       id: 'welcome',
       title: 'Welcome!',
       tags: [],
-      unresolvedReferences: ['newca1a54a0f56a4d429f5aff2c515cab08'],
+      unresolvedReferences: [
+        'newca1a54a0f56a4d429f5aff2c515cab08',
+        'newc72f87db5a5543b5ae8582d2d4cd34a7',
+      ],
       content: expect.objectContaining({ model: expect.any(Array) }),
       isGraded: false,
       objectives: [
@@ -87,7 +90,7 @@ it('should convert example course to valid course digest', async () => {
       type: 'Page',
       id: 'newe6ddd6fec8f54749a037ef13abd8df93',
       originalFile: '',
-      title: 'New Assessment',
+      title: 'Graded Assessment',
       tags: [],
       unresolvedReferences: [],
       content: expect.objectContaining({ model: expect.any(Array) }),
@@ -302,72 +305,64 @@ it('should convert content with purpose to groups', async () => {
       content: expect.objectContaining({
         model: expect.arrayContaining([
           expect.objectContaining({
-            type: 'group',
+            type: 'content',
             id: expect.any(String),
-            layout: 'vertical',
-            purpose: 'none',
             children: expect.arrayContaining([
               expect.objectContaining({
-                type: 'content',
-                id: expect.any(String),
+                type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    type: 'p',
-                    children: expect.arrayContaining([
-                      expect.objectContaining({
-                        text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
-                        strong: true,
-                      }),
-                    ]),
-                  }),
-                  expect.objectContaining({
-                    type: 'p',
-                    children: expect.arrayContaining([
-                      expect.objectContaining({
-                        text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
-                      }),
-                    ]),
+                    text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
+                    strong: true,
                   }),
                 ]),
               }),
               expect.objectContaining({
-                type: 'activity-reference',
-                activity_id:
-                  'newe6ddd6fec8f54749a037ef13abd8df93-newe6ddd6fec8f54749a037ef13abd8df93_1a',
-              }),
-              expect.objectContaining({
-                type: 'break',
-                id: expect.any(String),
-              }),
-              expect.objectContaining({
-                type: 'content',
-                id: expect.any(String),
+                type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    type: 'p',
-                    children: expect.arrayContaining([
-                      expect.objectContaining({
-                        text: 'Page 2 content',
-                      }),
-                    ]),
+                    text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
                   }),
                 ]),
-              }),
-              expect.objectContaining({
-                type: 'activity-reference',
-                activity_id:
-                  'newe6ddd6fec8f54749a037ef13abd8df93-dd4cf0fba08646cba219f424f2c6058c',
-              }),
-              expect.objectContaining({
-                type: 'break',
-                id: expect.any(String),
-              }),
-              expect.objectContaining({
-                type: 'activity-reference',
-                activity_id:
-                  'newe6ddd6fec8f54749a037ef13abd8df93-bab083e445df49b48d2af9a98e93a0c0',
               }),
             ]),
+          }),
+          expect.objectContaining({
+            type: 'activity-reference',
+            activity_id:
+              'newe6ddd6fec8f54749a037ef13abd8df93-newe6ddd6fec8f54749a037ef13abd8df93_1a',
+          }),
+          expect.objectContaining({
+            type: 'break',
+            id: expect.any(String),
+          }),
+          expect.objectContaining({
+            type: 'content',
+            id: expect.any(String),
+            children: expect.arrayContaining([
+              expect.objectContaining({
+                type: 'p',
+                children: expect.arrayContaining([
+                  expect.objectContaining({
+                    text: 'Page 2 content',
+                  }),
+                ]),
+              }),
+            ]),
+          }),
+          expect.objectContaining({
+            type: 'activity-reference',
+            activity_id:
+              'newe6ddd6fec8f54749a037ef13abd8df93-dd4cf0fba08646cba219f424f2c6058c',
+          }),
+          expect.objectContaining({
+            type: 'break',
+            id: expect.any(String),
+          }),
+          expect.objectContaining({
+            type: 'activity-reference',
+            activity_id:
+              'newe6ddd6fec8f54749a037ef13abd8df93-bab083e445df49b48d2af9a98e93a0c0',
           }),
         ]),
       }),
