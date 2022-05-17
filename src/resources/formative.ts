@@ -8,11 +8,7 @@ import {
   Activity,
   TemporaryContent,
 } from './resource';
-import {
-  standardContentManipulations,
-  processCodeblock,
-  wrapContentInGroup,
-} from './common';
+import { standardContentManipulations, processCodeblock } from './common';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
 import * as DOM from '../utils/dom';
@@ -321,9 +317,9 @@ export class Formative extends Resource {
           const legacyId = r.children[0].id;
           const { items } = processAssessmentModel(
             legacyId,
-            r.children[0].children,
-            r.purpose
+            r.children[0].children
           );
+
           resolve(items);
         }
       );
@@ -356,11 +352,7 @@ export class Formative extends Resource {
   }
 }
 
-export function processAssessmentModel(
-  legacyId: string,
-  children: any[],
-  purpose: string
-) {
+export function processAssessmentModel(legacyId: string, children: any[]) {
   const items: any = [];
   const unresolvedReferences: any = [];
   let title = 'Unknown';
@@ -461,12 +453,17 @@ export function processAssessmentModel(
     }
   };
 
-  const maybeInsertContentBreak = (items: any[], index: number) =>
-    index < children.length - 1
-      ? [...items, { type: 'break', id: guid() }]
-      : items;
+  const maybeInsertContentBreak = (modelItems: any[], index: number) => {
+    if (index < children.length - 1) {
+      const id = guid();
+      items.push({ type: 'Break', id, legacyId });
+      return [...modelItems, { type: 'break', id }];
+    }
 
-  let model = children
+    return modelItems;
+  };
+
+  const model = children
     .reduce((previous: any, item: any, index) => {
       if (item.type === 'title') {
         title = item.children[0].text;
@@ -493,9 +490,6 @@ export function processAssessmentModel(
       return previous;
     }, [])
     .filter((e: any) => e !== undefined);
-
-  const hasPages = children.some((i) => i.type === 'page');
-  model = hasPages ? [wrapContentInGroup(model, purpose)] : model;
 
   return {
     model,

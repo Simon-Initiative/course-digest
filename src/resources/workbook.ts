@@ -156,9 +156,7 @@ function introduceStructuredContent(content: any) {
     Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
 
   const startNewContent = (u: any) =>
-    u.length === 0 ||
-    u[u.length - 1].type === 'activity_placeholder' ||
-    u[u.length - 1].purpose !== 'none';
+    u.length === 0 || u[u.length - 1].type === 'activity_placeholder';
 
   return content.reduce((u: any, e: any) => {
     if (e.type === 'activity_placeholder') {

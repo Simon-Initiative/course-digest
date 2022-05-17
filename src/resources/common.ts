@@ -100,7 +100,7 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'quote', 'blockquote');
 }
 
-function getPurpose(purpose: string) {
+function getPurpose(purpose?: string) {
   if (
     purpose === 'checkpoint' ||
     purpose === 'didigetthis' ||
@@ -120,7 +120,7 @@ function getPurpose(purpose: string) {
   return 'none';
 }
 
-export function wrapContentInGroup(content: any[], purpose: string) {
+export function wrapContentInGroup(content: any[], purpose?: string) {
   return {
     type: 'group',
     id: guid(),

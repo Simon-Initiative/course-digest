@@ -128,7 +128,11 @@ export function globalizeObjectiveReferences(
 
 function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
   return resources.reduce((m: any, r: TorusResource) => {
-    if (r.type === 'Activity' || r.type === 'TemporaryContent') {
+    if (
+      r.type === 'Activity' ||
+      r.type === 'TemporaryContent' ||
+      r.type === 'Break'
+    ) {
       const activity = r as Activity;
       if (activity.legacyId !== undefined && activity.legacyId !== null) {
         if (m[activity.legacyId] === undefined) {
@@ -149,7 +153,7 @@ const selection = {
   },
 };
 
-function createContentWithLink(title: string, idref: string, purpose: string) {
+function createContentWithLink(title: string, idref: string) {
   const content = {
     type: 'content',
     id: guid(),
@@ -168,49 +172,54 @@ function createContentWithLink(title: string, idref: string, purpose: string) {
     ],
   };
 
-  return hasPurpose(purpose) ? wrapContentInGroup([content], purpose) : content;
-}
-
-function hasPurpose(purpose?: string | null) {
-  return purpose !== undefined && purpose !== null;
+  return content;
 }
 
 function updateParentReference(
-  resource: TorusResource,
+  parent: TorusResource,
   byLegacyId: DerivedResourceMap,
   pageMap: any
 ): TorusResource {
-  if (resource.type === 'Page') {
-    const page = resource as Page;
+  if (parent.type === 'Page') {
+    const page = parent as Page;
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
         if (m.type === 'activity_placeholder') {
           const derived = byLegacyId[m.idref];
+
           if (derived !== undefined) {
             return [
               ...entries,
-              ...derived.map((d) => {
-                if (d.type === 'Activity') {
-                  const activity = {
-                    type: 'activity-reference',
-                    activity_id: d.id,
-                  };
-
-                  return hasPurpose(m.purpose)
-                    ? wrapContentInGroup([activity], m.purpose)
-                    : activity;
-                }
-                if (d.type === 'TemporaryContent') {
-                  return (d as TemporaryContent).content;
-                }
-              }),
+              wrapContentInGroup(
+                derived.map((d) => {
+                  if (d.type === 'Activity') {
+                    return {
+                      type: 'activity-reference',
+                      activity_id: d.id,
+                    };
+                  }
+                  if (d.type === 'TemporaryContent') {
+                    return (d as TemporaryContent).content;
+                  }
+                  if (d.type === 'Break') {
+                    return {
+                      type: 'break',
+                      id: d.id,
+                    };
+                  }
+                }),
+                m.purpose
+              ),
             ];
           }
           if (pageMap[m.idref] !== undefined) {
             const page = pageMap[m.idref];
             return [
               ...entries,
-              createContentWithLink(page.title, m.idref, m.purpose),
+              wrapContentInGroup(
+                [createContentWithLink(page.title, m.idref)],
+                m.purpose
+              ),
             ];
           }
 
@@ -220,6 +229,7 @@ function updateParentReference(
 
           return entries;
         }
+
         return [...entries, m];
       },
       []
@@ -228,7 +238,7 @@ function updateParentReference(
     return page;
   }
 
-  return resource;
+  return parent;
 }
 
 export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
