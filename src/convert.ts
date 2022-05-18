@@ -108,8 +108,7 @@ export function globalizeObjectiveReferences(
   // id of the parent <objectives> element
   const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {
-      const parts = r.id.split('|');
-      m[parts[0]] = r.id;
+      m[r.id] = `${r.id}-${r.parentId}`;
       return m;
     }
     return m;
