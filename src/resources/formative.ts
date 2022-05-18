@@ -319,6 +319,7 @@ export class Formative extends Resource {
             legacyId,
             r.children[0].children
           );
+
           resolve(items);
         }
       );
@@ -351,7 +352,7 @@ export class Formative extends Resource {
   }
 }
 
-export function processAssessmentModel(legacyId: string, children: any) {
+export function processAssessmentModel(legacyId: string, children: any[]) {
   const items: any = [];
   const unresolvedReferences: any = [];
   let title = 'Unknown';
@@ -365,7 +366,6 @@ export function processAssessmentModel(legacyId: string, children: any) {
       const a = {
         type: 'activity-reference',
         activity_id: activity.id,
-        purpose: 'none',
       } as any;
 
       if (pageId !== null) {
@@ -414,7 +414,6 @@ export function processAssessmentModel(legacyId: string, children: any) {
           },
           count: parseInt(item.count),
           id: guid(),
-          purpose: 'none',
         } as any;
 
         // If this activity reference is within a specific page, track that.
@@ -431,7 +430,7 @@ export function processAssessmentModel(legacyId: string, children: any) {
     ) {
       const content: any = Object.assign(
         {},
-        { type: 'content', purpose: 'none', id: guid() },
+        { type: 'content', id: guid() },
         { children: item.children }
       );
       if (pageId !== null) {
@@ -454,8 +453,18 @@ export function processAssessmentModel(legacyId: string, children: any) {
     }
   };
 
+  const maybeInsertContentBreak = (modelItems: any[], index: number) => {
+    if (index < children.length - 1) {
+      const id = guid();
+      items.push({ type: 'Break', id, legacyId });
+      return [...modelItems, { type: 'break', id }];
+    }
+
+    return modelItems;
+  };
+
   const model = children
-    .reduce((previous: any, item: any) => {
+    .reduce((previous: any, item: any, index) => {
       if (item.type === 'title') {
         title = item.children[0].text;
       } else if (item.type === 'page') {
@@ -466,12 +475,15 @@ export function processAssessmentModel(legacyId: string, children: any) {
           pageId = guid();
         }
 
-        return [
-          ...previous,
-          ...item.children
-            .filter((c: any) => c.type !== 'title')
-            .map((c: any) => handleNestableItems(c, pageId)),
-        ];
+        return maybeInsertContentBreak(
+          [
+            ...previous,
+            ...item.children
+              .filter((c: any) => c.type !== 'title')
+              .map((c: any) => handleNestableItems(c, pageId)),
+          ],
+          index
+        );
       } else {
         return [...previous, handleNestableItems(item, null)];
       }

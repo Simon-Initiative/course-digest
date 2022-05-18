@@ -1,4 +1,4 @@
-import { mapResources } from '../../src/utils/resource_mapping';
+import { mapResources } from '../../src/utils/resources';
 
 describe('mapResources', () => {
   test('should find two resources', () => {

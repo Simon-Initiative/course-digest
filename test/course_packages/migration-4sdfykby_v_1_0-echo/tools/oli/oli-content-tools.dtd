@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+==============================================================================
+$Id: oli-content-tools.dtd,v 1.3 2009/05/22 19:50:04 jar2 Exp $
+
+Copyright (c) 2005-2009 Carnegie Mellon University.
+5000 Forbes Avenue
+Pittsburgh, Pennsylvania 15213, U.S.A.
+All rights reserved.
+
+John Rinderle (jar2@andrew.cmu.edu)
+Bill Jerome (wjj@andrew.cmu.edu
+
+This entity may be identified by the PUBLIC and SYSTEM identifiers:
+
+	PUBLIC "-//Carnegie Mellon University//DTD Content Tools Configuration 2.0//EN"
+	SYSTEM "oli-content-tools.dtd"
+
+==============================================================================
+-->
+
+<!-- Boolean Option -->
+<!ENTITY % boolean "(true | false)">
+
+
+<!-- Package Builder -->
+<!ELEMENT content_tools (log4j_configuration, options?, resource_types, image_mime_types, mime_type_mappings)>
+
+<!-- Location on local disk. -->
+<!ELEMENT file (#PCDATA)>
+
+
+<!-- Log4j Configuration -->
+<!ELEMENT log4j_configuration (file)>
+
+
+<!-- Options -->
+<!ELEMENT options EMPTY>
+
+<!-- ignore_empty_files: exclude empty files from packages and organizations -->
+<!-- cache_xml_grammars: enable the XML grammar caching feature of the Xerces XML parser -->
+<!-- reuse_xml_parser: reuse the small XML parser instance between documents -->
+<!-- collate_files: collate referenced files instead of including all discovered files -->
+<!-- append_namespace: append namespace token to package and organization versions -->
+<!-- namespace_resources: append namespace token to external resource references -->
+<!-- link_expansion : rule for expanding resource links into references in simple organizations -->
+<!ATTLIST options
+	ignore_empty_files %boolean; #IMPLIED
+	cache_xml_grammars %boolean; #IMPLIED
+	reuse_xml_parser %boolean; #IMPLIED
+	collate_files %boolean;#IMPLIED
+	append_namespace %boolean; #IMPLIED
+	namespace_resources %boolean; #IMPLIED
+	link_expansion (always | never | first_use_only | heuristic | modular) #IMPLIED
+>
+
+
+<!-- Resource Types -->
+<!ELEMENT resource_types (resource_type)+>
+
+<!-- Resource Type -->
+<!ELEMENT resource_type (capabilities?, resource_builder)>
+
+<!-- id: identifier of the resource type -->
+<!-- display_name: display name (such as Assessment, Workbook Page, ...) -->
+<!ATTLIST resource_type
+	id ID #REQUIRED
+	display_name CDATA #REQUIRED
+>
+
+<!-- Capabilities -->
+<!ELEMENT capabilities EMPTY>
+
+<!-- item: can the resource type be referenced by an item? -->
+<!-- standalone: can the resource type be delivered standalone? -->
+<!-- inline: can the resource type be delivered inlined? -->
+<!-- sequenced: can the resource type be sequenced in the organization? -->
+<!-- scored: can the resource type be scored? -->
+<!ATTLIST capabilities
+	item %boolean; #IMPLIED
+	standalone %boolean; #IMPLIED
+	inline %boolean; #IMPLIED
+	sequenced %boolean; #IMPLIED
+	scored %boolean; #IMPLIED
+>
+
+<!-- Resource builder implementation, used to identify and create resources of
+the current type. -->
+<!ELEMENT resource_builder (class)>
+
+<!-- Name of a Java class available on the classpath. -->
+<!ELEMENT class (#PCDATA)>
+
+
+<!-- Image MIME Types -->
+<!ELEMENT image_mime_types (mime_type+)>
+
+<!-- MIME Type -->
+<!ELEMENT mime_type (#PCDATA)>
+
+
+<!-- MIME Type Mappings -->
+<!ELEMENT mime_type_mappings (mime_type_mapping)+>
+
+<!-- default_mime_type: default MIME type for files without an extension or
+files with an extension for which there is no explicit mapping. -->
+<!ATTLIST mime_type_mappings
+	default_mime_type CDATA #REQUIRED
+>
+
+<!-- MIME Type Mapping -->
+<!ELEMENT mime_type_mapping EMPTY>
+
+<!-- mime_type: MIME type to map to the specified file extension. -->
+<!-- extension: file extension (e.g. xml, swf, gif) -->
+<!ATTLIST mime_type_mapping
+	mime_type CDATA #REQUIRED
+	extensions NMTOKENS #REQUIRED
+>

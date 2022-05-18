@@ -1,0 +1,302 @@
+<!--
+==============================================================================
+$Id: build.xml,v 1.41 2010/03/29 17:28:43 jar2 Exp $
+
+Copyright (c) 2004-2010 Carnegie Mellon University.
+
+John Rinderle (jar2@andrew.cmu.edu)
+
+Default content package build script, requires Ant version 1.6.3 or newer.
+==============================================================================
+-->
+<project default="all" basedir=".">
+
+	<!-- Load properties file -->
+	<property name="public.tools.dir" value="/oli/public/tools"/>
+	<property file="${basedir}/ant.properties" />
+
+	<!-- Tools directories -->
+	<property name="tools.dir" value="${basedir}/tools" />
+	<property name="tools.ant.dir" value="${tools.dir}/ant" />
+	<property name="tools.jdom.dir" value="${tools.dir}/jdom" />
+	<property name="tools.log4j.dir" value="${tools.dir}/log4j" />
+	<property name="tools.oli.dir" value="${tools.dir}/oli" />
+
+	<!-- Source directories -->
+	<property name="pkg.dir" value="${basedir}/content" />
+	<property name="org.dir" value="${basedir}/organizations" />
+
+	<!-- Build directories -->
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="build.log" value="${basedir}/build.log" />
+
+	<!-- XML catalog -->
+	<condition property="xml.catalog.file" value="${local.xml.catalog}" else="${public.tools.dir}/dtd/catalog.xml">
+		<available file="${local.xml.catalog}" />
+	</condition>
+
+	<xmlcatalog id="oli.xml.catalog">
+		<catalogpath>
+			<pathelement location="${xml.catalog.file}" />
+		</catalogpath>
+	</xmlcatalog>
+	<echo message="xml catalog file: ${xml.catalog.file}"/>
+
+	<!-- Tools classpath -->
+	<path id="tools.path">
+		<fileset dir="${tools.ant.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${tools.jdom.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${tools.log4j.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${tools.oli.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<!-- ================================================================= -->
+	<!-- File selection patterns                                           -->
+	<!-- ================================================================= -->
+
+	<defaultexcludes add="**/CVS.sandboxinfo"/>
+	<defaultexcludes add="**/CVS.sandboxinfo/**"/>
+
+	<patternset id="resource.files">
+        <include name="**/x-oli-assessment2/**/*.xml" />
+		<include name="**/x-oli-inline-assessment/**/*.xml" />
+        <include name="**/x-oli-assessment2-pool/**/*.xml" />
+        <include name="**/x-oli-question_bank/**/*.xml" />
+		<include name="**/x-oli-dataset/**/*.xml" />
+		<include name="**/x-oli-discussion/**/*.xml" />
+		<include name="**/x-oli-experiment/**/*.xml" />
+		<include name="**/x-oli-feedback/**/*.xml" />
+		<include name="**/x-oli-learning_objectives/**/*.xml" />
+		<include name="**/x-oli-supertutor/**/*.xml" />
+		<include name="**/x-oli-workbook/**/*.xml" />
+		<include name="**/x-oli-workbook_page/**/*.xml" />
+		<include name="**/x-pitt-lrdc-andes1-assignment/**/*.xml" />
+		<include name="**/x-cmu-mwe-policyworld/**/*.xml" />
+		<include name="**/x-cmu-phil-cl-assignment/**/*.xml" />
+		<include name="**/x-cmu-phil-cpl-assignment/**/*.xml" />
+		<include name="**/x-cmu-phil-cpl-section/**/*.xml" />
+		<include name="**/x-cmu-phil-cpl-item/**/*.xml" />
+		<include name="**/x-cmu-phil-truthlab/**/*.xml" />
+		<include name="**/x-cmu-stat-stattutor3/**/*.xml" />
+		<include name="**/x-cmu-chem-vlab-exercise/**/*.xml" />
+		<include name="**/x-cmu-idea-watson/**/*.xml" />
+		<include name="**/x-cmu-ctat-tutor/**/*.xml" />
+		<include name="**/x-oli-lti-activity/**/*.xml" />
+	        <include name="**/x-oli-repl-activity/**/*.xml" />
+		<include name="**/x-oli-embed-activity/**/*.xml" />
+        	<include name="**/x-oli-linked-activity/**/*.xml" />
+		<include name="**/x-cmu-collaboration/**/*.xml" />
+		<include name="**/x-oli-embed-activity-highstakes/**/*.xml" />
+	</patternset>
+
+	<patternset id="web.content.files">
+		<include name="**/webcontent/**/*.7z" />
+		<include name="**/webcontent/**/*.avi" />
+		<include name="**/webcontent/**/*.bmp" />
+		<include name="**/webcontent/**/*.brd" />
+		<include name="**/webcontent/**/*.css" />
+		<include name="**/webcontent/**/*.csv" />
+		<include name="**/webcontent/**/*.dcr" />
+		<include name="**/webcontent/**/*.doc" />
+		<include name="**/webcontent/**/*.docx" />
+		<include name="**/webcontent/**/*.exe" />
+		<include name="**/webcontent/**/*.fbd" />
+		<include name="**/webcontent/**/*.flv" />
+		<include name="**/webcontent/**/*.gif" />
+		<include name="**/webcontent/**/*.htm" />
+		<include name="**/webcontent/**/*.html" />
+		<include name="**/webcontent/**/*.jar" />
+		<include name="**/webcontent/**/*.jnlp" />
+		<include name="**/webcontent/**/*.jpeg" />
+		<include name="**/webcontent/**/*.jpg" />
+		<include name="**/webcontent/**/*.js" />
+		<include name="**/webcontent/**/*.key" />
+		<include name="**/webcontent/**/*.mov" />
+		<include name="**/webcontent/**/*.mp3" />
+		<include name="**/webcontent/**/*.mp4" />
+		<include name="**/webcontent/**/*.mpeg" />
+		<include name="**/webcontent/**/*.mpg" />
+		<include name="**/webcontent/**/*.mtw" />
+		<include name="**/webcontent/**/*.odt" />
+		<include name="**/webcontent/**/*.pdb" />
+		<include name="**/webcontent/**/*.pdf" />
+		<include name="**/webcontent/**/*.png" />
+		<include name="**/webcontent/**/*.pps" />
+		<include name="**/webcontent/**/*.ppt" />
+		<include name="**/webcontent/**/*.pptx" />
+		<include name="**/webcontent/**/*.prb" />
+		<include name="**/webcontent/**/*.rar" />
+		<include name="**/webcontent/**/*.rdata" />
+		<include name="**/webcontent/**/*.rtf" />
+		<include name="**/webcontent/**/*.sav" />
+		<include name="**/webcontent/**/*.svg" />
+		<include name="**/webcontent/**/*.swf" />
+		<include name="**/webcontent/**/*.tar" />
+		<include name="**/webcontent/**/*.tar.gz" />
+		<include name="**/webcontent/**/*.tex" />
+		<include name="**/webcontent/**/*.tif" />
+		<include name="**/webcontent/**/*.tiff" />
+		<include name="**/webcontent/**/*.txt" />
+		<include name="**/webcontent/**/*.vtt" />
+		<include name="**/webcontent/**/*.wav" />
+		<include name="**/webcontent/**/*.webm" />
+		<include name="**/webcontent/**/*.wma" />
+		<include name="**/webcontent/**/*.wmv" />
+		<include name="**/webcontent/**/*.xls" />
+		<include name="**/webcontent/**/*.xlsx" />
+		<include name="**/webcontent/**/*.xml" />
+		<include name="**/webcontent/**/*.xyz" />
+		<include name="**/webcontent/**/*.zip" />
+	</patternset>
+
+	<patternset id="organization.files">
+		<patternset refid="web.content.files" />
+	</patternset>
+
+
+	<!-- ================================================================= -->
+	<!-- Init target                                                       -->
+	<!-- ================================================================= -->
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<delete file="${build.log}" failonerror="false" />
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- Clean target                                                      -->
+	<!-- ================================================================= -->
+
+	<target name="clean">
+		<delete dir="${build.dir}" failonerror="false" />
+		<delete file="${build.log}" failonerror="false" />
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- Validate target                                                   -->
+	<!-- ================================================================= -->
+
+	<target name="validate">
+		<xmlvalidate failonerror="false" warn="true" classpathref="tools.path">
+			<fileset dir="${pkg.dir}">
+				<include name="package.xml" />
+				<patternset refid="resource.files"/>
+			</fileset>
+			<fileset dir="${org.dir}">
+				<include name="**/organization.xml" />
+			</fileset>
+			<xmlcatalog refid="oli.xml.catalog" />
+		</xmlvalidate>
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- Verify target                                                     -->
+	<!-- ================================================================= -->
+
+	<target name="verify" depends="init">
+		<!-- Build the content package -->
+		<taskdef name="verify" classname="edu.cmu.oli.content.tools.builder.PackageBuilderTask">
+			<classpath refid="tools.path" />
+		</taskdef>
+		<verify config="${tools.oli.dir}/oli-content-tools.conf"
+				manifest="${pkg.dir}/package.xml"
+				verifyOnly="true">
+
+			<fileset dir="${pkg.dir}">
+				<patternset refid="resource.files"/>
+				<patternset refid="web.content.files"/>
+			</fileset>
+			<xmlcatalog refid="oli.xml.catalog" />
+		</verify>
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- Package target                                                    -->
+	<!-- ================================================================= -->
+
+	<target name="_package" depends="init">
+		<!-- Build the content package -->
+		<taskdef name="package" classname="edu.cmu.oli.content.tools.builder.PackageBuilderTask">
+			<classpath refid="tools.path" />
+		</taskdef>
+		<package config="${tools.oli.dir}/oli-content-tools.conf"
+				 manifest="${pkg.dir}/package.xml"
+				 destDir="${build.dir}">
+
+			<fileset dir="${pkg.dir}">
+				<patternset refid="resource.files"/>
+				<patternset refid="web.content.files"/>
+			</fileset>
+			<xmlcatalog refid="oli.xml.catalog" />
+		</package>
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- Organize target                                                   -->
+	<!-- ================================================================= -->
+
+	<target name="_organize" depends="_package">
+		<!-- Build the organizations -->
+		<taskdef name="organize" classname="edu.cmu.oli.content.tools.builder.OrganizationBuilderTask">
+			<classpath refid="tools.path" />
+		</taskdef>
+		<organize config="${tools.oli.dir}/oli-content-tools.conf"
+				  packageManifest="${build.dir}/package.xml"
+				  srcDir="${org.dir}"
+				  destDir="${build.dir}">
+
+			<patternset refid="organization.files"/>
+			<xmlcatalog refid="oli.xml.catalog" />
+		</organize>
+	</target>
+
+
+	<!-- ================================================================= -->
+	<!-- All target                                                        -->
+	<!-- ================================================================= -->
+
+	<target name="all" depends="clean, _organize" />
+	
+	<target name="outofdate">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+			<classpath>
+				<pathelement location="/oli/ant-contrib-1.0b3.jar"/>
+			</classpath>
+		</taskdef>
+		<outofdate property="manual.outofdate"
+			outputsources="olisources">
+			<sourcefiles>
+				<fileset dir="${pkg.dir}">
+					<patternset refid="resource.files"/>
+				</fileset>	
+			</sourcefiles>
+			<targetfiles path="${basedir}/log4j.properties"/>
+			<sequential>
+				<shellscript shell="bash">
+					cd ${basedir}
+					for g in ${olisources}
+					do
+					  echo $g
+					done
+				</shellscript>
+			</sequential>
+		</outofdate>
+		
+	</target>
+
+
+</project>

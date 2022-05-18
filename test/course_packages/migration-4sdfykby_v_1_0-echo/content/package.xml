@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE package PUBLIC "-//Carnegie Mellon University//DTD Content Package Simple 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_content_package_simple_2_0.dtd">
+<package id="migration-4sdfykby" version="1.0" language="en">
+	<title>Migration Test Course</title>
+	<description>Empty project template for authoring OLI content packages.</description>
+	<cmd:metadata xmlns:cmd="http://oli.web.cmu.edu/content/metadata/">
+		<cmd:license>http://creativecommons.org/licenses/by-nc-sa/3.0/</cmd:license>
+	</cmd:metadata>
+</package>

@@ -1,7 +1,11 @@
 import * as Histogram from '../utils/histogram';
 import { ItemReference, guid } from '../utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
-import { standardContentManipulations, processCodeblock } from './common';
+import {
+  standardContentManipulations,
+  processCodeblock,
+  wrapContentInGroup,
+} from './common';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { convertImageCodingActivities } from './image';
@@ -136,7 +140,7 @@ export class WorkbookPage extends Resource {
 // This function returns a content element collection that is reforumulated as:
 //
 // { type: content, children: [{ type: p, ...}, {type: image, ...}]}
-// { type: content, purpose: example, children: [{ ... ]}
+// { type: content, children: [{ ... ]}
 // { type: activity_placeholder ...}
 // { type: content, children: [{ type: p, ...}]}
 //
@@ -149,24 +153,35 @@ const selection = {
 
 function introduceStructuredContent(content: any) {
   const asStructured = (attrs: Record<string, unknown>) =>
-    Object.assign(
-      {},
-      { type: 'content', purpose: 'none', id: guid() },
-      selection,
-      attrs
-    );
+    Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
 
   const startNewContent = (u: any) =>
-    u.length === 0 ||
-    u[u.length - 1].type === 'activity_placeholder' ||
-    u[u.length - 1].purpose !== 'none';
+    u.length === 0 || u[u.length - 1].type === 'activity_placeholder';
 
   return content.reduce((u: any, e: any) => {
     if (e.type === 'activity_placeholder') {
       return [...u, e];
     }
     if (e.type === 'example') {
-      return [...u, asStructured({ children: e.children, purpose: 'example' })];
+      return [
+        ...u,
+        wrapContentInGroup(
+          [
+            asStructured({
+              children: [
+                {
+                  children: e.children.find((c: any) => c.type === 'title')
+                    .children,
+                  id: guid(),
+                  type: 'h2',
+                },
+                ...e.children.filter((c: any) => c.type !== 'title'),
+              ],
+            }),
+          ],
+          'example'
+        ),
+      ];
     }
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];

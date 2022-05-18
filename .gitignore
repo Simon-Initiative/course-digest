@@ -7,3 +7,5 @@ out.zip
 /yarn-error.log
 /out.zip
 /.idea/
+
+test/course_packages/**/.svn

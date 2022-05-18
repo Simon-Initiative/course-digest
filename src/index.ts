@@ -1,7 +1,11 @@
 import * as Resources from './resources/resource';
-import * as Orgs from './resources/organization';
 import { executeSerially } from './utils/common';
-import { mapResources } from './utils/resource_mapping';
+import {
+  collectOrgItemReferences,
+  mapResources,
+  getLearningObjectiveIds,
+  getSkillIds,
+} from './utils/resources';
 import * as Summarize from './summarize';
 import * as Convert from './convert';
 import * as Media from './media';
@@ -10,7 +14,6 @@ import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import * as glob from 'glob';
 import * as readline from 'readline';
 import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
@@ -42,9 +45,15 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   mediaUrlPrefix: string;
 }
 
-const options = commandLineArgs(optionDefinitions) as CmdOptions;
+interface ConvertedResults {
+  packageDirectory: string;
+  outputDirectory: string;
+  hierarchy: Resources.TorusResource;
+  finalResources: Resources.TorusResource[];
+  mediaItems: Media.MediaItem[];
+}
 
-function validateArgs() {
+function validateArgs(options: CmdOptions) {
   if (options.operation === 'convert') {
     if (
       options.mediaUrlPrefix &&
@@ -66,53 +75,6 @@ function validateArgs() {
   return false;
 }
 
-function collectOrgItemReferences(packageDirectory: string, id = '') {
-  return Orgs.locate(packageDirectory).then((orgs) =>
-    executeSerially(
-      orgs.map((file) => () => {
-        const o = new Orgs.Organization(file, false);
-        return o.summarize(file);
-      })
-    ).then((results: (string | Resources.Summary)[]) => {
-      const seenReferences = {} as any;
-      const references: string[] = [];
-      const referencesOthers: string[] = [];
-
-      results.forEach((r) => {
-        if (typeof r !== 'string') {
-          r.found().forEach((i) => {
-            if (seenReferences[i.id] === undefined) {
-              if (id === '' || id === r.id) {
-                seenReferences[i.id] = true;
-                references.push(i.id);
-              } else {
-                // Add references from all other organization files that are
-                // not part of the main org
-                // Ensure referenced file exists
-                const files = glob.sync(
-                  `${packageDirectory}/**/${i.id}.xml`,
-                  {}
-                );
-                if (files && files.length > 0) {
-                  seenReferences[i.id] = true;
-                  references.push(i.id);
-                  referencesOthers.push(i.id);
-                }
-              }
-            }
-          });
-        }
-      });
-
-      const orgReferences = {} as any;
-      orgReferences['orgReferences'] = references;
-      orgReferences['orgReferencesOthers'] = referencesOthers;
-
-      return orgReferences;
-    })
-  );
-}
-
 // Helper to execute a function that returns a promise, and resolve it
 // as an element in an array that includes any number of other times. This
 // allows an easy way to 'pass along' some number of values through a
@@ -121,7 +83,7 @@ function alongWith(promiseFunc: any, ...along: any) {
   return promiseFunc().then((result: any) => [...along, result]);
 }
 
-function summaryAction() {
+function summaryAction(options: CmdOptions) {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
   const specificOrgId = options.specificOrgId;
@@ -151,19 +113,7 @@ function summaryAction() {
     .catch((err: any) => console.log(err));
 }
 
-function getLearningObjectiveIds(packageDirectory: string) {
-  return mapResources(
-    `${packageDirectory}/content/x-oli-learning_objectives`
-  ).then((map) => Object.keys(map));
-}
-
-function getSkillIds(packageDirectory: string) {
-  return mapResources(`${packageDirectory}/content/x-oli-skills_model`).then(
-    (map) => Object.keys(map)
-  );
-}
-
-function uploadAction() {
+function uploadAction(options: CmdOptions) {
   const mediaManifest =
     options.mediaManifest ||
     path.join(options.outputDir, '_media-manifest.json');
@@ -186,7 +136,7 @@ function uploadAction() {
   return executeSerially(uploaders);
 }
 
-function convertAction() {
+export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
   const specificOrgId = options.specificOrgId;
@@ -243,13 +193,13 @@ function convertAction() {
               (k: string) => results.mediaItems[k]
             );
 
-            Convert.output(
+            return Promise.resolve({
               packageDirectory,
               outputDirectory,
               hierarchy,
               finalResources,
-              mediaItems
-            );
+              mediaItems,
+            });
           }
         );
       });
@@ -257,17 +207,33 @@ function convertAction() {
   });
 }
 
+function writeConvertedResults({
+  packageDirectory,
+  outputDirectory,
+  hierarchy,
+  finalResources,
+  mediaItems,
+}: ConvertedResults) {
+  return Convert.output(
+    packageDirectory,
+    outputDirectory,
+    hierarchy,
+    finalResources,
+    mediaItems
+  );
+}
+
 const anyOf = (ans: string, ...opts: any[]) => {
   ans = ans.toLowerCase();
   return opts.some((opt) => opt === ans);
 };
 
-function suggestUploadAction() {
+function suggestUploadAction(options: CmdOptions) {
   return new Promise<string>((res) =>
     rl.question('Do you want to upload media assets? [y/N] ', res)
   ).then((answer: string) => {
     if (anyOf(answer || 'n', 'y', 'yes')) {
-      return uploadAction().then((_r: any) => console.log('Done!'));
+      return uploadAction(options).then((_r: any) => console.log('Done!'));
     }
 
     console.log('Skipping media upload.');
@@ -275,7 +241,7 @@ function suggestUploadAction() {
   });
 }
 
-function zipAction() {
+function zipAction(options: CmdOptions) {
   const archive = archiver('zip', { zlib: { level: 9 } });
   const stream = fs.createWriteStream('out.zip');
 
@@ -290,12 +256,12 @@ function zipAction() {
   });
 }
 
-function suggestZipAction() {
+function suggestZipAction(options: CmdOptions) {
   return new Promise<string>((res) =>
     rl.question('Do you want to create a zip archive? [Y/n] ', res)
   ).then((answer: string) => {
     if (anyOf(answer || 'y', 'y', 'yes')) {
-      return zipAction().then((_r: any) => console.log('Done!'));
+      return zipAction(options).then((_r: any) => console.log('Done!'));
     }
 
     console.log('Skipping zip archive.');
@@ -321,16 +287,19 @@ function exit() {
 function main() {
   dotenv.config();
 
-  if (validateArgs()) {
+  const options = commandLineArgs(optionDefinitions) as CmdOptions;
+
+  if (validateArgs(options)) {
     if (options.operation === 'summarize') {
-      summaryAction();
+      summaryAction(options);
     } else if (options.operation === 'convert') {
-      convertAction()
-        .then(suggestZipAction)
-        .then(suggestUploadAction)
+      convertAction(options)
+        .then(writeConvertedResults)
+        .then(() => suggestZipAction(options))
+        .then(() => suggestUploadAction(options))
         .then(exit);
     } else if (options.operation === 'upload') {
-      uploadAction().then((_r: any) => console.log('Done!'));
+      uploadAction(options).then((_r: any) => console.log('Done!'));
     } else {
       helpAction();
       exit();
@@ -341,4 +310,6 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
