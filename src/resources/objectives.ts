@@ -19,13 +19,13 @@ export class Objectives extends Resource {
     });
 
     $('objective').each((i: any, elem: any) => {
-      // This makes the id truly global
-      const id = $(elem).attr('id') + '|' + parentId;
+      const id = $(elem).attr('id');
       const title = $(elem).text().trim();
 
       const o = {
         type: 'Objective',
         id,
+        parentId,
         originalFile: '',
         title,
         tags: [],
@@ -34,14 +34,15 @@ export class Objectives extends Resource {
         objectives: [],
       } as TorusResource;
 
-      map[o.id] = o;
+      // parentId is necessary because it makes the id truly global
+      map[`${o.id}-${parentId}`] = o;
 
       objectives.push(o);
     });
 
     $('skillref').each((i: any, elem: any) => {
       const id = $(elem).attr('idref');
-      const actualParent = $(elem).parent().attr('idref') + '|' + parentId;
+      const actualParent = $(elem).parent().attr('idref') + '-' + parentId;
       const o = map[actualParent];
       o.objectives.push(id);
     });

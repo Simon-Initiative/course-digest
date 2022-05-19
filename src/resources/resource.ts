@@ -35,6 +35,7 @@ export interface TorusResource {
   type: string;
   originalFile: string;
   id: string;
+  parentId?: string;
   title: string;
   tags: string[];
   unresolvedReferences: string[];
