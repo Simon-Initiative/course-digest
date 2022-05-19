@@ -11,5 +11,5 @@ To generate a full course package digest using this tool from source:
 ```
 git clone <this repository>
 yarn install
-node ./node_modules/ts-node/dist/bin.js src/index.ts --operation convert --inputDir <course input dir> --outputDir ./out --specificOrg <optional path to specific org> --specificOrgId <optional specific org id> --mediaUrlPrefix https://torus-media-dev.s3.amazonaws.com/media
+npm run start -- --operation convert --inputDir <course input dir> --outputDir ./out --specificOrg <optional path to specific org> --specificOrgId <optional specific org id> --mediaUrlPrefix https://torus-media-dev.s3.amazonaws.com/media
 ```
