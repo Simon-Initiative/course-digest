@@ -24,6 +24,9 @@ export function convert(
   return determineResourceType(file).then((t: ResourceType) => {
     const item = create(t, file, navigable);
 
+    // print out current filename for progress/diagnostics
+    console.log(file);
+
     let $ = DOM.read(file, { normalizeWhitespace: false });
     item.restructurePreservingWhitespace($);
 
