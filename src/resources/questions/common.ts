@@ -1,3 +1,4 @@
+import { maybe } from 'tsmonad';
 import { guid, replaceAll } from '../../utils/common';
 
 export function getChild(collection: any, named: string) {
@@ -41,7 +42,34 @@ export function buildChoices(question: any, from = 'multiple_choice') {
   }));
 }
 
-export function buildTextPart(question: any) {
+export const isSubmitAndCompare = (question: any) =>
+  hasShortAnswer(question) && getParts(question).some((p) => hasExplanation(p));
+
+type Element = { type: string; children?: Element[] };
+type Part = { type: 'part'; children: Element[] };
+
+const hasExplanation = (part: Part) =>
+  part.children.some((e) => e.type === 'explanation');
+
+const defaultModel = () => [{ type: 'p', children: [{ text: '' }] }];
+
+const hasShortAnswer = (question: any) =>
+  question.children.some((t: any) => t.type === 'short_answer');
+
+const shortAnswerExplanationOrDefaultModel = (question: any) =>
+  hasShortAnswer(question)
+    ? maybe(
+        question.children.find((t: any) => t.type === 'explanation')
+      ).caseOf({
+        just: (explanation) => ensureParagraphs(explanation.children),
+        nothing: () => defaultModel(),
+      })
+    : defaultModel();
+
+const getParts = (question: any): any[] =>
+  question.children.filter((c: any) => c.type === 'part');
+
+export function buildTextPart(id: string, question: any) {
   const responses = getChild(question.children, 'part').children.filter(
     (p: any) => p.type === 'response'
   );
@@ -64,7 +92,10 @@ export function buildTextPart(question: any) {
           id: guid(),
           content: {
             id: guid(),
-            model: ensureParagraphs(r.children[0].children),
+            model: maybe(r.children[0]).caseOf({
+              just: (feedback: any) => ensureParagraphs(feedback.children),
+              nothing: () => shortAnswerExplanationOrDefaultModel(question),
+            }),
           },
         },
       };
@@ -86,7 +117,7 @@ export function buildTextPart(question: any) {
 export function hint() {
   return {
     id: guid(),
-    content: { model: [{ type: 'p', children: [{ text: '' }] }] },
+    content: { model: defaultModel() },
   };
 }
 

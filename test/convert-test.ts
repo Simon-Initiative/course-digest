@@ -80,7 +80,7 @@ it('should convert example course to valid course digest', async () => {
       content: expect.objectContaining({ model: expect.any(Array) }),
       isGraded: false,
       objectives: [
-        'c47ac29051ed427984e2b6f76d09fa8e|dd83841bc84045138faf6f3b7868c6dc',
+        'c47ac29051ed427984e2b6f76d09fa8e-dd83841bc84045138faf6f3b7868c6dc',
       ],
     })
   );
@@ -159,7 +159,8 @@ it('should convert example course to valid course digest', async () => {
   expect(finalResources).toContainEqual(
     expect.objectContaining({
       type: 'Objective',
-      id: 'c47ac29051ed427984e2b6f76d09fa8e|dd83841bc84045138faf6f3b7868c6dc',
+      id: 'c47ac29051ed427984e2b6f76d09fa8e',
+      parentId: 'dd83841bc84045138faf6f3b7868c6dc',
       originalFile: '',
       title: 'Default objective',
       tags: [],
