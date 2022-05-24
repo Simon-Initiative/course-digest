@@ -201,8 +201,9 @@ function single_response_text(question: any) {
   return {
     stem: Common.buildStem(question),
     inputType: 'text',
+    submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
-      parts: [Common.buildTextPart(question)],
+      parts: [Common.buildTextPart('1', question)],
       transformations: [],
       previewText: '',
     },

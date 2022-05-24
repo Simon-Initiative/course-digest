@@ -25,7 +25,7 @@ export function convert(
     const item = create(t, file, navigable);
 
     // print out current filename for progress/diagnostics
-    console.log(file);
+    console.log('Converting: ', file);
 
     let $ = DOM.read(file, { normalizeWhitespace: false });
     item.restructurePreservingWhitespace($);

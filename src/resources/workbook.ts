@@ -9,6 +9,7 @@ import {
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { convertImageCodingActivities } from './image';
+import { maybe } from 'tsmonad';
 
 function liftTitle($: any) {
   $('workbook_page').attr('title', $('head title').text());
@@ -168,15 +169,19 @@ function introduceStructuredContent(content: any) {
         wrapContentInGroup(
           [
             asStructured({
-              children: [
-                {
-                  children: e.children.find((c: any) => c.type === 'title')
-                    .children,
-                  id: guid(),
-                  type: 'h2',
-                },
-                ...e.children.filter((c: any) => c.type !== 'title'),
-              ],
+              children: maybe(
+                e.children.find((c: any) => c.type === 'title')
+              ).caseOf({
+                just: (title: any) => [
+                  {
+                    children: title.children,
+                    id: guid(),
+                    type: 'h2',
+                  },
+                  ...e.children.filter((c: any) => c.type !== 'title'),
+                ],
+                nothing: () => e.children,
+              }),
             }),
           ],
           'example'

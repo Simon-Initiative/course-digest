@@ -13,39 +13,43 @@ export function addWebContentToMediaSummary(
   const getName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
 
   return new Promise((resolve, _reject) => {
-    glob(`${directory}/**/webcontent/**/*.*`, {}, (err: any, files: any) => {
-      // Sort file paths by depth to ensure that shallower paths are processed first when a
-      // filename conflict, in the now relatively flatted webcontent file structure, is detected
-      files.sort((a: string, b: string) => {
-        return a.split('/').length - b.split('/').length;
-      });
+    glob(
+      `${directory}/**/webcontent/**/*`,
+      { nodir: true },
+      (err: any, files: any) => {
+        // Sort file paths by depth to ensure that shallower paths are processed first when a
+        // filename conflict, in the now relatively flatted webcontent file structure, is detected
+        files.sort((a: string, b: string) => {
+          return a.split('/').length - b.split('/').length;
+        });
 
-      files.forEach((file: string) => {
-        const absolutePath = path.resolve(file);
-        const name = getName(absolutePath);
-        const md5 = md5File.sync(absolutePath);
-        const toURL = (name: string) => `${summary.urlPrefix}/${md5}/${name}`;
+        files.forEach((file: string) => {
+          const absolutePath = path.resolve(file);
+          const name = getName(absolutePath);
+          const md5 = md5File.sync(absolutePath);
+          const toURL = (name: string) => `${summary.urlPrefix}/${md5}/${name}`;
 
-        if (summary.mediaItems[absolutePath] === undefined) {
-          const flattenedName = summary.flattenedNames[name]
-            ? generateNewName(name)
-            : name;
+          if (summary.mediaItems[absolutePath] === undefined) {
+            const flattenedName = summary.flattenedNames[name]
+              ? generateNewName(name)
+              : name;
 
-          summary.flattenedNames[flattenedName] = flattenedName;
-          summary.mediaItems[absolutePath] = {
-            file: absolutePath,
-            fileSize: getFilesizeInBytes(absolutePath),
-            name,
-            flattenedName,
-            md5,
-            mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
-            references: [],
-            url: toURL(flattenedName),
-          };
-        }
-      });
-      resolve(summary);
-    });
+            summary.flattenedNames[flattenedName] = flattenedName;
+            summary.mediaItems[absolutePath] = {
+              file: absolutePath,
+              fileSize: getFilesizeInBytes(absolutePath),
+              name,
+              flattenedName,
+              md5,
+              mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
+              references: [],
+              url: toURL(flattenedName),
+            };
+          }
+        });
+        resolve(summary);
+      }
+    );
   });
 }
 
