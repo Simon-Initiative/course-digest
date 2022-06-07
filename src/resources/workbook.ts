@@ -28,7 +28,6 @@ export class WorkbookPage extends Resource {
     liftTitle($);
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'inline', 'activity_placeholder');
-    DOM.rename($, 'activity', 'activity_placeholder');
     DOM.rename($, 'activity_link', 'a');
   }
 
@@ -47,6 +46,12 @@ export class WorkbookPage extends Resource {
 
     $('activity_placeholder').each((i: any, elem: any) => {
       page.unresolvedReferences.push($(elem).attr('idref'));
+    });
+
+    $('activity').each((i: any, elem: any) => {
+      const idref = $(elem).attr('idref');
+      page.unresolvedReferences.push(idref);
+      $(elem).replaceWith(`<p><a idref="${idref}">Click to begin</a></p>`);
     });
 
     $('objref').each((i: any, elem: any) => {
