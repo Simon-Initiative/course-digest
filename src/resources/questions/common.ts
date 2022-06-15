@@ -9,6 +9,31 @@ export function getChild(collection: any, named: string) {
   return undefined;
 }
 
+export function convertAutoGenResponses(model: any) {
+  const autoGens = model.authoring.parts[0].responses.filter(
+    (r: any) => r.name !== undefined && r.name.indexOf('AUTOGEN') > -1
+  );
+
+  if (autoGens.length > 0) {
+    model.authoring.parts[0].responses =
+      model.authoring.parts[0].responses.filter(
+        (r: any) => r.name === undefined || r.name.indexOf('AUTOGEN') === -1
+      );
+
+    const catchAll = autoGens[0];
+    catchAll.rule = 'input like {.*}';
+    model.authoring.parts[0].responses.push(catchAll);
+  }
+}
+
+export function hasCatchAll(responses: any[]) {
+  return responses.some((r) => r.match === 'input like {.*}');
+}
+
+export function hasCatchAllRule(responses: any[]) {
+  return responses.some((r) => r.rule === 'input like {.*}');
+}
+
 export function ensureParagraphs(children: any) {
   if (children.length === 1 && children[0].text !== undefined) {
     return [{ type: 'p', children }];
