@@ -16,15 +16,11 @@ import * as XML from '../utils/xml';
 import * as Common from './questions/common';
 
 function usesSimpleModel(responses: any[]) {
-  return hasCatchAll(responses) && responses.length <= 2;
+  return Common.hasCatchAll(responses) && responses.length <= 2;
 }
 
 function shouldUseSimpleModel(responses: any[]) {
-  return !hasCatchAll(responses) && responses.length === 2;
-}
-
-function hasCatchAll(responses: any[]) {
-  return responses.some((r) => r.match === 'input like {.*}');
+  return !Common.hasCatchAll(responses) && responses.length === 2;
 }
 
 function buildMCQPart(question: any) {
@@ -89,7 +85,7 @@ function buildMCQPart(question: any) {
 
   model.targeted = targeted;
 
-  if (!hasCatchAll(r)) {
+  if (!Common.hasCatchAllRule(r)) {
     model.responses.push({
       id: guid(),
       score: 0,
@@ -182,7 +178,7 @@ function ordering(question: any) {
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
-  if (!hasCatchAll(model.authoring.parts[0].responses)) {
+  if (!Common.hasCatchAllRule(model.authoring.parts[0].responses)) {
     model.authoring.parts[0].responses.push({
       id: guid(),
       score: 0,

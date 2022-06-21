@@ -1,5 +1,6 @@
 import { guid } from '../../utils/common';
 import * as Common from './common';
+import { matchListRule } from './rules';
 
 // Helper. Assumes a correct ID is given
 interface Identifiable {
@@ -65,28 +66,28 @@ export function setDifference<T>(subtractedFrom: T[], toSubtract: T[]) {
 
 // Update all response rules based on a model with new choices that
 // are not yet reflected by the rules.
-export const updateCATAResponseRules = (model: any) => {
-  getCorrectResponse(model).rule = createRuleForIds(
-    getCorrectChoiceIds(model),
-    getIncorrectChoiceIds(model)
-  );
 
-  const targetedRules: string[] = [];
-  const allChoiceIds = model.choices.map((choice: any) => choice.id);
+function getResponseBy(model: any, fn: any) {
+  const result = model.authoring.parts[0].responses.filter(fn);
+  if (result.length > 0) {
+    return result[0];
+  }
+  return null;
+}
+
+const updateResponseRules = (model: any) => {
+  getCorrectResponse(model).rule = matchListRule(
+    model.choices.map((c: any) => c.id),
+    getCorrectChoiceIds(model)
+  );
 
   model.authoring.targeted.forEach((assoc: any) => {
-    const targetedRule = createRuleForIds(
-      getChoiceIds(assoc),
-      setDifference(allChoiceIds, getChoiceIds(assoc))
-    );
-    targetedRules.push(targetedRule);
-    getResponse(model, getResponseId(assoc)).rule = targetedRule;
+    getResponseBy(model, (r: any) => r.id === getResponseId(assoc)).rule =
+      matchListRule(
+        model.choices.map((c: any) => c.id),
+        getChoiceIds(assoc)
+      );
   });
-  getIncorrectResponse(model).rule = unionRules(
-    targetedRules
-      .map(invertRule)
-      .concat([invertRule(getCorrectResponse(model).rule)])
-  );
 };
 
 function buildCATAPart(question: any) {
@@ -100,7 +101,7 @@ function buildCATAPart(question: any) {
     (p: any) => p.type === 'skillref'
   );
 
-  return {
+  const part = {
     id: '1',
     responses: responses.map((r: any) => {
       const id = guid();
@@ -108,6 +109,7 @@ function buildCATAPart(question: any) {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
         rule: r.match,
+        name: r.name,
         feedback: {
           id: guid(),
           content: { model: Common.ensureParagraphs(r.children[0].children) },
@@ -123,6 +125,8 @@ function buildCATAPart(question: any) {
     scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
   };
+
+  return part;
 }
 
 export function cata(question: any) {
@@ -144,6 +148,8 @@ export function cata(question: any) {
     },
   };
 
+  Common.convertAutoGenResponses(model);
+
   const correctResponse = model.authoring.parts[0].responses.filter(
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
@@ -153,7 +159,7 @@ export function cata(question: any) {
 
   const incorrectIds = choiceIds.filter((x: any) => !correctIds.includes(x));
   const incorrectResponses = model.authoring.parts[0].responses.filter(
-    (r: any) => r.rule === '*'
+    (r: any) => r.rule === '*' || r.rule === 'input like {.*}'
   );
   let incorrectResponse: any;
   if (incorrectResponses.length === 0) {
@@ -184,7 +190,19 @@ export function cata(question: any) {
     }
   });
 
-  updateCATAResponseRules(model);
+  updateResponseRules(model);
+
+  if (!Common.hasCatchAllRule(model.authoring.parts[0].responses)) {
+    model.authoring.parts[0].responses.push({
+      id: guid(),
+      score: 0,
+      rule: 'input like {.*}',
+      feedback: {
+        id: guid(),
+        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+      },
+    });
+  }
 
   return model;
 }
