@@ -93,7 +93,7 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p formula');
   DOM.stripElement($, 'materials material');
   DOM.stripElement($, 'materials');
-  DOM.stripElement($, 'anchor');
+
   $('pullout title').remove();
   DOM.stripElement($, 'pullout');
 
@@ -107,6 +107,8 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'dl', 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
+
+  DOM.rename($, 'extra', 'popup');
 }
 
 function getPurpose(purpose?: string) {

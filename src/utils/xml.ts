@@ -190,6 +190,29 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const getOneOfType = (children: any, type: string) => {
+        const results = children.filter((t: any) => t.type === type);
+        if (results.length > 0) {
+          return results[0];
+        }
+        return null;
+      };
+
+      const elevatePopoverContent = () => {
+        if (tag === 'popup' && top().children.length === 2) {
+          const anchor = getOneOfType(top().children, 'anchor');
+          const meaning = getOneOfType(top().children, 'meaning');
+
+          if (anchor !== null && meaning !== null) {
+            const material = getOneOfType(meaning.children, 'material');
+
+            top().children = anchor.children;
+            top().content = material.children;
+            top().trigger = 'hover';
+          }
+        }
+      };
+
       const elevateCaption = (parent: string) => {
         if (tag === 'caption' && stack[stack.length - 2].type === parent) {
           if (stack.length > 1) {
@@ -232,6 +255,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         elevateCaption('youtube');
         elevateTableCaption();
         elevateCaption('audio');
+        elevatePopoverContent();
 
         if (top() && top().children === undefined) {
           top().children = [];
