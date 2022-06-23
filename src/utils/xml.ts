@@ -1,6 +1,7 @@
 // XML related utilities
 import * as stream from 'stream';
 import * as fs from 'fs';
+import { decodeEntities } from './common';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -190,6 +191,29 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const getOneOfType = (children: any, type: string) => {
+        const results = children.filter((t: any) => t.type === type);
+        if (results.length > 0) {
+          return results[0];
+        }
+        return null;
+      };
+
+      const elevatePopoverContent = () => {
+        if (tag === 'popup' && top().children.length === 2) {
+          const anchor = getOneOfType(top().children, 'anchor');
+          const meaning = getOneOfType(top().children, 'meaning');
+
+          if (anchor !== null && meaning !== null) {
+            const material = getOneOfType(meaning.children, 'material');
+
+            top().children = anchor.children;
+            top().content = material.children;
+            top().trigger = 'hover';
+          }
+        }
+      };
+
       const elevateCaption = (parent: string) => {
         if (tag === 'caption' && stack[stack.length - 2].type === parent) {
           if (stack.length > 1) {
@@ -207,6 +231,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
               stack.length - 2
             ].children.filter((t: any) => t.type !== 'caption');
           }
+        }
+      };
+
+      const unescapeFormulaSrc = () => {
+        if (
+          (tag === 'formula' || tag === 'formula_inline') &&
+          top().subtype !== 'richtext'
+        ) {
+          top().src = decodeEntities(top().src);
         }
       };
 
@@ -232,6 +265,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         elevateCaption('youtube');
         elevateTableCaption();
         elevateCaption('audio');
+        elevatePopoverContent();
+        unescapeFormulaSrc();
 
         if (top() && top().children === undefined) {
           top().children = [];

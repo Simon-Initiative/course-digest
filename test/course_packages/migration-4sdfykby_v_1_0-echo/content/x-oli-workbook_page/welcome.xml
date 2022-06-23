@@ -1,2 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd"><workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="welcome"><head><title>Welcome!</title><objref idref="c47ac29051ed427984e2b6f76d09fa8e" /></head><body><p id="c970f9059f4f4ac3a0b5f417f1f82acf">(This space intentionally left blank.)</p><example id="a088625f4d624799b370bc3d6e6a9677"><title>Example Title</title><p id="e1f96ce25cc14278ae759e14b08c44ff">This is an example</p></example><wb:inline idref="newca1a54a0f56a4d429f5aff2c515cab08" purpose="learnbydoing" /><activity idref="newc72f87db5a5543b5ae8582d2d4cd34a7" purpose="quiz" /></body></workbook_page>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="welcome">
+	<head>
+		<title>
+			Welcome!
+		</title>
+		<objref idref="c47ac29051ed427984e2b6f76d09fa8e" />
+	</head>
+	<body>
+		<p id="c970f9059f4f4ac3a0b5f417f1f82acf">
+			(This space intentionally left blank.)
+		</p>
+		<example id="a088625f4d624799b370bc3d6e6a9677">
+			<title>
+				Example Title
+			</title>
+			<p id="e1f96ce25cc14278ae759e14b08c44ff">
+				This is an example
+			</p>
+		</example>
+		<inline idref="newca1a54a0f56a4d429f5aff2c515cab08" purpose="learnbydoing" />
+		<activity idref="newc72f87db5a5543b5ae8582d2d4cd34a7" purpose="quiz" />
+	</body>
+</workbook_page>

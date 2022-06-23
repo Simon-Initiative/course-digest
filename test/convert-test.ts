@@ -37,6 +37,8 @@ it('should convert example course to valid course digest', async () => {
     mediaUrlPrefix: 'https://example-url-prefix',
   });
 
+  console.log(hierarchy);
+
   expect(hierarchy as Hierarchy).toEqual(
     expect.objectContaining({
       type: 'Hierarchy',
@@ -61,11 +63,13 @@ it('should convert example course to valid course digest', async () => {
           type: 'container',
           children: expect.any(Array),
           id: 'lesson1',
-          title: 'Lesson 1',
+          title: ' Lesson 1 ',
         }),
       ]),
     })
   );
+
+  console.log(finalResources);
 
   expect(finalResources).toContainEqual(
     expect.objectContaining({
