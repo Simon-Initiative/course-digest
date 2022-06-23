@@ -1,6 +1,7 @@
 // XML related utilities
 import * as stream from 'stream';
 import * as fs from 'fs';
+import { decodeEntities } from './common';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -233,6 +234,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const unescapeFormulaSrc = () => {
+        if (
+          (tag === 'formula' || tag === 'formula_inline') &&
+          top().subtype !== 'richtext'
+        ) {
+          top().src = decodeEntities(top().src);
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -256,6 +266,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         elevateTableCaption();
         elevateCaption('audio');
         elevatePopoverContent();
+        unescapeFormulaSrc();
 
         if (top() && top().children === undefined) {
           top().children = [];

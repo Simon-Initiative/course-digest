@@ -4,10 +4,41 @@ import {
   stripElement,
   moveAttrToChildren,
   mergeCaptions,
+  isInlineElement,
 } from '../../src/utils/dom';
 import * as cheerio from 'cheerio';
 
 describe('dom mutations', () => {
+  test('should return that the formula is not inline', () => {
+    const content = '<td><formula>test</formula></td>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    const refs = $('formula');
+
+    refs.each((i: any, elem: any) => {
+      expect(isInlineElement($, elem)).toBeFalsy();
+    });
+  });
+
+  test('should return that the formula is inline', () => {
+    const content = '<td>This is some <formula>test</formula></td>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    const refs = $('formula');
+
+    refs.each((i: any, elem: any) => {
+      expect(isInlineElement($, elem)).toBeTruthy();
+    });
+  });
+
   test('should strip the element', () => {
     const content = '<p>1<b>2</b>3<b><c/></b></p>';
 

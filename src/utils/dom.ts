@@ -46,6 +46,50 @@ export function flattenResourceRefs($: any) {
   });
 }
 
+// Utility function that allows determining whether an instance of a mixed type element (e.g. formula) is
+// needs to be considered inline or block.
+export function isInlineElement($: any, elem: any) {
+  const parent = $(elem).parent();
+
+  if (
+    isOneOf(parent[0].name, ['li', 'td', 'th', 'choice', 'feedback', 'hint'])
+  ) {
+    if (parent[0].children.length === 1) {
+      return false;
+    }
+
+    return parent[0].children.some(
+      (c: any) => c.type === 'text' || (c.type == 'tag' && isInlineTag(c.name))
+    );
+  }
+  return false;
+}
+
+const inlineTags = {
+  em: true,
+  sub: true,
+  sup: true,
+  cite: true,
+  a: true,
+  link: true,
+  activity_link: true,
+  foreign: true,
+  ipa: true,
+  code: true,
+  var: true,
+  term: true,
+  extra: true,
+  text: true,
+};
+
+export function isInlineTag(tag: string) {
+  return (inlineTags as any)[tag] === true;
+}
+
+export function isOneOf(item: string, items: Array<string>) {
+  return items.some((i: string) => i === item);
+}
+
 export function moveAttrToChildren(
   $: any,
   item: any,

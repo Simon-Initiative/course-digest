@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="mathml">
+	<head>
+		<title>
+			MathML and Formula Ingest
+		</title>
+		<objref idref="c47ac29051ed427984e2b6f76d09fa8e" />
+	</head>
+	<body>
+		<p>
+			The following test cases exist:
+		</p>
+		<ol>
+			<li>
+				Block level formula with plain text
+			</li>
+			<li>
+				Block level formula with markup and text
+			</li>
+			<li>
+				Block level formula containing escaped Latex
+			</li>
+			<li>
+				Block level formula containing MathML
+			</li>
+			<li>
+				Inline formula with plain text
+			</li>
+			<li>
+				Inline formula with markup and text
+			</li>
+			<li>
+				Inline formula containing escaped Latex
+			</li>
+			<li>
+				Inline formula containing MathML
+			</li>
+			<li>
+				Standalone, inline Latex with inline escape
+			</li>
+			<li>
+				Standalone, inline Latex with block escape
+			</li>
+			<li>
+				Standalone, inline MathML with inline setting
+			</li>
+			<li>
+				Standalone, inline MathML with block setting
+			</li>
+			<li>
+				MathML appearing as the only entry within a table cell
+			</li>
+		</ol>
+		<p>
+			1. Block level formula with plain text
+		</p>
+		<formula>
+			A + B ⇌ C + D
+		</formula>
+		<p>
+			2. Block level formula with markup
+		</p>
+		<formula>
+			<em>
+				Emphasis
+			</em>
+			<sup>
+				2
+			</sup>
+		</formula>
+		<p>
+			3. Block level formula with Latex
+		</p>
+		<formula>
+			$${\mathrm M}_1{\mathrm L}_1\;=\;{\mathrm M}_2{\mathrm L}_2$$
+		</formula>
+		<p>
+			4. Block level formula with MathML
+		</p>
+		<formula>
+			<math display="block">
+				<mrow>
+					<mn>
+						0
+					</mn>
+					<mtext>
+						&nbsp;
+					</mtext>
+					<mo lspace="0px" rspace="0px">
+						=
+					</mo>
+					<mtext>
+						&nbsp;Δ
+					</mtext>
+					<mi>
+						G
+					</mi>
+					<mo lspace="0px" rspace="0px">
+						°
+					</mo>
+					<mtext>
+						&nbsp;
+					</mtext>
+					<mo lspace="0px" rspace="0px">
+						+
+					</mo>
+					<mtext>
+						&nbsp;
+					</mtext>
+					<mi>
+						RT
+					</mi>
+					<mtext>
+						ln
+					</mtext>
+					<mi>
+						K
+					</mi>
+					<mtext>
+						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+					</mtext>
+					<mo fence="false" stretchy="false">
+						(
+					</mo>
+					<mi>
+						at
+					</mi>
+					<mo>
+						&nbsp;
+					</mo>
+					<mi>
+						equilibrium
+					</mi>
+					<mo fence="false" stretchy="false" form="infix">
+						)
+					</mo>
+				</mrow>
+			</math>
+		</formula>
+		<p>
+			5. Inline formula with plain text:
+			<formula>
+				This is the text
+			</formula>
+		</p>
+		<p>
+			6. Inline formula with markup and text:
+			<formula>
+				This is
+				<em>
+					bolded
+				</em>
+			</formula>
+		</p>
+		<p>
+			7. Inline formula Latex with inline escape
+			<formula>
+				\(=\;\frac{(3.6\times10^{-4})^2}{(0.036)(0.0089)}\)
+			</formula>
+			and one with a block escape:
+			<formula>
+				$$=\;\frac{(3.6\times10^{-4})^2}{(0.036)(0.0089)}$$
+			</formula>
+		</p>
+		<p>
+			8. Inline formula with MathMl with inline setting, including namespace:
+			<formula>
+				<m:math style="inline">
+					<m:mo>
+						&#x21CC;
+					</m:mo>
+				</m:math>
+			</formula>
+			And one with a block setting
+			<formula>
+				<math style="block">
+					<mo>
+						&#x21CC;
+					</mo>
+				</math>
+			</formula>
+		</p>
+		<p>
+			9. Standalone Latex with inline \(=\;\frac{(3.6\times10^{-4})^2}{(0.036)(0.0089)}\)
+		</p>
+		<p>
+			10. Standalone Latex with block $$=\;\frac{(3.6\times10^{-4})^2}{(0.036)(0.0089)}$$
+		</p>
+		<p>
+			11. Standalone MathML with inline
+			<math style="inline">
+				<mo>
+					&#x21CC;
+				</mo>
+			</math>
+		</p>
+		<p>
+			12. Standalone MathML with block
+			<math style="block">
+				<mo>
+					&#x21CC;
+				</mo>
+			</math>
+		</p>
+		<p>
+			13. MathML appearing as the only thing within a table cell (header in this example):
+		</p>
+		<table>
+			<tr>
+				<th>
+					<em style="italic">
+						T
+					</em>
+					(K)
+				</th>
+				<th>
+					<em style="italic">
+						k
+					</em>
+					(L/mol/s)
+				</th>
+				<th>
+					<math display="inline">
+						<mrow>
+							<mfrac>
+								<mn>
+									1
+								</mn>
+								<mi>
+									T
+								</mi>
+							</mfrac>
+						</mrow>
+					</math>
+					(K
+					<sup>
+						−1
+					</sup>
+					)
+				</th>
+				<th>
+					ln
+					<em style="italic">
+						k
+					</em>
+				</th>
+			</tr>
+			<tr>
+				<td>
+					703
+				</td>
+				<td>
+					1.1 × 10
+					<sup>
+						−2
+					</sup>
+				</td>
+				<td>
+					0.001422
+				</td>
+				<td>
+					-4.510
+				</td>
+			</tr>
+			<tr>
+				<td>
+					865
+				</td>
+				<td>
+					4.95
+				</td>
+				<td>
+					0.001156
+				</td>
+				<td>
+					1.600
+				</td>
+			</tr>
+		</table>
+	</body>
+</workbook_page>

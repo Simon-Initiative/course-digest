@@ -1,6 +1,7 @@
 import { ItemReference, guid } from '../utils/common';
 import * as Histogram from '../utils/histogram';
 import * as DOM from '../utils/dom';
+import { Domain } from 'domain';
 
 export interface HasReferences {
   found: () => ItemReference[];
@@ -90,7 +91,6 @@ export function standardContentManipulations($: any) {
 
   DOM.stripElement($, 'li p');
   DOM.stripElement($, 'p quote');
-  DOM.stripElement($, 'p formula');
   DOM.stripElement($, 'materials material');
   DOM.stripElement($, 'materials');
 
@@ -109,6 +109,110 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'quote', 'blockquote');
 
   DOM.rename($, 'extra', 'popup');
+
+  handleFormulaMathML($);
+}
+
+export function handleFormulaMathML($: any) {
+  $('formula').each((i: any, item: any) => {
+    const subtype = determineFormulaType(item);
+    if (subtype === 'mathml') {
+      $(item).attr('src', getFirstMathML($, item));
+      item.children = [];
+    } else if (subtype === 'latex') {
+      $(item).attr('src', stripLatexDelimiters(item.children[0].data));
+      item.children = [];
+    }
+    $(item).attr('subtype', subtype);
+  });
+
+  // For formula inside of paragraphs, we know they are of the inline variety
+  DOM.rename($, 'p formula', 'formula_inline');
+
+  // All others, we must inspect their context to determine whether they are
+  // inline or block
+  $('formula').each((i: any, item: any) => {
+    if (DOM.isInlineElement($, item)) {
+      item.tagName = 'formula_inline';
+    }
+  });
+
+  // At this point, all remaining <m:math> or <math> elements must be "standalone",
+  // that is, they exist without <formula> as their direct parent.  They all also
+  // can only be inline, thus we can safely parent them all with <formula_inline>
+  const formula_inline = $(
+    '<formula_inline_temp subtype="mathml"></formula_inline_temp>'
+  );
+  $('m\\:math').wrap(formula_inline);
+  $('math').wrap(formula_inline);
+  $('formula_inline_temp').each((i: any, item: any) => {
+    item.tagName = 'formula_inline';
+    $(item).attr('src', getFirstMathML($, item));
+    item.children = [];
+  });
+}
+
+function getFirstMathML($: any, item: any) {
+  const text = $(item).html();
+
+  let firstMath = text.indexOf('<math');
+  if (firstMath === -1) {
+    firstMath = text.indexOf('<m:math');
+  }
+
+  let firstMathEnd = text.indexOf('</m:math>');
+  if (firstMathEnd !== -1) {
+    firstMathEnd = firstMathEnd + 9;
+  } else {
+    firstMathEnd = text.indexOf('</math>') + 7;
+  }
+
+  return text.substring(firstMath, firstMathEnd);
+}
+
+export function determineFormulaType(item: any) {
+  if (
+    item.children.length === 1 &&
+    item.children[0].type === 'text' &&
+    isLatexString(item.children[0].data)
+  ) {
+    return 'latex';
+  }
+
+  if (
+    item.children.some((c: any) => isMathTag(c)) &&
+    item.children.every((c: any) => isTextOrMathTag(c))
+  ) {
+    return 'mathml';
+  }
+  return 'richtext';
+}
+
+function isTextOrMathTag(e: any) {
+  return e.type === 'text' || isMathTag(e);
+}
+
+function isMathTag(e: any) {
+  return e.type === 'tag' && (e.name === 'm:math' || e.name === 'math');
+}
+
+function stripLatexDelimiters(s: string): string {
+  const trimmed = s.trim();
+  return trimmed.substring(2, trimmed.length - 2);
+}
+
+function isLatexString(s: string): boolean {
+  const trimmed = s.trim();
+  if (trimmed.startsWith('$$') && trimmed.endsWith('$$')) {
+    return true;
+  }
+  if (trimmed.startsWith('\\(') && trimmed.endsWith('\\)')) {
+    return true;
+  }
+  if (trimmed.startsWith('\\[') && trimmed.endsWith('\\]')) {
+    return true;
+  }
+  return false;
 }
 
 function getPurpose(purpose?: string) {
