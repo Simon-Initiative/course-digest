@@ -1,7 +1,6 @@
 import { ItemReference, guid } from '../utils/common';
 import * as Histogram from '../utils/histogram';
 import * as DOM from '../utils/dom';
-import { Domain } from 'domain';
 
 export interface HasReferences {
   found: () => ItemReference[];
@@ -119,21 +118,40 @@ export function handleFormulaMathML($: any) {
     if (subtype === 'mathml') {
       $(item).attr('src', getFirstMathML($, item));
       item.children = [];
+      $(item).attr('subtype', subtype);
     } else if (subtype === 'latex') {
       $(item).attr('src', stripLatexDelimiters(item.children[0].data));
       item.children = [];
+      $(item).attr('subtype', subtype);
+    } else {
+      item.tagName = 'callout';
     }
-    $(item).attr('subtype', subtype);
   });
 
   // For formula inside of paragraphs, we know they are of the inline variety
   DOM.rename($, 'p formula', 'formula_inline');
+  DOM.rename($, 'p callout', 'callout_inline');
 
   // All others, we must inspect their context to determine whether they are
   // inline or block
   $('formula').each((i: any, item: any) => {
     if (DOM.isInlineElement($, item)) {
       item.tagName = 'formula_inline';
+    }
+  });
+  $('callout').each((i: any, item: any) => {
+    if (DOM.isInlineElement($, item)) {
+      item.tagName = 'callout_inline';
+    } else {
+      const containsInlineOnly = item.children.every(
+        (c: any) =>
+          c.type === 'text' || (c.type == 'tag' && DOM.isInlineTag(c.name))
+      );
+
+      // We must wrap these inlines only in a paragraph
+      if (containsInlineOnly) {
+        $(item).html(`<p>${$(item).html()}</p>`);
+      }
     }
   });
 

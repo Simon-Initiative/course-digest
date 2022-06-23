@@ -14,22 +14,20 @@ describe('formulas and mathml', () => {
   test('should properly identify and convert inlines', () => {
     expect(
       process('<body><formula>test</formula><p>test</p></body>').indexOf(
-        'formula_inline'
+        'callout'
       )
-    ).toEqual(-1);
+    ).toBeGreaterThan(-1);
 
     expect(
-      process('<body><formula>test</formula></body>').indexOf('formula_inline')
-    ).toEqual(-1);
+      process('<body><formula>test</formula></body>').indexOf('callout')
+    ).toBeGreaterThan(-1);
 
     expect(
-      process('<td><formula>test</formula><p>test</p></td>').indexOf(
-        'formula_inline'
-      )
-    ).toEqual(-1);
+      process('<td><formula>test</formula><p>test</p></td>').indexOf('callout')
+    ).toBeGreaterThan(-1);
 
     expect(
-      process('<td>test <formula>test</formula></td>').indexOf('formula_inline')
+      process('<td>test <formula>test</formula></td>').indexOf('callout_inline')
     ).toBeGreaterThan(-1);
   });
 
@@ -84,10 +82,9 @@ describe('formulas and mathml', () => {
 
   test('should properly identify and convert richtext formulas', () => {
     const s = process('<body><formula>plain text</formula></body>');
-    expect(s.indexOf('subtype="richtext"')).toBeGreaterThan(-1);
-    expect(s.indexOf('plain text</formula>')).toBeGreaterThan(-1);
-
-    expect(s.indexOf('src=')).toEqual(-1);
+    expect(s.indexOf('<callout><p>plain text</p></callout>')).toBeGreaterThan(
+      -1
+    );
   });
 
   test('should reparent standalone math', () => {
