@@ -23,7 +23,6 @@ export function convertBibliographyEntries($: any, found: Map<string, any>): str
       destination: "document"
     });
     const bibtexVal = SaxonJS.serialize(result.principalResult, {method: 'text'});
-    // console.log(bibtexVal);
     
     const data = new Cite(bibtexVal)
     const cslData = data.get({
