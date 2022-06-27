@@ -43,3 +43,22 @@ export enum LegacyTypes {
 export function guid() {
   return `${Math.floor(Math.random() * Math.floor(Math.pow(2, 32) - 1))}`;
 }
+
+export function decodeEntities(encodedString: string) {
+  const translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+  const translate = {
+    nbsp: ' ',
+    amp: '&',
+    quot: '"',
+    lt: '<',
+    gt: '>',
+  };
+  return encodedString
+    .replace(translate_re, (match, entity) => {
+      return (translate as any)[entity];
+    })
+    .replace(/&#(\d+);/gi, function (match, numStr) {
+      const num = parseInt(numStr, 10);
+      return String.fromCharCode(num);
+    });
+}
