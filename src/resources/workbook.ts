@@ -73,8 +73,10 @@ export class WorkbookPage extends Resource {
     const bibEntries: Map<string, any> = new Map<string, any>();
     xml = convertBibliographyEntries($, bibEntries)
 
+    const bibrefs: number[] = [];
     $('cite').each((i: any, elem: any) => {
       const entry = $(elem).attr('entry');
+      bibrefs.push(bibEntries.get(entry).id);
       $(elem).replaceWith(`<cite id="${entry}" bibref="${bibEntries.get(entry).id}">[citation]</cite>`);
     });
     xml = $.html();
@@ -93,7 +95,7 @@ export class WorkbookPage extends Resource {
               (o: any) => o.idref
             );
           }
-          page.content = { model };
+          page.content = { model, bibrefs };
           page.title = r.children[0].title;
 
           resolve([page, ...imageCodingActivities, ...bibEntries.values()]);
