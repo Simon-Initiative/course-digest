@@ -29,7 +29,10 @@
     "tsmonad": "^0.8.0",
     "xml-formatter": "^2.6.1",
     "xml2js": "^0.4.23",
-    "xmldom": "^0.3.0"
+    "xmldom": "^0.3.0",
+    "saxon-js": "^2.3.0",
+    "citation-js": "^0.5.7",
+    "ajv": "^8.11.0"
   },
   "devDependencies": {
     "@types/archiver": "^5.3.1",
