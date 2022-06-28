@@ -8,7 +8,11 @@ import {
   Activity,
   TemporaryContent,
 } from './resource';
-import { standardContentManipulations, processCodeblock } from './common';
+import {
+  standardContentManipulations,
+  processCodeblock,
+  processVariables,
+} from './common';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
 import * as DOM from '../utils/dom';
@@ -140,15 +144,25 @@ function buildOrderingPart(question: any) {
 function mcq(question: any) {
   const part = buildMCQPart(question);
   const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
-
+  const transformationsElement = Common.getChild(
+    question.children,
+    'transformations'
+  );
+  const transformationsArray =
+    transformationsElement === undefined
+      ? []
+      : (transformationsElement as any).children;
   return {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question),
     authoring: {
       version: 2,
       parts: [part],
-      transformations:
-        shuffle === 'true' ? [Common.shuffleTransformation()] : [],
+
+      transformations: [
+        ...(shuffle ? [Common.shuffleTransformation()] : []),
+        ...transformationsArray,
+      ],
       previewText: '',
       targeted: part.targeted,
     },
@@ -157,14 +171,24 @@ function mcq(question: any) {
 
 function ordering(question: any) {
   const shuffle = Common.getChild(question.children, 'ordering').shuffle;
+  const transformationsElement = Common.getChild(
+    question.children,
+    'transformations'
+  );
+  const transformationsArray =
+    transformationsElement === undefined
+      ? []
+      : (transformationsElement as any).children;
   const model = {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question, 'ordering'),
     authoring: {
       version: 2,
       parts: [buildOrderingPart(question)],
-      transformations:
-        shuffle === 'true' ? [Common.shuffleTransformation()] : [],
+      transformations: [
+        ...(shuffle ? [Common.shuffleTransformation()] : []),
+        ...transformationsArray,
+      ],
       previewText: '',
       correct: [],
       targeted: [],
@@ -194,13 +218,16 @@ function ordering(question: any) {
 }
 
 function single_response_text(question: any) {
+  const transformations = Common.getChild(question.children, 'transformations');
+
   return {
     stem: Common.buildStem(question),
     inputType: 'text',
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
       parts: [Common.buildTextPart('1', question)],
-      transformations: [],
+      transformations:
+        transformations === undefined ? [] : (transformations as any).children,
       previewText: '',
     },
   };
@@ -296,11 +323,26 @@ export function performRestructure($: any) {
 
   DOM.rename($, 'question body', 'stem');
   DOM.eliminateLevel($, 'section');
+
+  migrateVariables($);
+}
+
+function migrateVariables($: any) {
+  DOM.rename($, 'question variables', 'transformations');
+  DOM.rename($, 'transformations variable', 'transformation');
+
+  $('transformation').each((i: any, item: any) => {
+    $(item).attr('path', '');
+    $(item).attr('operation', 'variable_substitution');
+
+    item.children = [];
+  });
 }
 
 export class Formative extends Resource {
   restructurePreservingWhitespace($: any): any {
     processCodeblock($);
+    processVariables($);
   }
 
   restructure($: any): any {

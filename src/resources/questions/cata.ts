@@ -132,7 +132,14 @@ function buildCATAPart(question: any) {
 export function cata(question: any) {
   const choices = Common.buildChoices(question);
   const choiceIds = choices.map((c: any) => c.id);
-
+  const transformationsElement = Common.getChild(
+    question.children,
+    'transformations'
+  );
+  const transformationsArray =
+    transformationsElement === undefined
+      ? []
+      : (transformationsElement as any).children;
   const model = {
     stem: Common.buildStem(question),
     choices,
@@ -140,7 +147,10 @@ export function cata(question: any) {
     authoring: {
       version: 2,
       parts: [buildCATAPart(question)],
-      transformations: question.shuffle ? [Common.shuffleTransformation()] : [],
+      transformations: [
+        ...(question.shuffle ? [Common.shuffleTransformation()] : []),
+        ...transformationsArray,
+      ],
       previewText: '',
       targeted: [],
       correct: [],
