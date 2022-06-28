@@ -107,7 +107,7 @@ export function standardContentManipulations($: any) {
   $('unity').remove();
   $('video').remove();
   $('vimeo').remove();
-  $('cite').remove();
+  // $('cite').remove();
 
   DOM.stripElement($, 'li p');
   DOM.stripElement($, 'p quote');

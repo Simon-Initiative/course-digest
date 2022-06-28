@@ -10,6 +10,7 @@ import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { convertImageCodingActivities } from './image';
 import { maybe } from 'tsmonad';
+import { convertBibliographyEntries } from './bibentry';
 
 function liftTitle($: any) {
   $('workbook_page').attr('title', $('head title').text());
@@ -67,7 +68,18 @@ export class WorkbookPage extends Resource {
     });
 
     const imageCodingActivities: any = [];
-    const xml: string = convertImageCodingActivities($, imageCodingActivities);
+    let xml: string = convertImageCodingActivities($, imageCodingActivities);
+
+    const bibEntries: Map<string, any> = new Map<string, any>();
+    xml = convertBibliographyEntries($, bibEntries)
+
+    const bibrefs: number[] = [];
+    $('cite').each((i: any, elem: any) => {
+      const entry = $(elem).attr('entry');
+      bibrefs.push(bibEntries.get(entry).id);
+      $(elem).replaceWith(`<cite id="${entry}" bibref="${bibEntries.get(entry).id}">[citation]</cite>`);
+    });
+    xml = $.html();
 
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
@@ -83,10 +95,10 @@ export class WorkbookPage extends Resource {
               (o: any) => o.idref
             );
           }
-          page.content = { model };
+          page.content = { model, bibrefs };
           page.title = r.children[0].title;
 
-          resolve([page, ...imageCodingActivities]);
+          resolve([page, ...imageCodingActivities, ...bibEntries.values()]);
         }
       );
     });
@@ -193,6 +205,7 @@ function introduceStructuredContent(content: any) {
         ),
       ];
     }
+    
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];
     }
