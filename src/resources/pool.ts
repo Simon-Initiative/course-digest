@@ -4,8 +4,14 @@ import { Resource, TorusResource, Summary } from './resource';
 import * as Formative from './formative';
 import * as Summative from './summative';
 import * as XML from '../utils/xml';
+import { processCodeblock, processVariables } from './common';
 
 export class Pool extends Resource {
+  restructurePreservingWhitespace($: any): any {
+    processCodeblock($);
+    processVariables($);
+  }
+
   restructure($: any): any {
     Summative.convertToFormative($);
     Formative.performRestructure($);

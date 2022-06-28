@@ -243,6 +243,12 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const unescapeVariableData = () => {
+        if (tag === 'transformation') {
+          top().data = decodeEntities(top().data);
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -267,6 +273,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         elevateCaption('audio');
         elevatePopoverContent();
         unescapeFormulaSrc();
+        unescapeVariableData();
 
         if (top() && top().children === undefined) {
           top().children = [];

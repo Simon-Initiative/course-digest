@@ -42,6 +42,14 @@
 						<resourceref idref="mathml" />
 					</item>
 				</module>
+				<module id="variables">
+					<title>
+						Dynamic Questions
+					</title>
+					<item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
+						<resourceref idref="assessment_with_selection" />
+					</item>
+				</module>
 			</unit>
 		</sequence>
 	</sequences>

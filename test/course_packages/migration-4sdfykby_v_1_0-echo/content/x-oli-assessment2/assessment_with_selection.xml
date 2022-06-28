@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="assessment_with_selection" recommended_attempts="3" max_attempts="3">
+	<title>
+		Graded Assessment With Selection of Variable Question
+	</title>
+	<page id="222">
+		<title>
+			Page 1
+		</title>
+		<selection count="1" strategy="random" exhaustion="reuse" scope="resource">
+			<pool_ref idref="complex_ion_pool" />
+		</selection>
+	</page>
+</assessment>

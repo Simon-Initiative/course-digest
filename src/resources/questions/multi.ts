@@ -26,7 +26,7 @@ export function buildMulti(question: any) {
       torusParts.push(part);
     }
   }
-
+  const transformations = Common.getChild(question.children, 'transformations');
   return {
     stem: buildStem(question, inputs),
     choices: allChoices,
@@ -34,7 +34,8 @@ export function buildMulti(question: any) {
     authoring: {
       targeted: allTargeted,
       parts: torusParts,
-      transformations: [],
+      transformations:
+        transformations === undefined ? [] : (transformations as any).children,
       previewText: '',
     },
   };

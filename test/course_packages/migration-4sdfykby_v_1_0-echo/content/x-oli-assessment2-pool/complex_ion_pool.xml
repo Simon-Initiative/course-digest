@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pool PUBLIC "-//Carnegie Mellon University//DTD Assessment Pool MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<pool xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="complex_ion_pool">
+	<title>
+		complex_ion_pool
+	</title>
+	<content available="always">
+		<p id="defabe25f2b74ab684f861d3c4f3b9d9" />
+	</content>
+	<numeric id="complex_ion_pool_v1" grading="automatic">
+		<body>
+			<p id="d6b027159b34442a8405d699de5509c2">
+				Calculate the concentration of cobalt(III) ions
+				in a solution formed by mixing @@co@@ mL of @@conc_co@@ M Co(NO
+				<sub>
+					3
+				</sub>
+				)
+				<sub>
+					3
+				</sub>
+				with @@nh3@@ mL of @@conc_nh3@@ M NH
+				<sub>
+					3
+				</sub>
+				solution given
+				<em style="italic">
+					K
+					<sub>
+						f
+					</sub>
+				</em>
+				of
+				[Co(NH
+				<sub>
+					3
+				</sub>
+				)
+				<sub>
+					6
+				</sub>
+				]
+				<sup>
+					3+
+				</sup>
+				is 4.5&times;10
+				<sup>
+					33
+				</sup>
+				.
+			</p>
+			<p id="e75b24df376e45d2868788a5dc44b77a">
+				[Co
+				<sup>
+					3+
+				</sup>
+				] =
+				<input_ref input="numeric1" />
+				M
+			</p>
+		</body>
+		<input id="numeric1" size="small" />
+		<part id="numeric1">
+			<response match="[@@low@@,@@high@@]" score="10" input="numeric1">
+				<feedback>
+					<p id="e5053c20e8d54eb69dfb613c2ea9a4e4">
+						Correct. The equilibrium concentration
+						of cobalt ion is calculated by using the correct equilibrium constant, equilibrium
+						expression, and the I-C-E (Initial-Change-Equilibrium) table of concentrations or
+						similar algebraic calculation, along with several simplifications to make the algebra
+						more manageable. Simplifications include 1) treating the cobalt ion as a limiting
+						reactant that forms the maximum amount of the complex ion product, meaning, the amount
+						of product at equilibrium equals the initial amount of cobalt ion, and 2) using the
+						I-C-E (Initial-Change-Equilibrium) table of concentrations (or similar algebraic
+						calculation), but using moles, instead of concentration, and setting the change in
+						moles equal to the moles of product formed.
+					</p>
+				</feedback>
+			</response>
+			<response match="*" score="0" input="numeric1">
+				<feedback>
+					<p id="f2746d810a144d4998ed3fb466438565">
+						Incorrect. There are different
+						algebraic approaches for solving for the equilibrium concentration of the cobalt (III)
+						ion, but the most manageable approaches rely on 1) using the large
+						<em style="italic">
+							K
+						</em>
+						<sub>
+							f
+						</sub>
+						value to
+						treat the cobalt ion as a limiting reactant that forms the maximum amount of the
+						complex ion product [Co(NH
+						<sub>
+							3
+						</sub>
+						)
+						<sub>
+							6
+						</sub>
+						]
+						<sup>
+							3+
+						</sup>
+						meaning the amount of product
+						at equilibrium equals the initial amount of cobalt ion, and 2) when using the I-C-E
+						(Initial-Change-Equilibrium) table of concentrations (or similar algebraic
+						calculation), use moles, instead of concentration, and set the change in moles equal
+						to the moles of product formed. When writing the equilibrium expression, be sure to
+						write the correct chemical equation for the equilibrium, and consider the phase of the
+						different substances and stoichiometric coefficients.
+					</p>
+					<p id="d374b06917904fa69637317039cd3c6b">
+						For the initial moles of all reactants and
+						products that appear in the equilibrium expression, use the molarity and volume to
+						calculate the initial moles of these substances. Remember that some or all of the
+						initial moles may be zero.
+					</p>
+					<p id="e84627fdfb68450692f11a61646cc861">
+						For the change
+						in moles required to reach equilibrium, the change is usually shown as -
+						<em style="italic">
+							x
+						</em>
+						for
+						reactants and +
+						<em style="italic">
+							x
+						</em>
+						for products. Remember to make the change equal to the moles of
+						product formed, and be sure to consider the stoichiometric coefficients again.
+					</p>
+					<p id="d8873dab7c3e4b95b6a1978604e31d90">
+						For the final equilibrium moles, use algebra to
+						account for the change in moles from the initial moles. Then, in order to use the
+						equilibrium expression, convert the final equilibrium moles into equilibrium
+						concentrations by dividing by the total volume. Keep in mind that molarity is moles
+						per liter (mol/L). As a final simplification, set the equilibrium concentration of
+						cobalt ion to a new variable, rather than trying to account for the change in moles
+						and total volume for the cobalt ion.
+					</p>
+					<p id="c9ce9ea06a3749bcb77dfed35e139209">
+						Finally, use algebra to solve for the equilibrium concentration of cobalt
+						ion.
+					</p>
+				</feedback>
+			</response>
+		</part>
+		<variables>
+			<variable name="module" id="e478e473b00c47e291fe612cfe870a57">
+				<![CDATA[
+				const c1 = [50, 100, 150, 200];
+				const co = OLI.randomArrayItem(c1) ;
+				const nh3 = OLI.randomArrayItem([100,150, 200, 250,300]);
+				const vol = co + nh3;
+				const conc_co = OLI.randomArrayItem([0.1, 0.2, 0.3]) .toPrecision(3);
+				const conc_nh3 = OLI.randomArrayItem([4.0, 5.0, 6.0]) .toPrecision(3);
+				
+				const kf = 4.5e33;
+				const kd=1/kf;
+				
+				const mol_co = co/1000*conc_co;
+				const mol_nh3 = nh3/1000*conc_nh3;
+				const molf_nh3 = mol_nh3-6*mol_co;
+				
+				const num = mol_co/vol*1000; // initial conc of complex for ice chart
+				const denom = molf_nh3/vol*1000; // initial conc of NH3 for ice chart
+				
+				const x = kd*num*denom**-6;
+				const low = 0.95*x;
+				const high = 1.05*x;
+				// Expose variables to OLI
+				module.exports = {
+				co, conc_co, nh3,conc_nh3, x, low, high
+				};
+				]]>
+			</variable>
+		</variables>
+	</numeric>
+</pool>

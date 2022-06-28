@@ -31,6 +31,27 @@ export function processCodeblock($: any) {
     }
   });
 }
+export function processVariables($: any) {
+  $('variable').each((i: any, item: any) => {
+    const h = $(item).html().trim();
+    if (h.startsWith('<![CDATA[') && h.endsWith(']]>')) {
+      const html = h
+        .substring(9, h.length - 3)
+        .split('\n')
+        .map((r: any) => r + '\n')
+        .reduce((s: string, e: string) => s + e);
+
+      $(item).attr('data', html);
+    } else {
+      const html = h
+        .split('\n')
+        .map((r: any) => r + '\n')
+        .reduce((s: string, e: string) => s + e);
+
+      $(item).attr('data', html);
+    }
+  });
+}
 
 export function standardContentManipulations($: any) {
   // Convert all inline markup elements to <em> tags, this
