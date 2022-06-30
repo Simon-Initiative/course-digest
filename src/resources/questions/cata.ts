@@ -132,14 +132,12 @@ function buildCATAPart(question: any) {
 export function cata(question: any) {
   const choices = Common.buildChoices(question);
   const choiceIds = choices.map((c: any) => c.id);
-  const transformationsElement = Common.getChild(
+  const transformationElement = Common.getChild(
     question.children,
-    'transformations'
+    'transformation'
   );
   const transformationsArray =
-    transformationsElement === undefined
-      ? []
-      : (transformationsElement as any).children;
+    transformationElement === undefined ? [] : [transformationElement];
   const model = {
     stem: Common.buildStem(question),
     choices,

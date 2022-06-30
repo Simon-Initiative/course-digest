@@ -144,14 +144,12 @@ function buildOrderingPart(question: any) {
 function mcq(question: any) {
   const part = buildMCQPart(question);
   const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
-  const transformationsElement = Common.getChild(
+  const transformationElement = Common.getChild(
     question.children,
-    'transformations'
+    'transformation'
   );
   const transformationsArray =
-    transformationsElement === undefined
-      ? []
-      : (transformationsElement as any).children;
+    transformationElement === undefined ? [] : [transformationElement];
   return {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question),
@@ -171,14 +169,12 @@ function mcq(question: any) {
 
 function ordering(question: any) {
   const shuffle = Common.getChild(question.children, 'ordering').shuffle;
-  const transformationsElement = Common.getChild(
+  const transformationElement = Common.getChild(
     question.children,
-    'transformations'
+    'transformation'
   );
   const transformationsArray =
-    transformationsElement === undefined
-      ? []
-      : (transformationsElement as any).children;
+    transformationElement === undefined ? [] : [transformationElement];
   const model = {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question, 'ordering'),
@@ -218,7 +214,7 @@ function ordering(question: any) {
 }
 
 function single_response_text(question: any) {
-  const transformations = Common.getChild(question.children, 'transformations');
+  const transformation = Common.getChild(question.children, 'transformation');
 
   return {
     stem: Common.buildStem(question),
@@ -226,8 +222,7 @@ function single_response_text(question: any) {
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
       parts: [Common.buildTextPart('1', question)],
-      transformations:
-        transformations === undefined ? [] : (transformations as any).children,
+      transformations: transformation === undefined ? [] : [transformation],
       previewText: '',
     },
   };
@@ -328,14 +323,16 @@ export function performRestructure($: any) {
 }
 
 function migrateVariables($: any) {
-  DOM.rename($, 'question variables', 'transformations');
-  DOM.rename($, 'transformations variable', 'transformation');
+  DOM.rename($, 'question variables', 'transformation');
+
+  $('variable').each((i: any, item: any) => {
+    item.children = [];
+    $(item).attr('variable', $(item).attr('name'));
+  });
 
   $('transformation').each((i: any, item: any) => {
     $(item).attr('path', '');
     $(item).attr('operation', 'variable_substitution');
-
-    item.children = [];
   });
 }
 

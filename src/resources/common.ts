@@ -41,14 +41,14 @@ export function processVariables($: any) {
         .map((r: any) => r + '\n')
         .reduce((s: string, e: string) => s + e);
 
-      $(item).attr('data', html);
+      $(item).attr('expression', html);
     } else {
       const html = h
         .split('\n')
         .map((r: any) => r + '\n')
         .reduce((s: string, e: string) => s + e);
 
-      $(item).attr('data', html);
+      $(item).attr('expression', html);
     }
   });
 }

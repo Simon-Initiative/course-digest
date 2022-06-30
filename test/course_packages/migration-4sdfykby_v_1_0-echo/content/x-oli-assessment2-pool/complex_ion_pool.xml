@@ -178,4 +178,111 @@
 			</variable>
 		</variables>
 	</numeric>
+	<multiple_choice id="q1_def_prob" grading="automatic" select="single">
+		<body>
+			<p id="acdc08a099dfb450ab2bfdf25d1da8f64">
+				There are @@V5@@ students in a
+				<em style="italic">
+					Film Production
+				</em>
+				course at GSU: @@V1@@
+				<em style="italic">
+					Freshmen
+				</em>
+				, @@V2@@
+				<em style="italic">
+					Sophomores
+				</em>
+				, @@V3@@
+				<em style="italic">
+					Juniors
+				</em>
+				, and @@V4@@
+				<em style="italic">
+					Seniors
+				</em>
+				. One student is selected at random to have his film shown at the Rialto in downtown Atlanta. What is the probability that the chosen student is a @@V8@@?
+			</p>
+		</body>
+		<input shuffle="false" id="c9d5004ce2314d34a729872c8ee7396c" labels="false">
+			<choice value="A">
+				@@V10@@ %
+			</choice>
+			<choice value="B">
+				@@V12@@ %
+			</choice>
+			<choice value="C">
+				@@V5@@ %
+			</choice>
+			<choice value="D">
+				50%
+			</choice>
+		</input>
+		<part id="fe5da5b258934f469175084df1a2a6e8">
+			<response match="A" score="0">
+				<feedback>
+					<p id="aa4271c5f8a86455685503afc603ca2f6" />
+				</feedback>
+			</response>
+			<response match="B" score="10">
+				<feedback>
+					<p id="aa1b721487afb4d4c9e25604c42ff55cc">
+						Correct. Since there are @@V10@@ @@V8@@ in the course out of a total of @@V5@@ students, the probability of selecting one is @@V10@@/ @@V5@@ = @@V12@@ %
+					</p>
+				</feedback>
+			</response>
+			<response match="C" score="0">
+				<feedback>
+					<p id="aa65cfabbbd8047118c68ed6ebcbcc419">
+						Incorrect. You may have selected this choice because there are @@V5@@ students in the course. However, to find the probability of selecting a @@V8@@, we also need to take into account the number of @@V5@@ in the course.
+					</p>
+				</feedback>
+			</response>
+			<response match="D" score="0">
+				<feedback>
+					<p id="aec3233b6bb72483f82aa44fd548d1568">
+						Incorrect. You may have selected this choice because the chosen student is either a @@V8@@ or not - but these two possibilities are not equally likely. Note that there are @@V10@@ juniors out of @@V5@@ students in the course.
+					</p>
+				</feedback>
+			</response>
+		</part>
+		<variables>
+			<variable name="V1" id="cae9267609534c4fa7f7cb4dc0471acc">
+				<![CDATA[ em.random(15,20) ]]>
+			</variable>
+			<variable name="V2" id="f2dbec6e4e6d4b8da02c714ab16ba7ef">
+				<![CDATA[ em.random(8,11) ]]>
+			</variable>
+			<variable name="V3" id="fb7fa675b50e4b3aa5534ff55b59edd5">
+				<![CDATA[ em.random(12,15) ]]>
+			</variable>
+			<variable name="V4" id="dcf1b74b0aea46b587634a3be306d703">
+				<![CDATA[ em.random(4,8) ]]>
+			</variable>
+			<variable name="V5" id="f3c6462aeaaa4efba26c5dc2262d5285">
+				<![CDATA[ @@V1@@+@@V2@@+@@V3@@+@@V4@@ ]]>
+			</variable>
+			<variable name="V6" id="d092409efe264dbdbcc56f6a43057f3d">
+				<![CDATA[ "Freshmen, Sophomores, Juniors, Seniors" ]]>
+			</variable>
+			<variable name="V7" id="fdc9cd771f274ce5bbd184b7495a2353">
+				<![CDATA[ em.random(1,5) ]]>
+			</variable>
+			<variable name="V8" id="a2c51f5215ab448d8b401e7559d74c37">
+				<![CDATA[ em.getAV(@@V6@@,@@V7@@) ]]>
+			</variable>
+			<variable name="V9" id="f241c2bdff8a4ba9bb7cabeedeb64b95">
+				<![CDATA[ "@@V1@@,@@V2@@,@@V3@@,@@V4@@" ]]>
+			</variable>
+			<variable name="V10" id="b36e1b026ce748eeb48a28f104867bd0">
+				<![CDATA[ em.getAV(@@V9@@,@@V7@@) ]]>
+			</variable>
+			<variable name="V11" id="b7d18241b5474984901e8b5fe96b1564">
+				<![CDATA[ @@V10@@/@@V5@@*100 ]]>
+			</variable>
+			<variable name="V12" id="d7bbccd99a3e4d119f3e8b10b3c7be81">
+				<![CDATA[ em.round(@@V11@@,0) ]]>
+			</variable>
+		</variables>
+	</multiple_choice>
 </pool>
