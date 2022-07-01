@@ -47,6 +47,9 @@
 					<item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
 						<resourceref idref="materials" />
 					</item>
+					<item id="bca2e889891c18a62d699" scoring_mode="default">
+						<resourceref idref="composite" />
+					</item>
 				</module>
 				<module id="variables">
 					<title>

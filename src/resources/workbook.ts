@@ -71,13 +71,17 @@ export class WorkbookPage extends Resource {
     let xml: string = convertImageCodingActivities($, imageCodingActivities);
 
     const bibEntries: Map<string, any> = new Map<string, any>();
-    xml = convertBibliographyEntries($, bibEntries)
+    xml = convertBibliographyEntries($, bibEntries);
 
     const bibrefs: number[] = [];
     $('cite').each((i: any, elem: any) => {
       const entry = $(elem).attr('entry');
       bibrefs.push(bibEntries.get(entry).id);
-      $(elem).replaceWith(`<cite id="${entry}" bibref="${bibEntries.get(entry).id}">[citation]</cite>`);
+      $(elem).replaceWith(
+        `<cite id="${entry}" bibref="${
+          bibEntries.get(entry).id
+        }">[citation]</cite>`
+      );
     });
     xml = $.html();
 
@@ -205,7 +209,13 @@ function introduceStructuredContent(content: any) {
         ),
       ];
     }
-    
+    if (e.type === 'group') {
+      const withStructuredContent = Object.assign({}, e, {
+        children: introduceStructuredContent(e.children),
+      });
+
+      return [...u, withStructuredContent];
+    }
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];
     }

@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="weak_titration_lbd">
+	<title>
+		tutor
+	</title>
+	<page>
+		<question id="q1">
+			<body>
+				Calculate pH of the initial 0.250 M HClO solution.
+				<p>
+					<input_ref input="q1numeric" />
+				</p>
+			</body>
+			<numeric id="q1numeric" size="small" />
+			<part>
+				<response match="[4.0,4.1]" score="10" input="q1numeric">
+					<feedback>
+						Correct.
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;HClO &nbsp;&nbsp;
+									&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp;&nbsp; &nbsp; &nbsp;
+									&nbsp; &nbsp; H
+									<sub>
+										2
+									</sub>
+									O &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+									&nbsp; ⇌ &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+									&nbsp;H
+									<sub>
+										3
+									</sub>
+									O
+									<sup>
+										+
+									</sup>
+									&nbsp; &nbsp; &nbsp; &nbsp;
+									+ &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ClO
+									<sup>
+										-
+									</sup>
+									&nbsp; &nbsp;
+									&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									initial
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0.250 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; ------ &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									change
+								</td>
+								<td align="center">
+									-
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									equilibrium
+								</td>
+								<td align="center">
+									0.250 M -
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+						</table>
+						<p>
+							Assuming
+							<em style="italic">
+								x
+							</em>
+							&lt;&lt; 0.250.
+						</p>
+						<formula>
+							$$\begin{array}{l}K_a\;=\;\frac{x^2}{0.250}\;=\;2.9\times10^{-8}\;\\x\;=\;8.51\times10^{-5}\;=\;\lbrack{\mathrm
+							H}_3\mathrm
+							O^+\rbrack\\\mathrm{pH}\;=\;-\log\;(8.51\times10^{-5})\;=\;4.070\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<response match="*" input="q1numeric">
+					<feedback>
+						Incorrect. Review the hint and try again.
+					</feedback>
+					<feedback>
+						Incorrect.
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;HClO &nbsp;&nbsp;
+									&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp;&nbsp; &nbsp; &nbsp;
+									&nbsp; &nbsp; H
+									<sub>
+										2
+									</sub>
+									O &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+									&nbsp; ⇌ &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+									&nbsp;H
+									<sub>
+										3
+									</sub>
+									O
+									<sup>
+										+
+									</sup>
+									&nbsp; &nbsp; &nbsp; &nbsp;
+									+ &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ClO
+									<sup>
+										-
+									</sup>
+									&nbsp; &nbsp;
+									&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									initial
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0.250 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; ------ &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									change
+								</td>
+								<td align="center">
+									-
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									equilibrium
+								</td>
+								<td align="center">
+									0.250 M -
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+						</table>
+						<p>
+							Assuming
+							<em style="italic">
+								x
+							</em>
+							&lt;&lt; 0.250.
+						</p>
+						<formula>
+							$$\begin{array}{l}K_a\;=\;\frac{x^2}{0.250}\;=\;2.9\times10^{-8}\;\\x\;=\;8.51\times10^{-5}\;=\;\lbrack{\mathrm
+							H}_3\mathrm
+							O^+\rbrack\\\mathrm{pH}\;=\;-\log\;(8.51\times10^{-5})\;=\;4.070\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<hint>
+					HClO, a weak acid, dissociates to form H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					and
+					ClO
+					<sup>
+						-
+					</sup>
+					according the reaction:
+					<formula>
+						$$\mathrm{HClO}(aq)\;+\;{\mathrm H}_2\mathrm
+						O(l)\;\;\rightleftharpoons\;\;{\mathrm H}_3\mathrm
+						O^+(aq)\;+\;\mathrm{ClO}^-(aq)$$
+					</formula>
+					Use an ICE table to determine
+					relative equilibrium concentrations of the HClO, H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					and
+					ClO
+					<sup>
+						-
+					</sup>
+					. Then use the
+					<em style="italic">
+						K
+						<sub>
+							a
+						</sub>
+					</em>
+					expression to determine [H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					]eq.
+				</hint>
+			</part>
+		</question>
+		<question id="q2">
+			<body>
+				Now determine the equivalence point.
+				<p>
+					<input_ref input="q1numeric" />
+				</p>
+			</body>
+			<numeric id="q1numeric" size="small" />
+			<part>
+				<response match="[31.2,31.3]" score="10" input="q1numeric">
+					<feedback>
+						Correct.
+						<formula>
+							$$\begin{array}{l}\mathrm{mol}\;{\mathrm H}_3\mathrm
+							O^+\;:\;0.250\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;\times\;0.025\;\mathrm
+							L\;=\;0.00625\;\mathrm{mol}\;\\\mathrm{Volume}\;\mathrm{of}\;\mathrm{titrant}\;\mathrm{that}\;\mathrm{contain}\;0.00625\;\mathrm{mol}:\;\;0.200\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;=\;\frac{0.00625\;\mathrm{mol}}{x\;\mathrm
+							L}\\x\;=\;0.03125\;\mathrm
+							L\;=\;31.25\;\mathrm{mL}\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<response match="*" input="q1numeric">
+					<feedback>
+						Incorrect. Review the hints and try again.
+					</feedback>
+					<feedback>
+						Incorrect.
+						<formula>
+							$$\begin{array}{l}\mathrm{mol}\;{\mathrm
+							H}_3\mathrm O^+\;:\;0.250\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;\times\;0.025\;\mathrm
+							L\;=\;0.00625\;\mathrm{mol}\;\\\mathrm{Volume}\;\mathrm{of}\;\mathrm{titrant}\;\mathrm{that}\;\mathrm{contain}\;0.00625\;\mathrm{mol}:\;\;0.200\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;=\;\frac{0.00625\;\mathrm{mol}}{x\;\mathrm
+							L}\\x\;=\;0.03125\;\mathrm
+							L\;=\;31.25\;\mathrm{mL}\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<hint>
+					The equivalence point is the point at with [H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					] =
+					[OH
+					<sup>
+						-
+					</sup>
+					].
+				</hint>
+				<hint>
+					Calculate the number of moles of H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					that can be
+					produced from the dissociation of 25.0 mL of the 0.250 M HClO. Determine the
+					volume of 0.200 M NaOH that will contain the same number of moles of
+					OH
+					<sup>
+						-
+					</sup>
+					.
+				</hint>
+			</part>
+		</question>
+	</page>
+	<page>
+		<question id="q3">
+			<body>
+				<p>
+					We now recognize that 25.00 mL is before the equivalence point, 31.25 is at the
+					equivalence point, and 35.00 is after the equivalence point.
+				</p>
+				<p>
+					Calculate the pH at each volume of titrant added.
+				</p>
+				<p>
+					At 25.00 mL NaOH added, pH =
+					<input_ref input="q1numeric" />
+				</p>
+				<p>
+					At 31.25 mL NaOH added, pH =
+					<input_ref input="q2numeric" />
+				</p>
+				<p>
+					At 35.00 mL NaOH added, pH =
+					<input_ref input="q3numeric" />
+				</p>
+			</body>
+			<numeric id="q1numeric" size="small" />
+			<numeric id="q2numeric" size="small" />
+			<numeric id="q3numeric" size="small" />
+			<part>
+				<response match="[8.1,8.2]" score="10" input="q1numeric">
+					<feedback>
+						Correct.
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HClO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									OH
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; →
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClO
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H
+									<sub>
+										2
+									</sub>
+									O
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Before Addition of Titrant
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00625
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Addition of Titrant
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00500
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+							<tr>
+								<td>
+									After Addition of Titrant
+								</td>
+								<td align="center">
+									0.00125 mol
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00500
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}\mathrm{total}\;\mathrm{volume}\;\mathrm{after}\;\mathrm{the}\;\mathrm{titrant}\;\mathrm{is}\;\mathrm{added}\;\mathrm{is}\;50.00\;\mathrm{mL}\\\lbrack\mathrm{HClO}\rbrack\;=\;\frac{0.00125}{0.0500}\;=\;0.0250\;\mathrm
+							M\\\lbrack\mathrm{ClO}^-\rbrack\;=\;\frac{0.00500}{0.0500}\;=\;0.100\;\mathrm
+							M\\K_a\;=\frac{\;\lbrack{\mathrm H}_3\mathrm
+							O^+\rbrack\lbrack\mathrm{ClO}^-\rbrack}{\lbrack\mathrm{HClO}\rbrack}\;=\;2.9\times10^{-8}\\\frac{\lbrack{\mathrm
+							H}_3\mathrm O^+\rbrack(0.100\;\mathrm M)}{(0.0250\;\mathrm
+							M)}\;=\;2.9\times10^{-8}\\\lbrack{\mathrm H}_3\mathrm
+							O^+\rbrack\;=\;7.25\times10^{-9}\\\mathrm{pH}\;=\;-\log\;(7.25\times10^{-9})\;=\;8.14\\\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<response match="*" input="q1numeric">
+					<feedback>
+						Incorrect. Review the hints and try again.
+					</feedback>
+					<feedback>
+						Incorrect.
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HClO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									OH
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; →
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClO
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H
+									<sub>
+										2
+									</sub>
+									O
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Before Addition of Titrant
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00625
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Addition of Titrant
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00500
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+							<tr>
+								<td>
+									After Addition of Titrant
+								</td>
+								<td align="center">
+									0.00125 mol
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;0.00500
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}\mathrm{total}\;\mathrm{volume}\;\mathrm{after}\;\mathrm{the}\;\mathrm{titrant}\;\mathrm{is}\;\mathrm{added}\;\mathrm{is}\;50.00\;\mathrm{mL}\\\lbrack\mathrm{HClO}\rbrack\;=\;\frac{0.00125}{0.0500}\;=\;0.0250\;\mathrm
+							M\\\lbrack\mathrm{ClO}^-\rbrack\;=\;\frac{0.00500}{0.0500}\;=\;0.100\;\mathrm
+							M\\K_a\;=\frac{\;\lbrack{\mathrm H}_3\mathrm
+							O^+\rbrack\lbrack\mathrm{ClO}^-\rbrack}{\lbrack\mathrm{HClO}\rbrack}\;=\;2.9\times10^{-8}\\\frac{\lbrack{\mathrm
+							H}_3\mathrm O^+\rbrack(0.100\;\mathrm M)}{(0.0250\;\mathrm
+							M)}\;=\;2.9\times10^{-8}\\\lbrack{\mathrm H}_3\mathrm
+							O^+\rbrack\;=\;7.25\times10^{-9}\\\mathrm{pH}\;=\;-\log\;(7.25\times10^{-9})\;=\;8.14\\\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<hint>
+					Once the strong base (OH
+					<sup>
+						-
+					</sup>
+					) is added to the weak acid solution, the
+					OH
+					<sup>
+						-
+					</sup>
+					will react with HClO to produce additional ClO
+					<sup>
+						-
+					</sup>
+					,
+					thereby decreasing the amount of HClO and increasing the amount of
+					ClO
+					<sup>
+						-
+					</sup>
+					. The reaction of significance here is:
+					<formula>
+						$$\mathrm{HClO}(aq)\;+\;\mathrm{OH}^-(aq)\;\;\rightarrow\;\;\mathrm{ClO}^-(aq)\;+\;{\mathrm
+						H}_2\mathrm O(l)$$
+					</formula>
+				</hint>
+				<hint>
+					Calculate the moles of HClO after the OH
+					<sup>
+						-
+					</sup>
+					is added and the moles
+					ClO
+					<sup>
+						-
+					</sup>
+					after the OH
+					<sup>
+						-
+					</sup>
+					is added. Using the total volume
+					determine the concentrations of each. Then use the
+					<em style="italic">
+						K
+						<sub>
+							a
+						</sub>
+					</em>
+					expression to determine [H
+					<sub>
+						3
+					</sub>
+					O
+					<sup>
+						+
+					</sup>
+					]
+					and finally pH.
+				</hint>
+			</part>
+			<part>
+				<response match="[10.2,10.4]" score="10" input="q2numeric">
+					<feedback>
+						Correct.
+						<formula>
+							$$\lbrack\mathrm{ClO}^-\rbrack\;=\;\frac{0.00625\;\mathrm{mol}}{(0.02500\;\mathrm
+							L\;+\;0.03125\;\mathrm L)}\;=\;0.111\;\mathrm M$$
+						</formula>
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ClO
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp;&nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp; H
+									<sub>
+										2
+									</sub>
+									O &nbsp;&nbsp; &nbsp;
+									&nbsp; &nbsp; &nbsp; ⇌ &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+									&nbsp;HClO&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp; &nbsp;&nbsp;
+									&nbsp;&nbsp; OH
+									<sup>
+										-
+									</sup>
+									&nbsp; &nbsp; &nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									initial
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0.111 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; ------ &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									change
+								</td>
+								<td align="center">
+									-
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									equilibrium
+								</td>
+								<td align="center">
+									0.111 M -
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}K_{\mathrm a(\mathrm{HClO})}\;\times\;K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;K_w\\2.9\times10^{-8}\;\times K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;1.0\times10^{-14}\\K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;3.448\times10^{-7}\\K_b\;=\frac{\;\lbrack\mathrm{OH}^-\rbrack\lbrack\mathrm{HClO}\rbrack}{\lbrack\mathrm{ClO}^-\rbrack}\\3.448\times10^{-7}\;=\;\frac{x^2}{0.111\;\mathrm
+							M}\;(\mathrm{assuming}\;\mathrm
+							x\;\mathrm{much}\;\mathrm{less}\;\mathrm{than}\;0.111)\\\mathrm
+							x\;=\;1.956\times10^{-4}\;=\;\lbrack\mathrm{OH}^-\rbrack\\\mathrm{pOH}\:=\;-\log\;(\;1.956\times10^{-4})\;=\;3.708\\\mathrm{pH}\;=\;14.00\;-\;3.708\;=\;10.291\;\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<response match="*" input="q2numeric">
+					<feedback>
+						Incorrect. Review the hints and try again.
+					</feedback>
+					<feedback>
+						Correct.
+						<formula>
+							$$\lbrack\mathrm{ClO}^-\rbrack\;=\;\frac{0.00625\;\mathrm{mol}}{(0.02500\;\mathrm
+							L\;+\;0.03125\;\mathrm L)}\;=\;0.111\;\mathrm M$$
+						</formula>
+						<table>
+							<tr>
+								<td />
+								<td colspan="4">
+									&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ClO
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp;&nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp; H
+									<sub>
+										2
+									</sub>
+									O &nbsp;&nbsp; &nbsp;
+									&nbsp; &nbsp; &nbsp; ⇌ &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+									&nbsp;HClO&nbsp; &nbsp; &nbsp; &nbsp; + &nbsp; &nbsp;&nbsp;
+									&nbsp;&nbsp; OH
+									<sup>
+										-
+									</sup>
+									&nbsp; &nbsp; &nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									initial
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0.111 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; ------ &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+								<td align="center">
+									&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; 0 M &nbsp;
+									&nbsp; &nbsp; &nbsp; &nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									change
+								</td>
+								<td align="center">
+									-
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									+
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									equilibrium
+								</td>
+								<td align="center">
+									0.111 M -
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									-----
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+								<td align="center">
+									<em style="italic">
+										x
+									</em>
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}K_{\mathrm a(\mathrm{HClO})}\;\times\;K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;K_w\\2.9\times10^{-8}\;\times K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;1.0\times10^{-14}\\K_{\mathrm
+							b(\mathrm{ClO}-)}\;=\;3.448\times10^{-7}\\K_b\;=\frac{\;\lbrack\mathrm{OH}^-\rbrack\lbrack\mathrm{HClO}\rbrack}{\lbrack\mathrm{ClO}^-\rbrack}\\3.448\times10^{-7}\;=\;\frac{x^2}{0.111\;\mathrm
+							M}\;(\mathrm{assuming}\;\mathrm
+							x\;\mathrm{much}\;\mathrm{less}\;\mathrm{than}\;0.111)\\\mathrm
+							x\;=\;1.956\times10^{-4}\;=\;\lbrack\mathrm{OH}^-\rbrack\\\mathrm{pOH}\:=\;-\log\;(\;1.956\times10^{-4})\;=\;3.708\\\mathrm{pH}\;=\;14.00\;-\;3.708\;=\;10.291\;\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<hint>
+					At the equivalence point for this titration, the initial amount of HClO and
+					OH
+					<sup>
+						-
+					</sup>
+					have been completely neutralized. However, the
+					ClO
+					<sup>
+						-
+					</sup>
+					produced will react with H
+					<sub>
+						2
+					</sub>
+					O to form the weak
+					acid and OH
+					<sup>
+						-
+					</sup>
+					, according to the following reaction:
+					<formula>
+						$$\mathrm{ClO}^-\;+\;{\mathrm H}_2\mathrm
+						O\;\;\rightleftharpoons\;\;\mathrm{OH}^-\;+\;\mathrm{HClO}$$
+					</formula>
+				</hint>
+				<hint>
+					First the moles and then concentration of ClO
+					<sup>
+						-
+					</sup>
+					produced given the
+					amounts of analyte and titrant must be determined. An ICE chart can be used to
+					determine relative equilibrium concentrations of the species and then the
+					<em style="italic">
+						K
+						<sub>
+							b
+						</sub>
+					</em>
+					expression can be used to calculate
+					[OH
+					<sup>
+						-
+					</sup>
+					]
+					<sub>
+						eq
+					</sub>
+					and then pOH and pH.
+				</hint>
+			</part>
+			<part>
+				<response match="[12.0,12.15]" score="10" input="q3numeric">
+					<feedback>
+						Correct.
+						<formula>
+							$$\begin{array}{l}\mathrm{volume}\;\mathrm{of}\;\mathrm{NaOH}\;\mathrm{added}\;\mathrm{after}\;\mathrm{the}\;\mathrm{equivalence}\;\mathrm{point}\;=\;35.00\;-\;31.25\;=\;3.75\;\mathrm{mL}\\\mathrm{moles}\;\;\mathrm{NaOH}\;\mathrm{added}\;\mathrm{after}\;\mathrm{the}\;\mathrm{equivalence}\;\mathrm{point}\;=\;0.200\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;\times\;0.00375\;\mathrm
+							L\;=\;7.50\times10^{-4}\;\mathrm{mol}\end{array}$$
+						</formula>
+						<table>
+							<tr>
+								<td />
+								<td colspan="3">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H
+									<sub>
+										3
+									</sub>
+									O
+									<sup>
+										+
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									OH
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; →
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2
+									H
+									<sub>
+										2
+									</sub>
+									O
+								</td>
+							</tr>
+							<tr>
+								<td>
+									At the Equivalence Point
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp; 0
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Addition after Eq. Pt.
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									7.5&times;10
+									<sup>
+										-4
+									</sup>
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+							<tr>
+								<td>
+									After Addition
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									7.5&times;10
+									<sup>
+										-4
+									</sup>
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}\lbrack\mathrm{OH}^-\rbrack\;=\;\frac{7.5\times10^{-4}\;\mathrm{mol}}{(0.02500\;\mathrm
+							L\;+\;0.03500\;\mathrm L)}\;=\;0.125\;\mathrm
+							M\\\mathrm{pOH}\:=\;-\log\;(\;0.125\;)\;=\;1.903\\\mathrm{pH}\;=\;14.00\;-\;1.903\;=\;12.097\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<response match="*" input="q3numeric">
+					<feedback>
+						Incorrect. Review the hint and try again.
+					</feedback>
+					<feedback>
+						Incorrect.
+						<formula>
+							$$\begin{array}{l}\mathrm{volume}\;\mathrm{of}\;\mathrm{NaOH}\;\mathrm{added}\;\mathrm{after}\;\mathrm{the}\;\mathrm{equivalence}\;\mathrm{point}\;=\;35.00\;-\;31.25\;=\;3.75\;\mathrm{mL}\\\mathrm{moles}\;\;\mathrm{NaOH}\;\mathrm{added}\;\mathrm{after}\;\mathrm{the}\;\mathrm{equivalence}\;\mathrm{point}\;=\;0.200\;{\textstyle\frac{\mathrm{mol}}{\mathrm
+							L}}\;\times\;0.00375\;\mathrm
+							L\;=\;7.50\times10^{-4}\;\mathrm{mol}\end{array}$$
+						</formula>
+						<table>
+							<tr>
+								<td />
+								<td colspan="3">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H
+									<sub>
+										3
+									</sub>
+									O
+									<sup>
+										+
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									OH
+									<sup>
+										-
+									</sup>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; →
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2
+									H
+									<sub>
+										2
+									</sub>
+									O
+								</td>
+							</tr>
+							<tr>
+								<td>
+									At the Equivalence Point
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp; 0
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Addition after Eq. Pt.
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									7.5&times;10
+									<sup>
+										-4
+									</sup>
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+							<tr>
+								<td>
+									After Addition
+								</td>
+								<td align="center">
+									0 mol
+								</td>
+								<td align="center">
+									7.5&times;10
+									<sup>
+										-4
+									</sup>
+									mol&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td align="center">
+									----
+								</td>
+							</tr>
+						</table>
+						<formula>
+							$$\begin{array}{l}\lbrack\mathrm{OH}^-\rbrack\;=\;\frac{7.5\times10^{-4}\;\mathrm{mol}}{(0.02500\;\mathrm
+							L\;+\;0.03500\;\mathrm L)}\;=\;0.125\;\mathrm
+							M\\\mathrm{pOH}\:=\;-\log\;(\;0.125\;)\;=\;1.903\\\mathrm{pH}\;=\;14.00\;-\;1.903\;=\;12.097\end{array}$$
+						</formula>
+					</feedback>
+				</response>
+				<hint>
+					After the equivalence point, all of the moles of HClO have been neutralized.
+					The moles of titrant (OH
+					<sup>
+						-
+					</sup>
+					) added after the equivalence point will be
+					used to calculate the pH. Note that the moles of ClO
+					<sup>
+						-
+					</sup>
+					present affect
+					on pH is insignificant compared to the OH
+					<sup>
+						-
+					</sup>
+					added. Calculating the pH
+					after the equivalence point is the same for a weak acid-strong base titration as
+					it was for a strong acid-strong base titration.
+				</hint>
+			</part>
+		</question>
+	</page>
+</assessment>

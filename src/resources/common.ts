@@ -125,7 +125,14 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'dl', 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
-
+  DOM.rename($, 'composite_activity', 'group');
+  $('group').each((i: any, item: any) => {
+    $(item).attr('layout', 'vertical');
+    $(item).attr(
+      'id',
+      $(item).attr('id') === undefined ? guid() : $(item).attr('id')
+    );
+  });
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
