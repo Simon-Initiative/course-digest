@@ -244,8 +244,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
       };
 
       const unescapeVariableData = () => {
+        if (tag === 'variable') {
+          top().expression = decodeEntities(top().expression);
+        }
+      };
+
+      const setTransformationData = () => {
         if (tag === 'transformation') {
-          top().data = decodeEntities(top().data);
+          top().data = top().children;
+          top().children = [];
         }
       };
 
@@ -274,6 +281,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         elevatePopoverContent();
         unescapeFormulaSrc();
         unescapeVariableData();
+        setTransformationData();
 
         if (top() && top().children === undefined) {
           top().children = [];
