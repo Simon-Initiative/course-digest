@@ -44,6 +44,9 @@
 					<item id="bca2e8dc245e4ca5889891c18a62d699" scoring_mode="default">
 						<resourceref idref="entities" />
 					</item>
+					<item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
+						<resourceref idref="materials" />
+					</item>
 				</module>
 				<module id="variables">
 					<title>
