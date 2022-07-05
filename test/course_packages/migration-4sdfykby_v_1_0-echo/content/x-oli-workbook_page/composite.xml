@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="composite">
+	<head>
+		<title>
+			Composite activity tag
+		</title>
+		<objref idref="c47ac29051ed427984e2b6f76d09fa8e" />
+	</head>
+	<body>
+		<p>
+			There should be two groups created, one for each composite activity.  The first is the
+			most standard way composite_activity is used: block level content with one or more inline references.
+			The second one is a form used in chemistry where it is just a collection of block elements and
+			there is are no inline references.
+		</p>
+		<composite_activity purpose="learnbydoing">
+			<p>
+				25.0 mL of 0.250 M hypochlorous acid, HClO, is titrated with 0.200 M NaOH. At each of
+				the following volumes of titrant added: 0.00 mL, 25.00 mL, 31.25 mL, 35.00 mL.
+				<em style="italic">
+					K
+					<sub>
+						a
+					</sub>
+				</em>
+				= 2.9&times;10
+				<sup>
+					−8
+				</sup>
+			</p>
+			<inline idref="weak_titration_lbd" />
+		</composite_activity>
+		<composite_activity purpose="learnbydoing">
+			<p>
+				25.0 mL of 0.250 M hypochlorous acid, HClO, is titrated with 0.200 M NaOH. At each of
+				the following volumes of titrant added: 0.00 mL, 25.00 mL, 31.25 mL, 35.00 mL.
+				<em style="italic">
+					K
+					<sub>
+						a
+					</sub>
+				</em>
+				= 2.9&times;10
+				<sup>
+					−8
+				</sup>
+			</p>
+			<formula>
+				This is a block formula
+			</formula>
+		</composite_activity>
+	</body>
+</workbook_page>

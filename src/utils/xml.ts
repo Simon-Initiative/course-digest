@@ -16,6 +16,30 @@ function getPastDocType(content: string): string {
   return content;
 }
 
+function isBlockElement(name: string) {
+  const blocks = {
+    p: true,
+    img: true,
+    youtube: true,
+    audio: true,
+    codeblock: true,
+    video: true,
+    iframe: true,
+    formula: true,
+    callout: true,
+    h1: true,
+    h2: true,
+    h3: true,
+    h4: true,
+    h5: true,
+    h6: true,
+    ol: true,
+    ul: true,
+    table: true,
+  };
+  return (blocks as any)[name];
+}
+
 function inlineAttrName(attrs: Record<string, unknown>) {
   if (attrs['style'] === 'bold') {
     return 'strong';
@@ -256,6 +280,24 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const ensureTextDoesNotSurroundBlockElement = (e: string) => {
+        if (tag === e) {
+          if (top() && top().children.length === 3) {
+            const first = top().children[0];
+            const second = top().children[1];
+            const third = top().children[2];
+
+            if (
+              first.text === ' ' &&
+              third.text === ' ' &&
+              isBlockElement(second.type)
+            ) {
+              top().children = [second];
+            }
+          }
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -273,6 +315,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
         ensureNotEmpty('li');
+        ensureTextDoesNotSurroundBlockElement('td');
+        ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');
         elevateCaption('iframe');
         elevateCaption('youtube');

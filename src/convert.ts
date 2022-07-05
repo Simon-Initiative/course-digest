@@ -177,6 +177,58 @@ function createContentWithLink(title: string, idref: string) {
   return content;
 }
 
+function handleOnePlaceholder(
+  entries: any,
+  m: any,
+  byLegacyId: DerivedResourceMap,
+  pageMap: any,
+  page: Page
+) {
+  const derived = byLegacyId[m.idref];
+
+  if (derived !== undefined) {
+    return [
+      ...entries,
+      wrapContentInGroup(
+        derived.map((d) => {
+          if (d.type === 'Activity') {
+            return {
+              type: 'activity-reference',
+              activity_id: d.id,
+            };
+          }
+          if (d.type === 'TemporaryContent') {
+            return (d as TemporaryContent).content;
+          }
+          if (d.type === 'Break') {
+            return {
+              type: 'break',
+              id: d.id,
+            };
+          }
+        }),
+        m.purpose
+      ),
+    ];
+  }
+  if (pageMap[m.idref] !== undefined) {
+    const page = pageMap[m.idref];
+    return [
+      ...entries,
+      wrapContentInGroup(
+        [createContentWithLink(page.title, m.idref)],
+        m.purpose
+      ),
+    ];
+  }
+
+  console.log(
+    `Warning: Could not find derived resources for ${m.idref} within page ${page.id}`
+  );
+
+  return entries;
+}
+
 function updateParentReference(
   parent: TorusResource,
   byLegacyId: DerivedResourceMap,
@@ -187,49 +239,24 @@ function updateParentReference(
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
         if (m.type === 'activity_placeholder') {
-          const derived = byLegacyId[m.idref];
-
-          if (derived !== undefined) {
-            return [
-              ...entries,
-              wrapContentInGroup(
-                derived.map((d) => {
-                  if (d.type === 'Activity') {
-                    return {
-                      type: 'activity-reference',
-                      activity_id: d.id,
-                    };
-                  }
-                  if (d.type === 'TemporaryContent') {
-                    return (d as TemporaryContent).content;
-                  }
-                  if (d.type === 'Break') {
-                    return {
-                      type: 'break',
-                      id: d.id,
-                    };
-                  }
-                }),
-                m.purpose
-              ),
-            ];
-          }
-          if (pageMap[m.idref] !== undefined) {
-            const page = pageMap[m.idref];
-            return [
-              ...entries,
-              wrapContentInGroup(
-                [createContentWithLink(page.title, m.idref)],
-                m.purpose
-              ),
-            ];
-          }
-
-          console.log(
-            `Warning: Could not find derived resources for ${m.idref} within page ${page.id}`
-          );
-
-          return entries;
+          return handleOnePlaceholder(entries, m, byLegacyId, pageMap, page);
+        } else if (m.type === 'group') {
+          const group = Object.assign({}, m, {
+            children: m.children.map((c: any) => {
+              if (c.type === 'activity_placeholder') {
+                return handleOnePlaceholder(
+                  [],
+                  c,
+                  byLegacyId,
+                  pageMap,
+                  page
+                )[0];
+              } else {
+                return c;
+              }
+            }),
+          });
+          return [...entries, group];
         }
 
         return [...entries, m];

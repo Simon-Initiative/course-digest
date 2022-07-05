@@ -58,8 +58,9 @@ export function transformToFlatDirectory(
 
     // Update the URL in the XML DOM
     if (url !== null) {
-      const elem = paths[assetReference];
-      $(elem).attr('src', url);
+      paths[assetReference].forEach((elem) => {
+        $(elem).attr('src', url);
+      });
     }
   });
 }
@@ -156,23 +157,23 @@ export function stage(
   );
 }
 
-function findFromDOM($: any): string[] {
+function findFromDOM($: any): Record<string, Array<string>> {
   const paths: any = {};
 
   $('image').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = elem;
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
   $('audio').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = elem;
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
   $('audio source').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = elem;
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
   $('audio track').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = elem;
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
   Object.keys(paths)

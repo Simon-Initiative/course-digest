@@ -111,8 +111,6 @@ export function standardContentManipulations($: any) {
 
   DOM.stripElement($, 'li p');
   DOM.stripElement($, 'p quote');
-  DOM.stripElement($, 'materials material');
-  DOM.stripElement($, 'materials');
 
   $('pullout title').remove();
   DOM.stripElement($, 'pullout');
@@ -127,10 +125,40 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'dl', 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
-
+  DOM.rename($, 'composite_activity', 'group');
+  $('group').each((i: any, item: any) => {
+    $(item).attr('layout', 'vertical');
+    $(item).attr(
+      'id',
+      $(item).attr('id') === undefined ? guid() : $(item).attr('id')
+    );
+  });
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
+  sideBySideMaterials($);
+}
+
+function sideBySideMaterials($: any) {
+  $('materials material').each((i: any, item: any) => {
+    item.tagName = 'td';
+  });
+  $('materials').each((i: any, item: any) => {
+    item.tagName = 'table';
+    $(item).attr('borderStyle', 'hidden');
+    const orientation = $(item).attr('orient');
+
+    if (
+      orientation === undefined ||
+      orientation === null ||
+      orientation === 'horizontal'
+    ) {
+      $(item).html(`<tr>${$(item).html().trim()}</tr>`);
+    } else {
+      const tr = $('<tr></tr>');
+      $(item).children().wrap(tr);
+    }
+  });
 }
 
 export function handleFormulaMathML($: any) {
