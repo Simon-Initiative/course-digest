@@ -4,6 +4,7 @@ import {
   ResourceType,
   Page,
   Activity,
+  NonDirectImageReference,
 } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid } from './utils/common';
@@ -268,6 +269,27 @@ function updateParentReference(
   }
 
   return parent;
+}
+
+export function updateNonDirectImageReferences(
+  resources: TorusResource[],
+  summary: Media.MediaSummary
+): TorusResource[] {
+  return resources.map((r: TorusResource) => {
+    if (
+      r.type === 'Activity' &&
+      (r as Activity).subType === 'oli_custom_dnd' &&
+      (r as Activity).imageReferences !== undefined &&
+      ((r as Activity).imageReferences as any).length > 0
+    ) {
+      Media.transformToFlatDirectoryURLReferences(
+        (r as Activity).imageReferences as NonDirectImageReference[],
+        r as Activity,
+        summary
+      );
+    }
+    return r;
+  });
 }
 
 export function generatePoolTags(resources: TorusResource[]): TorusResource[] {

@@ -34,7 +34,8 @@ export class Pool extends Resource {
                   const pooledActivity = Formative.toActivity(
                     c,
                     subType,
-                    legacyId
+                    legacyId,
+                    this.file
                   );
                   pooledActivity.tags = [tagId];
                   pooledActivity.scope = 'banked';

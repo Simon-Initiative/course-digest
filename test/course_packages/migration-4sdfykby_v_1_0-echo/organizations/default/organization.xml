@@ -59,6 +59,14 @@
 						<resourceref idref="assessment_with_selection" />
 					</item>
 				</module>
+				<module id="dnd">
+					<title>
+						Drag and Drop Questions
+					</title>
+					<item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
+						<resourceref idref="customdnd" />
+					</item>
+				</module>
 			</unit>
 		</sequence>
 	</sequences>

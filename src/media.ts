@@ -2,6 +2,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as md5File from 'md5-file';
+import { Activity, NonDirectImageReference } from './resources/resource';
+import { replaceImageReferences } from './resources/questions/custom-dnd';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -18,6 +20,7 @@ export interface FlattenResult {
 export interface MediaItemReference {
   filePath: string;
   assetReference: string;
+  isLayoutRef?: boolean;
 }
 
 export interface MediaItem {
@@ -63,6 +66,26 @@ export function transformToFlatDirectory(
       });
     }
   });
+}
+
+export function transformToFlatDirectoryURLReferences(
+  assetReferences: NonDirectImageReference[],
+  activity: Activity,
+  summary: MediaSummary
+) {
+  let layout = activity.content.layoutStyles as string;
+  assetReferences.forEach((item: any) => {
+    // Flatten this file reference into our single, virtual directory
+    const { assetReference, originalReference } = item;
+    const ref = { filePath: activity.originalFile, assetReference };
+    const url = flatten(ref, summary);
+
+    // Update the URL in the XML DOM
+    if (url !== null) {
+      layout = replaceImageReferences(layout, originalReference, url);
+    }
+  });
+  activity.content.layoutStyles = layout;
 }
 
 // Take a collection of media item references and flatten them into a single
