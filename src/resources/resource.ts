@@ -120,7 +120,7 @@ export abstract class Resource {
     this.navigable = navigable;
   }
 
-  abstract summarize(file: string): Promise<Summary | string>;
+  abstract summarize(): Promise<Summary | string>;
 
   restructurePreservingWhitespace(_$: any): any {
     return;
@@ -132,8 +132,8 @@ export abstract class Resource {
 
   abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;
 
-  convert(file: string): Promise<(TorusResource | string)[]> {
-    const $ = DOM.read(file);
+  convert(): Promise<(TorusResource | string)[]> {
+    const $ = DOM.read(this.file);
     this.restructure($);
     return Maybe.maybe($?.root()?.html()).caseOf({
       just: (xml) => this.translate(xml, $),

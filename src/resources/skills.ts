@@ -33,7 +33,7 @@ export class Skills extends Resource {
     return Promise.resolve(objectives as TorusResource[]);
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -44,7 +44,7 @@ export class Skills extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      XML.visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
       })
         .then((_result) => {

@@ -17,13 +17,7 @@
     "alwaysStrict": true,
     "outDir": "./dist",
     "baseUrl": ".",
-    "paths": {
-      "*": ["src/*"],
-    },
-    "typeRoots": ["./types"],
     "lib": ["es2015", "es2016", "es2017"],
-    "types": ["node"]
   },
-  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

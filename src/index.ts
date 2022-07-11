@@ -36,7 +36,7 @@ const optionDefinitions = [
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
-  operation: string;
+  operation: 'summarize' | 'convert' | 'upload';
   mediaManifest: string;
   outputDir: string;
   inputDir: string;

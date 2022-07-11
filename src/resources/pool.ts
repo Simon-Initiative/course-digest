@@ -49,7 +49,7 @@ export class Pool extends Resource {
       );
     });
   }
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const summary: Summary = {
       type: 'Summary',
       subType: 'SummativePool',
@@ -59,7 +59,7 @@ export class Pool extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'pool') {

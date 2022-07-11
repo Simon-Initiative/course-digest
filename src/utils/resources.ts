@@ -27,7 +27,7 @@ export function collectOrgItemReferences(packageDirectory: string, id = '') {
     executeSerially(
       orgs.map((file) => () => {
         const o = new Orgs.Organization(file, false);
-        return o.summarize(file);
+        return o.summarize();
       })
     ).then((results: (string | Resources.Summary)[]) => {
       const seenReferences = {} as any;

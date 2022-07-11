@@ -11,7 +11,7 @@ export class Feedback extends Resource {
     return Promise.resolve(['']);
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const summary: Summary = {
       type: 'Summary',
       subType: 'Feedback',
@@ -21,7 +21,7 @@ export class Feedback extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
         if (tag === 'feedback') {
           summary.id = (attrs as any)['id'];

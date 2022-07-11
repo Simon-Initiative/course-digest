@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { convertAction } from '../src/index';
-import { Hierarchy } from '../src/resources/resource';
+import { convertAction } from 'src/index';
+import { Hierarchy } from 'src/resources/resource';
 
 // migration-4sdfykby_v_1_0-echo is an echo course downloaded from svn.
 // Though the .svn repo is not committed to VCS, the intent is that any updates
@@ -28,16 +28,14 @@ it('should convert example course to valid course digest', async () => {
   );
 
   const { hierarchy, finalResources } = await convertAction({
-    operation: null,
-    mediaManifest: null,
-    outputDir: null,
+    operation: 'convert',
+    mediaManifest: '',
+    outputDir: '',
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
     mediaUrlPrefix: 'https://example-url-prefix',
   });
-
-  console.log(hierarchy);
 
   expect(hierarchy as Hierarchy).toEqual(
     expect.objectContaining({
@@ -69,18 +67,16 @@ it('should convert example course to valid course digest', async () => {
     })
   );
 
-  console.log(finalResources);
-
   expect(finalResources).toContainEqual(
     expect.objectContaining({
       type: 'Page',
       id: 'welcome',
       title: 'Welcome!',
       tags: [],
-      unresolvedReferences: [
+      unresolvedReferences: expect.arrayContaining([
         'newca1a54a0f56a4d429f5aff2c515cab08',
         'newc72f87db5a5543b5ae8582d2d4cd34a7',
-      ],
+      ]),
       content: expect.objectContaining({ model: expect.any(Array) }),
       isGraded: false,
       objectives: [
@@ -259,9 +255,9 @@ it('should convert content with purpose to groups', async () => {
   );
 
   const { finalResources } = await convertAction({
-    operation: null,
-    mediaManifest: null,
-    outputDir: null,
+    operation: 'convert',
+    mediaManifest: '',
+    outputDir: '',
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
@@ -292,7 +288,14 @@ it('should convert content with purpose to groups', async () => {
                   expect.objectContaining({
                     type: 'p',
                     children: expect.arrayContaining([
-                      expect.objectContaining({ text: 'This is an example' }),
+                      expect.objectContaining({ text: 'This is an ' }),
+                      expect.objectContaining({
+                        type: 'cite',
+                        children: [{ text: '[citation]' }],
+                        id: 'Kluver_1939',
+                        bibref: expect.any(String),
+                      }),
+                      expect.objectContaining({ text: ' example' }),
                     ]),
                   }),
                 ]),
@@ -317,7 +320,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
+                    text: ' THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT. ',
                     strong: true,
                   }),
                 ]),
@@ -326,7 +329,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
+                    text: ' Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions. ',
                   }),
                 ]),
               }),
@@ -349,7 +352,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'Page 2 content',
+                    text: ' Page 2 content ',
                   }),
                 ]),
               }),

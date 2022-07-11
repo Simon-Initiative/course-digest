@@ -68,9 +68,9 @@ export class Superactivity extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const id = Maybe.maybe(
-      file.split('\\')?.pop()?.split('/')?.pop()?.split('.').shift()
+      this.file.split('\\')?.pop()?.split('/')?.pop()?.split('.').shift()
     ).caseOf({
       just: (id) => id,
       nothing: () => '',
@@ -85,7 +85,7 @@ export class Superactivity extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      XML.visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
       })
         .then((_result) => {

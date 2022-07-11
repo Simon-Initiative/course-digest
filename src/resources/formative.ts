@@ -362,7 +362,7 @@ export class Formative extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -373,7 +373,7 @@ export class Formative extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'assessment') {

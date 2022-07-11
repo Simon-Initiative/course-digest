@@ -1,4 +1,4 @@
-import { MediaSummary } from 'media';
+import { MediaSummary } from 'src/media';
 import { guid } from '../utils/common';
 import * as glob from 'glob';
 import * as fs from 'fs';
