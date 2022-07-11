@@ -1,6 +1,6 @@
-import { ItemReference, guid } from '../utils/common';
-import * as Histogram from '../utils/histogram';
-import * as DOM from '../utils/dom';
+import { ItemReference, guid } from 'src/utils/common';
+import * as Histogram from 'src/utils/histogram';
+import * as DOM from 'src/utils/dom';
 
 export interface HasReferences {
   found: () => ItemReference[];

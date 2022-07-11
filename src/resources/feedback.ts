@@ -1,5 +1,5 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
 import { Resource, TorusResource, Summary } from './resource';
 
 export class Feedback extends Resource {

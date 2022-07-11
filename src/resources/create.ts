@@ -1,4 +1,4 @@
-import { rootTag } from '../utils/xml';
+import { rootTag } from 'src/utils/xml';
 import { Resource, ResourceType } from './resource';
 
 import * as WB from './workbook';

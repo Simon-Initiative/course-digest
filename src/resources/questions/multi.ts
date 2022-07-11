@@ -1,6 +1,6 @@
 // Assemble the Torus representation of a multi-input activity from
 
-import { guid, replaceAll } from '../../utils/common';
+import { guid, replaceAll } from 'src/utils/common';
 
 import * as Common from './common';
 

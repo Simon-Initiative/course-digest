@@ -1,4 +1,4 @@
-import { guid } from '../../utils/common';
+import { guid } from 'src/utils/common';
 import * as Common from './common';
 import { matchListRule } from './rules';
 

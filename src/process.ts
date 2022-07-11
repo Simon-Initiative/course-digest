@@ -1,6 +1,6 @@
-import { TorusResource } from './resources/resource';
-import { executeSerially } from './utils/common';
-import { ResourceMap } from './utils/resources';
+import { TorusResource } from 'src/resources/resource';
+import { executeSerially } from 'src/utils/common';
+import { ResourceMap } from 'src/utils/resources';
 
 // Recursive helper to process a collection of resources.
 // Resources can reference other resources in a chain (e.g. Workbook page ->

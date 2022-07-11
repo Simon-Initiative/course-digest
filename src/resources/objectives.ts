@@ -1,7 +1,7 @@
-import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary } from './resource';
-import * as XML from '../utils/xml';
+import * as XML from 'src/utils/xml';
 
 export class Objectives extends Resource {
   restructure(_$: any): any {

@@ -1,6 +1,6 @@
-import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
-import * as DOM from '../utils/dom';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference } from 'src/utils/common';
+import * as DOM from 'src/utils/dom';
 import { Maybe } from 'tsmonad';
 
 export interface Summary {

@@ -1,8 +1,8 @@
 import * as glob from 'glob';
-import { ItemReference } from '../utils/common';
-import * as Histogram from '../utils/histogram';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import { ItemReference } from 'src/utils/common';
+import * as Histogram from 'src/utils/histogram';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 
 import { Resource, TorusResource, Hierarchy, Summary } from './resource';
 

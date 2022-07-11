@@ -1,9 +1,9 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
 import { Resource, TorusResource, Summary } from './resource';
 import * as Formative from './formative';
 import * as Summative from './summative';
-import * as XML from '../utils/xml';
+import * as XML from 'src/utils/xml';
 import { processCodeblock, processVariables } from './common';
 
 export class Pool extends Resource {

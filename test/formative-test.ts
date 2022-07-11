@@ -1,4 +1,4 @@
-import { Formative } from '../src/resources/formative';
+import { Formative } from 'src/resources/formative';
 
 describe('conversion to Torus resources', () => {
   test('should create a Torus Activity', () => {

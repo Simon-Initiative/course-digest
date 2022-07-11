@@ -1,5 +1,5 @@
-import { WorkbookPage } from '../src/resources/workbook';
-import { Other } from '../src/resources/other';
+import { WorkbookPage } from 'src/resources/workbook';
+import { Other } from 'src/resources/other';
 
 describe('check resource DTD version', () => {
   test('should print unsupported version message', () => {

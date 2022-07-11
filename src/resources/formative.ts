@@ -1,6 +1,6 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
-import { guid, ItemReference, replaceAll } from '../utils/common';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
+import { guid, ItemReference, replaceAll } from 'src/utils/common';
 import {
   Resource,
   TorusResource,
@@ -15,8 +15,8 @@ import {
 } from './common';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
 
 function usesSimpleModel(responses: any[]) {

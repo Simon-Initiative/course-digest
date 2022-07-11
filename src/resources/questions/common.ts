@@ -1,5 +1,5 @@
 import { maybe } from 'tsmonad';
-import { guid, replaceAll } from '../../utils/common';
+import { guid, replaceAll } from 'src/utils/common';
 
 export function getChild(collection: any, named: string) {
   const items = collection.filter((e: any) => named == e.type);

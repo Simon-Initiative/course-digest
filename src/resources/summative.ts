@@ -1,11 +1,11 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 import { processCodeblock } from './common';
 import * as Formative from './formative';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 
 export function convertToFormative($: any) {
   $('multiple_choice').each((i: any, item: any) => {

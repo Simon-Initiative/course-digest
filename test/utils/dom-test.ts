@@ -5,7 +5,7 @@ import {
   moveAttrToChildren,
   mergeCaptions,
   isInlineElement,
-} from '../../src/utils/dom';
+} from 'src/utils/dom';
 import * as cheerio from 'cheerio';
 
 describe('dom mutations', () => {

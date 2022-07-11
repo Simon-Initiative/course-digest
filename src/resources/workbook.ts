@@ -1,13 +1,13 @@
-import * as Histogram from '../utils/histogram';
-import { ItemReference, guid } from '../utils/common';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference, guid } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 import {
   standardContentManipulations,
   processCodeblock,
   wrapContentInGroup,
 } from './common';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 import { convertImageCodingActivities } from './image';
 import { maybe } from 'tsmonad';
 import { convertBibliographyEntries } from './bibentry';
