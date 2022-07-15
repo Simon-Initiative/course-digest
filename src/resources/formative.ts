@@ -233,7 +233,6 @@ function single_response_text(question: any) {
 }
 
 function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
-  console.log(subType);
   if (subType === 'oli_multiple_choice') {
     return [mcq(question), []];
   }
