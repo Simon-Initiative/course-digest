@@ -178,14 +178,16 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         orgReferences,
         map
       ).then((converted: Resources.TorusResource[]) => {
-        const updated = Convert.updateDerivativeReferences(converted);
-        const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+        const filterOutTemporaryContent = (updated: any) =>
+          updated.filter((u: any) => u.type !== 'TemporaryContent');
 
-        const withoutTemporary = withTagsInsteadOfPools.filter(
-          (u) => u.type !== 'TemporaryContent'
-        );
-        const finalResources =
-          Convert.globalizeObjectiveReferences(withoutTemporary);
+        let updated = converted;
+
+        updated = Convert.updateDerivativeReferences(updated);
+        updated = Convert.generatePoolTags(updated);
+        updated = filterOutTemporaryContent(updated);
+        updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
+        updated = Convert.globalizeObjectiveReferences(updated);
 
         return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
           (results) => {
@@ -197,7 +199,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
               packageDirectory,
               outputDirectory,
               hierarchy,
-              finalResources,
+              finalResources: updated,
               mediaItems,
             });
           }

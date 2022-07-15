@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">		
+#q2_target_container0 {  
+    margin: auto;
+    position:relative; <!-- This is important-->
+    width: 680px;  
+    height: 300px;
+   
+}	
+	.tbody .th {
+    text-align: center;
+}		
+			.target {  
+			  border: 2px;
+			  border-style: dashed;
+			  border-color: #999999; 
+			  display: inline-block; 
+			  position: absolute; 
+			  min-width: 200px;  
+			  width: 250px;  
+			  min-height: 40px; 
+			  height: 40px;
+			  
+			}
+			
+			
+			.initiator
+			{
+				display: inline-block;
+				min-height: 20px;
+				min-width: 60px;
+				background: #ffc;
+				text-align: center;
+				padding: 4px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			.dragdropspacer
+			{
+				height: 50px;
+			}
+			
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+		<div id="q2_target_container0">
+
+
+<div id="lefttitle" style="position:absolute;top:30px; left:5px" ><b>Zero Order</b></div>
+<div id="lefttitle" style="position:absolute;top:92px; left:5px" ><b>First Order</b></div>
+<div id="lefttitle" style="position:absolute;top:154px; left:5px" ><b>Second Order</b></div>
+<div id="bottomtitle" style="position:absolute;top:216px; left:5px" ><b>Third Order</b></div>
+
+
+
+
+<div input_ref="zero_area" class="target"  style="left:200px; top:25px; width:75px; height:40px;"> </div>
+
+<div input_ref="first_area" class="target" style="left:200px;top:85px; width:75px; height:40px;"> </div>
+
+
+<div input_ref="second_area" class="target"  style="left:200px; top:145px; width:75px; height:40px;"> </div>
+
+<div input_ref="third_area" class="target"  style="left:200px; top:205px; width:75px; height:40px;"> </div>
+
+
+		    </div>
+			
+		]]>
+    </targetArea>
+    
+    <initiators>
+        <![CDATA[		
+        <div input_val="d1" class="initiator">M<sup>-2</sup> s<sup>-2</sup></div>
+        <div input_val="second" class="initiator">M<sup>-1</sup> s<sup>-1</sup></div>
+			<div input_val="zero" class="initiator">M s<sup>-1</sup></div>
+		
+			
+			<div input_val="third" class="initiator">M<sup>-2</sup> s<sup>-1</sup></div>
+			
+			<div input_val="d2" class="initiator">M s</div>
+				<div input_val="first" class="initiator">s<sup>-1</sup></div>
+					
+		]]>
+    </initiators>
+    
+</dragdrop>
+
+
+
+
+

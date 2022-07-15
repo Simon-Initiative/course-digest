@@ -90,7 +90,11 @@ export class Summative extends Resource {
           const legacyId = r.children[0].id;
 
           const { model, items, unresolvedReferences, title } =
-            Formative.processAssessmentModel(legacyId, r.children[0].children);
+            Formative.processAssessmentModel(
+              legacyId,
+              r.children[0].children,
+              this.file
+            );
 
           page.id = r.children[0].id;
           page.objectives = r.children[0].children[0].children.map(
