@@ -19,6 +19,7 @@ import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
+import { runInThisContext } from 'vm';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -151,8 +152,11 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const map = results[0];
     const orgReferences = [...results[1].orgReferences];
     const orgReferencesOthers = [...results[1].orgReferencesOthers];
+    const orgPaths = [...results[1].organizationPaths];
+
     const references = [
       ...orgReferences,
+      ...orgReferencesOthers,
       ...results.slice(2),
       ...results.slice(3),
     ];
@@ -164,16 +168,11 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       flattenedNames: {},
     };
 
-    return Convert.convert(
-      mediaSummary,
-      orgReferencesOthers,
-      specificOrg,
-      false
-    ).then((results) => {
+    return Convert.convert(mediaSummary, specificOrg, false).then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
 
       return processResources(
-        (file: string) => Convert.convert(mediaSummary, null, file, false),
+        (file: string) => Convert.convert(mediaSummary, file, false),
         references,
         orgReferences,
         map
@@ -189,18 +188,23 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
         updated = Convert.globalizeObjectiveReferences(updated);
 
-        return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
-          (results) => {
-            const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-              (k: string) => results.mediaItems[k]
-            );
-
-            return Promise.resolve({
+        return Convert.createProducts(updated, orgPaths, specificOrg).then(
+          (updated) => {
+            return addWebContentToMediaSummary(
               packageDirectory,
-              outputDirectory,
-              hierarchy,
-              finalResources: updated,
-              mediaItems,
+              mediaSummary
+            ).then((results) => {
+              const mediaItems = Object.keys(mediaSummary.mediaItems).map(
+                (k: string) => results.mediaItems[k]
+              );
+
+              return Promise.resolve({
+                packageDirectory,
+                outputDirectory,
+                hierarchy,
+                finalResources: updated,
+                mediaItems,
+              });
             });
           }
         );

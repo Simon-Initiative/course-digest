@@ -35,6 +35,15 @@ export class Organization extends Resource {
     DOM.rename($, 'section', 'container');
   }
 
+  restructureProduct($: any): any {
+    DOM.flattenResourceRefs($);
+    DOM.mergeTitles($);
+    removeSequences($);
+    DOM.rename($, 'unit', 'container');
+    DOM.rename($, 'module', 'container');
+    DOM.rename($, 'section', 'container');
+  }
+
   translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
     const h: Hierarchy = {
       type: 'Hierarchy',
@@ -49,6 +58,33 @@ export class Organization extends Resource {
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml).then((r: any) => {
         h.children = r.children;
+        resolve([h]);
+      });
+    });
+  }
+
+  translateProduct(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+    const h: Hierarchy = {
+      type: 'Hierarchy',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      children: [],
+    };
+
+    return new Promise((resolve, _reject) => {
+      XML.toJSON(xml).then((r: any) => {
+        r.children.forEach((c: any) => {
+          // restructureProduct allows the org node to come through, so that we can
+          // grab the title
+          if (c.type === 'organization') {
+            h.title = c.title.trim();
+            h.children = c.children;
+          }
+        });
+
         resolve([h]);
       });
     });
