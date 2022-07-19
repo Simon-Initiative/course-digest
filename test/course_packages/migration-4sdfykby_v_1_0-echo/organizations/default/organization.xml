@@ -51,7 +51,7 @@
 						<resourceref idref="composite" />
 					</item>
 					<item id="bca2e88983a62d699" scoring_mode="default">
-						<resourceref idref="video" />
+						<resourceref idref="styled_lists" />
 					</item>
 				</module>
 				<module id="variables">
