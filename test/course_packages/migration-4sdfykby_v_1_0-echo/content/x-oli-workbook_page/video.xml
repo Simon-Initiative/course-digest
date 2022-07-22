@@ -15,13 +15,5 @@
 			</code>
 			attribute:
 		</p>
-		<video src="../webcontent/ammonium.mp4" width="600" height="400" />
-		<p>
-			Here is a video that originally had a multiple sources set via source sub elements:
-		</p>
-		<video width="600" height="400">
-			<source src="../webcontent/sodium_gen.mp4" type="video/mp4" />
-			<source src="../webcontent/sample.webm" type="video/webm" />
-		</video>
 	</body>
 </workbook_page>
