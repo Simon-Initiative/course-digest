@@ -55,7 +55,7 @@ export class Summative extends Resource {
   restructure($: any): any {
     // We simplify the handling of the differing Summative and Formative models
     // by converting the more restrictive Summative to the more flexible Formative
-    // model.  This alllows then one set of restructuring code to exist.
+    // model.  This allows then one set of restructuring code to exist.
     convertToFormative($);
     Formative.performRestructure($);
   }

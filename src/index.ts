@@ -19,6 +19,7 @@ import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
+import { inspect as utilInspect, InspectOptions } from 'util';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -148,7 +149,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     () => getLearningObjectiveIds(packageDirectory),
     () => getSkillIds(packageDirectory),
   ]).then((results: any) => {
-    const map = results[0];
+    const resourceMap = results[0];
     const orgReferences = [...results[1].orgReferences];
     const orgReferencesOthers = [...results[1].orgReferencesOthers];
     const references = [
@@ -176,7 +177,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         (file: string) => Convert.convert(mediaSummary, null, file, false),
         references,
         orgReferences,
-        map
+        resourceMap
       ).then((converted: Resources.TorusResource[]) => {
         const updated = Convert.updateDerivativeReferences(converted);
         const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
@@ -313,3 +314,11 @@ function main() {
 if (require.main === module) {
   main();
 }
+
+// expose globally accessible inspect function for console log debugging
+declare global {
+  function inspect(object: any): void;
+}
+
+global.inspect = (object: any, options: InspectOptions = { depth: null }) =>
+  console.log(utilInspect(object, options));
