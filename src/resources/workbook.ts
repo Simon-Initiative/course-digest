@@ -76,12 +76,17 @@ export class WorkbookPage extends Resource {
     const bibrefs: number[] = [];
     $('cite').each((i: any, elem: any) => {
       const entry = $(elem).attr('entry');
-      bibrefs.push(bibEntries.get(entry).id);
-      $(elem).replaceWith(
-        `<cite id="${entry}" bibref="${
-          bibEntries.get(entry).id
-        }">[citation]</cite>`
-      );
+      const bibRef = bibEntries.get(entry);
+      if (bibRef) {
+        bibrefs.push(bibRef.id);
+        $(elem).replaceWith(
+          `<cite id="${entry}" bibref="${
+            bibEntries.get(entry).id
+          }">[citation]</cite>`
+        );
+      } else {
+        $(elem).remove();
+      }
     });
     xml = $.html();
 
