@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC " -//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page id="pre_course_survey"
+    xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:bib="http://bibtexml.sf.net/"
+    xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/">
+    <head>
+        <title>Pre-Course Student Expectations</title>
+    </head>
+    <body>
+        <section>
+            <title>Part I</title>
+            <body>
+                <composite_activity>
+                    <p> Two opposing words appear above and below the field to fill in the 
+                statement "Chemistry is...". Rate how well these words describe your
+                feelings about chemistry. Think carefully and try not to include your feelings
+                toward chemistry teachers or chemistry courses. For each line, choose a position
+                between the two words that describes exactly how you feel. The middle position (4) is if you are undecided or have no feelings related
+                to the terms on that row.</p>
+                    <wb:inline idref="inline_pre_student_survey"></wb:inline>
+                </composite_activity>
+            </body>
+        </section>
+    </body>
+</workbook_page>
