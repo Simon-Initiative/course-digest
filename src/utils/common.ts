@@ -71,3 +71,28 @@ export function decodeEntities(encodedString: string) {
  */
 export const valueOr = <T>(value: T | null | undefined, defaultValue: T): T =>
   value === null || value === undefined ? defaultValue : value;
+
+// returns a plain text representation of the rich content element
+export function toPlainText(node: any): string {
+  if (Array.isArray(node)) return toPlainTextHelper({ children: node }, '');
+  if (node.model != undefined)
+    return toPlainTextHelper({ children: node.model }, '');
+  return toPlainTextHelper(node, '');
+}
+
+function toPlainTextHelper(node: any, text: string): string {
+  if (isText(node)) {
+    return text + node.text;
+  } else if (Array.isArray(node.children)) {
+    return [...node.children].reduce((p, c) => {
+      if (isText(c)) return p + c.text;
+      return toPlainTextHelper(c, p);
+    }, text);
+  } else {
+    return '';
+  }
+}
+
+function isText(node: any) {
+  return node && node.text != undefined;
+}

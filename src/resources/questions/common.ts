@@ -59,7 +59,7 @@ export function shuffleTransformation() {
 }
 
 export function buildChoices(question: any, from = 'multiple_choice') {
-  const choices = getChild(question.children, from).children;
+  const choices = getChild(question.children, from).children as any[];
 
   return choices.map((c: any) => ({
     content: { model: ensureParagraphs(c.children) },
@@ -146,8 +146,8 @@ export function hint() {
   };
 }
 
-export function ensureThree(hints: any) {
-  if (hints.length === 0) {
+export function ensureThree(hints?: any[]) {
+  if (hints === undefined || hints.length === 0) {
     return [hint(), hint(), hint()];
   }
   if (hints.length === 1) {

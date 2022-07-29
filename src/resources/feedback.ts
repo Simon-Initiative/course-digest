@@ -84,15 +84,18 @@ export function convertToFormative($: cheerio.Root) {
 }
 
 export class Feedback extends Resource {
-  restructure(_$: cheerio.Root): any {
-    return;
+  restructure($: any): any {
+    // We simplify the handling of Feedback by converting it to the Formative
+    // model.  This allows then one set of restructuring code to exist.
+    convertToFormative($);
+    Formative.performRestructure($);
   }
 
   translate(
     xml: string,
     _$: cheerio.Root
   ): Promise<(TorusResource | string)[]> {
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve, _reject) =>
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
           const legacyId = r.children[0].id;
@@ -103,8 +106,8 @@ export class Feedback extends Resource {
 
           resolve(items);
         }
-      );
-    });
+      )
+    );
   }
 
   summarize(): Promise<string | Summary> {

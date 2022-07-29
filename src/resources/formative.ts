@@ -141,6 +141,48 @@ function buildOrderingPart(question: any) {
   };
 }
 
+function buildLikertItems(question: any) {
+  const items = question.children.filter((p: any) => p.type === 'item');
+
+  return items.map((item: any) => ({
+    content: { model: Common.ensureParagraphs(item.children) },
+    id: item.id,
+    required: item.required,
+  }));
+}
+
+function buildLikertPart(question: any) {
+  const firstChoice = Common.buildChoices(question, 'likert_scale')[0];
+
+  return {
+    gradingApproach: 'automatic',
+    hints: Common.ensureThree(),
+    id: '3892726450',
+    outOf: null,
+    responses: [
+      {
+        id: guid(),
+        score: 1,
+        rule: `input like {${firstChoice.id}}`,
+        feedback: {
+          id: guid(),
+          content: { model: [{ type: 'p', children: [{ text: 'Correct.' }] }] },
+        },
+      },
+      {
+        id: guid(),
+        score: 0,
+        rule: `input like {.*}`,
+        feedback: {
+          id: guid(),
+          content: { model: [{ type: 'p', children: [{ text: 'Correct.' }] }] },
+        },
+      },
+    ],
+    scoringStrategy: 'average',
+  };
+}
+
 function mcq(question: any) {
   const part = buildMCQPart(question);
   const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
@@ -228,6 +270,20 @@ function single_response_text(question: any) {
   };
 }
 
+function likert(question: any) {
+  return {
+    stem: Common.buildStem(question),
+    choices: Common.buildChoices(question, 'likert_scale'),
+    items: buildLikertItems(question),
+    orderDescending: false,
+    authoring: {
+      parts: [buildLikertPart(question)],
+      transformations: [],
+      previewText: '',
+    },
+  };
+}
+
 function buildModel(subType: ItemTypes, question: any) {
   if (subType === 'oli_multiple_choice') {
     return mcq(question);
@@ -240,6 +296,9 @@ function buildModel(subType: ItemTypes, question: any) {
   }
   if (subType === 'oli_multi_input') {
     return buildMulti(question);
+  }
+  if (subType === 'oli_likert') {
+    return likert(question);
   }
 
   return single_response_text(question);
@@ -285,7 +344,8 @@ type ItemTypes =
   | 'oli_check_all_that_apply'
   | 'oli_short_answer'
   | 'oli_ordering'
-  | 'oli_multi_input';
+  | 'oli_multi_input'
+  | 'oli_likert';
 
 export function determineSubType(question: any): ItemTypes {
   const mcq = Common.getChild(question.children, 'multiple_choice');
@@ -308,6 +368,11 @@ export function determineSubType(question: any): ItemTypes {
     Common.getChild(question.children, 'fill_in_the_blank') !== undefined
   ) {
     return 'oli_multi_input';
+  }
+
+  const likert_scale = Common.getChild(question.children, 'likert_scale');
+  if (likert_scale !== undefined) {
+    return 'oli_likert';
   }
 
   return 'oli_short_answer';
