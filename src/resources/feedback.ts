@@ -101,7 +101,8 @@ export class Feedback extends Resource {
           const legacyId = r.children[0].id;
           const { items } = Formative.processAssessmentModel(
             legacyId,
-            r.children[0].children
+            r.children[0].children,
+            this.file
           );
 
           resolve(items);

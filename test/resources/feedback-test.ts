@@ -172,7 +172,7 @@ describe('convertToFormative', () => {
   });
 });
 
-describe('convert Feedback', () => {
+describe('convert feedback', () => {
   it('should translate to valid json', async () => {
     const file =
       'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-feedback/pre_course_student_survey.xml';
@@ -182,18 +182,18 @@ describe('convert Feedback', () => {
       urlPrefix: '',
       flattenedNames: {},
     };
-    const otherOrgRefs: string[] = [];
 
-    const converted = await convert(mediaSummary, otherOrgRefs, file, false);
+    const converted = await convert(mediaSummary, file, false);
 
     expect(converted).toStrictEqual([
       {
         type: 'Activity',
         id: expect.stringContaining('pre_course_student_survey-'),
-        originalFile: '',
+        originalFile: file,
         title: '',
         tags: [],
         unresolvedReferences: [],
+        imageReferences: undefined,
         content: {
           stem: {
             content: {
@@ -307,10 +307,11 @@ describe('convert Feedback', () => {
       {
         type: 'Activity',
         id: expect.stringContaining('pre_course_student_survey-'),
-        originalFile: '',
+        originalFile: file,
         title: '',
         tags: [],
         unresolvedReferences: [],
+        imageReferences: undefined,
         content: {
           stem: {
             content: {
@@ -500,10 +501,11 @@ describe('convert Feedback', () => {
       {
         type: 'Activity',
         id: expect.stringContaining('pre_course_student_survey-'),
-        originalFile: '',
+        originalFile: file,
         title: '',
         tags: [],
         unresolvedReferences: [],
+        imageReferences: undefined,
         content: {
           stem: {
             content: {
@@ -633,10 +635,11 @@ describe('convert Feedback', () => {
       {
         type: 'Activity',
         id: 'pre_course_student_survey-gender',
-        originalFile: '',
+        originalFile: file,
         title: '',
         tags: [],
         unresolvedReferences: [],
+        imageReferences: [],
         content: {
           stem: {
             content: {
@@ -707,10 +710,11 @@ describe('convert Feedback', () => {
       {
         type: 'Activity',
         id: 'pre_course_student_survey-race',
-        originalFile: '',
+        originalFile: file,
         title: '',
         tags: [],
         unresolvedReferences: [],
+        imageReferences: [],
         content: {
           stem: {
             content: {

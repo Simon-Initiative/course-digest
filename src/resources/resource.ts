@@ -79,6 +79,11 @@ export interface Page extends TorusResource {
   objectives: any[];
 }
 
+export type NonDirectImageReference = {
+  originalReference: string;
+  assetReference: string;
+};
+
 export interface Activity extends TorusResource {
   type: 'Activity';
   content: Record<string, unknown>;
@@ -86,6 +91,7 @@ export interface Activity extends TorusResource {
   legacyId: string;
   subType: string;
   scope?: string;
+  imageReferences?: NonDirectImageReference[];
 }
 
 export interface Objective extends TorusResource {

@@ -13,6 +13,10 @@ import {
   processCodeblock,
   processVariables,
 } from './common';
+import {
+  findCustomTag,
+  process as processCustomDnd,
+} from './questions/custom-dnd';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
 import * as DOM from 'src/utils/dom';
@@ -284,35 +288,40 @@ function likert(question: any) {
   };
 }
 
-function buildModel(subType: ItemTypes, question: any) {
+function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_multiple_choice') {
-    return mcq(question);
+    return [mcq(question), []];
   }
   if (subType === 'oli_check_all_that_apply') {
-    return cata(question);
+    return [cata(question), []];
   }
   if (subType === 'oli_ordering') {
-    return ordering(question);
+    return [ordering(question), []];
   }
   if (subType === 'oli_multi_input') {
-    return buildMulti(question);
+    return [buildMulti(question), []];
+  }
+  if (subType === 'oli_custom_dnd') {
+    const multipart = buildMulti(question, true);
+    return processCustomDnd(multipart, baseFileName);
   }
   if (subType === 'oli_likert') {
-    return likert(question);
+    return [likert(question)];
   }
 
-  return single_response_text(question);
+  return [single_response_text(question), []];
 }
 
 export function toActivity(
   question: any,
   subType: ItemTypes,
-  legacyId: string
+  legacyId: string,
+  baseFileName: string
 ) {
   const activity: Activity = {
     type: 'Activity',
     id: '',
-    originalFile: '',
+    originalFile: baseFileName,
     title: '',
     tags: [],
     unresolvedReferences: [],
@@ -323,7 +332,15 @@ export function toActivity(
   };
 
   activity.id = legacyId + '-' + question.id;
-  activity.content = buildModel(subType, question);
+
+  const [content, imageReferences] = buildModel(
+    subType,
+    question,
+    baseFileName
+  );
+
+  activity.content = content;
+  activity.imageReferences = imageReferences;
   activity.objectives = constructObjectives(
     (activity.content as any).authoring.parts
   );
@@ -340,6 +357,7 @@ function constructObjectives(parts: any): any {
 }
 
 type ItemTypes =
+  | 'oli_custom_dnd'
   | 'oli_multiple_choice'
   | 'oli_check_all_that_apply'
   | 'oli_short_answer'
@@ -367,6 +385,11 @@ export function determineSubType(question: any): ItemTypes {
     Common.getChild(question.children, 'text') !== undefined ||
     Common.getChild(question.children, 'fill_in_the_blank') !== undefined
   ) {
+    const customTag = findCustomTag(question);
+    if (customTag !== undefined && customTag.type === 'custom') {
+      return 'oli_custom_dnd';
+    }
+
     return 'oli_multi_input';
   }
 
@@ -418,7 +441,8 @@ export class Formative extends Resource {
           const legacyId = r.children[0].id;
           const { items } = processAssessmentModel(
             legacyId,
-            r.children[0].children
+            r.children[0].children,
+            this.file
           );
 
           resolve(items);
@@ -453,7 +477,11 @@ export class Formative extends Resource {
   }
 }
 
-export function processAssessmentModel(legacyId: string, children: any[]) {
+export function processAssessmentModel(
+  legacyId: string,
+  children: any[],
+  baseFileName: string
+) {
   const items: any = [];
   const unresolvedReferences: any = [];
   let title = 'Unknown';
@@ -461,7 +489,7 @@ export function processAssessmentModel(legacyId: string, children: any[]) {
   const handleNestableItems = (item: any, pageId: string | null) => {
     if (item.type === 'question') {
       const subType = determineSubType(item);
-      const activity = toActivity(item, subType, legacyId);
+      const activity = toActivity(item, subType, legacyId, baseFileName);
       items.push(activity);
 
       const a = {
@@ -488,7 +516,12 @@ export function processAssessmentModel(legacyId: string, children: any[]) {
           child.children.forEach((c: any) => {
             if (c.type !== 'title' && c.type !== 'content') {
               const subType = determineSubType(c);
-              const pooledActivity = toActivity(c, subType, legacyId);
+              const pooledActivity = toActivity(
+                c,
+                subType,
+                legacyId,
+                baseFileName
+              );
               pooledActivity.tags = [tagId];
               pooledActivity.scope = 'banked';
               items.push(pooledActivity);

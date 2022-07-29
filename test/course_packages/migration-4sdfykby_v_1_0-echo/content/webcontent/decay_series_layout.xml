@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">		
+#q2_target_container0 {  
+    margin: auto;
+    background-image: url("decay_series_background.png");
+    background-repeat: no-repeat;  
+    width: 700px;  
+    height:450px;
+    position: relative;
+   
+}	
+	.tbody .th {
+    text-align: center;
+}		
+			.target {  
+			  border: 2px;
+			  border-style: dashed;
+			  border-color: #999999; 
+			  display: inline-block; 
+			  position: absolute; 
+			  min-width: 40px;  
+			 
+			  min-height: 40px; 
+			
+			  
+			}
+			
+			
+			.initiator
+			{
+				display: inline-block;
+				min-height: 30px;
+				min-width: 60px;
+				background: #ffc;
+				text-align: center;
+				padding: 4px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			.dragdropspacer
+			{
+				height: 50px;
+			}
+			
+			#alpha {  
+    margin: auto;
+    background-image: url("alppha.png");
+    background-repeat: no-repeat;     
+    width: 120px;  
+    height: 68px;
+}
+#beta {  
+    margin: auto;
+    background-image: url("beta.png");
+    background-repeat: no-repeat;     
+    width: 120px;  
+    height: 68px;
+}
+#bi-210 {  
+    margin: auto;
+    background-image: url("bi-210.png");
+    background-repeat: no-repeat;     
+     width: 120px;  
+    height: 68px;
+}
+#pb-210 {  
+    margin: auto;
+    background-image: url("pb-210.png");
+    background-repeat: no-repeat;     
+     width: 120px;  
+    height: 68px;
+}
+#po-210 {  
+    margin: auto;
+    background-image: url("po-210.png");
+    background-repeat: no-repeat;     
+     width: 120px;  
+    height: 68px;
+}
+
+
+			
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+		<div id="q2_target_container0">
+		
+	
+
+<div input_ref="pb210_area" class="target"  style="left:288px; top:17px; width:125px; height:70px;"> </div>
+
+<div input_ref="alpha1_area" class="target" style="left:510px;top:17px; width:125px; height:70px;"> </div>
+
+
+<div input_ref="pb210_2_area" class="target"  style="left:25px; top:116px; width:125px; height:70px;"> </div>
+
+<div input_ref="bi210_area" class="target"  style="left:288px; top:116px; width:125px; height:70px;"> </div>
+
+<div input_ref="beta1_area" class="target"  style="left:510px; top:116px; width:125px; height:70px;"> </div>
+
+<div input_ref="bi210_2_area" class="target" style="left:25px;top:219px; width:125px; height:70px;"> </div>
+<div input_ref="po210_area" class="target" style="left:288px;top:219px; width:125px; height:70px;"> </div>
+<div input_ref="beta2_area" class="target" style="left:510px;top:219px; width:125px; height:70px;"> </div>
+<div input_ref="po210_2_area" class="target" style="left:25px;top:320px; width:125px; height:70px;"> </div>
+<div input_ref="alpha2_area" class="target" style="left:510px;top:320px; width:125px; height:70px;"> </div>
+
+
+
+
+
+		    </div>
+			
+		]]>
+    </targetArea>
+    
+    
+    <initiators>
+        <![CDATA[			
+         <div input_val="alpha1" id="alpha" class="initiator"></div>
+          <div input_val="alpha2" id="alpha" class="initiator"></div>
+           <div input_val="beta1" id="beta" class="initiator"></div>
+          <div input_val="beta2" id="beta" class="initiator"></div>
+            <div input_val="bi210_1" id="bi-210" class="initiator"></div>
+          <div input_val="bi210_2" id="bi-210" class="initiator"></div>
+        
+       
+            <div input_val="pb210_1" id="pb-210" class="initiator"></div>
+          <div input_val="pb210_2" id="pb-210" class="initiator"></div>
+           <div input_val="po210_1" id="po-210" class="initiator"></div>
+          <div input_val="po210_2" id="po-210" class="initiator"></div>
+         
+			
+			
+		
+		
+					
+		]]>
+    </initiators>
+    
+</dragdrop>
+
+
+
+
+
+

@@ -105,7 +105,6 @@ export function standardContentManipulations($: any) {
   $('mathematica').remove();
   $('panopto').remove();
   $('unity').remove();
-  $('video').remove();
   $('vimeo').remove();
   // $('cite').remove();
 
@@ -133,6 +132,7 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
+  DOM.renameAttribute($, 'video source', 'type', 'format');
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);

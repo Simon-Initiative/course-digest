@@ -5,7 +5,7 @@ import { guid, replaceAll } from 'src/utils/common';
 import * as Common from './common';
 
 // a JSON representation of the Formative Legacy model of this question type
-export function buildMulti(question: any) {
+export function buildMulti(question: any, skipInputRefValidation = false) {
   // Pair up the inputs and the parts
   const { items, parts } = collectItemsParts(question);
   const allChoices: any[] = [];
@@ -28,7 +28,7 @@ export function buildMulti(question: any) {
   }
   const transformation = Common.getChild(question.children, 'transformation');
   return {
-    stem: buildStem(question, inputs),
+    stem: buildStem(question, inputs, skipInputRefValidation),
     choices: allChoices,
     inputs,
     authoring: {
@@ -59,7 +59,11 @@ function updateInputRefs(model: any, foundInputs: any): any {
   return model;
 }
 
-export function buildStem(question: any, inputs: any[]) {
+export function buildStem(
+  question: any,
+  inputs: any[],
+  skipInputRefValidation: boolean
+) {
   const stem = Common.getChild(question.children, 'stem');
   const model = Common.ensureParagraphs(stem.children);
   const foundInputs: any = {};
@@ -67,17 +71,19 @@ export function buildStem(question: any, inputs: any[]) {
 
   // Some multi input questions omit the input_ref.  We do not allow that in Torus, therefore we must
   // detect that case and append an input ref for every one that is missing.
-  inputs.forEach((input) => {
-    if (foundInputs[input.id] === undefined) {
-      updated.push({
-        type: 'p',
-        id: guid(),
-        children: [
-          { type: 'input_ref', id: input.id, children: [{ text: '' }] },
-        ],
-      });
-    }
-  });
+  if (!skipInputRefValidation) {
+    inputs.forEach((input) => {
+      if (foundInputs[input.id] === undefined) {
+        updated.push({
+          type: 'p',
+          id: guid(),
+          children: [
+            { type: 'input_ref', id: input.id, children: [{ text: '' }] },
+          ],
+        });
+      }
+    });
+  }
 
   return {
     content: {
@@ -165,7 +171,13 @@ function buildDropdownPart(part: any, _i: number) {
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
-  const id = part.id !== undefined && part.id !== null ? part.id + '' : guid();
+  const firstResponseInputValue =
+    responses.length > 0 ? responses[0].input : guid();
+
+  const id =
+    part.id !== undefined && part.id !== null
+      ? part.id + ''
+      : firstResponseInputValue;
 
   return {
     id,

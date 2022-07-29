@@ -63,6 +63,7 @@ export function collectOrgItemReferences(packageDirectory: string, id = '') {
       const orgReferences = {} as any;
       orgReferences['orgReferences'] = references;
       orgReferences['orgReferencesOthers'] = referencesOthers;
+      orgReferences['organizationPaths'] = orgs;
 
       return orgReferences;
     })

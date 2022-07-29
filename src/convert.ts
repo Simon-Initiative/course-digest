@@ -4,6 +4,7 @@ import {
   ResourceType,
   Page,
   Activity,
+  NonDirectImageReference,
 } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid } from './utils/common';
@@ -12,12 +13,12 @@ import * as Media from './media';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
 import * as tmp from 'tmp';
+import { Organization } from './resources/organization';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
 export function convert(
   mediaSummary: Media.MediaSummary,
-  otherOrgRefs: string[] | null,
   file: string,
   navigable: boolean
 ): Promise<(TorusResource | string)[]> {
@@ -36,19 +37,6 @@ export function convert(
     $ = DOM.read(tmpobj.name);
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
-
-    if (t === 'Organization') {
-      if (otherOrgRefs && otherOrgRefs.length > 0) {
-        let module = `<unit id="${guid()}"><title>Additional resources</title>`;
-        let items = '';
-        otherOrgRefs.forEach((val: string) => {
-          items = `${items}<item scoring_mode="default"><resourceref idref="${val}"/></item>`;
-        });
-        module = module + items;
-        module = `${module}</unit>`;
-        $('sequence').append(module);
-      }
-    }
 
     item.restructure($);
 
@@ -82,6 +70,33 @@ export function updateDerivativeReferences(
   return resources.map((parent: TorusResource) =>
     updateParentReference(parent, byLegacyId, resourceActivityRefs)
   );
+}
+
+export function createProducts(
+  resources: TorusResource[],
+  orgPaths: string[],
+  baseOrgPath: string
+): Promise<TorusResource[]> {
+  const exceptPrimaryOrg = orgPaths
+    .filter((p) => p !== baseOrgPath && !p.endsWith(baseOrgPath))
+    .map((path) => {
+      const o = new Organization(path, false);
+      const $ = DOM.read(path, { normalizeWhitespace: true });
+      o.restructureProduct($);
+      const xml = $.html();
+      return () => o.translateProduct(xml, $);
+    });
+
+  return new Promise((resolve, reject) => {
+    executeSerially(exceptPrimaryOrg).then((results: TorusResource[]) => {
+      const products = results.map((r: any) => {
+        r.type = 'Product';
+        r.id = guid();
+        return r;
+      });
+      resolve([...resources, ...products]);
+    });
+  });
 }
 
 function createResourceActivityRefs(
@@ -268,6 +283,27 @@ function updateParentReference(
   }
 
   return parent;
+}
+
+export function updateNonDirectImageReferences(
+  resources: TorusResource[],
+  summary: Media.MediaSummary
+): TorusResource[] {
+  return resources.map((r: TorusResource) => {
+    if (
+      r.type === 'Activity' &&
+      (r as Activity).subType === 'oli_custom_dnd' &&
+      (r as Activity).imageReferences !== undefined &&
+      ((r as Activity).imageReferences as any).length > 0
+    ) {
+      Media.transformToFlatDirectoryURLReferences(
+        (r as Activity).imageReferences as NonDirectImageReference[],
+        r as Activity,
+        summary
+      );
+    }
+    return r;
+  });
 }
 
 export function generatePoolTags(resources: TorusResource[]): TorusResource[] {

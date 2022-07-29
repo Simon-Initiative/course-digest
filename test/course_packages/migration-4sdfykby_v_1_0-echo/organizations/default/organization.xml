@@ -59,6 +59,9 @@
                     <item id="bca2e889891c18a62d699" scoring_mode="default">
                         <resourceref idref="composite" />
                     </item>
+                    <item id="bca2e88983a62d699" scoring_mode="default">
+                        <resourceref idref="styled_lists" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>
@@ -66,6 +69,14 @@
 					</title>
                     <item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
                         <resourceref idref="assessment_with_selection" />
+                    </item>
+                </module>
+                <module id="dnd">
+                    <title>
+						Drag and Drop Questions
+					</title>
+                    <item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
+                        <resourceref idref="customdnd" />
                     </item>
                 </module>
             </unit>

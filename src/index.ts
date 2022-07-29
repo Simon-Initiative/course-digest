@@ -152,8 +152,11 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const resourceMap = results[0];
     const orgReferences = [...results[1].orgReferences];
     const orgReferencesOthers = [...results[1].orgReferencesOthers];
+    const orgPaths = [...results[1].organizationPaths];
+
     const references = [
       ...orgReferences,
+      ...orgReferencesOthers,
       ...results.slice(2),
       ...results.slice(3),
     ];
@@ -165,41 +168,43 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       flattenedNames: {},
     };
 
-    return Convert.convert(
-      mediaSummary,
-      orgReferencesOthers,
-      specificOrg,
-      false
-    ).then((results) => {
+    return Convert.convert(mediaSummary, specificOrg, false).then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
 
       return processResources(
-        (file: string) => Convert.convert(mediaSummary, null, file, false),
+        (file: string) => Convert.convert(mediaSummary, file, false),
         references,
         orgReferences,
         resourceMap
       ).then((converted: Resources.TorusResource[]) => {
-        const updated = Convert.updateDerivativeReferences(converted);
-        const withTagsInsteadOfPools = Convert.generatePoolTags(updated);
+        const filterOutTemporaryContent = (updated: any) =>
+          updated.filter((u: any) => u.type !== 'TemporaryContent');
 
-        const withoutTemporary = withTagsInsteadOfPools.filter(
-          (u) => u.type !== 'TemporaryContent'
-        );
-        const finalResources =
-          Convert.globalizeObjectiveReferences(withoutTemporary);
+        let updated = converted;
 
-        return addWebContentToMediaSummary(packageDirectory, mediaSummary).then(
-          (results) => {
-            const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-              (k: string) => results.mediaItems[k]
-            );
+        updated = Convert.updateDerivativeReferences(updated);
+        updated = Convert.generatePoolTags(updated);
+        updated = filterOutTemporaryContent(updated);
+        updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
+        updated = Convert.globalizeObjectiveReferences(updated);
 
-            return Promise.resolve({
+        return Convert.createProducts(updated, orgPaths, specificOrg).then(
+          (updated) => {
+            return addWebContentToMediaSummary(
               packageDirectory,
-              outputDirectory,
-              hierarchy,
-              finalResources,
-              mediaItems,
+              mediaSummary
+            ).then((results) => {
+              const mediaItems = Object.keys(mediaSummary.mediaItems).map(
+                (k: string) => results.mediaItems[k]
+              );
+
+              return Promise.resolve({
+                packageDirectory,
+                outputDirectory,
+                hierarchy,
+                finalResources: updated,
+                mediaItems,
+              });
             });
           }
         );
@@ -314,11 +319,3 @@ function main() {
 if (require.main === module) {
   main();
 }
-
-// expose globally accessible inspect function for console log debugging
-declare global {
-  function inspect(object: any): void;
-}
-
-global.inspect = (object: any, options: InspectOptions = { depth: null }) =>
-  console.log(utilInspect(object, options));
