@@ -70,6 +70,7 @@ export class Summative extends Resource {
       unresolvedReferences: [],
       content: {},
       isGraded: true,
+      isSurvey: false,
       objectives: [],
     };
 

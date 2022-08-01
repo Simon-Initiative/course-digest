@@ -49,6 +49,7 @@ export class Superactivity extends Resource {
                 unresolvedReferences: [],
                 content: { model },
                 isGraded: true,
+                isSurvey: false,
                 objectives: [],
               };
               resolve([page, activity]);

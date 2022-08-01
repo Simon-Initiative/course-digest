@@ -76,6 +76,7 @@ export interface Page extends TorusResource {
   type: 'Page';
   content: Record<string, unknown>;
   isGraded: boolean;
+  isSurvey: boolean;
   objectives: any[];
 }
 

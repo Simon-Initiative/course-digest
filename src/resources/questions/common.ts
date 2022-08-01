@@ -50,6 +50,18 @@ export function buildStem(question: any) {
   };
 }
 
+export function buildStemFromText(text: string) {
+  return {
+    content: buildContentModelFromText(text),
+  };
+}
+
+export function buildContentModelFromText(text: string) {
+  return {
+    model: [{ type: 'p', children: [{ text }] }],
+  };
+}
+
 export function shuffleTransformation() {
   return {
     id: guid(),

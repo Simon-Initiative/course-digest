@@ -1,6 +1,6 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
-import { Resource, TorusResource, Summary } from './resource';
+import { Resource, TorusResource, Summary, Page } from './resource';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { guid } from 'src/utils/common';
@@ -57,6 +57,9 @@ export function convertToFormative($: cheerio.Root) {
       )
     );
 
+    $('item prompt', item).each(
+      (_i, p: cheerio.TagElement) => (p.tagName = 'p')
+    );
     $('prompt', item).each((i, p: cheerio.TagElement) => (p.tagName = 'body'));
 
     item.tagName = 'question';
@@ -68,6 +71,9 @@ export function convertToFormative($: cheerio.Root) {
   $('likert,likert_series').each((_i, item: cheerio.TagElement) => {
     const question_id = valueOr($(item).attr('id'), guid());
 
+    $('item prompt', item).each(
+      (_i, p: cheerio.TagElement) => (p.tagName = 'p')
+    );
     $('prompt', item).each((i, p: cheerio.TagElement) => (p.tagName = 'body'));
 
     item.tagName = 'question';
@@ -91,21 +97,51 @@ export class Feedback extends Resource {
     Formative.performRestructure($);
   }
 
-  translate(
-    xml: string,
-    _$: cheerio.Root
-  ): Promise<(TorusResource | string)[]> {
+  translate(xml: string, $: cheerio.Root): Promise<(TorusResource | string)[]> {
+    const page: Page = {
+      type: 'Page',
+      id: '',
+      originalFile: '',
+      title: '',
+      tags: [],
+      unresolvedReferences: [],
+      content: {},
+      isGraded: false,
+      isSurvey: true,
+      objectives: [],
+    };
+
+    $('activity_placeholder').each((i: any, elem: any) => {
+      page.unresolvedReferences.push($(elem).attr('idref') as string);
+    });
+
+    $('a').each((i: any, elem: any) => {
+      const idref = $(elem).attr('idref');
+      if (idref !== undefined && idref !== null) {
+        page.unresolvedReferences.push(idref);
+      }
+    });
+
     return new Promise((resolve, _reject) =>
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
           const legacyId = r.children[0].id;
-          const { items } = Formative.processAssessmentModel(
-            legacyId,
-            r.children[0].children,
-            this.file
-          );
 
-          resolve(items);
+          const { model, items, unresolvedReferences, title } =
+            Formative.processAssessmentModel(
+              legacyId,
+              r.children[0].children,
+              this.file
+            );
+
+          page.id = r.children[0].id;
+          page.content = {
+            model: [{ type: 'survey', id: guid(), children: model }],
+          };
+          page.title = title;
+          page.unresolvedReferences = unresolvedReferences;
+
+          resolve([page, ...items]);
         }
       )
     );

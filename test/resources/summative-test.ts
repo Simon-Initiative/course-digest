@@ -52,6 +52,7 @@ describe('convert summative', () => {
             },
             {
               type: 'activity-reference',
+              id: expect.any(String),
               activity_id:
                 'newc72f87db5a5543b5ae8582d2d4cd34a7-newc72f87db5a5543b5ae8582d2d4cd34a7_1a',
               page: 'b749f85cbddc4660a195fef26fb87422',
@@ -59,6 +60,7 @@ describe('convert summative', () => {
             { type: 'break', id: expect.any(String) },
             {
               type: 'activity-reference',
+              id: expect.any(String),
               activity_id:
                 'newc72f87db5a5543b5ae8582d2d4cd34a7-e652695935d04ce089f473330345ecf5',
               page: 'e34a049fc4d54f118a914c39d58937e9',
@@ -66,6 +68,7 @@ describe('convert summative', () => {
           ],
         },
         isGraded: true,
+        isSurvey: false,
         objectives: [undefined],
       },
       {

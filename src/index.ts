@@ -19,7 +19,6 @@ import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
-import { inspect as utilInspect, InspectOptions } from 'util';
 
 const rl = readline.createInterface({
   input: process.stdin,

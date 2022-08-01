@@ -302,12 +302,31 @@ function getPurpose(purpose?: string) {
   return 'none';
 }
 
+export function wrapContentInSurveyOrGroup(
+  content: any[],
+  m: any,
+  legacyMyResponseFeedbackIds: Record<string, boolean>
+) {
+  const isSurvey = legacyMyResponseFeedbackIds[m.idref];
+  return isSurvey
+    ? wrapContentInSurvey(content)
+    : wrapContentInGroup(content, m.purpose);
+}
+
 export function wrapContentInGroup(content: any[], purpose?: string) {
   return {
     type: 'group',
     id: guid(),
     layout: 'vertical',
     purpose: getPurpose(purpose),
+    children: content,
+  };
+}
+
+export function wrapContentInSurvey(content: any[]) {
+  return {
+    type: 'survey',
+    id: guid(),
     children: content,
   };
 }

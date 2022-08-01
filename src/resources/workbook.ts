@@ -42,6 +42,7 @@ export class WorkbookPage extends Resource {
       unresolvedReferences: [],
       content: {},
       isGraded: false,
+      isSurvey: false,
       objectives: [],
     };
 
@@ -164,7 +165,7 @@ export class WorkbookPage extends Resource {
 // { type: activity_placeholder ...}
 // { type: p, ...}
 //
-// This function returns a content element collection that is reforumulated as:
+// This function returns a content element collection that is reformulated as:
 //
 // { type: content, children: [{ type: p, ...}, {type: image, ...}]}
 // { type: content, children: [{ ... ]}
@@ -178,10 +179,10 @@ const selection = {
   },
 };
 
-function introduceStructuredContent(content: any) {
-  const asStructured = (attrs: Record<string, unknown>) =>
-    Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
+const asStructured = (attrs: Record<string, unknown>) =>
+  Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
 
+function introduceStructuredContent(content: any) {
   const startNewContent = (u: any) =>
     u.length === 0 || u[u.length - 1].type === 'activity_placeholder';
 

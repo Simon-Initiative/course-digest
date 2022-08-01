@@ -19,7 +19,7 @@
                 toward chemistry teachers or chemistry courses. For each line, choose a position
                 between the two words that describes exactly how you feel. The middle position (4) is if you are undecided or have no feelings related
                 to the terms on that row.</p>
-                    <wb:inline idref="inline_pre_student_survey"></wb:inline>
+                    <wb:inline idref="pre_course_student_survey"></wb:inline>
                 </composite_activity>
             </body>
         </section>

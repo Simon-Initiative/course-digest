@@ -145,7 +145,7 @@ function buildOrderingPart(question: any) {
   };
 }
 
-function buildLikertItems(question: any) {
+function buildLikertSeriesItems(question: any) {
   const items = question.children.filter((p: any) => p.type === 'item');
 
   return items.map((item: any) => ({
@@ -155,13 +155,27 @@ function buildLikertItems(question: any) {
   }));
 }
 
+function buildLikertItems(question: any) {
+  const stem = Common.getChild(question.children, 'stem');
+
+  return [
+    {
+      content: {
+        model: Common.ensureParagraphs(stem.children),
+      },
+      id: guid(),
+      required: false,
+    },
+  ];
+}
+
 function buildLikertPart(question: any) {
   const firstChoice = Common.buildChoices(question, 'likert_scale')[0];
 
   return {
     gradingApproach: 'automatic',
     hints: Common.ensureThree(),
-    id: '3892726450',
+    id: guid(),
     outOf: null,
     responses: [
       {
@@ -179,11 +193,15 @@ function buildLikertPart(question: any) {
         rule: `input like {.*}`,
         feedback: {
           id: guid(),
-          content: { model: [{ type: 'p', children: [{ text: 'Correct.' }] }] },
+          content: {
+            model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
+          },
         },
       },
     ],
     scoringStrategy: 'average',
+    objectives: [],
+    targeted: [],
   };
 }
 
@@ -274,9 +292,31 @@ function single_response_text(question: any) {
   };
 }
 
-function likert(question: any) {
+function likertOrLikertSeries(question: any) {
+  const isLikertSeries =
+    question.children.filter((p: any) => p.type === 'item').length > 0;
+
+  return isLikertSeries ? likertSeries(question) : likert(question);
+}
+
+function likertSeries(question: any) {
   return {
     stem: Common.buildStem(question),
+    choices: Common.buildChoices(question, 'likert_scale'),
+    items: buildLikertSeriesItems(question),
+    orderDescending: false,
+    authoring: {
+      parts: [buildLikertPart(question)],
+      transformations: [],
+      previewText: '',
+      targeted: [],
+    },
+  };
+}
+
+function likert(question: any) {
+  return {
+    stem: Common.buildStemFromText(''),
     choices: Common.buildChoices(question, 'likert_scale'),
     items: buildLikertItems(question),
     orderDescending: false,
@@ -284,6 +324,7 @@ function likert(question: any) {
       parts: [buildLikertPart(question)],
       transformations: [],
       previewText: '',
+      targeted: [],
     },
   };
 }
@@ -306,7 +347,7 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
     return processCustomDnd(multipart, baseFileName);
   }
   if (subType === 'oli_likert') {
-    return [likert(question)];
+    return [likertOrLikertSeries(question)];
   }
 
   return [single_response_text(question), []];
@@ -495,6 +536,7 @@ export function processAssessmentModel(
       const a = {
         type: 'activity-reference',
         activity_id: activity.id,
+        id: guid(),
       } as any;
 
       if (pageId !== null) {
