@@ -2,7 +2,6 @@ import { convertToFormative } from '../../src/resources/feedback';
 import * as DOM from '../../src/utils/dom';
 import * as Media from 'src/media';
 import { convert } from 'src/convert';
-import { inspect } from 'util';
 
 describe('convertToFormative', () => {
   test('should convert the feedback model to formative', () => {

@@ -27,7 +27,7 @@ it('should convert example course to valid course digest', async () => {
     'organization.xml'
   );
 
-  const { hierarchy, finalResources } = await convertAction({
+  const { hierarchy } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
     outputDir: '',
@@ -84,7 +84,6 @@ it('should convert content with purpose to groups', async () => {
     'default',
     'organization.xml'
   );
-
   const { finalResources } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
@@ -94,7 +93,6 @@ it('should convert content with purpose to groups', async () => {
     specificOrgId,
     mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
   });
-
   expect(finalResources).toContainEqual(
     expect.objectContaining({
       id: 'welcome',
@@ -137,7 +135,6 @@ it('should convert content with purpose to groups', async () => {
       }),
     })
   );
-
   expect(finalResources).toContainEqual(
     expect.objectContaining({
       id: 'newe6ddd6fec8f54749a037ef13abd8df93',

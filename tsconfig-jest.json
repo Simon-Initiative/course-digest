@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"],
+    }
+  },
+  "include": ["test/**/*"],
+  "exclude": ["node_modules"]
+}

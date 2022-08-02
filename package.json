@@ -7,9 +7,11 @@
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test": "jest -c jest.config.js",
     "test:watch": "jest --watch -c jest.config.js",
-    "lint": "eslint --ext .js,.ts .",
-    "lint:fix": "eslint --ext .js,.ts . --fix",
-    "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
+    "lint": "npx eslint src test",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "npx prettier src test --check",
+    "prettier:fix": "npm run prettier -- --write",
+    "format": "npm run prettier:fix && npm run lint:fix"
   },
   "author": "",
   "license": "MIT",
@@ -48,6 +50,8 @@
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
     "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.6.0",
     "ts-jest": "^26.3.0",
     "ts-node": "^10.7.0",

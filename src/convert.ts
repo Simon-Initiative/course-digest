@@ -95,7 +95,7 @@ export function createProducts(
       return () => o.translateProduct(xml, $);
     });
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     executeSerially(exceptPrimaryOrg).then((results: TorusResource[]) => {
       const products = results.map((r: any) => {
         r.type = 'Product';
