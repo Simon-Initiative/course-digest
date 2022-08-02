@@ -1,4 +1,4 @@
-import { visit, toJSON, replaceUnicodeReferences } from '../../src/utils/xml';
+import { visit, toJSON, replaceUnicodeReferences } from 'src/utils/xml';
 
 const preserved = { p: true, em: true, li: true };
 

@@ -1,7 +1,7 @@
 import * as glob from 'glob';
-import { executeSerially } from '../utils/common';
-import * as Resources from '../resources/resource';
-import * as Orgs from '../resources/organization';
+import { executeSerially } from 'src/utils/common';
+import * as Resources from 'src/resources/resource';
+import * as Orgs from 'src/resources/organization';
 
 // Build a map of resource ids to the full path of the resource for all resources
 // found in the OLI legacy course project directory
@@ -27,7 +27,7 @@ export function collectOrgItemReferences(packageDirectory: string, id = '') {
     executeSerially(
       orgs.map((file) => () => {
         const o = new Orgs.Organization(file, false);
-        return o.summarize(file);
+        return o.summarize();
       })
     ).then((results: (string | Resources.Summary)[]) => {
       const seenReferences = {} as any;

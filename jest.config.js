@@ -51,24 +51,25 @@ module.exports = {
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: null,
 
-  // A set of global variables that need to be available in all test environments
-  globals: {
-    'ts-jest': {
-      tsConfigFile: 'tsconfig-jest.json',
-    },
-  },
+  // // A set of global variables that need to be available in all test environments
+  // globals: {
+  //   'ts-jest': {
+  //     tsConfigFile: 'tsconfig-jest.json',
+  //   },
+  // },
 
   // An array of directory names to be searched recursively up from the requiring module's location
   moduleDirectories: [
     "node_modules",
-    "src"
   ],
 
   // An array of file extensions your modules use
   moduleFileExtensions: ['ts', 'js', 'json', 'jsx', 'node'],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    'src/(.*)': '<rootDir>/src/$1',
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],

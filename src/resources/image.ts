@@ -1,5 +1,5 @@
-import { replaceAll } from '../utils/xml';
-import { guid } from '../utils/common';
+import { replaceAll } from 'src/utils/xml';
+import { guid } from 'src/utils/common';
 
 export function convertImageCodingActivities($: any, found: any): string {
   $('code').each((i: any, item: any) => {

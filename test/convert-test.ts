@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { convertAction } from '../src/index';
-import { Hierarchy } from '../src/resources/resource';
+import { convertAction } from 'src/index';
+import { Hierarchy } from 'src/resources/resource';
 
 // migration-4sdfykby_v_1_0-echo is an echo course downloaded from svn.
 // Though the .svn repo is not committed to VCS, the intent is that any updates
@@ -28,16 +28,14 @@ it('should convert example course to valid course digest', async () => {
   );
 
   const { hierarchy, finalResources } = await convertAction({
-    operation: null,
-    mediaManifest: null,
-    outputDir: null,
+    operation: 'convert',
+    mediaManifest: '',
+    outputDir: '',
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
     mediaUrlPrefix: 'https://example-url-prefix',
   });
-
-  console.log(hierarchy);
 
   expect(hierarchy as Hierarchy).toEqual(
     expect.objectContaining({
@@ -68,177 +66,6 @@ it('should convert example course to valid course digest', async () => {
       ]),
     })
   );
-
-  console.log(finalResources);
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Page',
-      id: 'welcome',
-      title: 'Welcome!',
-      tags: [],
-      unresolvedReferences: [
-        'newca1a54a0f56a4d429f5aff2c515cab08',
-        'newc72f87db5a5543b5ae8582d2d4cd34a7',
-      ],
-      content: expect.objectContaining({ model: expect.any(Array) }),
-      isGraded: false,
-      objectives: [
-        'c47ac29051ed427984e2b6f76d09fa8e-dd83841bc84045138faf6f3b7868c6dc',
-      ],
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Page',
-      id: 'newe6ddd6fec8f54749a037ef13abd8df93',
-      originalFile: '',
-      title: 'Graded Assessment',
-      tags: [],
-      unresolvedReferences: [],
-      content: expect.objectContaining({ model: expect.any(Array) }),
-      isGraded: true,
-      objectives: [undefined],
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Activity',
-      id: 'newe6ddd6fec8f54749a037ef13abd8df93-newe6ddd6fec8f54749a037ef13abd8df93_1a',
-      originalFile: '',
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      content: {
-        stem: expect.any(Object),
-        choices: expect.any(Array),
-        authoring: expect.any(Object),
-      },
-      objectives: { '1': [] },
-      legacyId: 'newe6ddd6fec8f54749a037ef13abd8df93',
-      subType: 'oli_multiple_choice',
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Activity',
-      id: 'newe6ddd6fec8f54749a037ef13abd8df93-dd4cf0fba08646cba219f424f2c6058c',
-      originalFile: '',
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      content: {
-        stem: expect.any(Object),
-        choices: expect.any(Array),
-        authoring: expect.any(Object),
-      },
-      objectives: { '1': [] },
-      legacyId: 'newe6ddd6fec8f54749a037ef13abd8df93',
-      subType: 'oli_multiple_choice',
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Activity',
-      id: 'newe6ddd6fec8f54749a037ef13abd8df93-bab083e445df49b48d2af9a98e93a0c0',
-      originalFile: '',
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      content: {
-        stem: expect.any(Object),
-        choices: expect.any(Array),
-        authoring: expect.any(Object),
-      },
-      objectives: { '1': [] },
-      legacyId: 'newe6ddd6fec8f54749a037ef13abd8df93',
-      subType: 'oli_multiple_choice',
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Objective',
-      id: 'c47ac29051ed427984e2b6f76d09fa8e',
-      parentId: 'dd83841bc84045138faf6f3b7868c6dc',
-      originalFile: '',
-      title: 'Default objective',
-      tags: [],
-      unresolvedReferences: [],
-      content: {},
-      objectives: [],
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Objective',
-      id: 'cd6bb81e2b0f4705ac48346f36bfda52',
-      originalFile: '',
-      title: 'Default skill',
-      tags: [],
-      unresolvedReferences: [],
-      children: [],
-      content: {},
-      objectives: [],
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Objective',
-      id: 'cd6bb81e2b0f4705ac48346f36bfda52',
-      originalFile: '',
-      title: 'Default skill',
-      tags: [],
-      unresolvedReferences: [],
-      children: [],
-      content: {},
-      objectives: [],
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Activity',
-      id: 'newca1a54a0f56a4d429f5aff2c515cab08-newca1a54a0f56a4d429f5aff2c515cab08_1a',
-      originalFile: '',
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      content: {
-        stem: expect.any(Object),
-        choices: expect.any(Array),
-        authoring: expect.any(Object),
-      },
-      objectives: { '1': [] },
-      legacyId: 'newca1a54a0f56a4d429f5aff2c515cab08',
-      subType: 'oli_multiple_choice',
-    })
-  );
-
-  expect(finalResources).toContainEqual(
-    expect.objectContaining({
-      type: 'Activity',
-      id: 'newca1a54a0f56a4d429f5aff2c515cab08-aa22bef84d16434088919ecf4eedb11e',
-      originalFile: '',
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      content: {
-        stem: expect.any(Object),
-        choices: expect.any(Array),
-        authoring: expect.any(Object),
-      },
-      objectives: { '1': [] },
-      legacyId: 'newca1a54a0f56a4d429f5aff2c515cab08',
-      subType: 'oli_ordering',
-    })
-  );
 });
 
 it('should convert content with purpose to groups', async () => {
@@ -259,9 +86,9 @@ it('should convert content with purpose to groups', async () => {
   );
 
   const { finalResources } = await convertAction({
-    operation: null,
-    mediaManifest: null,
-    outputDir: null,
+    operation: 'convert',
+    mediaManifest: '',
+    outputDir: '',
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
@@ -292,7 +119,14 @@ it('should convert content with purpose to groups', async () => {
                   expect.objectContaining({
                     type: 'p',
                     children: expect.arrayContaining([
-                      expect.objectContaining({ text: 'This is an example' }),
+                      expect.objectContaining({ text: 'This is an ' }),
+                      expect.objectContaining({
+                        type: 'cite',
+                        children: [{ text: '[citation]' }],
+                        id: 'Kluver_1939',
+                        bibref: expect.any(String),
+                      }),
+                      expect.objectContaining({ text: ' example' }),
                     ]),
                   }),
                 ]),
@@ -317,7 +151,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
+                    text: ' THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT. ',
                     strong: true,
                   }),
                 ]),
@@ -326,7 +160,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
+                    text: ' Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions. ',
                   }),
                 ]),
               }),
@@ -349,7 +183,7 @@ it('should convert content with purpose to groups', async () => {
                 type: 'p',
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    text: 'Page 2 content',
+                    text: ' Page 2 content ',
                   }),
                 ]),
               }),

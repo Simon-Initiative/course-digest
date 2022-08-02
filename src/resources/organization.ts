@@ -1,8 +1,8 @@
 import * as glob from 'glob';
-import { ItemReference } from '../utils/common';
-import * as Histogram from '../utils/histogram';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import { ItemReference } from 'src/utils/common';
+import * as Histogram from 'src/utils/histogram';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 
 import { Resource, TorusResource, Hierarchy, Summary } from './resource';
 
@@ -90,7 +90,7 @@ export class Organization extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -101,7 +101,7 @@ export class Organization extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      XML.visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'resourceref') {
