@@ -280,6 +280,19 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const setVideoAttributes = () => {
+        if (tag === 'video') {
+          top().src = top().children;
+          top().children = [];
+          if (top().width !== undefined) {
+            top().width = parseInt(top().width);
+          }
+          if (top().height !== undefined) {
+            top().height = parseInt(top().height);
+          }
+        }
+      };
+
       const ensureTextDoesNotSurroundBlockElement = (e: string) => {
         if (tag === e) {
           if (top() && top().children.length === 3) {
@@ -326,6 +339,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         unescapeFormulaSrc();
         unescapeVariableData();
         setTransformationData();
+        setVideoAttributes();
 
         if (top() && top().children === undefined) {
           top().children = [];

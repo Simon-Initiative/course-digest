@@ -199,6 +199,14 @@ function findFromDOM($: any): Record<string, Array<string>> {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
+  $('video').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
+  $('video source').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
   Object.keys(paths)
     .filter((src: string) => !isLocalReference(src))
     .forEach((src: string) => delete paths[src]);
