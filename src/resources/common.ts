@@ -132,7 +132,18 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
-  DOM.renameAttribute($, 'video source', 'type', 'format');
+  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
+  DOM.renameAttribute($, 'video source', 'src', 'url');
+
+  $('video').each((i: any, item: any) => {
+    const src = $(item).attr('src');
+
+    if (src !== undefined && src !== null && src.trim() !== null) {
+      $(item).html(`<source contenttype="video/mp4" url="${src}"></source>`);
+    }
+  });
+
+
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
