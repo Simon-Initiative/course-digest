@@ -1,5 +1,5 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
 import { Resource, TorusResource, Summary } from './resource';
 
 export class Other extends Resource {
@@ -22,7 +22,7 @@ export class Other extends Resource {
     ]);
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const summary: Summary = {
       type: 'Summary',
       subType: 'Other',
@@ -32,7 +32,7 @@ export class Other extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
       })
         .then((_result) => {

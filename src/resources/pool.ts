@@ -1,9 +1,9 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
 import { Resource, TorusResource, Summary } from './resource';
 import * as Formative from './formative';
 import * as Summative from './summative';
-import * as XML from '../utils/xml';
+import * as XML from 'src/utils/xml';
 import { processCodeblock, processVariables } from './common';
 
 export class Pool extends Resource {
@@ -50,7 +50,7 @@ export class Pool extends Resource {
       );
     });
   }
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const summary: Summary = {
       type: 'Summary',
       subType: 'SummativePool',
@@ -60,7 +60,7 @@ export class Pool extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'pool') {

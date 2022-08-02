@@ -1,9 +1,9 @@
 import {
   processCodeblock,
   standardContentManipulations,
-} from '../../src/resources/common';
+} from 'src/resources/common';
 import * as cheerio from 'cheerio';
-import { toJSON } from '../../src/utils/xml';
+import { toJSON } from 'src/utils/xml';
 
 describe('cdata and codeblocks', () => {
   test('should strip the element', () => {

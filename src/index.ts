@@ -36,7 +36,7 @@ const optionDefinitions = [
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
-  operation: string;
+  operation: 'summarize' | 'convert' | 'upload';
   mediaManifest: string;
   outputDir: string;
   inputDir: string;
@@ -148,7 +148,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     () => getLearningObjectiveIds(packageDirectory),
     () => getSkillIds(packageDirectory),
   ]).then((results: any) => {
-    const map = results[0];
+    const resourceMap = results[0];
     const orgReferences = [...results[1].orgReferences];
     const orgReferencesOthers = [...results[1].orgReferencesOthers];
     const orgPaths = [...results[1].organizationPaths];
@@ -174,7 +174,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         (file: string) => Convert.convert(mediaSummary, file, false),
         references,
         orgReferences,
-        map
+        resourceMap
       ).then((converted: Resources.TorusResource[]) => {
         const filterOutTemporaryContent = (updated: any) =>
           updated.filter((u: any) => u.type !== 'TemporaryContent');

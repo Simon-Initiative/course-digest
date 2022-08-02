@@ -1,4 +1,4 @@
-import { guid } from '../utils/common';
+import { guid } from 'src/utils/common';
 import * as path from 'path';
 import Ajv from 'ajv';
 import { TorusResource } from './resource';

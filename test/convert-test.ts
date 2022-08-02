@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { convertAction } from '../src/index';
-import { Hierarchy } from '../src/resources/resource';
+import { convertAction } from 'src/index';
+import { Hierarchy } from 'src/resources/resource';
 
 // migration-4sdfykby_v_1_0-echo is an echo course downloaded from svn.
 // Though the .svn repo is not committed to VCS, the intent is that any updates

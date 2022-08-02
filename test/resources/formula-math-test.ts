@@ -1,4 +1,4 @@
-import { handleFormulaMathML } from '../../src/resources/common';
+import { handleFormulaMathML } from 'src/resources/common';
 import * as cheerio from 'cheerio';
 
 function process(xml: string): any {

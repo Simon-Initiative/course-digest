@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE feedback PUBLIC "-//Carnegie Mellon University//DTD Feedback Activity 1.0//EN" "http://oli.web.cmu.edu/dtd/oli_feedback_1_0.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_workbook_page_3_7.css"?>
+<feedback id="pre_course_student_survey">
+    <title>Pre-Course Student Survey</title>
+    <description>
+        <p> </p>
+    </description>
+    <questions>
+        <likert_series>
+            <prompt>
+                <em>PartI:</em> A list of opposing words appears below. Rate how well these
+                words describe your feelings about chemistry. Think carefully and try not to include
+                your feelings toward chemistry teachers or chemistry courses. For each line, choose
+                a position between the two words that describes exactly how you feel. The middle
+                position (4) is if you are undecided or have no feelings related to the terms on
+                that row. Your answers should finish the statement:
+            </prompt>
+            <likert_scale size="7" center="4">
+                <label value="1">hard</label>
+                <label value="2"/>
+                <label value="3"/>
+                <label value="4"/>
+                <label value="5"/>
+                <label value="6"/>
+                <label value="7">easy</label>
+            </likert_scale>
+            <item id="q1" required="true">
+                <prompt>Chemistry is...</prompt>
+            </item>
+        </likert_series>
+        <likert_series>
+            <prompt> Indicate the extent to which you agree or disagree with each of the following
+                statements. </prompt>
+            <likert_scale size="7" center="4">
+                <label value="1">strongly agree</label>
+                <label value="2">agree</label>
+                <label value="3">somewhat agree</label>
+                <label value="4">neither agree nor disagree</label>
+                <label value="5">somewhat disagree</label>
+                <label value="6">disagree</label>
+                <label value="7">strongly disagree</label>
+            </likert_scale>
+            <item id="q4" required="true">
+                <prompt>I feel like I "belong" in chemistry.</prompt>
+            </item>
+            <item id="q5" required="true">
+                <prompt>I feel welcomed in my chemistry class.</prompt>
+            </item>
+            <item id="q6" required="true">
+                <prompt>I do not have much in common with other students in my chemistry
+                    class.</prompt>
+            </item>
+        </likert_series>
+        <likert id="b323b3f3df7a4c2bb1886061d4aad835">
+            <prompt>
+                <p id="b7d20c484fd14ba7bb961dea2e460781">On average, about how much time per week did you
+                spend using the OLI materials? </p>
+                <p id="c2010152abcb4b8480459488ee1944bc"/>
+            </prompt>
+            <likert_scale size="6" center="3">
+                <label value="1">1-2 hours</label>
+                <label value="2">2-3 hours</label>
+                <label value="3">3-4 hours</label>
+                <label value="4">4-5 hours</label>
+                <label value="5">5-6 hours</label>
+                <label value="6">6+ hours</label>
+            </likert_scale>
+        </likert>
+        <open_response id="gender" required="false">
+            <prompt>How do you currently describe your gender identity?</prompt>
+        </open_response>
+        <multiple_choice id="race" required="false">
+            <prompt>Which categories describe you? Select all that apply to you: your racial or
+                ethnic heritage? </prompt>
+            <choice id="A"> American Indian or Alaska Native—For example, Navajo Nation, Blackfeet
+                Tribe, Mayan, Aztec, Native Village of Barrow Inupiat Traditional Government, Nome
+                Eskimo Community </choice>
+            <choice id="B">Asian—For example, Chinese, Filipino, Asian Indian, Vietnamese, Korean, Japanese</choice>
+            <choice id="C">Black or African American—For example, Jamaican, Haitian, Nigerian, Ethiopian, Somalian</choice>
+            <choice id="D">Hispanic, Latino or Spanish Origin—For example, Mexican or Mexican American, Puerto Rican, Cuban, Salvadoran, Dominican, Columbian
+            </choice>
+            <choice id="E">Middle Eastern or North African—For example, Lebanese, Iranian, Egyptian, Syrian, Moroccan, Algerian</choice>
+            <choice id="F">Native Hawaiian or Other Pacific Islander—For example, Native Hawaiian, Samoan, Chamorro, Tongan, Fijian, Marshallese</choice>
+            <choice id="G">White—For example, German, Irish, English, Italian, Polish, French</choice>
+            <choice id="H">International student</choice>
+            <choice id="I">Some other race, ethnicity, or origin, please specify: ___________</choice>
+            <choice id="J"> I prefer not to answer
+            </choice>
+        </multiple_choice>
+    </questions>
+</feedback>

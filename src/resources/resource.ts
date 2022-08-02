@@ -1,6 +1,6 @@
-import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
-import * as DOM from '../utils/dom';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference } from 'src/utils/common';
+import * as DOM from 'src/utils/dom';
 import { Maybe } from 'tsmonad';
 
 export interface Summary {
@@ -76,6 +76,7 @@ export interface Page extends TorusResource {
   type: 'Page';
   content: Record<string, unknown>;
   isGraded: boolean;
+  isSurvey: boolean;
   objectives: any[];
 }
 
@@ -126,7 +127,7 @@ export abstract class Resource {
     this.navigable = navigable;
   }
 
-  abstract summarize(file: string): Promise<Summary | string>;
+  abstract summarize(): Promise<Summary | string>;
 
   restructurePreservingWhitespace(_$: any): any {
     return;
@@ -138,8 +139,8 @@ export abstract class Resource {
 
   abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;
 
-  convert(file: string): Promise<(TorusResource | string)[]> {
-    const $ = DOM.read(file);
+  convert(): Promise<(TorusResource | string)[]> {
+    const $ = DOM.read(this.file);
     this.restructure($);
     return Maybe.maybe($?.root()?.html()).caseOf({
       just: (xml) => this.translate(xml, $),
