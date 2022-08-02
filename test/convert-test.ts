@@ -27,7 +27,7 @@ it('should convert example course to valid course digest', async () => {
     'organization.xml'
   );
 
-  const { hierarchy, finalResources } = await convertAction({
+  const { hierarchy } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
     outputDir: '',
