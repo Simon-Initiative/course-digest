@@ -1,0 +1,51 @@
+name: Build & Test PR
+
+on:
+  pull_request:
+    branches:
+      - master
+      - hotfix-*
+
+jobs:
+  auto-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔧 Configure
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.13.2"
+
+      - name: Install node_module dependencies 📦
+        run: yarn --frozen-lockfile
+
+      - name: 🧹 Lint
+        run: npm run format
+
+      - name: ✅ Commit
+        uses: EndBug/add-and-commit@v9
+
+  build-test:
+    needs: auto-format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v2
+
+      - name: 🔧 Configure
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.13.2"
+
+      - name: Install node_module dependencies 📦
+        run: yarn --frozen-lockfile
+
+      - name: 🧹 Lint
+        run: npm run prettier && npm run lint
+
+      - name: ⚙️ Test
+        run: npm run test
