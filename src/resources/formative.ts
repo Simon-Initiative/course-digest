@@ -169,13 +169,13 @@ function buildLikertItems(question: any) {
   ];
 }
 
-function buildLikertPart(question: any) {
+function buildLikertParts(question: any, items: any[]) {
   const firstChoice = Common.buildChoices(question, 'likert_scale')[0];
 
-  return {
+  return items.map((i) => ({
     gradingApproach: 'automatic',
     hints: Common.ensureThree(),
-    id: guid(),
+    id: i.id,
     outOf: null,
     responses: [
       {
@@ -202,7 +202,7 @@ function buildLikertPart(question: any) {
     scoringStrategy: 'average',
     objectives: [],
     targeted: [],
-  };
+  }));
 }
 
 function mcq(question: any) {
@@ -300,13 +300,15 @@ function likertOrLikertSeries(question: any) {
 }
 
 function likertSeries(question: any) {
+  const items = buildLikertSeriesItems(question);
+
   return {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question, 'likert_scale'),
     items: buildLikertSeriesItems(question),
     orderDescending: false,
     authoring: {
-      parts: [buildLikertPart(question)],
+      parts: buildLikertParts(question, items),
       transformations: [],
       previewText: '',
       targeted: [],
@@ -315,13 +317,15 @@ function likertSeries(question: any) {
 }
 
 function likert(question: any) {
+  const items = buildLikertItems(question);
+
   return {
     stem: Common.buildStemFromText(''),
     choices: Common.buildChoices(question, 'likert_scale'),
-    items: buildLikertItems(question),
+    items,
     orderDescending: false,
     authoring: {
-      parts: [buildLikertPart(question)],
+      parts: buildLikertParts(question, items),
       transformations: [],
       previewText: '',
       targeted: [],

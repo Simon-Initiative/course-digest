@@ -97,7 +97,10 @@ export class Feedback extends Resource {
     Formative.performRestructure($);
   }
 
-  translate(xml: string, $: cheerio.Root): Promise<(TorusResource | string)[]> {
+  translate(
+    xml: string,
+    _$: cheerio.Root
+  ): Promise<(TorusResource | string)[]> {
     const page: Page = {
       type: 'Page',
       id: '',
@@ -110,17 +113,6 @@ export class Feedback extends Resource {
       isSurvey: true,
       objectives: [],
     };
-
-    $('activity_placeholder').each((i: any, elem: any) => {
-      page.unresolvedReferences.push($(elem).attr('idref') as string);
-    });
-
-    $('a').each((i: any, elem: any) => {
-      const idref = $(elem).attr('idref');
-      if (idref !== undefined && idref !== null) {
-        page.unresolvedReferences.push(idref);
-      }
-    });
 
     return new Promise((resolve, _reject) =>
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(

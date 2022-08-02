@@ -524,7 +524,115 @@ describe('convert feedback', () => {
                   },
                 },
               ],
-              id: expect.any(String),
+              id: 'q4',
+              outOf: null,
+              responses: [
+                {
+                  id: expect.any(String),
+                  score: 1,
+                  rule: 'input like {1}',
+                  feedback: {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
+                    },
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  score: 0,
+                  rule: 'input like {.*}',
+                  feedback: {
+                    id: expect.any(String),
+                    content: {
+                      model: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
+                    },
+                  },
+                },
+              ],
+              scoringStrategy: 'average',
+              objectives: expect.any(Array),
+              targeted: expect.any(Array),
+            },
+            {
+              gradingApproach: 'automatic',
+              hints: [
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+              ],
+              id: 'q5',
+              outOf: null,
+              responses: [
+                {
+                  id: expect.any(String),
+                  score: 1,
+                  rule: 'input like {1}',
+                  feedback: {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
+                    },
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  score: 0,
+                  rule: 'input like {.*}',
+                  feedback: {
+                    id: expect.any(String),
+                    content: {
+                      model: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
+                    },
+                  },
+                },
+              ],
+              scoringStrategy: 'average',
+              objectives: expect.any(Array),
+              targeted: expect.any(Array),
+            },
+            {
+              gradingApproach: 'automatic',
+              hints: [
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+                {
+                  id: expect.any(String),
+                  content: {
+                    model: [{ type: 'p', children: [{ text: '' }] }],
+                  },
+                },
+              ],
+              id: 'q6',
               outOf: null,
               responses: [
                 {
