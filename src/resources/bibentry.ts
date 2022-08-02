@@ -3,33 +3,42 @@ import * as path from 'path';
 import Ajv from 'ajv';
 import { TorusResource } from './resource';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const SaxonJS = require('saxon-js')
+const SaxonJS = require('saxon-js');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Cite = require('citation-js')
+const Cite = require('citation-js');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cslSchema = require('./csl-data-schema.json');
 
 const ajv = new Ajv({ removeAdditional: true, allowUnionTypes: true });
 const validate = ajv.compile(cslSchema);
 
-export function convertBibliographyEntries($: any, found: Map<string, any>): string {
+export function convertBibliographyEntries(
+  $: any,
+  found: Map<string, any>
+): string {
   $('bib\\:entry').each((i: any, item: any) => {
     const id = $(item).attr('id');
-    const content = `<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/"><bibtex:entry id="${id}">${$(item).html().replaceAll('bib:', 'bibtex:')}</bibtex:entry></bibtex:file>`;
-    
+    const content = `<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/"><bibtex:entry id="${id}">${$(
+      item
+    )
+      .html()
+      .replaceAll('bib:', 'bibtex:')}</bibtex:entry></bibtex:file>`;
+
     const result = SaxonJS.transform({
       stylesheetFileName: path.resolve('assets/bibxml2bib.sef.json'),
       sourceText: content,
-      destination: "document"
+      destination: 'document',
     });
-    const bibtexVal = SaxonJS.serialize(result.principalResult, {method: 'text'});
-    
-    const data = new Cite(bibtexVal)
+    const bibtexVal = SaxonJS.serialize(result.principalResult, {
+      method: 'text',
+    });
+
+    const data = new Cite(bibtexVal);
     const cslData = data.get({
-        format: 'string',
-        type: 'json',
-        style: 'csl',
-        lang: 'en-US'
+      format: 'string',
+      type: 'json',
+      style: 'csl',
+      lang: 'en-US',
     });
 
     const cslJson: any[] = JSON.parse(cslData);
@@ -54,7 +63,7 @@ export function convertBibliographyEntries($: any, found: Map<string, any>): str
       tags: [],
       unresolvedReferences: [],
       children: [],
-      content: {data: cslJson},
+      content: { data: cslJson },
       objectives: [],
     } as TorusResource;
 
