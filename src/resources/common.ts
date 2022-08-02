@@ -143,7 +143,6 @@ export function standardContentManipulations($: any) {
     }
   });
 
-
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);

@@ -207,7 +207,6 @@ function findFromDOM($: any): Record<string, Array<string>> {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
-
   Object.keys(paths)
     .filter((src: string) => !isLocalReference(src))
     .forEach((src: string) => delete paths[src]);
