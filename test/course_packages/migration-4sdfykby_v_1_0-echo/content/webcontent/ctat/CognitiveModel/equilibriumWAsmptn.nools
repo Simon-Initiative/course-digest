@@ -1,0 +1,190 @@
+import("equilibriumRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "K",
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[PCl5]",
+			html: "[PCl<sub>5</sub>]",
+			latex: '[{PCl}_{5}]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[PCl3]",
+			html: "[PCl<sub>3</sub>]",
+			latex: '[{PCl}_{3}]',
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[Cl2]",
+			html: "[Cl<sub>2</sub>]",
+			latex: '[{Cl}_{2}]',
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str:'PCl5',
+			html: 'PCl<sub>5</sub>',
+			latex: '{PCl}_{5}',
+			hotkey: '7',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str:"PCl3",
+			html: 'PCl<sub>3</sub>',
+			latex: '{PCl}_{3}',
+			hotkey: '8',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str: "Cl2",
+			html: 'Cl<sub>2</sub>',
+			latex: '{Cl}_{2}',
+			hotkey: '9',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "log",
+			html: "log<sub>10</sub>()",
+			styles: {
+				lineHeight: "35px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "ln",
+			html: "ln()",
+			styles: {
+				lineHeight: "35px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	initialPhase: 'createIceTable',
+	finalQuantities: [
+		{
+			'substance': 'PCl5',
+			'type': 'concentration',
+			'unit': 'M',
+			'context': 'equilibrium',
+		},
+		{
+			'substance': 'PCl3',
+			'type': 'concentration',
+			'unit': 'M',
+			'context': 'equilibrium',
+		},
+		{
+			'substance': 'Cl2',
+			'type': 'concentration',
+			'unit': 'M',
+			'context': 'equilibrium',
+		}
+	],
+	knowns: [
+		{
+			'id': 'PCl5_init_concentration',
+			'substance': 'PCl5',
+			'type': 'concentration',
+			'value': '1',
+			'unit': 'M',
+			'context': 'initial',
+			'requiredToMatch':['unit','context','substance']
+		},
+		{
+			'id': 'PCl3_init_concentration',
+			'substance': 'PCl3',
+			'type': 'concentration',
+			'value': '0',
+			'unit': 'M',
+			'context': 'initial',
+			'requiredToMatch':['unit','context','substance']
+		},
+		{
+			'id': 'Cl2_init_concentration',
+			'substance': 'Cl2',
+			'type': 'concentration',
+			'value': '0',
+			'unit': 'M',
+			'context': 'initial',
+			'requiredToMatch':['unit','context','substance']
+		},
+		{
+			'id':'eqConst',
+			'type': 'equilibriumConst',
+			'variable': 'K',
+			'value': '0.0211',
+			'context': 'initial'
+		}
+	],
+	data: [],	
+	targetReaction: {
+		str: 'PCl5_is_PCl3_plus_Cl2',
+		reagents: [
+			{
+				substance: 'PCl5',
+				moles: 1
+			}		
+		],
+		products: [
+			{
+				substance: 'PCl3',
+				moles: 1
+			},
+			{
+				substance: 'Cl2',
+				moles: 1
+			}
+		],
+		reversible: true
+	},
+	reactions: {
+		'PCl5_is_PCl3_plus_Cl2': {
+			'id' : 'pcl3_plus_cl2',
+			'type': 'reaction_menu_item',
+			'text': 'PCl<sub>5</sub> &#x21cc PCl<sub>3</sub> + Cl<sub>2</sub>',
+			'reversible': true
+		}
+	},
+	claimTypes: ["Final Quantity", "Validate X Assumption"],
+	usesIceTable: true,
+	canAssumeX: true,
+	problemStatement: "Under certain conditions, the equilibrium constant K for the decomposition of PCl<sub>5</sub>(g) into PCl<sub>3</sub>(g) and Cl<sub>2</sub>(g) is <strong>%eqConst.value%</strong>.  What are the equilibrium concentrations of PCl<sub>5</sub>, PCl<sub>3</sub>, and Cl<sub>2</sub> if the initial concentration of PCl<sub>5</sub> is <strong>%PCl5_init_concentration.value% %PCl5_init_concentration.unit%</strong> and the initial concentrations of PCl<sub>3</sub> and Cl<sub>2</sub> are <strong>%PCl3_init_concentration.value% %PCl3_init_concentration.unit%</strong>, according to the following reaction? <br><br> PCl<sub>5</sub>(g) &#x21cc PCl<sub>3</sub>(g) + Cl<sub>2</sub>(g)"
+};

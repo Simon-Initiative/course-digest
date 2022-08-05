@@ -1,0 +1,73 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str: 'O',
+			hotkey: 'o',
+			modifierKey: 'shift'
+		}
+	],
+	initReadyForFinalQty: true,
+	initialPhase: 'convertKnowns',
+	stoichStepDone: false,
+	usesEqSheet: false,
+	claimTypes: [ "Final Quantity" ],
+	probSpecificData: {
+		generalData: [
+			{
+				type: "atomicWeight",
+				substance: "O",
+				value: "16.00",
+				unit: "g/mol"
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'CO2',
+				hotkey: '4',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '27.93',
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'g'
+				},
+				atomicWeight: "44.01"
+			}
+		],
+		compositions: [
+			"CO2_is_1C_plus_2O"
+		],
+		finalQuantities: [
+			{
+				'substance': 'O',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'initial'
+			}
+		],	  
+		problemStatement: "How many grams of oxygen are in 27.93 grams of carbon dioxide (CO<sub>2</sub>)?  The atomic weight of carbon dioxide is 44.01 g/mol.  The atomic weight of oxygen is 16.00 g/mol."
+	},
+};

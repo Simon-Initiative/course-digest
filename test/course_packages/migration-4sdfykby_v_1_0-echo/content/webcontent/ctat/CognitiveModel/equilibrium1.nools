@@ -1,0 +1,187 @@
+import("equilibriumRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "K",
+			html: "K<sub>c</sub>",
+			latex: "{K}_{c}",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[PCl5]",
+			html: "[PCl<sub>5</sub>]",
+			latex: '[{PCl}_{5}]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[PCl3]",
+			html: "[PCl<sub>3</sub>]",
+			latex: '[{PCl}_{3}]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[Cl2]",
+			html: "[Cl<sub>2</sub>]",
+			latex: '[{Cl}_{2}]',
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	initialPhase: 'determineEQConcentrations',
+	phases: ['determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX', 'validateXAssumption', 'determineFinalValues'],
+	canAssumeX: false,
+	mustValidateXAssumption: true,
+	usesIceTable: true,
+	usesEqSheet: true,
+	claimTypes: ["Final Quantity"],
+	stoichStepDone: true,
+	contexts: ["initial","changed","equilibrium"],
+	majorityAlias: "initial",
+	initialAlias: "none",
+	preferredEQStrategy: "quadratic",
+	probSpecificData: {
+		equations: [
+			{
+				id: "equilibrium_exp",
+				forms: [
+					"K_eq_(&[PCl3]&^1&[Cl2]&^1)/(&[PCl5]&^1)"
+				],
+				name: "equilibrium expression",
+				substitutions: {}	
+			}
+		],
+		finalQuantities: [
+			{
+				'substance': 'PCl5',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			},
+			{
+				'substance': 'PCl3',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			},
+			{
+				'substance': 'Cl2',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'PCl5',
+				html: 'PCl<sub>5</sub>',
+				latex: '{PCl}_{5}',
+				hotkey: '6',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'PCl5_init_concentration',
+					'type': 'concentration',
+					'value': 'rand',
+					'set': ['0.5','1','1.5'], 
+					'displayVal': 'value',
+					'unit': 'M',
+					'sigFigs': 3,
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				type: 'substance',
+				str:"PCl3",
+				html: 'PCl<sub>3</sub>',
+				latex: '{PCl}_{3}',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'PCl3_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'displayVal': 'value',
+					'unit': 'M',
+					'sigFigs': 3,
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				type: 'substance',
+				str: "Cl2",
+				html: 'Cl<sub>2</sub>',
+				latex: '{Cl}_{2}',
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'Cl2_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'equilibriumConst',
+					'variable': 'K',
+					'value': 'rand',
+					'range': ['0.01','2.0'],
+					'displayVal': 'value',
+					'sigFigs': 3,
+					'context': 'majority'
+				}
+			}
+		],
+		data: [],	
+		phase2Reaction: 'PCl5_is_PCl3_plus_Cl2',
+		reactions: {
+			'PCl5_is_PCl3_plus_Cl2': {
+				'id' : 'pcl3_plus_cl2',
+				'equilibrium': true
+			}
+		},
+		problemStatement: "Under certain conditions, the equilibrium constant K<sub>c</sub> for the decomposition of PCl<sub>5</sub>(g) into PCl<sub>3</sub>(g) and Cl<sub>2</sub>(g) is <strong>%eqConst.displayVal%</strong>.  What are the equilibrium concentrations of PCl<sub>5</sub>, PCl<sub>3</sub>, and Cl<sub>2</sub> if the initial concentration of PCl<sub>5</sub> is <strong>%PCl5_init_concentration.displayVal% %PCl5_init_concentration.unit%</strong> and the initial concentrations of PCl<sub>3</sub> and Cl<sub>2</sub> are <strong>%PCl3_init_concentration.displayVal% %PCl3_init_concentration.unit%</strong>, according to the following reaction? <br><br> PCl<sub>5</sub>(g) &#x21cc PCl<sub>3</sub>(g) + Cl<sub>2</sub>(g)"
+	}
+};

@@ -1,0 +1,99 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	notReadyForFinalQtyMsg: "",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'CO3',
+				'type': 'amount',
+				'unit': 'mol',
+				'context': 'initial',
+				'label': 'mol CO3 initial'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'CaCO3',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0.93',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g',
+					'context': 'final'
+				},
+				atomicWeight: "100.1"
+			},
+			{
+				type: 'substance',
+				str:"CO3",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'amount',
+					'value': '0',
+					'displayVal': "value",
+					'unit': 'mol',
+					'context': 'final'
+				}, 
+				atomicWeight: '12.011+3(16)'
+			}
+		],
+		phase1Reaction: 'CO3_plus_Ca+2_is_CaCO3',
+		reactions: {
+			'CO3_plus_Ca+2_is_CaCO3': {
+				'id' : 'CO3_plus_Ca+2',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "An excess of Ca<sup>+2</sup> is added to a solution containing an unknown amount of CO<sub>3</sub>.  %CaCO3_mass_g_final.displayVal% g CaCO<sub>3</sub> is produced.  Using the reaction below, determine the initial number of moles of CO<sub>3</sub> present in the solution.<br><br><strong>CO<sub>3</sub> + Ca<sup>+2</sup> &#8594 CaCO<sub>3</sub></strong> <br><br> The atomic weight of CaCO<sub>3</sub> is 100.1 g/mol"
+	},	
+	claimTypes: ["Final Quantity"],
+	stoichStepDone: false,
+	usesIceTable: false
+};

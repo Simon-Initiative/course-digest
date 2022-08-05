@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE embed_activity PUBLIC "-//Carnegie Mellon University//DTD Embed 1.1//EN" "http://oli.cmu.edu/dtd/oli-embed-activity_1.0.dtd">
+<embed_activity id="density_metals_vlab" width="828" height="800" >
+    <title>VLab with item in template</title>
+    <source>webcontent/api/oli.v2.min.js</source>
+    <assets>
+        <!-- These don't change -->
+        <asset name="autoresize">true</asset>
+        <asset name="style">webcontent/vlab/vlab_oli.css</asset>
+        <asset name="javascript">webcontent/vlab/vlab.js</asset>
+        <!-- These are used if the vlab has custom HTML or javascript -->
+       <!-- <asset name="javascript">IV/webcontent/vlab/p5_iodine_dilution2_vlab.js</asset>
+        <asset name="layout">IV/webcontent/vlab/p5_iodine_dilution2_vlab.html</asset>-->
+        <!-- The path to the vlab activity file (relative to vlab/scripts/resources/assignments/en) -->
+        <asset name="configPath">MolarityDensity/metals</asset>
+        <!-- The string that will show up in the 'source' field when logging vlab output to OLI -->
+      <asset name="activityName">density_metals</asset>
+    </assets>
+</embed_activity>
+

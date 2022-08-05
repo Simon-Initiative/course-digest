@@ -1,0 +1,222 @@
+import("stoichRules.nools");
+import("equilibriumRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "[H2]",
+			html: "[H<sub>2</sub>]",
+			latex: '[{H}_{2}]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[C2H4]",
+			html: "[C<sub>2</sub>H<sub>4</sub>]",
+			latex: '[{C}_{2}{H}_{4}]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[C2H6]",
+			html: "[C<sub>2</sub>H<sub>6</sub>]",
+			latex: '[{C}_{2}{H}_{6}]',
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'variable',
+			str: "K",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: 'm',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: 'm'
+		},
+		{
+			type: 'unit',
+			str:'%',
+			latex: '\\%',
+			hotkey: '5',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	initialPhase: 'convertKnowns',
+	phases: ["convertKnowns", "determineLimitingReagent", 'determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX', 'determineFinalValues'],
+	preferredLRStrategy: "2",
+	preferredEQStrategy: "implicitX",
+	initialAlias: "initial",
+	majorityAlias: "majority",
+	contexts: ["initial","majority","changed","equilibrium","assume small x"],
+	claimTypes: [
+		{
+			id: 'smallx',
+			btnText: 'Assume small x',
+			claimText: 'Assume that the value of x is less than 5% of <blank>',
+			onlyOne: true,
+			matchQty: {
+				context: 'majority',
+				type: 'concentration',
+				unit: 'M',
+				lowestMajorityConcentration: true
+			}
+		},
+		"Limiting Reagent", "Validate X Assumption"],
+	usesIceTable: true,
+	canAssumeX: true,
+	canSkipAssumeX: true,
+	mustValidateXAssumption: false,
+	stoichStepDone: false,
+	phase1ReactionHidden: false,
+	probSpecificData: {
+		equations: [
+			{
+				id: "equilibrium_exp",
+				forms: [
+					"K_eq_&[C2H6]&/(&[H2]&*&[C2H4]&)"
+				],
+				name: "equilibrium expression",
+				substitutions: {}	
+			}
+		],
+		finalQuantities: [
+			{
+				'type': 'concentration',
+				'substance': "H2",
+				'unit': "M",
+				'context': "equilibrium"
+			},{
+				'type': 'concentration',
+				'substance': "C2H4",
+				'unit': "M",
+				'context': "equilibrium"
+			},{
+				'type': 'concentration',
+				'substance': "C2H6",
+				'unit': "M",
+				'context': "equilibrium"
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str: "H2",
+				html: 'H<sub>2</sub>',
+				latex: '{H}_{2}',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'H2_init_amount',
+					'type': 'amount',
+					'value': '1.25',
+					'unit': 'mol',
+					'context': 'initial',
+					'solution': 's1'					
+				}
+			},
+			{
+				type: 'substance',
+				str:"C2H4",
+				html: 'C<sub>2</sub>H<sub>4</sub>',
+				latex: '{C}_{2}{H}_{4}',
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'C2H4_init_amount',
+					'type': 'amount',
+					'value': '3.5',
+					'unit': 'mol',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "C2H6",
+				html: 'C<sub>2</sub>H<sub>6</sub>',
+				latex: '{C}_{2}{H}_{6}',
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'C2H6_init_amount',
+					'type': 'amount',
+					'value': '0',
+					'unit': 'mol',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'variable',
+					'variable': 'K',
+					'value': '4.80e12',
+					'displayVal': '4.8 &#215 10<sup>12</sup>',
+				}
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'substances': ['H2','C2H4','C2H6'],
+					'type': 'solution',
+					'context': 'initial'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '1000',
+					'unit': 'mL',
+					'context': 'initial',
+					'substance': 'H2,C2H4,C2H6',
+					'solution': 's1'
+				}
+			}
+		],
+		data: [],	
+		phase1Reaction: "H2_plus_C2H4_is_C2H6",
+		phase2Reaction: "C2H6_is_H2_plus_C2H4",
+		reactions: {		
+		//phase1		
+			"H2_plus_C2H4_is_C2H6": {
+				'id' : 'h2_plus_c2h4',
+				'equilibrium': false,
+			},
+		//phase2		
+			"C2H6_is_H2_plus_C2H4": {
+				'id': 'c2h6',
+				'equilibrium': true,
+			}
+		},
+		problemStatement: "Hydrogen reacts with ethylene (C<sub>2</sub>H<sub>4</sub>) to form ethane (C<sub>2</sub>H<sub>6</sub>) according to the following equation: <br><br> H<sub>2</sub>(g) + C<sub>2</sub>H<sub>4</sub>(g) &#x21cc C<sub>2</sub>H<sub>6</sub>(g) <br><br> At a certain temperature, K<sub>c</sub> is equal to 4.8*10<sup>12</sup>.  1.25 mol of H<sub>2</sub> and 3.5 mol of C<sub>2</sub>H<sub>4</sub> are added to a 1.0 L container.  What are the concentrations of each species once equilibrium is established?" 
+	}
+};

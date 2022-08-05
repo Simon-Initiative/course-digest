@@ -1,0 +1,221 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: 'P',
+			hotkey: 'p'
+		},
+		{
+			type: 'variable',
+			str: 'V',
+			hotkey: 'v'
+		},
+		{
+			type: 'variable',
+			str: 'n',
+			hotkey: 'n'
+		},
+		{
+			type: 'variable',
+			str: 'R',
+			hotkey: 'r'
+		},
+		{
+			type: 'variable',
+			str: 'T',
+			hotkey: 't'
+		},
+		{
+			type: 'unit',
+			str:'L',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'degreeC',
+			html: '&#8451',
+			latex:'^{\\circ}C',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'atm', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g', 
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		equations: [
+			{
+				id: "gas_law",
+				forms: [
+					"PV_eq_nRT",
+					"P_eq_nRT/V",
+					"V_eq_nRT/P",
+					"n_eq_PV/(RT)",
+					"T_eq_PV/(nR)"
+				],
+				context: "final",
+				name: "gas law equation",
+				substitutions: {
+					"P": {
+						type: "pressure",
+						unit: "atm",
+						substance: "N2,Na",
+						context: "final"
+					},
+					"V": {
+						type: "volume",
+						unit: "L",
+						substance: "N2",
+						context: "final",
+					},
+					"n": {
+						type: "amount",
+						unit: "mol",
+						substance: "N2",
+						context: "final"
+					},
+					"R": {
+						type: "gasConstant",
+						unit: "(L * atm)/(mol * degreeK)"
+					},
+					"T": {
+						type: "temperature",
+						unit: "degreeK",
+						substance: "N2,Na",
+						context: "final"
+					}
+				}
+			}
+		],
+		finalQuantities: [
+			{
+				'substance': 'NaN3',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'initial'
+			}
+		],
+		knowns: [
+			{
+				initialData: {
+					type: 'gasConstant',
+					unit: '(L * atm)/(mol * degreeK)',
+					value: "0.08205"
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'substance': "N2",
+					'type': 'volume',
+					'value': '66.8',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'L',
+					'context': 'final',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_temperature',
+					'type': 'temperature',
+					'value': '21.5',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'degreeC',
+					'substance': "N2,Na",
+					'context': "final",
+					'solution': 's1'
+				}, 
+			},
+			{
+				initialData: {
+					'id': 's1_pressure',
+					'type': 'pressure',
+					'value': '0.3402',
+					'displayVal': "value",
+					'unit': 'atm',
+					'substance': "N2,Na",
+					'context': "final",
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str:'N2',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				atomicWeight: "28.016",
+				initialData: {
+					'type': "mass",
+					'unit': "g",
+					'context': 'initial',
+					'value': '0'
+				}
+			},
+			{
+				type: 'substance',
+				str: "NaN3",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'amount',
+					'value': '0',
+					'displayVal': "value",
+					'unit': 'mol',
+					'context': 'final',
+					'solution': 's1'
+				},
+				atomicWeight: '22.991+3*14.008'
+			},
+			{
+				'initialData': {
+					type: 'solution',
+					id: 's1',
+					substances: ['N2', 'Na'],
+					context: 'final'
+				}
+			}
+		],
+		phase1Reaction: '2NaN3_is_2Na_plus_3N2',
+		reactions: {
+			'2NaN3_is_2Na_plus_3N2': {
+				'id' : '2nan3',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "The reaction below is initiated when an airbag is triggered to produce N<sub>2</sub>(g). <br><br> 2NaN<sub>3</sub> &#8594 2Na + 3N<sub>2</sub> <br><br> What mass of NaN3 is needed to inflate a %s1_volume.value% L airbag if the ambient temperature is %s1_temperature.value% oC and a minimum pressure of %s1_pressure.value% atm? <br><br> Use the following values for your calculations:<br>molar mass of N<sub>2</sub>: 28.016 g/mol <br> molar mass of NaN<sub>3</sub>: 65.015 g/mol <br> Ideal gas constant: 0.08205 L atm / (K mol)"
+	},	
+	claimTypes: ["Final Quantity"],
+	stoichStepDone: false,
+	usesIceTable: false
+};

@@ -1,0 +1,93 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'NaCl',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'initial',
+				'label': 'g NaCl final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'NaCl',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'concentration',
+					'value': 'rand',
+					'range': [0.5,3.5],
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'M',
+					'solution': 's1'
+				},
+				atomicWeight: '22.991+35.457'
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['NaCl'],
+					'value': 'rand',
+					'range': [2,5],
+					'unit': 'L',
+					'context': 'initial',
+					'volume': {
+						'value': 'rand',
+						'range': [2,5],
+						'unit': 'L'
+					}
+				}
+			}
+		],
+		problemStatement: "How much salt would you have to add to %s1.volume.value% L of distilled water for the concentration to reach %NaCl_concentration_M_initial.value% M?<br>The atomic weight of NaCl is 58.448 g/mol"
+	},	
+	stoichStepDone: false,
+	usesIceTable: false,
+	claimTypes: ["Final Quantity"]
+};

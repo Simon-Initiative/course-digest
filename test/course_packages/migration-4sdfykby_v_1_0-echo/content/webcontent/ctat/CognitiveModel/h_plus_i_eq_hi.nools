@@ -1,0 +1,208 @@
+import("equilibriumRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "K",
+			html: "K<sub>c</sub>",
+			latex: "{K}_{c}",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[H2]",
+			html: "[H<sub>2</sub>]",
+			latex: '[{H}_{2}]',
+			hotkey: 'h',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[I2]",
+			html: "[I<sub>2</sub>]",
+			latex: '[{I}_{2}]',
+			hotkey: 'i',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[HI]",
+			html: "[HI]",
+			latex: '[HI]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: 'm',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	initialPhase: 'determineEQConcentrations',
+	phases: ['determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX', 'validateXAssumption', 'determineFinalValues'],
+	canAssumeX: false,
+	mustValidateXAssumption: true,
+	usesIceTable: true,
+	usesEqSheet: true,
+	claimTypes: ["Final Quantity"],
+	stoichStepDone: true,
+	contexts: ["initial","changed","equilibrium"],
+	majorityAlias: "initial",
+	initialAlias: "none",
+	preferredEQStrategy: "quadratic",
+	probSpecificData: {
+		equations: [
+			{
+				id: "equilibrium_exp",
+				forms: [
+					"K_eq_(&[HI]&^2)/(&[H2]&^1*&[I2]&^1)"
+				],
+				name: "equilibrium expression",
+				substitutions: {}	
+			}
+		],
+		finalQuantities: [
+			{
+				'substance': 'H2',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			},
+			{
+				'substance': 'I2',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			},
+			{
+				'substance': 'HI',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'equilibrium',
+			}
+		],
+		knowns: [
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'equilibriumConst',
+					'variable': 'K',
+					'value': '12',
+					'range': ['0.01','2.0'],
+					'displayVal': 'value',
+					'sigFigs': 3,
+					'context': 'majority'
+				}
+			},
+			{
+				type: 'substance',
+				str:'H2',
+				html: 'H<sub>2</sub>',
+				latex: '{H}_{2}',
+				hotkey: '4',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'H2_init_amount',
+					'type': 'amount',
+					'value': '1',
+					'set': ['0.5','1','1.5'], 
+					'displayVal': 'value',
+					'unit': 'mol',
+					'sigFigs': 3,
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance'],
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str:"I2",
+				html: 'I<sub>2</sub>',
+				latex: '{I}_{2}',
+				hotkey: '5',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'I2_init_amount',
+					'type': 'amount',
+					'value': '2',
+					'displayVal': 'value',
+					'unit': 'mol',
+					'sigFigs': 3,
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance'],
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "HI",
+				html: 'HI',
+				latex: 'HI',
+				hotkey: '6',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'HI_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance'],
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'type': 'solution',
+					'id': 's1',
+					'substances': ['H2', 'I2'],
+					'context': 'majority'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '1',
+					'unit': 'L',
+					'substance': 'H2,I2',
+					'solution': 's1'
+				}
+			}
+		],
+		data: [],	
+		phase2Reaction: 'H2_plus_I2_is_2HI',
+		reactions: {
+			'H2_plus_I2_is_2HI': {
+				'id' : 'H2_plus_I2',
+				'equilibrium': true
+			}
+		},
+		problemStatement: "Under certain conditions, the equilibrium constant (K<sub>c</sub>) for the formation of HI is 12, based on the equation below:<br><br> H<sub>2</sub>(g) + I<sub>2</sub>(g) &#x21cc 2HI(g) <br><br> If 1 mol H<sub>2</sub> and 2 mol I<sub>2</sub> are placed in a 1L container and the system is allowed to reach equilibrium, what are the final concentrations of each species?"
+	}
+};

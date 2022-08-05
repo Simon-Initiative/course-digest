@@ -1,0 +1,825 @@
+import("util.nools");
+import("baseTypes.nools");
+import("interfaceActionRules.nools");
+import("hintRules.nools");
+import("conversionRules.nools");
+
+global problemTypePhases = {
+	"stoich": ["convertKnowns","determineLimitingReagent"],
+	"eqQuadratic": ['determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX'],
+	"eqExplicitX": ['determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX', 'validateXAssumption'],
+	"eqImplicitX": ['determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX']
+};
+
+global DEFAULT_PRECISION = 15;
+
+rule bootstrap {
+	when {
+		b: Boolean b from true;
+	} then {
+		console.log("bootstrap");
+		var pData = problemData;
+		if (problemData.randomize) {
+			let pIdx = getRandInt(0, problemData.chooseFrom.length-1);
+			problemData.probSpecificData = problemData.chooseFrom[pIdx];
+		}
+		
+		//init UI
+		//window.__uiInit(pData, ExpressionOptions);
+		//WAS HERE
+		//console.log("done UI init");
+		
+		if (problemData.mustValidateXAssumption === false) {
+			problemData.initReadyForFinalQty = true;
+		}
+		
+		problemData.phases = problemData.phases || [];
+		problemData.initialAlias = problemData.initialAlias || "initial";
+		problemData.majorityAlias = problemData.majorityAlias || "majority";
+		//set problem specific info for interface to send back as SAI
+		randomizeValues(problemData.probSpecificData.knowns);
+		window.__setProblemGivens(problemData.probSpecificData);
+		console.log("done set problem givens");
+		
+		//problem config
+		setProblemAttribute("use_backtracking", true);
+		setProblemAttribute("use_hint_fact", true);
+		var nRequiredSteps = getRequiredStepCount(problemData);
+		try {
+			CTAT.ToolTutor.tutor.getProblemSummary().setRequiredSteps(nRequiredSteps);
+		} catch(e) {
+			CTAT.ToolTutor.tutor.getProblemSummary().setRequiredSteps(10);
+		}
+		
+		//"the truth" default hypothesis that is always true
+		var defaultHyp = assert(new Hypothesis("default", [], true, true));
+
+		//problem fact
+		assert(new Problem(pData));
+		
+		//setTracerLogFlags("fire", "debug");
+		
+		halt();
+	}
+}
+
+rule assertPhase1Reaction {
+	salience: 20;
+	when {
+		p: Problem !p.stoichStepDone && p.data.phase1Reaction {data: pData};
+		not( rFact: Reaction rFact.id === pData.phase1Reaction );
+		defaultHyp: Hypothesis defaultHyp.type === "default";
+	} then {
+		let reaction = pData.reactions[pData.phase1Reaction];
+		let r = assert(new Reaction(pData.phase1Reaction, reaction.reagents, reaction.products, reaction.equilibrium, reaction.inactive));
+		//init any missing products to 0 mol
+		let allQtys = getFacts("KnownQuantity").filter((qty)=>qty.context === "initial");
+		let products = reaction.products.slice().filter((p)=>{
+			return !allQtys.find((qty)=>qty.substance === p.substance);
+		});
+
+		products.forEach((product) => {
+			assert(new KnownQuantity({
+				substance: product.substance,
+				unit: 'mol',
+				value: 0,
+				context: 'initial',
+				reaction: pData.phase1Reaction,
+				type: "amount",
+				fromHypothesis: defaultHyp,
+				fromRule: "assertPhase1Reaction",
+				fromFacts: [],
+				matched: true,
+				state: product.state
+			}));
+		});
+		modify(p, 'reaction', r);
+	}
+}
+
+rule assertPhase2Reaction {
+	salience: 20;
+	when {
+		p: Problem p.stoichStepDone && p.data.phase2Reaction {data: pData};
+		not( rFact: Reaction rFact.id === pData.phase2Reaction );
+		defaultHyp: Hypothesis defaultHyp.type === "default";
+	} then {
+		let reaction = pData.reactions[pData.phase2Reaction];
+		let r = assert(new Reaction(pData.phase2Reaction, reaction.reagents, reaction.products, reaction.equilibrium, reaction.inactive));
+		//init any missing products to 0 mol
+		let allQtys = getFacts("KnownQuantity").filter((qty)=>qty.context === "majority");
+		let products = reaction.products.slice().filter((p)=>{
+			return !allQtys.find((qty)=>qty.substance === p.substance);
+		});
+
+		products.forEach((product) => {
+			assert(new KnownQuantity({
+				substance: product.substance,
+				unit: 'M',
+				value: 0,
+				context: 'majority',
+				reaction: pData.phase2Reaction,
+				type: "concentration",
+				fromHypothesis: defaultHyp,
+				fromRule: "assertPhase2Reaction",
+				fromFacts: [],
+				matched: true,
+				state: product.state
+			}));
+		});
+		modify(p, 'reaction', r);
+	}
+}
+
+rule GivenSet {
+	when {
+		prob: Problem; // prob.phase === "initGivens";
+		sai: StudentValues sai.selection === 'problem_givens' {selection: s, action: a, input: i};
+		defaultHyp: Hypothesis defaultHyp.type === "default";
+	} then {
+		retract(sai);
+		
+		//set qty value
+		var givens = JSON.parse(i);
+		
+		//gen html/latex strings for given vals
+		formatGivens(givens);
+		
+		//assert given values (problem-specific)
+		console.log("GivenSet, stoichStepDone is "+prob.stoichStepDone);
+		var initReaction = prob.stoichStepDone ? givens.phase2Reaction : givens.phase1Reaction;
+		var knownValues = assertKnowns(givens.knowns, defaultHyp, initReaction);
+				
+		//values the problem is trying to solve for
+		assertFinalQuantityGoals(givens.finalQuantities);
+		//subgoals
+		assertGoals(givens.goals);
+		
+		var probStatement = givens.problemStatement;
+		
+		knownValues.forEach((kv) => {
+			//insert in problem statement
+			let qtyId = kv.id;
+			var regexId = qtyId.replace(/(\+|\(|\))/g, (m, g1)=>{return "\\"+g1});
+			var regexp = new RegExp('%'+regexId+'\.([^%]+)%', 'g');
+			probStatement = probStatement.replace(regexp, (match, propName)=>{
+				if (propName === "value" || propName === "displayVal") {
+					return kv.getDisplayVal();
+				} else {
+					return kv[propName];
+				}
+			});
+		});
+		
+		if (givens.compositions) {
+			givens.compositions.forEach((comp) => {
+				assert(new Composition(comp.compound, comp.elements));
+			});
+		}
+		
+		if (givens.generalData) {
+			assertGeneralData(givens.generalData);
+		}
+		
+		if (givens.equations) {
+			givens.equations.forEach((eq)=>{
+				let strs = eq.forms.map((f)=> f.replace("_eq_", " = "));
+				assert(new Expression({
+					id: eq.id,
+					str: strs[0],
+					altForms: strs.slice(1),
+					creator: "tutor",
+					context: eq.context,
+					unit: eq.unit,
+					substance: eq.substance,
+					fromRule: "_given_",
+					fromFacts: [],
+					name: eq.name	
+				}));
+				if (eq.substitutions) {
+					for(let varName in eq.substitutions) {
+						assert(new ReplaceVarGoal(eq.id, varName, eq.substitutions[varName]));
+					}
+				}
+			});
+			if (prob.data.usesEqSheet) {
+				workspace.fillEquationSheet(givens.equations.map((e)=>e.id));
+			}
+		}
+		
+		//fill in problem data from givens
+		var pDataStr = JSON.stringify(prob.data);
+		var newPData = JSON.parse(pDataStr);
+		newPData.phase1Reaction = givens.phase1Reaction;
+		newPData.phase2Reaction = givens.phase2Reaction;
+		newPData.reactions = givens.reactions;
+		
+		//init newPData.phases
+		if (!newPData.phases.length) {//allow indiv. problems to override
+			if (newPData.phase1Reaction) {
+				newPData.phases = newPData.phases.concat(problemTypePhases.stoich);
+			}
+			if (newPData.phase2Reaction) {
+				switch(newPData.preferredEQStrategy) {
+					case "quadratic": 
+						newPData.phases = newPData.phases.concat(problemTypePhases.eqQuadratic);
+					break;
+					case "explicitX": 
+						newPData.phases = newPData.phases.concat(problemTypePhases.eqExplicitX);
+					break;
+					case "implicitX":
+						newPData.phases = newPData.phases.concat(problemTypePhases.eqImplicitX);
+					break;
+				}
+			}
+			newPData.phases.push("determineFinalValues");
+		}
+		if (!newPData.initialPhase) {
+			newPData.initialPhase = newPData.phases[0];
+		}
+		
+		modify(prob, "data", newPData);
+		modify(prob, 'statement', probStatement);
+		modify(prob, 'finalQuantities', givens.finalQuantities);
+		modify(prob, 'phase', prob.data.initialPhase);
+		
+		//init ui
+		prob.data.symbols = prob.data.symbols.concat(givens.knowns.filter((k)=>k.type === "substance"));
+		window.__uiInit(prob.data, ExpressionOptions);
+	
+		assert(new TPA("problem_statement", "UpdateTextField", prob.statement));
+		
+		checkSAI(DUMMY_TUTOR_SAI, ()=>true);
+		
+		halt();
+	}
+}
+
+/* interface state has been modified, start search tree to comp w/ tutor generated expressions */
+rule StartSearch {
+	salience: 10;
+	when {
+		prob: Problem prob.stateModified && !prob.searching;
+	} then {
+		window.Util.repeatedExp.clearMap();
+		modify(prob, "searching", true);
+		modify(prob, "stateModified", false);
+	}
+}
+
+/* hint request */
+rule StartHintSearch {
+	salience: 10;
+	when {
+		or(
+			h: IsHintMatch,
+			sh: IsSilentHintMatch
+		);
+		prob: Problem !prob.hintSearching;
+	} then {
+		modify(prob, "hintSearching", true);
+	}
+}
+
+/* no match was found after search, save modified interface state */
+rule SaveModelStateAfterSearch {
+	when {
+		prob: Problem prob.stateModified && !prob.searching;
+	} then {
+		let input = prob.input[0];
+		let sai = getStudentInput();
+		modify(prob, "stateModified", false);
+		modify(prob, "input", []);
+		modify(prob, "inputType", null);
+		if (input && /expression_\d+/.test(input.id)) {
+			checkSAI({selection: sai.selection, action: "no_model_check", input: "no_model"}, ()=> true, true);
+			assert(new BugMessage("I don't recognize that value.  If you're stuck, you can use the hint button to ask for a hint."));
+			modify(prob, "unmatchedExp", input);
+			assert(new IsSilentHintMatch());
+		} else {
+			halt();
+		}
+	}
+}
+
+rule SaveModelStateAfterHintSearch {
+	when {
+		h: IsHintMatch;
+		prob: Problem !prob.hintSearching;
+	} then {
+		halt();
+	}
+}
+
+rule SaveModelStateAfterSilentHintSearch {
+	when {
+		h: IsSilentHintMatch;
+		prob: Problem !prob.hintSearching;
+	} then {
+		retract(h);
+		halt();
+	}
+}
+
+rule MarkStepsMatched {
+	salience: 1;
+	when {
+		prob: Problem prob.keepChain && prob.stepsMatched.length;
+	} then {
+		var stepChainsTxt = [];
+		//generate stepID from prob.stepsMatched
+		prob.stepsMatched.forEach((sm)=>{
+			var studentStep = sm.input,
+				ruleChain = sm.ruleChain;
+			
+			stepChainsTxt.push(ruleChain.map((step, idx) => {
+				//step = [matchedFact, fromRule, [fromFact0, fromFact1...]]
+				console.log("step "+idx+" is ",step);
+				if (idx === ruleChain.length - 1 && !step[0].matchedTo.includes(studentStep)) {
+					console.log("adding ",studentStep," to ",step[0].getName()," matchedTo");
+					modify(step[0], "matchedTo", step[0].matchedTo.concat(studentStep));
+				}
+				//return [matchedFact.id, fromRule, fromFact0.id, fromFact1.id...]
+				return [step[0].id, step[1], ...step[2].map((fact) => {
+					if (!fact.matched) {
+						modify(fact, "matched", true);
+					}
+					return fact.id;
+				})];
+			}));
+		});
+		console.log("got stepChains: ",stepChainsTxt);
+		assert(new CustomField("step_id", JSON.stringify(stepChainsTxt)));
+		modify(prob, "stepsMatched", []);
+	}
+}
+
+/* this chain is correct, halt at end */
+rule KeepChain {
+	when {
+		prob: Problem prob.keepChain;
+	} then {
+		console.log("keepChain");
+		
+		modify(prob, "keepChain", false);
+		modify(prob, "stateModified", false);
+		modify(prob, "searching", false);
+		modify(prob, "varReplaced", false);
+		modify(prob, "input", []);
+		modify(prob, "inputType", null);
+
+		halt();
+	}
+}
+
+/*
+//Check active student expression against tutor-generated expression
+rule CheckExpressionMatch {
+	salience: 11;
+	when {
+		prob: Problem prob.searching && prob.inputType === "expression" {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.id === prob.activeExpression && studentExp.creator === "student" && studentExp.matchedTo.length === 0;
+		tutorExp: Expression tutorExp.creator === "tutor" && (!prob.varReplaced || prob.varReplaced === tutorExp.id) {id: tutorExpId, matchedTo: tMatches};
+	} then {
+		var isFinalExp = tutorExpId.includes("final_exp");
+		var compResult;
+		if (checkSAI({selection: tutorExpId, action: 'tutor_exp', input: tutorExp.string}, function() {
+			if (tutorExp.checkFunc) {
+				compResult = tutorExp.checkFunc(tutorExp.string, studentExp.string);
+			} else {
+				compResult = compFormulas(studentExp.string, tutorExp.string, isFinalExp);
+			}
+			return !!compResult;
+		})) {
+			var newTutorMatchedTo = tMatches.slice();
+			newTutorMatchedTo.push(studentExp);
+			
+			var stepChain = qtyMatched(tutorExp);
+			var newStepsMatched = prob.stepsMatched.slice();
+			newStepsMatched.push(stepChain);
+			modify(prob, "keepChain", true);
+			modify(prob, "stepsMatched", newStepsMatched);
+			
+			modify(studentExp, "matchedTo", [tutorExp]);
+			modify(tutorExp, "matchedTo", newTutorMatchedTo);
+			if (isFinalExp && compResult === "identical") {
+				modify(prob, "finalQuantityMatched", tutorExpId.replace("final_exp_", ''));
+			}
+		} else {
+			backtrack();
+		};
+	}
+}
+*/
+
+//check student's input against tutor-generated quantities
+rule CheckQuantityMatch {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && prob.inputType === "expression" {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.creator === "student"  {matchedTo: priorMatches, string: studentVal};
+	} then {
+		var matchedQtys = [],
+			bugMatchQtys = [],
+			unmatchedQtys = [],
+			stepsMatched = prob.stepsMatched.slice();
+		
+		console.log("CheckQuantityMatch, input is ",studentExp);
+		
+		getFacts("KnownQuantity").concat(getFacts("Expression")).forEach((fact)=>{
+			console.log("\tcheck input against: ");
+			console.log(fact);
+			var comparator = !fact.creator ? compareQuantity : (fact.creator === "tutor" ? compareExpression : null);
+			if (comparator && (!prob.varReplaced || prob.varReplaced === fact.id)) {	
+				if (comparator(studentExp, fact)) {
+					console.log("\tit is a match");
+					if (fact.isBug) {
+						bugMatchQtys.push(fact);
+					} else {
+						matchedQtys.push(fact);
+						stepsMatched.push({input: studentExp, ruleChain: window.Util.genRuleChain(fact)});
+						var newMatchedTo = !studentExp.matchedTo.includes(fact) ? studentExp.matchedTo.concat(fact) : studentExp.matchedTo.slice();
+						modify(studentExp, "matchedTo", newMatchedTo);
+						
+						if (fact === prob.hintTargetQty) {
+							modify(prob, "hintTargetQty", null);
+						}
+					}
+				} else {
+					console.log("\tit is not a match");
+					!fact.isBug && unmatchedQtys.push(fact);
+				}
+			}
+		});
+		var isBugStep = false;
+		if (!matchedQtys.length && bugMatchQtys.length) {
+			matchedQtys = bugMatchQtys;
+			isBugStep = true;
+			if (matchedQtys.length === 1 || matchedQtys.every((mq)=>mq.bugMsg === matchedQtys[0].bugMsg)) {
+				assert(new BugMessage(matchedQtys[0].bugMsg));
+			}
+		}
+		var tSelection = '', tInput;
+		if (matchedQtys.length) {
+			tInput = (matchedQtys[0] instanceof Expression ? matchedQtys[0].string : matchedQtys[0].value);
+			matchedQtys.forEach((mq, idx)=> {
+				tSelection += (idx > 0 ? ',' : '') + mq.id;
+			});
+			
+			var newInput = prob.input.slice();
+			newInput.splice(newInput.indexOf(studentExp), 1);
+			modify(prob, "input", newInput);
+			modify(prob, "stepsMatched", stepsMatched);
+			modify(prob, "keepChain", true);
+		} else {
+			tSelection = unmatchedQtys[0].id;
+			tInput = (unmatchedQtys[0] instanceof Expression ? unmatchedQtys[0].string : unmatchedQtys[0].value);
+		}
+		if (!checkSAI({selection:tSelection, action:"tutor_qty", input: tInput}, ()=>!!matchedQtys.length, isBugStep)) {
+			backtrack();
+		}
+	}
+}
+
+//check student's input against tutor-generated quantities
+/*
+rule CheckQuantityMatch2 {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && !prob.varReplaced && prob.inputType === "expression" {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.creator === "student"  {matchedTo: priorMatches, string: studentVal};
+		qty: KnownQuantity !(qty in priorMatches) {value: tutorVal, fromHypothesis: qtyHyp, requiredToMatch: propsToMatch};
+	} then {
+		var compFunction;
+		if (isNaN(tutorVal) || isNaN(studentVal)) {
+			compFunction = compFormulas;
+		} else {
+			compFunction = compValues;
+		}
+		var sel = (qty.unit ? qty.unit+"_" : '') +
+				  (qty.substance ? qty.substance+'_' : '') +
+				  (qty.context ? qty.context+'_' : '') +
+				  (qty.type ? qty.type+'_' : '');
+		if (checkSAI({selection: sel, action: 'tutor_qty', input: qty.value}, function() {
+			var isMatch = true;
+			//check required properties for this qty
+			for(let i = 0; isMatch && i < propsToMatch.length; i++) {
+				isMatch = (studentExp[propsToMatch[i]] === qty[propsToMatch[i]]);
+			}
+			//unit/context/substance either undefined for student or matches tutor
+			isMatch = isMatch && ['unit','context','substance'].every((prop)=>{
+				return !studentExp[prop] || studentExp[prop] === qty[prop];
+			});
+			//compare values
+			isMatch = isMatch && (compFunction(tutorVal, studentVal, IMPRECISION_MARGIN));
+			
+			return isMatch;
+		}, qty.isBug)) {
+			if (qty.isBug) {
+				setSuccessOrBugMsg(qty.bugMsg);
+				
+				assert(new BugMessage("bug message 1"));
+				assert(new BugMessage("bug message 2"));
+				assert(new BugMessage("bug message 3"));
+				
+				backtrack();
+			} else {
+				
+				assert(new SuccessMessage("success message 1"));
+				assert(new SuccessMessage("success message 2"));
+				assert(new SuccessMessage("success message 3"));
+				
+				var newMatchedTo = studentExp.matchedTo.concat(qty);
+				modify(studentExp, "matchedTo", newMatchedTo);
+				
+				newMatchedTo = qty.matchedTo.concat(studentExp);
+				modify(qty, "matchedTo", newMatchedTo);
+				
+				var newStepsMatched = prob.stepsMatched.slice();
+				newStepsMatched.push(qty);
+				modify(prob, "stepsMatched", newStepsMatched);
+				modify(prob, "keepChain", true);
+				if (qty === prob.hintTargetQty) {
+					modify(prob, "hintTargetQty", null);
+				}
+			}
+		} else {
+			backtrack();
+		}
+	}
+}
+*/
+rule PredictCustomClaim {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && prob.inputType === "customClaim" {input: pInput};
+		claim: CustomClaim claim === pInput[0] && claim.fieldsFilled && !claim.matched {value: claimExp, matchQty: claimMatchQty, id: claimId};
+		qty: KnownQuantity compObjects(qty, claimMatchQty, getObjKeys(claimMatchQty)) && !qty.matchedByClaim;
+	} then {
+		var si = getStudentInput(),
+			isBug = qty.isBug,
+			valCorrect = compValues(qty.value, claimExp.string, IMPRECISION_MARGIN),
+			matchedQuantity = null,
+			matchedList = claimExp.matchedTo;
+		
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: qty.value+' '+qty.unit+' '+qty.substance}, function() {
+			return valCorrect;
+		}, isBug)) {
+			if (!isBug) {
+				//claim correct
+				workspace.lockClaim(claim.id);
+				modify(qty, "matchedByClaim", true);
+				modify(claim, "matched", true);
+				modify(prob, "keepChain", true);
+				
+				addScoreLabels(claim.type+"_claim");
+			} else {
+				setSuccessOrBugMsg(qty.bugMsg);
+				backtrack();
+			}
+		} else {
+			backtrack();
+		}
+	} 
+}
+
+rule ResolveCorrectQuantity {
+	salience: 11; //should fire before search starts
+	when {
+		prob: Problem !prob.searching && !prob.varReplaced && prob.inputType === "expression" {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.aspectResolved && studentExp.matchedTo.length {matchedTo: priorMatches, string: studentVal};
+	} then {
+		let property = studentExp.aspectResolved;
+		let tInput = '';
+		let newMatches = [];
+		
+		priorMatches.forEach((pm, idx) => {
+			let tQtyProperty = pm[property];
+			if (tQtyProperty === studentExp[property]) {
+				newMatches.push(pm);
+			} else {
+				newPmMatches = pm.matchedTo.slice();
+				newPmMatches.splice(newPmMatches.indexOf(studentExp), 1);
+				modify(pm, "matchedTo", newPmMatches);
+			}
+			if (!tInput.includes(tQtyProperty)) {
+				tInput += (tInput.length ? '_or_' : '') + tQtyProperty;
+			}
+		});
+		
+		modify(studentExp, "matchedTo", newMatches);
+		var isMatch = newMatches.length > 0;
+		if (checkSAI({selection: 'set_'+property, action: 'tutor_qty_property', input: tInput}, function() {
+			return true;
+		}, !isMatch)) {
+			//need some kind of stepchain equivalent?
+			if (isMatch) {
+				modify(prob, "keepChain", true);
+			} else {
+				setSuccessOrBugMsg("That "+property+" appears to be incorrect; please double check your work.");
+			}
+		}
+		modify(studentExp, "aspectResolved", null);
+	}
+}
+
+//variable replacement
+rule ReplaceVariable {
+	when {
+		prob: Problem prob.searching && prob.inputType === "expression" && !prob.keepChain;
+		rvGoal: ReplaceVarGoal !rvGoal.completed {expId: eId, varName: vn, qtyProperties: qp};
+		qty: KnownQuantity compObjects(qty, qp, getObjKeys(qp)) {value: varVal};
+		exp: Expression exp.id === eId && !(prob.varReplaced && prob.varReplaced !== exp.id) {string: expString};
+	} then {
+		rvGoal.qtyTest = rvGoal.qtyTest || function() { return true };
+		if (rvGoal.qtyTest(qty, exp)) {
+			var newVarsReplaced = shallowCopyObj(exp.varsReplaced);
+			newVarsReplaced[vn] = qty;
+			var newVarsReplacedStr = Object.keys(newVarsReplaced).sort().join();
+			var newStr = chemStringify(chemSetVariable(expString, vn, varVal), true);
+			if (!window.Util.repeatedExp.checkExp(newVarsReplacedStr)) {
+				window.Util.repeatedExp.addExp(newVarsReplacedStr);
+				//modify(exp, 'string', newStr);
+				modify(exp, 'varsReplaced', newVarsReplaced);
+				modify(exp, 'fromFacts', exp.fromFacts.slice().concat(qty));
+				modify(prob, 'varReplaced', exp.id);
+				modify(rvGoal, 'completed', true);
+				modify(qty, 'variable', vn);
+			} else {
+				backtrack();
+			}
+		} else {
+			backtrack();
+		}
+	}
+}
+
+//A quantity we need for final answer has been solved for, mark quantity fact as final
+rule GotFinalQuantity {
+	salience: 20;
+	when {
+		prob: Problem !prob.searching;
+		goal: FinalQuantityGoal {id: fqId, substance: fqSub, type: fqType, unit: fqUnit, context: fqContext, label: fqLabel};
+		kq: KnownQuantity !getIsNaN(kq.value) && compObjects(goal, kq, ['substance', 'type', 'unit', 'context']) && !kq.isBug {fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh && hyp.isTrue;
+	} then {
+		if (!goal.solution || (kq.solution && kq.solution.id === goal.solution)) {
+			modify(kq, 'isFinalAnswer', true);
+			retract(goal);			
+		} else {
+			backtrack();
+		}
+	}
+}
+
+rule PredictFQClaim {
+	when {
+		prob: Problem prob.searching && prob.inputType === "fqClaim" {input: probInput};
+		fq: KnownQuantity fq.isFinalAnswer && !fq.matchedByClaim {value: fqVal, substance: fqSub, unit: fqUnit};
+		studentClaim: FinalQuantityClaim studentClaim === probInput[0] && studentClaim.fieldsFilled && !studentClaim.matched {id: claimId, substance: claimSub, value: claimExp, unit: claimUnit};
+	} then {
+		var si = getStudentInput(),
+			isBug = false,
+			valCorrect = compValues(fqVal, claimExp.string, IMPRECISION_MARGIN),
+			subCorrect = (fqSub === claimSub),
+			unitCorrect = (fqUnit === claimUnit),
+			matchedQuantity = null,
+			matchedList = claimExp.matchedTo;
+		
+		//bugs:
+		//	-right substance, wrong unit
+		//	-right substance, right unit, wrong LR
+		if (subCorrect) {
+			let matchedToWrongUnit = false;
+			let matchedToRightUnit = matchedList.find((m)=>m.substance === fqSub && m.context === "final" && m.fromHypothesis.isTrue && m.unit === fqUnit);
+			let matchedToWrongLR = false;
+			
+			let bugQtys = getFacts("KnownQuantity").filter((q)=>{
+				return (q.substance === fqSub && q.context === "final" && q.fromHypothesis.isTrue && q.unit !== fqUnit) ||
+					   (q.substance === fqSub && q.context === "final" && q.fromHypothesis.type === "limitingReagent" && !q.fromHypothesis.isTrue);
+			});
+			for (let i = 0; i < bugQtys.length; i++) {
+				let bugQty = bugQtys[i];
+				if (compValues(bugQty.value, claimExp.string, IMPRECISION_MARGIN)) {
+					if (bugQty.fromHypothesis.isTrue) {
+						matchedToWrongUnit = bugQty.unit;
+					} else {
+						matchedToWrongLR = true;
+					}
+					break;
+				}
+			}
+			
+			if (matchedToWrongUnit && !matchedToRightUnit) {
+				isBug = true;
+				setSuccessOrBugMsg(claimExp.roundedString+" is the amount of "+fqSub+" in "+matchedToWrongUnit+".  You need to determine the amount in "+fqUnit+'.');
+				setChainPriority(1);
+			} else if (matchedToWrongLR) {
+				isBug = true;
+				setSuccessOrBugMsg("Your computation appears to be using the reactant that is in excess instead of the limiting reactant.");
+				setChainPriority(1);
+			}
+		}
+		if (!isBug && !valCorrect && fq.fromHypothesis.type === "limitingReagent") {
+			let isReactant = false,
+				isProduct = false,
+				isLR = false,
+				reaction = fq.fromHypothesis.claims[0];
+			if (claimSub === fq.fromHypothesis.claims[1].substance) {
+				isLR = true;
+			} else {
+				isReactant = (reaction.reagentNames.indexOf(claimSub) >= 0);
+				isProduct = !isReactant;
+			}
+			isBug = true;
+			if (isLR) {
+				setSuccessOrBugMsg("You've already determined that "+claimSub+" is the limiting reactant.  That means that the entire quantity of "+claimSub+" will be consumed.");
+			} else if (isReactant) {
+				var msg;
+				switch(studentClaim.attempts) {
+					case 1: 
+						msg = "To determine the amount of "+claimSub+" left over after the reaction is complete, subtract the amount of "+claimSub+" consumed from the initial amount available.";
+						break;
+					case 2:
+					default:
+						msg = "Start with the initial mols of "+fq.fromHypothesis.claims[1].substance+" and convert to mols of "+claimSub+" consumed using the molar ratio from the balanced equation."+
+							" Then subtract that from the initial mols of "+claimSub;
+							switch(fq.unit) {
+								case "g": 
+									msg+=" and convert back to grams using the molar mass of "+claimSub;
+									break;
+								case "M":
+									msg+=" and convert to concentration using the volume of the solution";
+									break;
+							}
+						msg += '.';
+						break;
+				}
+				setSuccessOrBugMsg(msg);
+			} else if (isProduct) {
+				setSuccessOrBugMsg("To determine the amount of "+claimSub+" present after the reaction is complete, add the amount of "+claimSub+" produced to the initial amount given.");
+			}
+		}
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: fqVal+' '+fqUnit+' '+fqSub}, function() {
+			return isBug || (valCorrect && subCorrect && unitCorrect);
+		}, isBug)) {
+			if (!isBug) {
+				//claim correct
+				workspace.lockClaim(claimId);
+				modify(fq, "matchedByClaim", true);
+				modify(studentClaim, "matched", true);
+				modify(prob, "keepChain", true);
+				addScoreLabels("fq_claim");
+			} else {
+				backtrack();
+			}
+		} else {
+			backtrack();
+		}
+	}
+}
+
+//No more final quantity goals exist, problem solved
+rule Done {
+	when {
+		prob: Problem prob.readyForFinalQty;
+		exists( fQty: KnownQuantity fQty.isFinalAnswer );
+		not( qty: KnownQuantity qty.isFinalAnswer && !qty.matchedByClaim );
+	} then {
+		assert(new Hint("You've solved the problem; press the \"Done\" button to move on."));
+		if (checkSAI({selection: "done", action: "ButtonPressed", input: "-1"})) {
+			halt();
+		} else {
+			backtrack();
+		}
+	}
+}
+
+rule NotEveryFQMatched {
+	when {
+		prob: Problem prob.readyForFinalQty;
+		exists( qty: KnownQuantity qty.isFinalAnswer && qty.matchedByClaim );
+		exists( qty: KnownQuantity qty.isFinalAnswer && !qty.matchedByClaim );
+	} then {
+		if (checkSAI({selection: "done", action: "ButtonPressed", input: "-1"}, null, true)) {
+			console.log("shouldn't be here");
+			setSuccessOrBugMsg("You are not done yet.  Reread the problem statement and make sure you've provided a final value for every quantity the problem is asking for.");
+			backtrack();
+		} else {
+			backtrack();
+		}
+	}
+}
+
+rule HintMakeFinalClaim {
+	salience: -10;
+	when {
+		prob: Problem prob.hintSearching && prob.readyForFinalQty;
+		fq: KnownQuantity fq.isFinalAnswer && fq.matchedTo.length && !fq.matchedByClaim;
+		not( fqc: FinalQuantityClaim );
+	} then {
+		assert(new Hint("Once you've arrived at the solution, use the 'make claim' button to submit your final answers"));
+		checkSAI({selection: "claim_menu_item_final_quantity", action: "ButtonPressed", input: "-1"});
+		backtrack();
+	}
+}

@@ -1,0 +1,109 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	notReadyForFinalQtyMsg: "",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'AgNO3',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'initial',
+				'label': 'g AgNO3 initial'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Ag2CO3',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0.93',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g',
+					'context': 'final'
+				},
+				atomicWeight: "2*107.88 + 12.011 + 3*16"
+			},
+			{
+				type: 'substance',
+				str:"Ag+",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'displayVal': "value",
+					'unit': 'g',
+					'context': 'final'
+				}, 
+				atomicWeight: '107.88'
+			},
+			{
+				type: 'substance',
+				str:"AgNO3",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				atomicWeight: '169.888'
+			}
+		],
+		phase1Reaction: '2Ag+_plus_CO3-2_is_Ag2CO3',
+		reactions: {
+			'2Ag+_plus_CO3-2_is_Ag2CO3': {
+				'id' : '2Ag+_plus_CO3-2',
+				'equilibrium': false
+			}
+		},
+		compositions: [
+			'AgNO3_is_Ag+_plus_NO3'
+		],
+		problemStatement: "100 mL of a solution contains an unknown mass of AgNO<sub>3</sub>.  Excess CO<sub>3</sub><sup>-2</sup> is added to the solution and %Ag2CO3_mass_g_final.displayVal% g Ag<sub>2</sub>CO<sub>3</sub> are formed.  Using the reaction below, determine how many grams of AgNO<sub>3</sub> were present in the solution to begin with.<br><br><strong>2Ag<sup>+</sup>(aq) + CO<sub>3</sub><sup>-2</sup>(aq) &#8594 Ag<sub>2</sub>CO<sub>3</sub>(s)</strong> <br><br> The atomic weight of Ag<sub>2</sub>CO<sub>3</sub> is 275.771 g/mol.  The atomic weight of AgNO<sub>3</sub> is 169.888 g/mol"
+	},	
+	claimTypes: ["Final Quantity"],
+	stoichStepDone: false,
+	usesIceTable: false
+};

@@ -1,0 +1,73 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str: 'CO2',
+			html: 'CO<sub>2</sub>',
+			latex:'C{O}_{2}'
+		}
+	],
+	initReadyForFinalQty: true,
+	initialPhase: 'convertKnowns',
+	stoichStepDone: false,
+	usesEqSheet: false,
+	claimTypes: [ "Final Quantity" ],
+	probSpecificData: {
+		generalData: [
+			{
+				type: "atomicWeight",
+				substance: "CO2",
+				value: "44.01",
+				unit: "g/mol"
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'O',
+				hotkey: 'o',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'mass',
+					'value': '5.43',
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'g'
+				},
+				atomicWeight: "16.00"
+			}
+		],
+		compositions: [
+			"CO2_is_1C_plus_2O"
+		],
+		finalQuantities: [
+			{
+				'substance': 'CO2',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'initial'
+			}
+		],	  
+		problemStatement: "A sample of carbon dioxide contains 5.43 grams of oxygen.  How many grams of carbon dioxide is the original sample?  (i.e., how many grams of CO<sub>2</sub> contain 5.43 grams of O?)  The atomic weight of oxygen is 16.00 g/mol.  The atomic weight of carbon dioxide is 44.01 g/mol."
+	},
+};

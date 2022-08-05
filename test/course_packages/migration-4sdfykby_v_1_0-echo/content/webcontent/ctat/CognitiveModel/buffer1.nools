@@ -1,0 +1,282 @@
+import("stoichRules.nools");
+import("equilibriumRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "[OH-]",
+			html: "[OH<sup>-</sup>]",
+			latex: '[O{H}^{-}]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[HAc]",
+			html: "[HAc]",
+			latex: '[HAc]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[Ac-]",
+			html: "[Ac<sup>-</sup>]",
+			latex: '[A{c}^{-}]',
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[H3O+]",
+			html: "[H<sub>3</sub>O<sup>+</sup>]",
+			latex: '[{H}_{3}{O}^{+}]',
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'variable',
+			str: "K",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: 'm',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: 'm'
+		},
+		{
+			type: 'unit',
+			str:'%',
+			latex: '\\%',
+			hotkey: '5',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "log",
+			html: "log<sub>10</sub>()",
+			styles: {
+				lineHeight: "35px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "ln",
+			html: "ln()",
+			styles: {
+				lineHeight: "35px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	initialPhase: 'convertKnowns',
+	phases: ["convertKnowns", "determineLimitingReagent", 'determineEQConcentrations', 'createEquilibriumExpression', 'replaceVariables', 'solveForX', 'determineFinalValues'],
+	preferredLRStrategy: "2",
+	preferredEQStrategy: "implicitX",
+	initialAlias: "initial",
+	majorityAlias: "post-neut.",
+	contexts: ["initial","post-neut.","changed","equilibrium","assume small x"],
+	claimTypes: [
+		{
+			id: 'smallx',
+			btnText: 'Assume small x',
+			claimText: 'Assume that the value of x is less than 5% of <blank>',
+			onlyOne: true,
+			matchQty: {
+				context: 'majority',
+				type: 'concentration',
+				unit: 'M',
+				lowestMajorityConcentration: true
+			}
+		},{
+			id: 'ph',
+			btnText: 'pH of Solution',
+			claimText: 'The pH of the solution is <blank>',
+			onlyOne: true,
+			needReadyForFinalQty: true,
+			notReadyMsg: "You need to determine a valid value of x before you can make a claim about the pH of the solution",
+			matchQty: {
+				type: 'ph'
+			}
+		},
+		
+		"Limiting Reagent", "Validate X Assumption"],
+	usesIceTable: true,
+	canAssumeX: true,
+	canSkipAssumeX: true,
+	mustValidateXAssumption: false,
+	stoichStepDone: false,
+	phase1ReactionHidden: true,
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'type': 'ph',
+				'substance': null,
+				'unit': null,
+				'context': null
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str: 'OH-',
+				html: 'OH<sup>-</sup>',
+				latex: '{OH}^{-}',
+				hotkey: '6',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'OH-_init_mass',
+					'type': 'mass',
+					'value': '0.020',
+					'unit': 'mol',
+					'context': 'initial',
+					'solution': 's1'					
+				}
+			},
+			{
+				type: 'substance',
+				str: "H3O+",
+				html: 'H<sub>3</sub>O<sup>+</sup>',
+				latex: '{H}_{3}{O}^{+}',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'H3O+_init_mass',
+					'type': 'mass',
+					'value': '0',
+					'unit': 'mol',
+					'context': 'initial',
+					'solution': 's1'					
+				}
+			},
+			{
+				type: 'substance',
+				str:"HAc",
+				html: 'HAc',
+				latex: 'HAc',
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'HAc_init_concentration',
+					'type': 'concentration',
+					'value': '0.25',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "Ac-",
+				html: 'Ac<sup>-</sup>',
+				latex: 'A{c}^{-}',
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'Ac-_init_concentration',
+					'type': 'concentration',
+					'value': '0.15',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'variable',
+					'variable': 'K',
+					'value': '1.80e-5',
+					'displayVal': '1.8 &#215 10<sup>-5</sup>',
+				}
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'substances': ['HAc','Ac-','OH-'],
+					'type': 'solution',
+					'context': 'initial'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '1000',
+					'unit': 'mL',
+					'context': 'initial',
+					'substance': 'HAc,Ac-,OH-',
+					'solution': 's1'
+				}
+			}
+		],
+		data: [],	
+		phase1Reaction: "OH-_plus_HAc_is_H2O_plus_Ac-",
+		phase2Reaction: "HAc_plus_H2O_is_H3O+_plus_Ac-",
+		reactions: {		
+		//phase1		
+			"Ac-_plus_H3O+_is_HAc_plus_H2O": {
+				'id' : 'ac-_plus_h3o+',
+				'equilibrium': false,
+				'inactive': ['H2O'],
+				'bugMessage': "Consider what is present in the solution. Is there any reaction between these species that will go nearly to completion (i.e. has K>>1)?"
+			},
+			
+			"H3O+_plus_OH-_is_2H2O": {
+				'id' : 'h3o+_plus_oh-',
+				'equilibrium': false,
+				'inactive': ['H2O'],
+				'bugMessage': "Consider what is present in the solution. Is there any reaction between these species that will go nearly to completion (i.e. has K>>1)?"
+			},
+
+			"OH-_plus_HAc_is_H2O_plus_Ac-": {
+				'id' : 'hac_plus_oh-',
+				'equilibrium': false,
+				'inactive': ['H2O']
+			},
+	//phase2		
+			"HAc_plus_H2O_is_H3O+_plus_Ac-": {
+				'id': 'hac_plus_h2o',
+				'equilibrium': true,
+				'inactive': ['H2O']
+			},
+			"2H2O_is_H3O+_plus_OH-": {
+				'id' : '2h2o',
+				'equilibrium': true,
+				'inactive': ['H2O'],
+				'bugMessage': "Select the reaction HAc + H<sub>2</sub>O &#8594 H<sub>3</sub>O<sup>+</sup> + Ac<sup>-</sup>"
+			},
+
+			"Ac-_plus_H2O_is_HAc_plus_OH-": {
+				'id' : 'ac-_plus_h2o',
+				'equilibrium': true,
+				'inactive': ['H2O'],
+				'bugMessage': "Select the reaction HAc + H<sub>2</sub>O &#8594 H<sub>3</sub>O<sup>+</sup> + Ac<sup>-</sup>"
+			}
+		},
+		problemStatement: "<strong>0.020 mol</strong> of solid KOH is added to <strong>1.0 liter</strong> of a buffer solution that is <strong>0.25 M</strong> acetic acid and <strong>0.15 M</strong> sodium acetate. <br><br>K<sub>a</sub> for this solution is <strong>%eqConst.displayVal%</strong>. Calculate the pH of the resulting solution. (Note: use the context \"post-neut.\" to refer to amounts after neutralization has occurred.)" 
+	}
+};

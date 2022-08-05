@@ -1,0 +1,184 @@
+import("stoichRules.nools");
+
+global problemData = {
+
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str:'AsO4-3',
+			html: "AsO<sub>4</sub><sup>-3</sup>",
+			latex: "As{{O}_{4}}^{-3}",
+			hotkey: '7',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str:"PbCl2",
+			html: "PbCl<sub>2</sub>",
+			latex: "Pb{Cl}_{2}",
+			hotkey: '8',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str: "Pb5(AsO4)3Cl",
+			html: "Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3<\sub>Cl",
+			latex: "{Pb}_{5}{(As{O}_{4})}_{3}Cl",
+			hotkey: '9',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'substance',
+			str: "Cl-",
+			html: "Cl<sup>-</sup>",
+			latex: "{Cl}^{-}",
+			hotkey: '9',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnownsToMols',
+	finalQuantities: [
+		{
+			'substance': 'AsO4-3',
+			'type': 'mass',
+			'unit': 'g',
+			'context': 'final',
+			'label': 'g AsO4-3 final'
+		},
+		{
+			'substance': 'PbCl2',
+			'type': 'mass',
+			'unit': 'g',
+			'context': 'final',
+			'label': 'g Ca(OH)2 final'
+		}
+	],
+	knowns: [
+		{
+			'substance': 'AsO4-3',
+			'type': 'mass',
+			'value': 'rand',
+			'range': [0.1,3],
+			'sigFigs': 3,
+			'displayVal': "value",
+			'unit': 'g',
+			'context': 'initial'
+		},
+		{
+			'substance': 'PbCl2',
+			'type': 'mass',
+			'value': 'rand',
+			'range': [0.1,3],
+			'sigFigs': 3,
+			'displayVal': "value",
+			'unit': 'g',
+			'context': 'initial'
+		},
+		{
+			'substance': 'Pb5(AsO4)3Cl',
+			'type': 'mass',
+			'value': '0',
+			'sigFigs': 3,
+			'displayVal': "value",
+			'unit': 'g',
+			'context': 'initial'
+		},
+		{
+			'substance': 'Cl-',
+			'type': 'mass',
+			'value': '0',
+			'sigFigs': 3,
+			'displayVal': "value",
+			'unit': 'g',
+			'context': 'initial'
+		}
+	],
+	data: [
+		{
+			'substance': 'AsO4-3',
+			'type': 'atomicWeight',
+			'value': '138.9084'
+		},
+		{
+			'substance': 'PbCl2',
+			'type': 'atomicWeight',
+			'value': '278.1'
+		},
+		{
+			'substance': 'Pb5(AsO4)3Cl',
+			'type': 'atomicWeight',
+			'value': '1488.2'
+		}
+	],	
+	phase1Reaction: '3AsO4-3_plus_5PbCl2_is_Pb5(AsO4)3Cl_plus_9Cl-',
+	reactions: {
+		'3AsO4-3_plus_5PbCl2_is_Pb5(AsO4)3Cl_plus_9Cl-': {
+			'id' : '3AsO4-3_plus_5PbCl2',
+			'type': 'reaction_menu_item',
+			'text': '3AsO<sub>4</sub><sup>-3</sup> + 5PbCl<sub>2</sub> &#8594 Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl(s) + 9Cl<sup>-</sup>',
+			'reversible': false,
+			'reagents': [
+				{
+					substance: 'AsO4-3',
+					moles: 3
+				},
+				{
+					substance: 'PbCl2',
+					moles: 5
+				}
+			],
+			'products': [
+				{
+					substance: 'Pb5(AsO4)3Cl',
+					moles: 1
+				},
+				{
+					substance: 'Cl-',
+					moles: 9
+				}
+			]
+		}
+	},
+	stoichStepDone: false,
+	claimTypes: ["Limiting Reagent", "Final Quantity"],
+	problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br> 3AsO<sub>4</sub><sup>-3</sup> + 5PbCl<sub>2</sub> &#8594 Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl(s) + 9Cl<sup>-</sup> <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO4-3_mass_g_initial.displayVal%g of arsenate with %PbCl2_mass_g_initial.displayVal%g of lead(II) chloride.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>-3</sup></strong>: 138.9084 , <strong>PbCl<sub>2</sub></strong>: 278.1 , <strong>Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl</strong>: 1488.2"
+};

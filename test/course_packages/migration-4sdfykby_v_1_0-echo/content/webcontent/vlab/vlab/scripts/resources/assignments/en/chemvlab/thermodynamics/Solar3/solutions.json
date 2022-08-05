@@ -1,0 +1,64 @@
+{
+   "FILESYSTEM": {
+      "DIRECTORY": [
+         {
+            "name": "stockroom", 
+            "SOLUTION": [
+               {
+                  "name": "Distilled H<sub>2</sub>O", 
+                  "description": "Distilled Water", 
+                  "volume": "3.0", 
+                  "vessel": "3LCarboy", 
+                  "species": [
+                     {
+                        "id": "0", 
+                        "amount": "166.5186501"
+                     }
+                  ]
+               }, 
+                {
+                  "name": "100g Liquid Salt Blend 1", 
+                  "description": "Liquid Salt Blend 1", 
+                  "insulated": "true", 
+                  "volume": "0.036971", 
+                  "species": [
+                     {
+                        "id": "60", 
+                        "amount": "0.59101"
+                     }
+                  ]
+               },
+               
+               
+               
+              
+               {
+                  "name": "200g Liquid Salt Blend 1", 
+                  "description": "Liquid Salt Blend 1", 
+                  "insulated": "true", 
+                  "volume": "0.071942", 
+                  "species": [
+                     {
+                        "id": "60", 
+                        "amount": "1.18202"
+                     }
+                  ]
+               },
+              {
+                  "name": "400g Liquid Salt Blend 1", 
+                  "description": "Liquid Salt Blend 1", 
+                  "insulated": "true", 
+                  "volume": "0.14384", 
+                  "species": [
+                     {
+                        "id": "60", 
+                        "amount": "2.36404"
+                     }
+                  ]
+               } 
+              
+            ]
+         }
+      ]
+   }
+}

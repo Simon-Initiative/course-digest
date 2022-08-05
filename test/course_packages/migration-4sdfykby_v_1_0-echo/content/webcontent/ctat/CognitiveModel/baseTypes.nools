@@ -1,0 +1,533 @@
+/** CTAT MESSAGE TYPES **/
+
+define StudentValues {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s, a, i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+define TPA {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s, a, i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+define Hint {
+  precedence: 0,
+  msg: "",
+  constructor: function(m, optPrecedence) {
+  	this.msg = m;
+  	this.precedence = optPrecedence || 0;
+  }
+}
+
+define CustomField {
+	name: null,
+	value: null,
+	constructor: function(n, v) {
+		this.name = n;
+		this.value = v;
+	}
+}
+
+define SuccessMessage {
+	msg: null,
+	constructor: function(m) {
+		this.msg = m;
+	}
+}
+
+define BugMessage {
+	msg: null,
+	constructor: function(m) {
+		this.msg = m;
+	}
+}
+
+define IsHintMatch {
+	constructor: function() {}
+}
+
+define IsSilentHintMatch {
+	constructor: function() {}
+}
+
+/** PROBLEM TYPE **/
+define Problem {
+	activeExpression: null,
+	searching: false,
+	hintSearching: false,
+	stateModified: false,
+	finalQuantityMatched: null,
+	phase: null,
+	keepChain: false,
+	reaction: null,
+	studentValues: null,
+	lrClaimMade: false,
+	lr1EvidenceFound: null,
+	lr2EvidenceFound: null,
+	lr3EvidenceFound: null,
+	lr4EvidenceFound: null,
+	preferredLRStrategy: null,
+	readyForFinalQty: false,
+	notReadyForFinalQtyMsg: '',
+	finalQuantities: null,
+	roundedValsMap: {},
+	numFqClaims: 0,
+	varReplaced: false,
+	data: null,
+	inputType: null,
+	input: [],
+	formulaSerial: 0,
+	statement: '',
+	canAssumeX: false,
+	stepsMatched: null,
+	constructor: function(initialData, r, fqu) {
+		this.phase = 'initGivens';
+		this.reaction = r;
+		this.studentValues = [];
+		this.preferredLRStrategy = initialData.preferredLRStrategy;
+		this.readyForFinalQty = initialData.initReadyForFinalQty;
+		this.notReadyForFinalQtyMsg = initialData.notReadyForFinalQtyMsg;
+		this.finalQuantities = fqu;
+		this.data = initialData;
+		this.statement = initialData.problemStatement;
+		this.canAssumeX = initialData.canAssumeX;
+		this.canSkipAssumeX = initialData.canSkipAssumeX;
+		this.stoichStepDone = initialData.stoichStepDone;
+		this.phase1ReactionHidden = initialData.phase1ReactionHidden;
+		this.phase2ReactionHidden = initialData.phase2ReactionHidden;
+		this.stepsMatched = [];
+		this.lr1EvidenceFound = [];
+		this.lr2EvidenceFound = [];
+		this.lr3EvidenceFound = [];
+		this.lr4EvidenceFound = [];
+	}
+}
+
+/** INTERFACE COMPONENTS **/
+define Expression {
+	id: null,
+	inputID: null,
+	label: null,
+	unit: null,
+	context: null,
+	string: null,
+	roundedString: null,
+	creator: null,
+	substance: null,
+	matchedTo: null,
+	constructor: function(data) {
+		this.id = data.id;
+		this.inputID = data.inputID;
+		this.string = ''+data.str;
+		this.altForms = data.altForms || [];
+		this.creator = data.creator;
+		this.unit = data.unit || null;
+		this.context = data.context || null;
+		this.label = data.label || null;
+		this.substance = data.substance || null;
+		this.variable = data.variable || null;
+		this.roundedString = data.roundedStr;
+		this.fromRule = data.fromRule;
+		this.fromFacts = data.fromFacts;
+		this.toFacts = [];
+		this.copies = 0;
+		this.simplifications = 0;
+		this.matchedTo = [];
+		this.name = data.name || '';
+		this.varsReplaced = {};
+		this.getName = function() {
+			
+		};
+	}	
+}
+
+define Table {
+	id: null,
+	reaction: null,
+	equilibrium: false,
+	rows: null,
+	substances: null,
+	numRows: 0,
+	inactiveReagents: null,
+	constructor: function(i, r, s, ir, inactiveList, nRows) {
+		nRows = nRows || 1;
+		this.id = i;
+		this.reaction = r;
+		this.substances = s;
+		this.equilibrium = ir;
+		this.inactiveReagents = inactiveList || [];
+		this.rows = {};
+		for (let idx = 0; idx < nRows; idx++) {
+			let rowKey = i+"_row_"+idx;
+			this.rows[rowKey] = {id: rowKey, cells: {}}
+		}
+		this.numRows = nRows;
+	}
+}
+
+define LimitingReagentClaim {
+	id: null,
+	substance: null,
+	value1: null,
+	value2: null,
+	comparator: null,
+	fieldsFilled: false,
+	submitOnValueEntry: false,
+	constructor: function(id) {
+		this.id = id;
+	}
+}
+
+define XAssumptionClaim {
+	id: null,
+	validity: null,
+	value: null,
+	comparator: null,
+	percent: null,
+	fieldsFilled: false,
+	constructor: function(id) {
+		this.id = id;
+	}
+}
+
+define FinalQuantityClaim {
+	id: null,
+	substance: null,
+	value: null,
+	unit: null,
+	fieldsFilled: false,
+	matched: false,
+	submitOnValueEntry: false,
+	attempts: 0,
+	constructor: function(id, unit) {
+		this.id = id;
+		this.unit = unit;
+		this.attempts = 0;
+	}
+}
+
+define PHClaim {
+	id: null,
+	value: null,
+	fieldsFilled: false,
+	matched: false,
+	constructor: function(id) {
+		this.id = id;
+	}
+}
+
+define CustomClaim {
+	id: null,
+	value: null,
+	fieldsFilled: false,
+	matched: false,
+	type: null,
+	onlyOne: false,
+	matchQty: null,
+	constructor: function(id, type, onlyOne, mQty) {
+		this.id = id;
+		this.type = type;
+		this.onlyOne = onlyOne;
+		this.matchQty = mQty;
+	}
+}
+
+define Hypothesis {
+	type: null,
+	claims: null,
+	isTrue: null,
+	tested: false,
+	constructor: function(t, c, it, tested) {
+		this.type = t;
+		this.claims = c;
+		(it === true || it === false) && (this.isTrue = it);
+		(tested === true || tested === false) && (this.tested = tested);
+	}
+}
+
+define GeneralData {
+	type: null,
+	substance: null,
+	value: null,
+	unit: null,
+	constructor: function(t, s, v, u) {
+		this.type = t;
+		this.substance = s;
+		this.value = v;
+		this.unit = u;
+	}
+}
+
+define KnownQuantity {
+	substance: null,
+	type: null,
+	value: null,
+	unit: null,
+	context: null,
+	state: null,
+	matched: false,
+	matchedByClaim: false,
+	fromHypothesis: null,
+	isFinalAnswer: false,
+	requiredToMatch: null,
+	fromRule: null,
+	fromFacts: null,
+	hint: '',
+	isBug: false,
+	bugMsg: '',
+	solution: null,
+	constructor: function(data) {
+		var id;
+		var hypId = genIdForHypothesis(data.fromHypothesis);
+		
+		if (!(id = data.id)) {
+			id = (data.substance || 'nosubstance')+"_"+
+					  (data.type || 'notype')+"_"+
+					  (data.unit || 'nounit')+"_"+
+					  (data.context || 'nocontext')+
+					  (hypId ? "_"+hypId : '');
+			
+		}
+		this.id = workspace.registerQtyID(id);
+		this.substance = data.substance || null;
+		this.type = data.type || null;
+		this.value = ''+(!isNaN(data.value) ? parseFloat(data.value).toPrecision(15) : data.value);
+		this.unit = data.unit || null;
+		this.context = data.context || null;
+		this.state = data.state || null;
+		this.variable = data.variable || null;
+		this.fromHypothesis = data.fromHypothesis;
+		this.isFinalAnswer = data.isFinalAnswer;
+		this.requiredToMatch = data.requiredToMatch || [];
+		this.reaction = data.reaction;
+		this.matchedTo = [];
+		if (data.matched) {
+			this.matchedTo.push(this);
+		}
+		this.fromRule = data.fromRule;
+		this.fromFacts = data.fromFacts;
+		this.hint = data.hint;
+		this.name = data.name;
+		this.getDisplayVal = () => {
+			if (this.displayVal) {
+				return this.displayVal;
+			} else {
+				let ret;
+				if (isNaN(this.value)) {
+					ret = chemToPrecision(this.value, 4).result;
+				} else {
+					ret = ''+parseFloat(this.value).toPrecision(4);
+					if (ret.includes('e')) {
+						let sides = ret.split('e');
+						if (sides[1].charAt(0) === "+") {
+							sides[1] = sides[1].slice(1);
+						}
+						if (sides[0] === "1") {
+							ret = "10<sup>"+sides[1]+"</sup>";
+						} else {
+							ret = sides[0]+"&#215;"+"10<sup>"+sides[1]+"</sup>";
+						}
+					}
+				}
+				return ret;
+			}
+		};
+		this.getName = () => {
+			if (this.name) {
+				return this.name;
+			} else {
+				//default: <context> <type> of <substance> in <unit>
+				let ret = '';
+				if (this.context) {
+					ret += this.context;
+				}
+				if (this.type) {
+					ret += ' '+this.type;
+				}
+				if (this.substance) {
+					ret += ' of '+this.substance;
+				}
+				if (this.unit) {
+					ret += ' in '+this.unit;
+				}
+				if (this.fromHypothesis.type === "limitingReagent") {
+					ret += ' (if '+this.fromHypothesis.claims[1].substance+' is limiting)';
+				}
+				return ret;
+			}
+		};
+		this.toFacts = [];
+		this.isBug = data.isBug;
+		this.bugMsg = data.bugMsg;
+		this.solution = data.solution || null;
+	}
+}
+
+define Solution {
+	substances: null,
+	value: null,
+	unit: null,
+	fromHypothesis: null,
+	mixtureOf: null,
+	constructor: function(data) {
+		this.id = data.id || s.join('_')+u;
+		this.substances = data.substances;
+		this.value = ''+data.value;
+		this.unit = data.unit;
+		this.fromHypothesis = data.fromHypothesis;
+		this.getDisplayVal = () => this.value;
+		data.constituents && (this.mixtureOf = data.constituents);
+		this.volume = data.volume;
+		this.temperature = data.temperature;
+		this.pressure = data.pressure;
+	}
+}
+
+define MixSolutionGoal {
+	id1: null,
+	id2: null,
+	done: false,
+	contexts: null,
+	unit: null,
+	constructor: function(i1, i2, cList, u) {
+		this.id1 = i1;
+		this.id2 = i2;
+		this.contexts = cList;
+		this.unit = u || 'mol';
+	}
+}
+
+define Composition {
+	compound: null,
+	elements: null,
+	constructor: function(c, e) {
+		this.compound = c;
+		this.elements = e;
+	}
+}
+
+define Reaction {
+	reagents: null,
+	products: null,
+	equilibrium: false,
+	id: null,
+	constructor: function(i, r, p, rev, inactiveSubs) {
+		this.id = i;
+		this.reagents = [];
+		this.products = [];
+		this.equilibrium = rev;
+		inactiveSubs = inactiveSubs || [];
+		r.forEach(function(reagent) {
+			if (!(inactiveSubs.indexOf(reagent.substance) > -1)) {
+				this.reagents.push({substance: reagent.substance, moles: reagent.moles, state: reagent.state});
+			}
+		}, this);
+		p.forEach(function(product) {
+			if (!(inactiveSubs.indexOf(product.substance) > -1)) {
+				this.products.push({substance: product.substance, moles: product.moles, state: product.state});
+			}
+		}, this);
+	}
+}
+
+define ReactionInstance {
+	instanceOf: null,
+	reagents: null,
+	products: null,
+	reagentNames: null,
+	productNames: null,
+	limitingReagent: null,
+	partsOf: null,
+	calculated: false,
+	direction: null,
+	atEquilibrium: false,
+	constructor: function(io, r, p, lr, prods, dir, ae) {
+		this.instanceOf = io;
+		this.reagents = r;
+		this.limitingReagent = lr;
+		this.partsOf = {};
+		this.stateOf = {};
+		var rn = [];
+		io.reagents.forEach(function(reagent) {
+			rn.push(reagent.substance);
+			this.partsOf[reagent.substance] = reagent.moles;
+			this.stateOf[reagent.substance] = reagent.state;
+		}, this);
+		io.products.forEach(function(product) {
+			this.partsOf[product.substance] = product.moles;
+			this.stateOf[product.substance] = product.state;
+		}, this);
+		this.reagentNames = rn;
+		this.productNames = p;
+		this.products = prods;
+		this.direction = dir || "positive";
+		this.atEquilibrium = ae;
+	}
+}
+
+/** GOAL TYPES **/
+
+define ReplaceVarGoal {
+	expId: null,
+	varName: null,
+	qtyProperties: null,
+	qtyTest: null,
+	completed: false,
+	constructor: function(e, vn, qp, qt) {
+		this.expId = e;
+		this.varName = vn;
+		this.qtyProperties = qp;
+		this.qtyTest = qt;
+	}
+}
+
+define UnknownQuantityGoal {
+	substance: null,
+	type: null,
+	requiredToSolve: false,
+	completed: false,
+	constructor: function(s, t, r) {
+		this.substance = s;
+		this.type = t;
+		this.requiredToSolve = r;
+	}
+}
+
+define FinalQuantityGoal {
+	id: null,
+	label: null,
+	substance: null,
+	type: null,
+	unit: null,
+	context: null,
+	solution: null,
+	constructor: function(l, s, t, u, c, sol) {
+		this.id = s+"_"+t+"_"+(u || '')+"_"+(c || '');
+		this.label = l;
+		this.substance = s || null;
+		this.type = t || null;
+		this.unit = u || null;
+		this.context = c || null;
+		this.solution = sol || null;
+	}
+}
+
+define ReachEquilibriumGoal {
+	reaction: null,
+	completed: false,
+	constructor: function(r) {
+		this.reaction = r;
+	}
+}

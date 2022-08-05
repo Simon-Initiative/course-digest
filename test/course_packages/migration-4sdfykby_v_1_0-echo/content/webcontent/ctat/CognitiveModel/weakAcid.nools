@@ -1,0 +1,202 @@
+import("equilibriumRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "K",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[HA]",
+			html: "[HA]",
+			latex: '[HA]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[H3O+]",
+			html: "[H<sub>3</sub>O<sup>+</sup>]",
+			latex: '[{H}_{3}{O}^{+}]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[A-]",
+			html: "[A<sup>-</sup>]",
+			latex: '[{A}^{-}]',
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'%',
+			latex: '\\%',
+			hotkey: '5',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "log",
+			html: "log<sub>10</sub>()",
+			styles: {
+				lineHeight: "35px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "ln",
+			html: "ln()",
+			styles: {
+				lineHeight: "35px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	claimTypes: [
+		{
+			id: 'smallx',
+			btnText: 'Assume small x',
+			claimText: 'Assume that the value of x is less than 5% of <blank>',
+			onlyOne: true,
+			matchQty: {
+				context: 'majority',
+				type: 'concentration',
+				unit: 'M',
+				lowestMajorityConcentration: true
+			}
+		},"Validate X Assumption", "Final Quantity"],
+	usesIceTable: true,
+	usesEqSheet: true,
+	canAssumeX: true,
+	mustValidateXAssumption: true,
+	canSkipAssumeX: true,
+	stoichStepDone: true,
+	preferredEQStrategy: "explicitX",
+	majorityAlias: "initial",
+	contexts: ["initial","changed","equilibrium","assume small x"],
+	probSpecificData: {
+		equations: [
+			{
+				id: "equilibrium_exp",
+				forms: [
+					"K_eq_(&[H3O+]&^1&[A-]&^1)/(&[HA]&^1)"
+				],
+				name: "equilibrium expression",
+				substitutions: {}	
+			}
+		],
+		finalQuantities: [
+			{
+				'type': 'concentration',
+				'substance': "H3O+",
+				'unit': "M",
+				'context': "equilibrium"
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'HA',
+				html: 'HA',
+				latex: 'HA',
+				hotkey: '6',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'HA_init_concentration',
+					'type': 'concentration',
+					'value': 'rand',
+					'range': ['0.5','1.5'],
+					'displayVal': 'value',
+					'unit': 'M',
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				type: 'substance',
+				str: "A-",
+				html: 'A<sup>-</sup>',
+				latex: '{A}^{-}',
+				hotkey: '7',
+				modifierKey: 'ctrl',	
+				initialData: {
+					'id': 'A_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				type: 'substance',
+				str: "H3O+",
+				html: 'H<sub>3</sub>O<sup>+</sup>',
+				latex: '{H}_{3}{O}^{+}',
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'H3O+_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'majority',
+					'requiredToMatch':['unit','context','substance']
+				}
+			},
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'equilibriumConst',
+					'variable': 'K',
+					'value': 'rand',
+					'set': ['10e-4','10e-8'],
+					'displayVal': 'value',
+					'context': 'initial'
+				}
+			}
+		],
+		data: [],	
+		phase2Reaction: 'HA_plus_H2O_is_H3O+_plus_A-',
+		reactions: {
+			'HA_plus_H2O_is_H3O+_plus_A-': {
+				'id' : 'ha_plus_h2o',
+				'equilibrium': true,
+				'inactive': ['H2O']
+			}
+		},
+		problemStatement: "Consider a solution of weak acid, HA, with a concentration %HA_init_concentration.displayVal% %HA_init_concentration.unit%. HA has a Ka of %eqConst.displayVal%. What is the concentration of H3O<sup>+</sup> at equilibrium?" 
+	}
+};

@@ -1,0 +1,963 @@
+/** INTERFACE TRANSFORMATIONS **/
+/* A formula has been entered in the workspace */
+rule FormulaEntered {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.selection.includes("formula_entry_ctat") && sai.input !== '__invalid_exp__' {selection: s, action: a, input: i};
+		not( e: Expression e.inputID === sai.selection );
+	} then {
+		retract(sai);
+		if (chemParse(i)) {
+			var sais = getStudentSAIs();
+			var labelFieldId = s.replace("_formula_entry_ctat", "_name_entry");
+			var labelSAI = sais[labelFieldId];
+			var label = labelSAI ? labelSAI.input : 'eq'+(++prob.formulaSerial);
+			var res = expressionAdded(i, prob, {"label": label, "inputID": sai.selection}),
+				exp = res.exp,
+				simp = res.wasSimplified;
+			
+			console.log("i is "+i+" , exp.string is "+exp.string+" , exp.roundedString is "+exp.roundedString);
+
+			window.workspace.formulaEntered(s, exp.roundedString, exp.id, label, simp, i);
+			modify(prob, "stateModified", true);
+			modify(prob, "input", [exp]);
+			modify(prob, "inputType", "expression");
+		} else {
+			console.log("couldn't parse expression: "+i);
+		}
+	}
+}
+
+/**
+*	An expression that Guppy couldn't parse was entered in the interface
+*/
+rule InvalidFormulaEntered {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input === "__invalid_exp__";
+	} then {
+		retract(sai);
+		setSuccessOrBugMsg("The expression you entered is not valid. Possible reasons for this are: <ul>"+
+			"<li> You may be using substance labels (e.g. PCl<sub>5</sub>) in your expression when you meant to use variables (e.g. [PCl<sub>5</sub>]). PCl<sub>5</sub> = 1.0 is not valid, while [PCl<sub>5</sub>] = 1.0 is valid."+ 
+			"<li> An incomplete expression such as \"a = \" or \"a +\"</li>"+
+			"<li> Chemical reactions such as Na + Cl --> NaCl should not be entered as expressions</li></ul>"
+		);
+		modify(prob, "stateModified", true);
+	}
+}
+
+rule FormulaEdited {
+	salience: 5;
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.selection.includes("formula_entry_ctat") {selection: s, action: a, input: i};
+		exp: Expression exp.inputID === sai.selection;
+	} then {
+		retract(sai);
+		if (chemParse(i)) {
+			studentValueRemoved(exp, prob.studentValues);
+			var sais = getStudentSAIs();
+			var labelFieldId = s.replace("_formula_entry_ctat", "_name_entry");
+			var labelSAI = sais[labelFieldId];
+			var label = labelSAI ? labelSAI.input : (exp.label ? exp.label : 'eq'+(++prob.formulaSerial));
+			var res = expressionAdded(i, prob, {"id":exp.id, "label":label, "inputID": sai.selection}),
+				newExp = res.exp,
+				simp = res.wasSimplified;
+			window.workspace.doneEditingFormula(exp.id, newExp.roundedString, label, simp, i);
+			retract(exp);
+			modify(prob, "stateModified", true);
+			modify(prob, "input", [newExp]);
+			modify(prob, "inputType", "expression");
+		} else {
+			console.log("couldn't parse expression: "+i);
+			backtrack();
+		}
+	}
+}
+
+rule ComponentDeleted {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("close_btn") {selection: s};
+	} then {
+		retract(sai);
+		var componentID = sai.selection.replace("_close_btn", ''),
+			componentTypes = ["Expression", "Table", "LimitingReagentClaim", "FinalQuantityClaim", "CustomClaim", "XAssumptionClaim"],
+			componentFact;
+		for (let i = 0; i < componentTypes.length && !componentFact; i++) {
+			let cType = componentTypes[i];
+			let comps = getFacts(cType);
+			for (let j = 0; j < comps.length; j++) {
+				let c = comps[j];
+				if (c.id === componentID) {
+					componentFact = c;
+					switch(cType) {
+						case "Expression": workspace.formulaDeleted(c.id); break;
+						case "Table": workspace.tableDeleted(c.id); break;
+						case "LimitingReagentClaim":
+						case "FinalQuantityClaim":
+						case "CustomClaim":
+						case "XAssumptionClaim":
+							workspace.claimDeleted(c.id);
+							break;
+					}
+					break;
+				}
+			}
+		}
+		if (componentFact) {
+			retract(componentFact);
+			modify(prob, "stateModified", true);
+		} else {
+			console.warn("ComponentDeleted couldn't find component w/ id "+componentID);
+		}
+	}
+}
+
+/*
+rule FormulaDeleted {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("close_btn") {selection: s};
+		expId: String from s.replace("_close_btn", '');
+		exp: Expression exp.id === expId;
+	} then {
+		retract(exp);
+		retract(sai);
+		window.workspace.formulaDeleted(expId);
+		studentValueRemoved(exp.roundedString, prob.studentValues);
+		
+		modify(prob, "stateModified", true);
+	}
+}
+
+rule TableDeleted {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("close_btn") {selection: s};
+		tableId: String from s.replace("_close_btn", '');
+		table: Table table.id === tableId;
+	} then {
+		retract(table);
+		retract(sai);
+		window.workspace.tableDeleted(tableId);
+		
+		modify(prob, "stateModified", true);
+	}
+}
+*/
+
+/* A value has been entered for a variable in a formula */
+rule VariableEntered {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		inputSai: StudentValues inputSai.input && inputSai.selection.includes("var_value_entry") {selection: inputSel, input: varValue};
+		expId: String from inputSel.split("_var_value_entry")[0];
+		selectSai: StudentValues selectSai.selection === expId +"_var_replace_var_select" {input: varName};
+		expression: Expression expression.id === expId {string: expString};
+	} then {
+		retract(inputSai);
+		//validate... can be any valid expression?
+		var parsed = chemParse(varValue);
+		if (parsed) {
+			//update wm representation of expression
+			var setVar = chemSetVariable(expString, varName, varValue);
+			var newString = chemStringify(setVar, true);
+			var res = expressionAdded(newString, prob, {"label": expression.label}),
+				newExp = res.exp;
+			
+			var newInputId = "formula_entry_wrapper_for_"+newExp.id+"_formula_entry_ctat";
+			retract(selectSai);
+			modify(newExp, "inputID", newInputId);
+			console.log("variable entered, new exp is ",newExp);
+			window.workspace.variableEntered(newExp.roundedString, newExp.id, newExp.label);
+
+			modify(prob, "stateModified", true);
+			modify(prob, "input", [newExp]);
+			modify(prob, "inputType", "expression");
+		} else {
+			console.log("couldn't parse: "+varValue);
+			backtrack();
+		}
+	}
+}
+
+rule AspectEntered {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && (sai.selection.includes("set_unit") || sai.selection.includes("set_context") || sai.selection.includes("set_substance"))
+			{selection: s, input: i};
+		expression: Expression s.includes(expression.id);
+	} then {
+		let split = s.split('_'),
+			aspect = split[split.length-2],
+			value = split[split.length-1],
+			wmValue = value;
+		
+		if (value === prob.data.majorityAlias) {
+			wmValue = "majority";
+		} else if (value === prob.data.initialAlias) {
+			wmValue = "initial";
+		}
+		let unset = (expression[aspect] === wmValue);
+		
+		modify(expression, aspect, unset ? null : wmValue);
+		modify(expression, "aspectResolved", aspect);
+		
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [expression]);
+		modify(prob, "inputType", "expression");
+		retract(sai);
+		window.workspace.aspectEntered(expression.id, aspect, unset ? null : value);
+	}
+}
+
+rule SolveQuadraticBtnPressed {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("_quadratic") {selection: s};
+		expId: String from s.replace("_option_menu_option_solve_quadratic", '');
+		expression: Expression expression.id === expId {string: expString};
+	} then {
+		var coeffs = chemGetQuadraticCoefficients(expString),
+			roots = null,
+			rootExps = [];
+		if (coeffs) {
+			roots = chemSolveQuadratic(...coeffs);
+			var roundedRoots = []; 
+			roots.forEach((root)=> {
+				let rootExp = expressionAdded(root, prob, {"forceSimplify": true, "variable": "x"}).exp;
+				rootExps.push(rootExp);
+				roundedRoots.push(rootExp.roundedString);
+			});
+			modify(expression, "roots", roots);
+			window.workspace.quadraticSolved(expId, roundedRoots);
+		} else {
+			checkSAI({selection: sai.selection, action: sai.action, input: sai.input}, null, true);
+			setSuccessOrBugMsg("An expression must be in the form ax<sup>2</sup>+bx+c = 0 before you can use the \"Solve Quadratic\" option");
+			backtrack();
+		}		
+		
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(prob, "input", rootExps);
+		modify(prob, "inputType", "expression");
+	}
+}
+
+/* an ICE table has been added to the workspace */
+rule TableAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("reaction_menu_item") {selection: s, action: a, input: i};
+	} then {
+		console.log("tableAdded: "+i);
+		retract(sai);
+		if (prob.data.reactions[i].bugMessage) {
+			[].concat(prob.data.reactions[i].bugMessage).forEach((msg)=>assert(new BugMessage(msg)));
+		} else {
+			var table = tableAdded(i, prob, 1);
+			window.workspace.tableAdded({
+				id: table.id,
+				reaction: table.reaction,
+				isEquilibrium: table.equilibrium,
+				inactiveReagents: table.inactiveReagents,
+				rows: table.rows
+			});
+			modify(prob, "input", [table]);
+			modify(prob, "inputType", "table");
+		}
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI, null, !!prob.data.reactions[i].bugMessage); //count as matched step
+		modify(prob, "stateModified", true);
+	}
+}
+
+/* a row has been added to an ICE table */
+rule TableRowAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("add_row_btn") {selection: s};
+		tableId: String from s.replace("_add_row_btn", '');
+		table: Table table.id === tableId {id: tableId, rows: tableRows, numRows: nTableRows};
+	} then {
+		var parentRowId = tableId+'_row_'+(nTableRows-1),
+			parentRow = tableRows[parentRowId];
+		
+		var newRowObj = shallowCopyObj(tableRows);
+		var rowId = tableId+'_row_'+nTableRows;
+		newRowObj[rowId] = {id: rowId, cells: {}, unit: parentRow.unit};
+		modify(table, "rows", newRowObj);
+		modify(table, "numRows", nTableRows+1);
+		retract(sai);
+		
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [table]);
+		modify(prob, "inputType", "table");
+		
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+		
+		window.workspace.tableRowAdded(tableId, null, parentRow.unit);
+	}
+}
+
+/* the 'context' field of an ICE table row has changed */
+rule TableRowContextChanged {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("context_entry") {selection: s, input: i};
+		rowId: String from s.replace("_context_entry", '');
+		table: Table table.rows[rowId] {rows: tableRows};
+	} then {
+		var newRowObj = shallowCopyObj(tableRows);
+		var row = newRowObj[rowId];
+		var cells = row.cells;
+		var cellExps = [];
+		var wmContext = i;
+		if (i === prob.data.majorityAlias) {
+			wmContext = "majority";
+		} else if (i === prob.data.initialAlias) {
+			wmContext = "initial";
+		}
+		row.context = wmContext;
+		for (var cellId in cells) {
+			modify(cells[cellId], 'context', wmContext);
+			cellExps.push(cells[cellId]);
+		}
+		modify(table, "rows", newRowObj);
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(prob, "input", cellExps); //each cell stores an expression
+		modify(prob, "inputType", "expression"); //each cell stores an expression
+	
+		if (row.unit && row.unit !== '---' && row.context && row.context !== '---') {
+			workspace.unlockTableRowCells(table.id, rowId);
+		}
+	
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+/* the 'unit' field of an ICE table row has changed */
+rule TableRowUnitChanged {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("unit_entry") {selection: s, input: i};
+		rowId: String from s.replace("_unit_entry", '');
+		table: Table table.rows[rowId] {id: tableId, rows: tableRows, numRows: nRows};
+	} then {
+		var newRowObj = shallowCopyObj(tableRows);
+		var row = newRowObj[rowId];
+		var cells = row.cells;
+		var cellExps = [];
+		row.unit = i;
+		for (var cellId in cells) {
+			modify(cells[cellId], 'unit', i);
+			cellExps.push(cells[cellId]);
+		}
+		modify(table, "rows", newRowObj);
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(prob, "input", cellExps); //each cell stores an expression
+		modify(prob, "inputType", "expression"); //each cell stores an expression
+	
+		var rowN = parseInt(rowId.replace(tableId+'_row_', ''), 10);
+		for (let n = rowN+1; n < nRows; n++) {
+			var nextRowId = tableId+"_row_"+n,
+				nextRow = tableRows[nextRowId];
+			if (!nextRow.unit) {
+				nextRow.unit = i;
+				assert(new TPA(nextRowId+'_unit_entry', "UpdateComboBox", i));
+				if (nextRow.unit && row.unit !== '---' && nextRow.context && nextRow.context !== '---') {
+					workspace.unlockTableRowCells(table.id, nextRow.id);
+				}
+			}
+		}
+		
+		if (row.unit && row.unit !== '---' && row.context && row.context !== '---') {
+			workspace.unlockTableRowCells(table.id, rowId);
+		}
+		
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+/* a value has been entered in an ICE table cell */
+rule TableCellEntered {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("_cell_") && sai.action === "UpdateTextField" {selection: s, input: i};
+		rowId: String from s.split('_cell_')[0];
+		table: Table table.rows[rowId] {rows: tableRows, substances: tSubstances};
+	} then {
+		//table parts
+		var rowObj = tableRows[rowId],
+			rowCells = rowObj.cells,
+			cellId = s.replace("_ctat", ''),
+			colN = +cellId.split("_cell_")[1];
+		
+		//cell expr
+		var res = expressionAdded(i, prob, {"id": cellId+'_exp'}),
+			exp = res.exp,
+			simp = res.wasSimplified;
+		
+		//add unit, context, substance, reaction
+		modify(exp, "unit", rowObj.unit);
+		modify(exp, "context", rowObj.context);
+		modify(exp, "substance", tSubstances[colN]);
+		modify(exp, "reaction", table.reaction);
+		
+		//retract old cell expr
+		var oldCellExp = rowCells[cellId];
+		if (oldCellExp) {
+			retract(oldCellExp);
+		}
+		//add new to table structure
+		rowCells[cellId] = exp;
+		
+		//tell interface
+		window.workspace.tableCellEntered(s, exp.roundedString);
+		
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [rowCells[cellId]]); //each cell stores an expression
+		modify(prob, "inputType", "expression"); //each cell stores an expression
+	}
+}
+
+rule TableCellScrimClicked {
+	salience: 50;
+	when {
+		prob: Problem !prob.searching;
+		sai: StudentValues sai.input && sai.selection.includes("lock_scrim");
+	} then {
+		assert(new BugMessage("Please select a unit and context for the row before entering values in the cells"));
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI, null, true);
+		backtrack();
+	}
+}
+
+/* a "limiting reagent" type claim has been added to the workspace */
+rule LimitingReagentClaimAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection==="claim_menu_item_limiting_reagent";
+		r: Reaction r.id === prob.data.phase1Reaction;
+		not( claim: LimitingReagentClaim );
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(prob, "lrClaimMade", true);
+		var claimId = "limiting_reagent_claim";
+		assert(new LimitingReagentClaim(claimId));
+		window.workspace.claimAdded("limitingReagent", claimId, r.reagents.slice(), prob.studentValues.slice());
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+/* trying to add "limiting reagent" claim when one has already been added */
+rule LimitingReagentClaimAddedAlreadyExists {
+	when {
+		prob: Problem;
+		not( h: IsHintMatch );
+		exists( claim: LimitingReagentClaim );
+		sai: StudentValues sai.input && sai.selection==="claim_menu_item_limiting_reagent";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		checkSAI(WILDCARD_SAI, null, true);
+		setSuccessOrBugMsg("You've already added a claim about the limiting reagent to the workspace.  You can only make one such claim.");
+	}
+}
+
+rule LimitingReagentClaimValueEntered {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem {roundedValsMap: roundedMap};
+		sai: StudentValues sai.input && sai.selection.includes("limiting_reagent_claim_value_input") {selection: s, input: i};
+		claim: LimitingReagentClaim;
+	} then {
+		retract(sai);
+		var valN = s.replace("limiting_reagent_claim_value_input_", '').replace("_ctat", '');
+		var res = expressionAdded(i, prob, {"id": "limiting_reagent_claim_value"+valN}),
+		exp = res.exp;
+		
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [exp]);
+		modify(prob, "inputType", "expression");
+
+		var gupId = s.replace('_ctat', '');
+		var valueProperty = gupId.replace("limiting_reagent_claim_value_input_", "value");
+		var oldExp = claim[valueProperty];
+		
+		modify(claim, valueProperty, exp);
+		modify(claim, "fieldsFilled", false);
+		if (oldExp) {
+			retract(oldExp);
+		}
+		//workspace call here
+		window.workspace.claimValueEntered(claim.id, gupId, exp.roundedString);
+	}
+}
+
+rule LimitingReagentClaimComparatorSelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem {roundedValsMap: roundedMap};
+		sai: StudentValues sai.input && sai.selection.includes("limiting_reagent_claim_comparison_menu") {selection: s, input: i};
+		claim: LimitingReagentClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "comparator", i);
+		modify(claim, "fieldsFilled", false);
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule LimitingReagentClaimSubstanceSelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem {roundedValsMap: roundedMap};
+		sai: StudentValues sai.input && sai.selection.includes("limiting_reagent_claim_substance_menu") {selection: s, input: i};
+		claim: LimitingReagentClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "substance", i);
+		modify(claim, "fieldsFilled", false);
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+/*
+	got an sai from a limiting reagent claim submission - make sure all fields are filled in
+*/
+rule LimitingReagentClaimSubmitted {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection === "limiting_reagent_claim_submit_btn";
+		claim: LimitingReagentClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		if (claim.substance && claim.substance !== '---' &&
+			claim.value1 &&
+			claim.value2 &&
+			claim.comparator && claim.comparator !== '---') {
+			modify(claim, "fieldsFilled", true);
+			modify(prob, "input", [claim]); 
+			modify(prob, "inputType", "lrClaim"); 
+		} else {
+			setSuccessOrBugMsg("One or more fields are missing from your claim");
+		}
+	}
+}
+
+rule XAssumptionClaimAdded {
+	when {
+		not( h: IsHintMatch );
+		not( claim: XAssumptionClaim );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection==="claim_menu_item_validate_x_assumption";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		var claimId = "validate_x_assumption_claim";
+		var claim = window.workspace.claimAdded("validateXAssumption", claimId);
+		assert(new XAssumptionClaim(claimId));
+		
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+/* trying to add "limiting reagent" claim when one has already been added */
+rule XAssumptionClaimAddedAlreadyExists {
+	when {
+		prob: Problem;
+		not( h: IsHintMatch );
+		exists( claim: XAssumptionClaim );
+		sai: StudentValues sai.input && sai.selection==="claim_menu_item_validate_x_assumption";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		checkSAI(WILDCARD_SAI, null, true);
+		setSuccessOrBugMsg("You've already added a claim about the x assumption to the workspace.  You can only make one such claim.");
+	}
+}
+
+rule XAssumptionClaimValiditySelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem ;
+		sai: StudentValues sai.input && sai.selection.includes("validate_x_assumption_claim_validity_menu") {selection: s, input: i};
+		claim: XAssumptionClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "validity", i);
+		modify(claim, "fieldsFilled", false);
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule XAssumptionClaimComparatorSelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem ;
+		sai: StudentValues sai.input && sai.selection.includes("validate_x_assumption_claim_comparison_menu") {selection: s, input: i};
+		claim: XAssumptionClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "comparator", i);
+		modify(claim, "fieldsFilled", false);
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule XAssumptionClaimValueEntered {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem ;
+		sai: StudentValues sai.input && sai.selection.includes("validate_x_assumption_claim_value_input") {selection: s, input: i};
+		claim: XAssumptionClaim;
+	} then {
+		retract(sai);
+		var res = expressionAdded(i, prob, {"id": claim.id+"_value"}),
+		exp = res.exp;
+		
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [exp]);
+		modify(prob, "inputType", "expression");
+
+		var gupId = s.replace('_ctat', '');
+		var oldExp = claim['value'];
+		
+		modify(claim, 'value', exp);
+		modify(claim, "fieldsFilled", false);
+		if (oldExp) {
+			retract(oldExp);
+		}
+		//workspace call here
+		window.workspace.claimValueEntered(claim.id, gupId, exp.roundedString);
+	}
+}
+
+rule xAssumptionClaimPercentSelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection === "validate_x_assumption_claim_percent_menu" {selection: s, input: i};
+		claim: XAssumptionClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "percent", i);
+		modify(claim, "fieldsFilled", false);
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule XAssumptionClaimSubmitted {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection === "validate_x_assumption_claim_submit_btn";
+		claim: XAssumptionClaim;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		if (claim.validity && claim.validity !== '---' &&
+			claim.value &&
+			claim.comparator && claim.comparator !== '---' &&
+			claim.percent && claim.percent !== '---') {
+			modify(claim, "fieldsFilled", true);
+			modify(prob, "input", [claim]); 
+			modify(prob, "inputType", "xAssumptionClaim"); 
+		} else {
+			setSuccessOrBugMsg("One or more fields are missing from your claim");
+		}
+	}
+}
+
+rule FinalQuantityClaimAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem prob.readyForFinalQty {finalQuantities: fqList, studentValues: sVals};
+		sai: StudentValues sai.input && sai.selection === "claim_menu_item_final_quantity";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		var claimId = "final_quantity_claim_"+(prob.numFqClaims++);
+		fqList = fqList.filter((q)=>q.substance && q.unit);
+		var claim = window.workspace.claimAdded("finalQuantity", claimId, fqList, sVals.slice());
+		var unit = claim.units.length === 1 ? claim.units[0] : null;
+		assert(new FinalQuantityClaim(claimId, unit));
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule FinalQuantityClaimAddedNotReady {
+	when {
+		not (h: IsHintMatch);
+		prob: Problem !prob.readyForFinalQty;
+		sai: StudentValues sai.input && sai.selection === "claim_menu_item_final_quantity";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		checkSAI(WILDCARD_SAI, null, true);
+		setSuccessOrBugMsg(prob.notReadyForFinalQtyMsg);
+	}
+}
+
+rule FinalQuantityClaimSubstanceSelected {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("final_quantity_claim") && sai.selection.includes("substance_menu");
+		claimId: String from sai.selection.replace("_substance_menu", '');
+		claim: FinalQuantityClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "substance", sai.input);
+		modify(claim, "fieldsFilled", false);
+		if (claim.value && (claim.value.substance !== sai.input)) {
+			modify(claim.value, "substance", sai.input);
+		}
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule finalQuantityClaimUnitSelected {
+	when {
+		not (h: IsHintMatch);
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("final_quantity_claim") && sai.selection.includes("unit_menu");
+		claimId: String from sai.selection.replace("_unit_menu", '');
+		claim: FinalQuantityClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		modify(claim, "unit", sai.input);
+		modify(claim, "fieldsFilled", false);
+		if (claim.value && (claim.value.unit !== sai.input)) {
+			modify(claim.value, "unit", sai.input);
+		}
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+	}
+}
+
+rule FinalQuantityClaimValueEntered {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem {roundedValsMap: roundedMap};
+		sai: StudentValues sai.input && sai.selection.includes("final_quantity_claim") && sai.selection.includes("value_input") {selection: s, input: i};
+		claimId: String from s.replace("_value_input_ctat", '');
+		claim: FinalQuantityClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		var expConfig = {
+			"id": claimId+"_value",
+			"sigFigs": NUM_FINAL_ANS_SIG_FIGS,
+			"unit": claim.unit,
+			"substance": claim.substance
+		};
+		var res = expressionAdded(i, prob, expConfig),
+		exp = res.exp;
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [exp]);
+		modify(prob, "inputType", "expression");
+		var oldExp = claim.value;
+		modify(claim, "value", exp);
+		modify(claim, "fieldsFilled", false);
+		if (oldExp) {
+			retract(oldExp);
+		}
+		
+		var gupId = s.replace('_ctat', '');
+		//workspace call here
+		window.workspace.claimValueEntered(claimId, gupId, exp.roundedString);
+	}
+}
+
+/*
+	got an sai from a final quantity claim submission - make sure all fields are filled in
+*/
+rule FinalQuantityClaimSubmitted {
+	when {
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("final_quantity_claim") && sai.selection.includes("submit_btn") {selection: s};
+		claimId: String from s.replace("_submit_btn", '');
+		claim: FinalQuantityClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		if (claim.substance && claim.substance !== '---' &&
+			claim.value) {
+			modify(claim, "fieldsFilled", true);
+			modify(prob, "input", [claim]); 
+			modify(prob, "inputType", "fqClaim");
+			modify(claim, "attempts", claim.attempts+1);
+		} else {
+			setSuccessOrBugMsg("One or more fields are missing from your claim");
+		}
+	}
+}
+
+rule CustomClaimAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("claim_menu_item_custom_claim");
+	} then {
+		retract(sai);
+		var customClaimType = sai.selection.split("_").pop();
+		var claimData = prob.data.claimTypes.find((ct)=>ct.id === customClaimType);
+		var existingClaims = getFacts("CustomClaim").filter((cc)=>cc.type === customClaimType);
+		modify(prob, "stateModified", true);
+		if (existingClaims.length && claimData.onlyOne) {
+			checkSAI(WILDCARD_SAI, null, true);
+			setSuccessOrBugMsg("You've already created a claim of that type.  You can only make one such claim.");
+		} else if (claimData.needReadyForFinalQty && !prob.readyForFinalQty) {
+			checkSAI(WILDCARD_SAI, null, true);
+			setSuccessOrBugMsg(claimData.notReadyMsg);
+		} else {
+			var claimId = sai.selection.replace("claim_menu_item_",'')+existingClaims.length;
+			assert(new CustomClaim(claimId, customClaimType, claimData.onlyOne, claimData.matchQty));
+			window.workspace.claimAdded("custom", claimId, claimData.claimText, claimData.onlyOne);
+			var tutorSAI = shallowCopyObj(sai);
+			checkSAI(tutorSAI); //count as correct step
+		}
+	}
+}
+
+rule CustomClaimValueEntered {
+	when {
+		not(h: IsHintMatch);
+		prob: Problem {roundedValsMap: roundedMap};
+		sai: StudentValues sai.input && sai.selection.includes("custom_claim") && sai.selection.includes("value_input") {selection: s, input: i};
+		claimId: String from s.replace("_value_input_ctat", '');
+		claim: CustomClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		var res = expressionAdded(i, prob, {"id": claimId+'_value', "sigFigs": NUM_FINAL_ANS_SIG_FIGS}),
+		exp = res.exp;
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [exp]);
+		modify(prob, "inputType", "expression");
+		var oldExp = claim.value;
+		modify(claim, "value", exp);
+		modify(claim, "fieldsFilled", false);
+		if (oldExp) {
+			retract(oldExp);
+		}
+		var tutorSAI = shallowCopyObj(sai);
+		checkSAI(tutorSAI); //count as correct step
+		var gupId = s.replace('_ctat', '');
+		//workspace call here
+		window.workspace.claimValueEntered(claimId, gupId, exp.roundedString);
+	}
+}
+
+rule CustomClaimSubmitted {
+	when {
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection.includes("custom_claim") && sai.selection.includes("submit_btn") {selection: s};
+		claimId: String from s.replace("_submit_btn", '');
+		claim: CustomClaim claim.id === claimId;
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+		if (claim.value) {
+			modify(claim, "fieldsFilled", true);
+			modify(prob, "input", [claim]); 
+			modify(prob, "inputType", "customClaim"); 
+		} else {
+			setSuccessOrBugMsg("One or more fields are missing from your claim");
+		}
+	}
+}
+
+rule TargetQtyBtnClicked {
+	when {
+		prob: Problem !prob.hintSearching;
+		sai: StudentValues sai.tutored && sai.selection.includes("qty_btn_");
+		qty: KnownQuantity qty.id === sai.selection.replace("qty_btn_", '');
+	} then {
+		
+		//TODO move sai evaluation into checkSAI call
+		if (checkSAI({selection: sai.selection, action: sai.action, input: sai.input})) {
+			retract(sai);
+			modify(prob, "hintTargetQty", qty);
+			workspace.hideQtySelector();
+			setSuccessOrBugMsg("qty_btn_pressed");
+			halt();
+		} else {
+			backtrack();
+		}
+	}
+}
+
+rule DoneBtnClicked {
+	when {
+		prob: Problem;
+		sai: StudentValues sai.input && sai.selection === "done";
+	} then {
+		retract(sai);
+		modify(prob, "stateModified", true);
+	}
+}
+
+/* A formula has been added from the domain browser menu */
+/*
+rule FormulaAdded {
+	when {
+		not( h: IsHintMatch );
+		prob: Problem !prob.input.length;
+		sai: StudentValues sai.input && sai.selection.includes("domain_browser_formula") {selection: s, action: a, input: i};
+	} then {
+		var res = expressionAdded(i, prob),
+			exp = res.exp,
+			simp = res.wasSimplified;
+		
+		window.workspace.formulaAdded(exp.id, exp.string, simp); 
+		retract(sai);
+		
+		modify(prob, "stateModified", true);
+		modify(prob, "input", [exp]);
+		modify(prob, "inputType", "expression");
+	}
+}
+*/

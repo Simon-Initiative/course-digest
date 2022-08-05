@@ -1,0 +1,7 @@
+{
+	"name": "ctat-chem",
+	"version": "1.0.0",
+	"dependencies":{
+		"guppy-js": "2.0.0-beta.3" 
+	}
+}

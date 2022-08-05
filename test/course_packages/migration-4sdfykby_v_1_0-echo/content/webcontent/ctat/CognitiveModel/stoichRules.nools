@@ -1,0 +1,1374 @@
+/**
+	Overall control flow:
+	
+	1: register changes to interface (components added/values changed) ("...Added/Entered/Changed" family of rules)
+	2: solve for any quantities possible. ("SolveFor..." family of rules)  
+		-If this generates needed final-answer quantites, create expressions for them (rule "GotFinalQuantity")
+	3: Begin search for student/tutor expression matches, generating all possible transformations of predicted tutor expressions
+		-Rules under "Expression Transformations", and "CheckExpressionMatch" (check, if wrong backtrack, transform, check, and so on)
+		-Bulk of conflict tree is here
+		-On successful match:
+			-is it with a needed final answer value?
+				4: retract associated FinalQuantityGoal, halt
+			-else
+				halt
+	5: No match was found, save interface state (rule "SaveInterfaceState")	
+**/
+
+
+import("baseRules.nools");
+
+global ExpressionOptions = ['replace variable', 'set unit', 'set substance', 'set context'];
+
+
+rule HintIdentifyReaction {
+	salience: 10;
+	when {
+		prob: Problem prob.hintSearching && prob.phase1ReactionHidden && prob.phase === "determineLimitingReagent";
+		r: Reaction r.id === prob.data.phase1Reaction;
+	} then {
+		var reactionStr = r.reagents.map((reagent)=>formatChemStr(reagent.substance, 'html')).join(" + ")+" &#8594 "+r.products.map((product)=>formatChemStr(product.substance, 'html')).join(" + ");
+		assert(new Hint("What neutralization reaction is occuring in this mixture?"));
+		assert(new Hint("The neutralization reaction in this mixture is "+reactionStr+". What is present in the solution after this neutralization reaction occurs?"));
+		assert(new Hint("What is the limiting reagent for the neutralization reaction "+reactionStr+"?"));
+		
+		//todo: add stepID
+		
+		prob.phase1ReactionHidden = false;
+		modify(prob, "hack", "hack"); //hack
+	
+		backtrack();
+	}
+}
+
+rule HintConvertToM {
+	salience: 10;
+	when {
+		prob: Problem prob.hintSearching && beforeOrAtPhase(prob, "convertKnowns") && prob.data.phase2Reaction;
+		mQty: KnownQuantity mQty.context === "initial" && !mQty.matchedTo.length && mQty.unit === "M" {substance: s};
+		molQty: KnownQuantity molQty.context === "initial" && molQty.substance === s && molQty.unit === "mol";
+		sol: Solution sol.substances.includes(s);
+		reaction: ReactionInstance molQty in reaction.reagents;
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+	} then {
+		let sub = formatChemStr(s);
+		assert(new Hint("You have units of "+sub+" in mols.  What units does the equilibrium expression call for?"));
+		assert(new Hint("To set up the equilibrium expression you will need quantities expressed in M, so convert the initial quantity of "+sub+" from mols to M."));
+		assert(new Hint("Convert from mols to M by dividing the amount of mols by the volume of the solution in L."));
+		
+		assert(new CustomField("step_id", getStepIDFromQty(mQty)));
+		
+		backtrack();
+	}
+}
+
+//hint requested, student hasn't yet converted all given values to mols
+rule HintConvertToMols {
+	when {
+		prob: Problem prob.hintSearching && beforeOrAtPhase(prob, "convertKnowns");
+		molQty: KnownQuantity molQty.context === "initial" && !molQty.matchedTo.length && molQty.unit === "mol" {substance: s};
+		gQty: KnownQuantity gQty.context === "initial" && gQty.substance === s && gQty.unit === "g" {value: gAmt};
+		reaction: ReactionInstance molQty in reaction.reagents;
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+	} then {
+		s = formatChemStr(s);
+		assert(new Hint("To determine the results of the reaction, first convert the given quantity of "+gQty.getDisplayVal()+" g "+s+" into mols."));
+		assert(new Hint("You can use the molar mass of a substance to convert from grams to mols."));
+		assert(new Hint("Convert the mass of "+s+" from grams to mols by dividing its quantity in grams by its molar mass."));
+		
+		assert(new CustomField("step_id", getStepIDFromQty(molQty)));
+		
+		backtrack();
+	}
+}
+
+rule DoneConvertingToM {
+	salience: 20;
+	when {
+		prob: Problem prob.phase === "convertKnowns" && prob.data.phase2Reaction;
+		reaction: ReactionInstance;
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase2Reaction;
+		exists( qty: KnownQuantity qty.unit === "M" && qty.context === "majority" && qty in reaction.reagents );
+		not( qty: KnownQuantity qty.context === "majority" && qty.unit === "M" && !qty.matchedTo.length && qty in reaction.reagents );
+	} then {
+		if (reaction.reagents.length > 1) {
+			modify(prob, "phase", "determineLimitingReagent");
+		} else {
+			modify(prob, "phase", prob.data.phases[prob.data.phases.indexOf("determineLimitingReagent")+1]);
+		}
+	}
+}
+
+//student has converted all given values to mols, goto next phase of problem
+rule DoneConvertingToMols {
+	salience: 20;
+	when {
+		prob: Problem prob.phase === "convertKnowns" && !prob.data.phase2Reaction;
+		reaction: ReactionInstance;
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+		exists( qty: KnownQuantity qty.unit === "mol" && qty.context === "initial" );
+		not( qty: KnownQuantity qty.context === "initial" && qty.unit === "mol" && !qty.matchedTo.length && qty in reaction.reagents );
+	} then {
+		if (reaction.reagents.length > 1) {
+			modify(prob, "phase", "determineLimitingReagent");
+		} else {
+			modify(prob, "phase", prob.data.phases[prob.data.phases.indexOf("determineLimitingReagent")+1]);
+		}
+	}
+}
+
+//create an instance of a given reaction (apply reaction data to known quantities of reactants)
+
+function substanceIsReagent(substance, reagents) {
+	return !!reagents.find((r)=>r.substance === substance);
+}
+
+rule CreateReactionInstanceWithReagents {
+	salience: 19;
+	when {
+		reaction: Reaction !reaction.equilibrium {reagents: rList, products: pList};
+		exists( reagent: KnownQuantity reagent.context === "initial" && reagent.unit === "mol" && substanceIsReagent(reagent.substance, rList) ); //FIXME: reagent.substance is rList[n].substance
+		not( ri: ReactionInstance ri.instanceOf === reaction );
+	} then {
+		var reagents = getFacts("KnownQuantity").filter((kq)=>{
+			return substanceIsReagent(kq.substance, rList) && kq.context === "initial" && kq.unit === "mol"; 
+		});
+		assert(new ReactionInstance(reaction, reagents, pList.map(function(p){return p.substance}), null));
+	}
+}
+
+rule CreateReactionInstanceNoReagents {
+	salience: 19;
+	when {
+		reaction: Reaction !reaction.equilibrium {reagents: rList, products: pList};
+	not( reagent: KnownQuantity reagent.context === "initial" && reagent.unit === "mol" && substanceIsReagent(reagent.substance, rList) );  //FIXME: reagent.substance is rList[n].substance
+		not( ri: ReactionInstance ri.instanceOf === reaction );
+	} then {
+		assert(new ReactionInstance(reaction, [], pList.map(function(p){return p.substance}), null));
+	}
+}
+
+rule assumeLimitingReagent {
+	salience: 20;
+	when {
+		prob: Problem;
+		reaction: ReactionInstance !reaction.limitingReagent {reagents: rList, instanceOf: rTemplate};
+		reactionTemp: Reaction reactionTemp === rTemplate && reactionTemp.id === prob.data.phase1Reaction;
+		reagent: KnownQuantity reagent in rList;
+		not( h: Hypothesis h.type === "limitingReagent" && h.claims[0] === reaction && h.claims[1] === reagent );
+	} then {
+		assert(new Hypothesis("limitingReagent", [reaction, reagent]));
+	}
+}
+
+rule DetermineCompoundFromElement {
+	salience: 20;
+	when {
+		comp: Composition {compound: cmpnd, elements: els};
+		element: KnownQuantity els[element.substance] && element.unit === "mol";
+		not( compQty: KnownQuantity compQty.substance === cmpnd && compQty.context === element.context ); 
+	} then {
+		molRatio = els[element.substance];
+		amtCompound = element.value / molRatio;
+		var cmpnd = assert(new KnownQuantity({
+			value: amtCompound,
+			unit: "mol",
+			context: element.context,
+			reaction: element.reaction,
+			substance: cmpnd,
+			type: "amount",
+			fromHypothesis: element.fromHypothesis,
+			fromRule: "DetermineCompoundFromElement",
+			fromFacts: [element],
+			hint: "Use the amount of "+element.substance+" to determine the amount of "+cmpnd,
+			solution: element.solution
+		}));
+		modify(element, "toFacts", element.toFacts.slice().concat(cmpnd));
+	}
+}
+
+rule DetermineElementsFromCompound {
+	salience: 20;
+	when {
+		comp: Composition {compound: cmpnd, elements: els};
+		compQty: KnownQuantity compQty.substance === cmpnd && compQty.unit === "mol";
+		not( element: KnownQuantity els[element.substance] && element.unit === "mol" && element.context === compQty.context );
+	} then {
+		for (let elName in els) {
+			amtElement = compQty.value * els[elName];
+			var elQty = assert(new KnownQuantity({
+				value: amtElement,
+				unit: "mol",
+				context: compQty.context,
+				reaction: compQty.reaction,
+				substance: elName,
+				type: "amount",
+				fromHypothesis: compQty.fromHypothesis,
+				fromRule: "DetermineElementsFromCompound",
+				fromFacts: [compQty],
+				hint: ["You can determine the amount of "+elName+" based on the amount of "+cmpnd+".",
+						"The chemical name of "+cmpnd+" tells you how many mols of "+elName+" there are per mol of "+cmpnd+".",
+						"There are "+els[elName]+" mols of "+elName+" for every mol of "+cmpnd+".  That means you can take the number of mols of "+cmpnd+" and multiply it by "+els[elName]+" to get the number of mols of "+elName+".",
+						"Enter the formula: "+compQty.value+" * "+els[elName]],
+				solution: compQty.solution
+			}));
+			
+			modify(compQty, "toFacts", compQty.toFacts.slice().concat(elQty));
+		}
+	}
+}
+
+rule DetermineQuantitiesChangedFromInitial {
+	salience: 20;
+	when {
+		prob: Problem;
+		reaction: ReactionInstance {reagents: rList, instanceOf: template};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+		assumption: Hypothesis !assumption.tested && assumption.type === "limitingReagent" && assumption.claims[0] === reaction;
+		limiter: KnownQuantity limiter === assumption.claims[1];
+	} then {
+		var ptsLimiter = reaction.partsOf[limiter.substance];
+		var checking;
+		var	amtLimiting = +limiter.value;
+		var amt;
+		var finalAmt;
+		var isTrue = true;
+		for (var i = 0; i < rList.length; i++) {
+			checking = rList[i];
+			amt = 0 - ((reaction.partsOf[checking.substance] * amtLimiting) / ptsLimiter);
+			let changed = assert(new KnownQuantity({
+				substance: checking.substance,
+				type: "amount",
+				value: amt,
+				unit: "mol",
+				context: "changed",
+				reaction: limiter.reaction,
+				fromHypothesis: assumption,
+				fromRule: "DetermineQuantitiesChangedFromInitial",
+				fromFacts: [limiter],
+				hint: "Use the initial amount of the limiting reagent to determine the amount of "+checking.substance+" that will be consumed.",
+				solution: limiter.solution,
+				state: checking.state
+			}));
+			modify(limiter, "toFacts", limiter.toFacts.slice().concat(changed));
+			finalAmt = (+checking.value) + amt;
+			if (finalAmt < 0) {
+				isTrue = false;
+			}
+		}
+		for (var i = 0; i < template.products.length; i++) {
+			checking = template.products[i];
+			amt = (checking.moles * amtLimiting) / ptsLimiter;
+			let changed = assert(new KnownQuantity({
+				substance: checking.substance,
+				type: "amount",
+				value: amt,
+				unit: "mol",
+				context: "changed",
+				reaction: limiter.reaction,
+				fromHypothesis: assumption,
+				fromRule: "DetermineQuantitiesChangedFromInitial",
+				fromFacts: [limiter],
+				hint: "Use the initial amount of the limiting reagent to determine the amount of "+checking.substance+" that will be produced.",
+				solution: limiter.solution,
+				state: checking.state
+			}));
+			modify(limiter, "toFacts", limiter.toFacts.slice().concat(changed));
+		}
+		modify(assumption, 'tested', true);
+		modify(assumption, 'isTrue', isTrue);
+	}
+}
+
+rule DetermineOneToOneChangedFromInitial {
+	salience: 20;
+	when {
+		prob: Problem;
+		reaction: ReactionInstance reaction.reagents.length > 1 {reagents: rList, instanceOf: template};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+		assumption: Hypothesis assumption.tested && assumption.isTrue && assumption.type === "limitingReagent" && assumption.claims[0] === reaction;
+		limiter: KnownQuantity limiter === assumption.claims[1];
+		not( oneToOne: KnownQuantity oneToOne.fromRule === "DetermineOneToOneChangedFromInitial" && oneToOne.reaction === limiter.reaction );
+	} then {
+		var checking;
+		var	amtLimiting = +limiter.value;
+		var ptsLimiter = reaction.partsOf[limiter.substance];
+		
+		for (var i = 0; i < rList.length; i++) {
+			checking = rList[i];
+			if (reaction.partsOf[checking.substance] !== ptsLimiter) {
+				let changed = assert(new KnownQuantity({
+					substance: checking.substance,
+					type: "amount",
+					value: 0-amtLimiting,
+					unit: "mol",
+					context: "changed",
+					reaction: limiter.reaction,
+					fromHypothesis: assumption,
+					fromRule: "DetermineOneToOneChangedFromInitial",
+					fromFacts: [limiter],
+					solution: limiter.solution,
+					state: checking.state,
+					isBug: true,
+					bugMsg: "Don't forget that the stoichiometry of the reaction is not one-to-one."
+				}));
+				modify(limiter, "toFacts", limiter.toFacts.slice().concat(changed));
+			}
+		}
+		
+		for (var i = 0; i < template.products.length; i++) {
+			checking = template.products[i];
+			if (checking.moles !== ptsLimiter) {
+				let changed = assert(new KnownQuantity({
+					substance: checking.substance,
+					type: "amount",
+					value: amtLimiting,
+					unit: "mol",
+					context: "changed",
+					reaction: limiter.reaction,
+					fromHypothesis: assumption,
+					fromRule: "DetermineOneToOneChangedFromInitial",
+					fromFacts: [limiter],
+					solution: limiter.solution,
+					state: checking.state,
+					isBug: true,
+					bugMsg: "Don't forget that the stoichiometry of the reaction is not one-to-one."
+				}));
+				modify(limiter, "toFacts", limiter.toFacts.slice().concat(changed));
+			}
+		}
+	}
+}
+
+rule DetermineQuantitiesChangedFromFinal {
+	salience: 20;
+	when {
+		prob: Problem;
+		theTruth: Hypothesis theTruth.type === "default";
+		reaction: ReactionInstance {reagents: rList, instanceOf: template, reagentNames: rNames, productNames: pNames};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+		finalQty: KnownQuantity finalQty.unit === "mol" && finalQty.context === "final" && finalQty.substance in pNames;
+		finalQtyHyp: Hypothesis finalQtyHyp === finalQty.fromHypothesis && finalQtyHyp.isTrue;
+		not( changedQty: KnownQuantity changedQty.context === "changed" && changedQty.solution === finalQty.solution && 
+			(changedQty.substance in rNames || changedQty.substance in pNames) );
+	} then {
+		var molsProduct = finalQty.value;
+		for (var i = 0; i < rNames.length; i++) {
+			checking = rNames[i];
+			amt = 0 - ((reaction.partsOf[checking] * molsProduct) / reaction.partsOf[finalQty.substance]);
+			let changed = assert(new KnownQuantity({
+				substance: checking,
+				type: "amount",
+				value: amt,
+				unit: "mol",
+				context: "changed",
+				reaction: finalQty.reaction,
+				fromHypothesis: theTruth,
+				fromRule: "DetermineQuantitiesChangedFromFinal",
+				fromFacts: [finalQty],
+				hint: "Use the final amount of "+finalQty.substance+" to determine the amount of "+checking+" that was consumed by the reaction.",
+				solution: finalQty.solution,
+				state: reaction.stateOf[checking]
+			}));
+			modify(finalQty, "toFacts", finalQty.toFacts.slice().concat(changed));
+		}
+		for (var i = 0; i < template.products.length; i++) {
+			checking = template.products[i];
+			amt = (checking.moles * molsProduct) / reaction.partsOf[finalQty.substance];
+			let changed = assert(new KnownQuantity({
+				substance: checking.substance,
+				type: "amount",
+				value: amt,
+				unit: "mol",
+				context: "changed",
+				reaction: finalQty.reaction,
+				fromHypothesis: theTruth,
+				fromRule: "DetermineQuantitiesChangedFromFinal",
+				fromFacts: [finalQty],
+				hint: "Use the final amount of "+finalQty.substance+" to determine the amount of "+checking.substance+" that was produced by the reaction.",
+				solution: finalQty.solution,
+				state: checking.state
+			}));
+			modify(finalQty, "toFacts", finalQty.toFacts.slice().concat(changed));
+		}
+	}
+}
+
+rule DetermineFinalQuantityMol {
+	salience: 20;
+	when {
+		iQty: KnownQuantity iQty.context === "initial" && iQty.unit === "mol" {substance: sub, value: iVal, unit: iUnit, type: t, solution: iSolution};
+		cQty: KnownQuantity cQty.context === "changed" && !getIsNaN(cQty.value) && cQty.substance === sub && cQty.unit === iUnit && cQty.solution === iSolution {value: cVal, fromHypothesis: fh};
+		not(fQty: KnownQuantity fQty.context === "final" && isFrom(fQty, cQty, iQty));
+	} then {
+		var fVal = chemSimplify(iVal+'+'+cVal);
+		let newFQty = assert(new KnownQuantity({
+			substance: sub,
+			type: t,
+			value: fVal,
+			unit: iUnit,
+			context: "final",
+			reaction: cQty.reaction,
+			fromHypothesis: fh,
+			isFinalAnswer: false,
+			requiredToMatch: [],
+			fromRule: "DetermineFinalQuantityMol",
+			fromFacts: [iQty, cQty],
+			hint: "Combine the initial and changed amounts of "+sub+" to determine the final amount.",
+			solution: iQty.solution,
+			state: iQty.state,
+			isBug: cQty.isBug,
+			bugMsg: cQty.bugMsg
+		}));
+		modify(iQty, "toFacts", iQty.toFacts.slice().concat(newFQty));
+		modify(cQty, "toFacts", cQty.toFacts.slice().concat(newFQty));
+	}
+}
+
+rule DetermineInitialFromFinal {
+	salience: 20;
+	when {
+		cQty: KnownQuantity cQty.context === "changed" && !getIsNaN(cQty.value) && cQty.unit === "mol" {substance: sub, value: cVal, solution: cSol};
+		fQty: KnownQuantity fQty.context === "final" && fQty.substance === sub && fQty.unit === "mol" && fQty.solution === cSol {value: fVal};
+		not(iQty: KnownQuantity iQty.context === "initial" && iQty.substance === sub && iQty.unit === "mol");
+	} then {
+		var iVal = chemSimplify(fVal+'-'+cVal);
+		let newIQty = assert(new KnownQuantity({
+			substance: sub,
+			type: fQty.type,
+			value: iVal,
+			unit: "mol",
+			context: "initial",
+			reaction: cQty.reaction,
+			fromHypothesis: cQty.fromHypothesis,
+			isFinalAnswer: false,
+			requiredToMatch: [],
+			fromRule: "DetermineInitialFromFinal",
+			fromFacts: [cQty, fQty],
+			hint: "Combine the final and changed amounts of "+sub+" to determine the initial amount.",
+			solution: cSol,
+			state: cQty.state
+		}));
+		modify(cQty, "toFacts", cQty.toFacts.slice().concat(newIQty));
+		modify(fQty, "toFacts", fQty.toFacts.slice().concat(newIQty));
+	}
+}
+
+/* 
+	determine the molReact value for a limitingReagent hypothesis
+	molReact = -(amt_reactant_changed)/(stoich_coeff_of_reactant)
+*/
+rule DetermineMolReact {
+	salience: 20;
+	when {
+		prob: Problem;
+		hyp: Hypothesis hyp.type === "limitingReagent" {claims: hypClaims};
+		ri: ReactionInstance ri === hypClaims[0] {reagents: riReagents, partsOf: stoichCoeffs};
+		template: Reaction template === ri.instanceOf && template.id === prob.data.phase1Reaction;
+		initialAmt: KnownQuantity initialAmt === hypClaims[1];
+		not( mr : KnownQuantity mr.type === "molReact" && mr.fromHypothesis === hyp );
+	} then {
+		var changedAmtVal = +initialAmt.value;
+		var molReactVal = Math.abs((changedAmtVal)/stoichCoeffs[initialAmt.substance]);
+		let mrQty = assert(new KnownQuantity({
+			unit: "mol",
+			context: "changed",
+			type: "molReact",
+			value: molReactVal, 
+			fromHypothesis: hyp,
+			fromRule: "DetermineMolReact",
+			fromFacts: [initialAmt],
+			hint: "Assuming "+initialAmt.substance+" is the limiting reagent, determine what the mol reaction value would be.",
+			solution: initialAmt.solution
+		
+		}));
+		modify(initialAmt, "toFacts", initialAmt.toFacts.slice().concat(mrQty));
+	}
+}
+
+/*
+	determine the pts A/pts B value for two substances A and B in a reaction
+*/
+rule DetermineStoichRatio {
+	salience: 20;
+	when {
+		r: Reaction;
+		subA: Object from r.reagents;
+		subB: Object subB !== subA from r.reagents;
+		theTruth: Hypothesis theTruth.type === "default";
+	} then {
+		var ratio = subA.moles / subB.moles;
+		assert(new KnownQuantity({
+			substance: subA.substance,
+			type: "stoichRatio",
+			value: ratio,
+			context: subB.substance,
+			fromHypothesis: theTruth,
+			fromRule: "DetermineStoichRatio",
+			fromFacts: []
+		}));
+	}
+}
+
+/*
+	determine the mols A/mols B value for two substances A and B in a reaction
+*/
+rule DetermineMolRatio {
+	salience: 20;
+	when {
+		prob: Problem;
+		ri: ReactionInstance {reagents: riReagents};
+		template: Reaction template === ri.instanceOf && template.id === prob.data.phase1Reaction;
+		subA: KnownQuantity subA in riReagents {substance: subASub, solution: subASol};
+		subB: KnownQuantity subB in riReagents && subB !== subA && subB.solution === subASol {substance: subBSub};
+		theTruth: Hypothesis theTruth.type === "default";
+		not (mr : KnownQuantity mr.type === "molRatio" && mr.substance === subASub && mr.context === subBSub);
+	} then {
+		var subAVal = +subA.value,
+			subBVal = +subB.value;
+		var ratio = subAVal / subBVal;
+		let mrQty = assert(new KnownQuantity({
+			substance: subA.substance, 
+			type: "molRatio",
+			value: ratio, 
+			context: subB.substance, 
+			fromHypothesis: theTruth,
+			fromRule: "DetermineMolRatio",
+			fromFacts: [subA, subB],
+			hint: "Determine the number of mols of "+subA+" present per mol of "+subB+".  You can compare this to the stoichiometric ratio of the two to determine the limiting reagent.",
+			solution: subASol
+		}));
+		modify(subA, "toFacts", subA.toFacts.slice().concat(mrQty));
+		modify(subB, "toFacts", subB.toFacts.slice().concat(mrQty));
+	}
+}
+
+rule DeterminePercentYield {
+	when {
+		actual: KnownQuantity actual.context === "actual yield" {substance: sub, unit: unit};
+		theoretical: KnownQuantity theoretical.context === "final" && theoretical.substance === sub && theoretical.unit === unit;
+		not( py: KnownQuantity py.type === "percentYield" && py.substance === sub );
+	} then {
+		let percent = (+actual.value)/(+theoretical.value) * 100;
+		let pYield = assert(new KnownQuantity({
+			substance: sub,
+			type: "percentYield",
+			context: "percent yield",
+			unit: "percent",
+			value: percent,
+			fromHypothesis: theoretical.fromHypothesis,
+			fromRule: "DeterminePercentYield",
+			fromFacts: [actual, theoretical],
+			hint: ["Determine the percent yield by dividing the actual yield amount by the theoretical yield amount.",
+					"The actual yield amount is the amount of "+formatChemStr(sub)+" actually produced.  This value is given in the problem statement.",
+					"The theoretical yield amount is the amount of "+formatChemStr(sub)+" that should theoretically be produced based on the reaction and the given amounts of the reactants.",
+					"Divide "+actual.getDisplayVal()+" by "+theoretical.getDisplayVal()
+			],
+			name: "percent yield of "+sub
+		}));
+		modify(actual, "toFacts", actual.toFacts.slice().concat(pYield));
+		modify(theoretical, "toFacts", theoretical.toFacts.slice().concat(pYield));
+	}
+}
+
+rule DetermineNeededInitialQuantity {
+	salience: 20;
+	when {
+		prob: Problem;
+		reaction: ReactionInstance {reagents: rList, instanceOf: template};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase1Reaction;
+		assumption: Hypothesis assumption.type === "limitingReagent" && assumption.claims[0] === reaction;
+		limiter: KnownQuantity limiter === assumption.claims[1] {solution: limiterSol, value: limitVal, substance: limitSub};
+		other: KnownQuantity other in rList && other !== limiter && other.solution === limiterSol {substance: otherSub};
+		not( required: KnownQuantity required.context === "required" && required.unit === "mol" && required.substance === otherSub );
+	} then {
+		var neededVal = parseFloat(limitVal) * (reaction.partsOf[otherSub]/reaction.partsOf[limitSub]);
+		var qty = assert(new KnownQuantity({
+			value: neededVal,
+			context: "required",
+			reaction: limiter.reaction,
+			substance: otherSub,
+			fromHypothesis: assumption,
+			type: "amount",
+			unit: "mol",
+			fromRule: "DetermineNeededInitialQuantity",
+			fromFacts: [limiter],
+			hint: "Determine the amount of "+otherSub+" that would be consumed if "+limitSub+" were the limiting reagent.  You can compare this to the actual amount present to determine the actual limiting reagent.",
+			solution: limiterSol,
+			state: other.state
+		}));
+		modify(limiter, "toFacts", limiter.toFacts.slice().concat(qty));
+	}
+}
+
+rule HintDetermineLRNoEvidence {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "determineLimitingReagent" && !prob.lr1EvidenceFound.length && !prob.lr2EvidenceFound.length && !prob.lr3EvidenceFound.length && !prob.lr4EvidenceFound.length {preferredLRStrategy: prefStrategy};
+		r: Reaction r.id === prob.data.phase1Reaction;
+		//strategy 1 qtys
+		hyp1: Hypothesis hyp1.type === "limitingReagent" && hyp1.isTrue {claims: hyp1Claims};
+		hyp2: Hypothesis hyp2.type === "limitingReagent" && hyp2 !== hyp1 {claims: hyp2Claims};
+		reaction: ReactionInstance reaction === hyp1Claims[0]; 
+		fq1: KnownQuantity fq1.context === "final" && fq1.unit === "mol" && fq1.fromHypothesis === hyp1 && fq1.substance in reaction.productNames {substance: fq1Sub, unit: fq1Unit, value: fq1Val};
+		fq2: KnownQuantity fq2.context === "final" && fq2.unit === "mol" && fq2.fromHypothesis === hyp2 && fq2.substance === fq1Sub {value: fq2Val};
+		//strategy 2 qtys
+		molReact1: KnownQuantity molReact1.type === "molReact" && molReact1.fromHypothesis === hyp1 {value: molReact1Val};
+		molReact2: KnownQuantity molReact2.type === "molReact" && molReact2.fromHypothesis === hyp2 {value: molReact2Val};
+		//strategy 3 qtys
+		sr: KnownQuantity sr.type === "stoichRatio" {value: srVal, substance: srSub, context: srContext};
+		mr: KnownQuantity mr.type === "molRatio" && mr.substance === srSub && mr.context === srContext {value: mrVal};
+		//strategy 4 qtys
+		required: KnownQuantity required.context === "required" && required.unit === "mol" {substance: reqSub, unit: reqUnit};
+		present: KnownQuantity present.context === "initial" && present.substance === reqSub && present.unit === "mol";
+	} then {
+		var r1 = r.reagents[0].substance,
+			r2 = r.reagents[1].substance,
+			fr1 = formatChemStr(r1),
+			fr2 = formatChemStr(r2),
+			lr = hyp1Claims[1].substance,
+			flr = formatChemStr(lr),
+			val1Rounded,
+			val2Rounded,
+			qtyToEnter;
+
+		assert(new Hint("You need to identify the limiting reactant in order to determine the result of the reaction."));
+		if (!getFacts("LimitingReagentClaim").length) {
+			assert(new Hint("Click the \"Make Claim\" button, then select \"Limiting Reagent\" from the claim menu."));
+			checkSAI({selection:"claim_menu_item_limiting_reagent",action:"ButtonPressed",input:"limiting_reagent"});
+		} else {
+			if (prefStrategy === "1") {
+				assert(new Hint("You can determine the limiting reactant by comparing the amount of a product of the reaction that would be produced "+
+					"if "+fr1+" were the limiting reactant to the amount that would be produced if "+fr2+
+					" were the limiting reactant.  Start by computing those values."));
+			
+				val1Rounded = fq1.getDisplayVal();
+				val2Rounded = fq2.getDisplayVal();
+				assert(new Hint("Enter the following limiting reactant claim: The limiting reactant is "+flr+" because "+val1Rounded+" < "+val2Rounded+'.'));
+				qtyToEnter = fq1;
+			} else if (prefStrategy === "2") {
+				assert(new Hint("You can determine the limiting reactant by comparing the mol reaction value that would be expected if "+
+					fr1+" were the limiting reactant to the mol reaction value that would be expected if "+fr2+
+					" were the limiting reactant.  Start by computing those values."));
+				val1Rounded = molReact1.getDisplayVal();
+				val2Rounded = molReact2.getDisplayVal();
+				assert(new Hint("Enter the following limiting reactant claim: The limiting reactant is "+flr+" because "+val1Rounded+" < "+val2Rounded+'.'));
+				qtyToEnter = molReact1;
+			} else if (prefStrategy === "3") {
+				assert(new Hint("You can determine the limiting reactant by comparing the parts "+fr1+" consumed by the reaction per part "+fr2+
+					" to the mols present of "+fr1+" per mol of "+fr2+".  Start by computing those values."));
+				var srRounded = sr.getDisplayVal();
+				var mrRounded = mr.getDisplayVal();
+				var lesser = srRounded < mrRounded ? srRounded : mrRounded,
+					greater = lesser === srRounded ? mrRounded : srRounded;
+				assert(new Hint("Enter the following limiting reactant claim: The limiting reactant is "+flr+" because "+lesser+" < "+greater+'.'));
+				qtyToEnter = sr;
+			} else {
+				var assuming = required.substance === r1 ? r2 : r1;
+				assert(new Hint("You can determine the limiting reactant by comparing the amount of "+formatChemStr(required.substance)+" that would be consumed if "+formatChemStr(assuming)+
+					" were the limiting reactant to the actual amount of "+formatChemStr(required.substance)+" present."));
+				
+				val1Rounded = required.getDisplayVal();
+				val2Rounded = present.getDisplayVal();
+				var lesser = val1Rounded < val2Rounded ? val1Rounded : val2Rounded,
+					greater = lesser === val1Rounded ? val2Rounded : val1Rounded;
+				assert(new Hint("Enter the following limiting reactant claim: The limiting reactant is "+flr+" because "+lesser+" < "+greater+'.'));
+				qtyToEnter = required;
+			}
+			assert(new CustomField(getStepIDFromQty(qtyToEnter)));
+		}
+		backtrack();
+	}
+}
+
+rule HintDetermineLREvidence {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "determineLimitingReagent" &&
+			(prob.lr1EvidenceFound.length || prob.lr2EvidenceFound.length ||
+  			 prob.lr3EvidenceFound.length || prob.lr4EvidenceFound.length) {preferredLRStrategy: prefStrategy};
+		r: Reaction r.id === prob.data.phase1Reaction && r.reagents.length > 1;
+		lrHyp: Hypothesis lrHyp.type === "limitingReagent" && lrHyp.isTrue;
+	} then {
+
+		var r1 = r.reagents[0].substance,
+			fr1 = formatChemStr(r1),
+			fr2 = formatChemStr(r2),
+			r2 = r.reagents[1].substance,
+			e1 = prob.lr1EvidenceFound,
+			e2 = prob.lr2EvidenceFound,
+			e3 = prob.lr3EvidenceFound,
+			e4 = prob.lr4EvidenceFound,
+			qtyToEnter,
+			claim = getFacts("LimitingReagentClaim")[0];
+		
+		var lr1Advice = {hints: [], step: null, haveBoth: e1.length === 2, evidence: e1};
+		if (e1.length) {
+			let e1Sub1 = formatChemStr(e1[0].substance),
+				e1Lr1 = formatChemStr(e1[0].fromHypothesis.claims[1].substance);
+			if (e1.length === 2) {
+				let e1Lr2 = formatChemStr(e1[1].fromHypothesis.claims[1].substance);
+				lr1Advice.hints.push("You've determined the amount of "+e1Sub1+" that would be produced if "+
+						e1Lr1+" were the limiting reactant ("+e1[0].getDisplayVal()+") as well as the amount that would be produced if "+
+						e1Lr2+" were the limiting reactant ("+e1[1].getDisplayVal()+"). Now identify the actual limiting reactant by comparing"+
+						" these two values.");
+				
+				lr1Advice.hints.push("Enter the following limiting reactant claim: The limiting reactant is "+e1Lr1+" because "+
+					e1[0].getDisplayVal()+" < "+e1[1].getDisplayVal()+'.');
+			} else {
+				var reaction = e1[0].fromHypothesis.claims[0];
+				var assumed = e1[0].fromHypothesis.claims[1];
+				var otherReagent = reaction.reagents[assumed === reaction.reagents[0] ? 1 : 0];
+				lr1Advice.hints.push(e1[0].getDisplayVal()+" is the "+e1[0].unit+" of "+e1Sub1+" that would be produced if "+
+						e1Lr1+" were the limiting reactant.  You can now determine the actual limiting reactant by"+
+						" calculating the "+e1[0].unit+" "+e1Sub1+" that would be produced if "+formatChemStr(otherReagent.substance)+" were the limiting reactant, and comparing the two.");
+				lr1Advice.step = getFacts("KnownQuantity").find((q)=> {
+					return q.context === "changed" && q.substance === e1[0].substance && q.unit === e1[0].unit &&
+					q.fromHypothesis.claims[1].substance === otherReagent.substance
+				});
+			}
+		}
+		
+		var lr2Advice = {hints: [], step: null, haveBoth: e2.length === 2, evidence: e2};
+		if (e2.length) {
+			let e2Lr1 = formatChemStr(e2[0].fromHypothesis.claims[1].substance);
+			if (e2.length === 2) {
+				let e2Lr2 = formatChemStr(e2[1].fromHypothesis.claims[1].substance);
+				lr2Advice.hints.push("You've determined what the mol reaction value would be if "+e2Lr1+
+					" were the limiting reactant ("+e2[0].getDisplayVal()+") as well as what that value would be if "+e2Lr2+
+					" were the limiting reactant ("+e2[1].getDisplayVal()+").  Now identify the actual limiting reactant by comparing those two values.");
+					
+				lr2Advice.hints.push("Enter the following limiting reactant claim: The limiting reactant is "+e2Lr1+" because "+
+					e2[0].getDisplayVal()+" < "+e2[1].getDisplayVal()+'.');
+			} else {
+				var reaction = e2[0].fromHypothesis.claims[0];
+				var assumed = e2[0].fromHypothesis.claims[1];
+				var otherReagent = reaction.reagents[assumed === reaction.reagents[0] ? 1 : 0];
+				lr2Advice.hints.push(e2[0].getDisplayVal()+" is what the mol reaction value would be if "+e2Lr1+
+					" were the limiting reactant.  You can now determine the actual limiting reactant by calculating what the mol reaction value"+
+					" would be if "+formatChemStr(otherReagent.substance)+" were the limiting reactant, and comparing the two.");
+				lr2Advice.step = getFacts("KnownQuantity").find((q)=>q.type === "molReact" && q.fromHypothesis.claims[1].substance === otherReagent.substance);
+			}
+		}
+		
+		var lr3Advice = {hints: [], step: null, haveBoth: e3.length === 2, evidence: e3};
+		if (e3.length) {	
+			let e3Sub1 = formatChemStr(e3[0].substance);
+			let e3Sub2 = formatChemStr(e3[0].context);
+			if (e3.length === 2) {
+				lr3Advice.hints.push("You've determined the parts of "+e3Sub1+" consumed by the reaction per part of "+
+					e3Sub2+" ("+e3[0].getDisplayVal()+") as well as the mols present of "+e3Sub1+" per mol of "+e3Sub2+
+					" ("+e3[1].getDisplayVal()+").  Now identify the limiting reactant by comparing those two values.");
+			
+				var srVal = e3[0].getDisplayVal();
+				var mrVal = e3[1].getDisplayVal();
+				var lesserRatioVal, greaterRatioVal, lr;
+				if (srVal < mrVal) {
+					lesserRatioVal = srVal;
+					greaterRatioVal = mrVal;
+					lr = e3[0].context;
+				} else {
+					lesserRatioVal = mrVal;
+					greaterRatioVal = srVal;
+					lr = e3[1].substance;
+				}
+				lr3Advice.hints.push("Enter the following limiting reactant claim: The limiting reactant is "+formatChemStr(lr)+" because "+
+							lesserRatioVal + " < " + greaterRatioVal+'.');
+			} else {
+				lr3Advice.hints.push(e3[0].getDisplayVal()+" is the ratio of "+(e3[0].type === "molRatio" ? "mols present" : "parts consumed ")+
+					" of "+e3Sub1+" per "+(e3[0].type === "molRatio" ? "mol" : "part")+" of "+e3Sub2+".  You can now determine"+
+					" the limiting reactant by calculating the ratio of "+(e3[0].type === "molRatio" ? "parts consumed" : "mols present")+
+					" of "+e3Sub1+" per "+(e3[0].type === "molRatio" ? "part" : "mol")+" of "+e3Sub2+", and comparing the two.");
+				lr3Advice.step = getFacts("KnownQuantity").find((q)=> q.substance === e3[0].substance &&
+					(e3[0].type === "molRatio" ? q.type === "stoichRatio" : q.type === "molRatio")
+				);
+			}
+		}
+		
+		var lr4Advice = {hints: [], step: null, haveBoth: e4.length === 2, evidence: e4};
+		if (e4.length) {
+			let e4Sub1 = formatChemStr(e4[0].substance);
+			if (e4.length === 2) {
+				let e4Lr = formatChemStr(e4[0].fromHypothesis.claims[1].substance);
+				lr4Advice.hints.push("You've determined the amount of "+e4Sub1+" that would be consumed if "+e4Lr+
+					" were the limiting reactant ("+e4[0].getDisplayVal()+").  You can identify the limiting reactant by comparing that to"+
+					" the actual amount of "+e4Sub1+" present ("+e4[1].getDisplayVal()+").");
+				
+				var reqVal = e4[0].getDisplayVal();
+				var presVal = e4[1].getDisplayVal();
+				var lesser, greater, lr;
+				if (reqVal < presVal) {
+					lesser = reqVal;
+					greater = presVal;
+					lr = e4[0].fromHypothesis.claims[1].substance;
+				} else {
+					lesser = presVal;
+					greater = reqVal;
+					lr = e4[0].substance;
+				}
+				lr4Advice.hints.push("Enter the following limiting reactant claim: The limiting reactant is "+e4Lr+" because "+lesser+" < "+greater+'.');
+			} else {
+				var otherReagent = formatChemStr(r1 === e4[0].substance ? r2 : r1);
+			
+				lr4Advice.hints.push(e4[0].getDisplayVal()+" is the "+(e4[0].context === "required" ? e4[0].unit+" of "+e4Sub1+" that would be consumed if "+
+					otherReagent+" were the limiting reactant." : "initial "+e4[0].unit+" of "+e4Sub1+".") +
+					" You can identify the limiting reactant by calculating the "+(e4[0].context === "required" ? "initial "+e4[0].unit+" of "+e4Sub1 :
+					e4[0].unit+" of "+e4Sub1+" that would be consumed if "+otherReagent+" were the limiting reactant")+", and comparing the two.");
+				lr4Advice.step = getFacts("KnownQuantity").find((q)=>q.substance === e4[0].substance && q.unit === e4[0].unit && 
+					(e4[0].context === "required" ? q.context === "initial" : q.context === "required")
+				);
+			}
+		}
+		
+		var advice;
+		// order of precedence: has both vals for preferred strategy, has both vals for any strategy, has one val for preferred strategy, has one val for any strategy
+		if (e1.length === 2 && prefStrategy === "1") {
+			advice = lr1Advice;
+		} else if (e2.length === 2 && prefStrategy === "2") {
+			advice = lr2Advice;
+		} else if (e3.length === 2 && prefStrategy === "3") {
+			advice = lr3Advice;
+		} else if (e4.length === 2 && prefStrategy === "4") {
+			advice = lr4Advice;
+		} else if (e1.length === 2) {
+			advice = lr1Advice;
+		} else if (e2.length === 2) {
+			advice = lr2Advice;
+		} else if (e3.length === 2) {
+			advice = lr3Advice;
+		} else if (e4.length === 2) {
+			advice = lr4Advice;
+		} else if (e1.length === 1 && prefStrategy === "1") {
+			advice = lr1Advice;
+		} else if (e2.length === 1&& prefStrategy === "2") {
+			advice = lr2Advice;
+		} else if (e3.length === 1 && prefStrategy === "3") {
+			advice = lr3Advice;
+		} else if (e4.length === 1 && prefStrategy === "4") {
+			advice = lr4Advice;
+		} else if (e1.length === 1) {
+			advice = lr1Advice;
+		} else if (e2.length === 1) {
+			advice = lr2Advice;
+		} else if (e3.length === 1) {
+			advice = lr3Advice;
+		} else if (e4.length === 1) {
+			advice = lr4Advice;
+		}
+		
+		if (!advice.haveBoth) { //don't have both qtys yet, hint needed qty, step_id = needed qty
+			advice.hints.forEach((hint) => {assert(new Hint(hint))});
+			assert(new CustomField("step_id", getStepIDFromQty(advice.step)));
+		} else {
+			if (!claim) { //hasn't added claim, hint add claim, step_id = add claim
+				assert(new Hint("Click the \"Make Claim\" button, then select \"Limiting Reagent\" from the claim menu."));
+				checkSAI({selection:"claim_menu_item_limiting_reagent",action:"ButtonPressed",input:"limiting_reagent"});
+			} else {
+				if (!claim.value1 || !claim.value2) { //at least 1 value missing
+					if (!claim.value1 && !claim.value2) { //both values missing, hint enter values, step_id = enter first value
+						advice.hints.forEach((hint)=>assert(new Hint(hint)));
+						checkSAI({"selection": claim.id+"_value_input_1_ctat", "action":"UpdateTextField", "input":advice.evidence[1].value});
+					} else { //one value missing
+						var entered = claim.value1 || claim.value2;
+						var claimValSelection = claim.id+"_value_input_"+(claim.value1 ? "2_ctat" : "1_ctat");
+						var claimValInput;
+						var correspondingQtys = entered.matchedTo.reduce((arr, q)=>{
+							[e1,e2,e3,e4].forEach((evidenceSet)=>{
+								let idx = evidenceSet.indexOf(q);
+								if (idx !== -1) {
+									arr.push(evidenceSet[idx === 0 ? 1 : 0])
+								}
+							});
+							return arr;
+						}, []);
+						console.log("got correspondingQtys: ",correspondingQtys);
+						if (correspondingQtys.length) {
+							claimValInput = correspondingQtys[0].value;
+							assert(new Hint("Now enter the other value you will use in your comparison to identify the limiting reagent."));
+						} else {
+							assert(new Hint(entered.roundedString+" isn't a valid value to use in your limiting reagent claim."));
+							claimValInput = advice.evidence[1].value;
+						}
+						checkSAI({selection: claimValSelection, action: "UpdateTextField", input: claimValInput});
+					}
+				} else {
+					if (!claim.comparator) { //missing relational operator
+						assert(new Hint("Now choose '<' or '>' from the drop-down menu between the two values you entered to reflect the relationship between them"));
+						let compInput = Number(claim.value1.string) < Number(claim.value2.string) ? "<" : ">" ;
+						checkSAI({selection:claim.id+"_comparison_menu", "action":"UpdateComboBox","input": compInput});
+					} else if (!claim.substance) { //missing substance
+						assert(new Hint("Now choose the substance you believe is the limiting reactant from the first drop-down menu, based on the relationship between the two values you entered."));
+						checkSAI({"selection":claim.id+"_substance_menu", "action":"UpdateComboBox", "input": lrHyp.claims[1].substance});
+					}
+				}
+			}
+		}
+		
+		backtrack();
+	}
+}
+
+rule GotPartialEvidenceForLR1 {
+	salience: 20;
+	when {
+		prob: Problem prob.lr1EvidenceFound.length !== 2 && !prob.varReplaced {lr1EvidenceFound: evidence};
+		fq: KnownQuantity fq.matchedTo.length && fq.context === "final" && !(fq in evidence) {substance: fq1Sub, fromHypothesis: fq1Hyp, unit: fq1Unit, value: fq1Val};
+		hyp: Hypothesis hyp.type === "limitingReagent" && hyp === fq1Hyp;
+	} then {
+		var newEvidence = evidence.slice();
+		if (evidence.length === 1) {
+			let otherQty = evidence[0];
+			if (otherQty.substance === fq1Sub && otherQty.unit === fq1Unit && otherQty.fromHypothesis !== fq1Hyp) {
+				newEvidence[hyp.isTrue ? "unshift" : "push"](fq);
+			} else {
+				backtrack();
+			}
+		} else {
+			newEvidence.push(fq);
+		}
+		modify(prob, "lr1EvidenceFound", newEvidence);
+	}
+}
+
+rule PredictLRClaim1 {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && prob.lr1EvidenceFound.length && prob.inputType === "lrClaim" {input: probInput};
+		studentClaim: LimitingReagentClaim studentClaim === probInput[0] && studentClaim.fieldsFilled {value1: claimExp1, value2: claimExp2, substance: claimSub, comparator: claimComp};
+		fq1: KnownQuantity fq1.context === "final" {substance: fq1Sub, fromHypothesis: fq1Hyp, unit: fq1Unit, value: fq1TutorVal};
+		fq2: KnownQuantity fq2.context === "final" && fq2.substance === fq1Sub && fq2.unit === fq1Unit {value: fq2TutorVal, fromHypothesis: fq2Hyp};
+		hyp1: Hypothesis hyp1.type === "limitingReagent" && hyp1 === fq1Hyp && hyp1.isTrue {claims: hyp1Claims};
+		hyp2: Hypothesis hyp2.type === "limitingReagent" && hyp2 === fq2Hyp && hyp2 !== hyp1 {claims: hyp2Claims};
+		ri: ReactionInstance ri === hyp1Claims[0] && fq1Sub in ri.productNames;
+		template: Reaction template === ri.instanceOf && template.id === prob.data.phase1Reaction;
+	} then {
+		if (claimComp === ">") {
+			let tmp = claimExp1;
+			claimExp1 = claimExp2;
+			claimExp2 = tmp;
+			claimComp = "<";
+		}
+		var claimVal1 = claimExp1.string;
+		var claimVal2 = claimExp2.string;
+		var correct = false;
+		var lrRight = hyp1Claims[1].substance; 
+		var lrWrong = hyp2Claims[1].substance;
+		var substanceCorrect = (claimSub === lrRight); //substance matches predicted
+		var val1Correct = compValues(claimVal1, fq1TutorVal, IMPRECISION_MARGIN);	//right value, right field
+		var matchedToVal1 = val1Correct ? claimExp1 : (compValues(claimVal2, fq1TutorVal, IMPRECISION_MARGIN) ? claimExp2 : null); //right value
+		var compCorrect = (claimComp === "<"); //right comparator
+		var val2Correct = compValues(claimVal2, fq2TutorVal, IMPRECISION_MARGIN); //right value, right field
+		var matchedToVal2 = val2Correct ? claimExp2 : (compValues(claimVal1, fq2TutorVal, IMPRECISION_MARGIN) ? claimExp1 : null); //right value
+		var si = getStudentInput();
+		
+		modify(studentClaim, "fieldsFilled", false);
+		
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: lrRight+','+claimVal1+'<'+claimVal2}, function() {
+			correct = substanceCorrect && val1Correct && val2Correct && compCorrect;
+			return correct;
+		})) {
+			//claim correct
+			workspace.lockClaim("limiting_reagent_claim");
+			
+			let phaseIdx = prob.data.phases.indexOf("determineLimitingReagent");
+			modify(prob, "phase", prob.data.phases[phaseIdx+1]);
+			
+			if (!prob.data.phase2Reaction) {
+				modify(prob, "readyForFinalQty", true);
+			}
+			modify(prob, "keepChain", true);
+			addScoreLabels("lr_claim");
+		} else if (matchedToVal1 && matchedToVal2) {
+			setChainPriority(2);
+			setSuccessOrBugMsg("You're comparing the right values, but the comparison is incorrect.  Check your reasoning.");
+		} else if (matchedToVal1 && !matchedToVal2) {
+			setChainPriority(1);
+			setSuccessOrBugMsg(matchedToVal1.roundedString+' is the amount of '+fq1Sub+' that would be produced if '+lrRight+
+								' were the limiting reactant.  Try comparing this to the amount of '+fq1Sub+
+								' that would be produced if '+lrWrong+' were the limiting reactant.');
+		} else if (matchedToVal2 && !matchedToVal1) {
+			setChainPriority(1);
+			setSuccessOrBugMsg(matchedToVal2.roundedString+' is the amount of '+fq1Sub+' that would be produced if '+lrWrong+
+								' were the limiting reactant.  Try comparing this to the amount of '+fq1Sub+
+								' that would be produced if '+lrRight+' were the limiting reactant.');
+		} else {
+			setSuccessOrBugMsg("You have correctly calculated the values needed to determine the limiting reactant, but your claim does not include either of those values.");
+		}
+		if (!correct) {
+			backtrack();
+		}
+	}
+}
+
+rule GotPartialEvidenceForLR2 {
+	salience: 20;
+	when {
+		prob: Problem !(prob.lr2EvidenceFound.length === 2) {lr2EvidenceFound: evidence};
+		molReact1: KnownQuantity molReact1.matchedTo.length && molReact1.type === "molReact" {fromHypothesis: molReact1Hyp, value: molReact1Val};
+		hyp: Hypothesis hyp.type === "limitingReagent" && hyp === molReact1Hyp;
+	} then {
+		var newEvidence = evidence.slice();
+		if (evidence.length === 1) {
+			let otherQty = evidence[0];
+			if (otherQty.fromHypothesis !== hyp) {
+				newEvidence[hyp.isTrue ? "unshift" : "push"](molReact1);
+			} else {
+				backtrack();
+			}
+		} else {
+			newEvidence.push(molReact1);
+		}
+		modify(prob, "lr2EvidenceFound", newEvidence);
+	}
+}
+
+rule PredictLRClaim2 {
+	when {
+		prob: Problem prob.searching && prob.lr2EvidenceFound.length && prob.inputType === "lrClaim" {input: probInput};
+		studentClaim: LimitingReagentClaim studentClaim === probInput[0] && studentClaim.fieldsFilled {value1: claimExp1, value2: claimExp2, substance: claimSub, comparator: claimComp};
+		molReact1: KnownQuantity molReact1.type === "molReact" {fromHypothesis: molReact1Hyp, value: molReact1TutorVal};
+		molReact2: KnownQuantity molReact2.type === "molReact" {fromHypothesis: molReact2Hyp, value: molReact2TutorVal};
+		hyp1: Hypothesis hyp1.type === "limitingReagent" && hyp1 === molReact1Hyp && hyp1.isTrue {claims: hyp1Claims};
+		hyp2: Hypothesis hyp2.type === "limitingReagent" && hyp2 === molReact2Hyp && hyp2 !== hyp1 {claims: hyp2Claims};
+	} then {
+		if (claimComp === ">") {
+			let tmp = claimExp1;
+			claimExp1 = claimExp2;
+			claimExp2 = tmp;
+			claimComp = "<";
+		}
+		var claimVal1 = claimExp1.string;
+		var claimVal2 = claimExp2.string;
+		var correct = false;
+		var lrRight = hyp1Claims[1].substance; 
+		var lrWrong = hyp2Claims[1].substance;
+		var substanceCorrect = (claimSub === lrRight); //substance matches predicted
+		var val1Correct = compValues(claimVal1, molReact1TutorVal, IMPRECISION_MARGIN);	//right value, right field
+		var matchedToVal1 = val1Correct ? claimExp1 : (compValues(claimVal2, molReact1TutorVal, IMPRECISION_MARGIN) ? claimExp2 : null); //right value
+		var compCorrect = (claimComp === "<"); //right comparator
+		var val2Correct = compValues(claimVal2, molReact2TutorVal, IMPRECISION_MARGIN); //right value, right field
+		var matchedToVal2 = val2Correct ? claimExp2 : (compValues(claimVal1, molReact2TutorVal, IMPRECISION_MARGIN) ? claimExp1 : null); //right value
+		var si = getStudentInput();
+		
+		modify(studentClaim, "fieldsFilled", false);
+		
+		if (checkSAI({selection: si.selection, action: '', input: ''}, function() {
+			correct = substanceCorrect && val1Correct && val2Correct && compCorrect;
+			return correct;
+		})) {
+			//claim correct
+			workspace.lockClaim("limiting_reagent_claim");
+			
+			let phaseIdx = prob.data.phases.indexOf("determineLimitingReagent");
+			modify(prob, "phase", prob.data.phases[phaseIdx+1]);
+			
+			if (!prob.data.phase2Reaction) {
+				modify(prob, "readyForFinalQty", true);
+			}
+			modify(prob, "keepChain", true);
+			addScoreLabels("lr_claim");
+		} else if (matchedToVal1 && matchedToVal2) {
+			setChainPriority(2);
+			setSuccessOrBugMsg("You're comparing the right values, but the comparison is incorrect.  Check your reasoning.");
+		} else if (matchedToVal1 && !matchedToVal2) {
+			setChainPriority(1);
+			setSuccessOrBugMsg(matchedToVal1.roundedString+' is the expected mol reaction value if '+lrRight+
+								' were the limiting reactant.  Try comparing this to the expected mol reaction value '+
+								' that would be produced if '+lrWrong+' were the limiting reactant.');
+		} else if (matchedToVal2 && !matchedToVal1) {
+			setChainPriority(1);
+			setSuccessOrBugMsg(matchedToVal2.roundedString+' is the expected mol reaction value if '+lrWrong+
+								' were the limiting reactant.  Try comparing this to the expected mol reaction value '+
+								' that would be produced if '+lrRight+' were the limiting reactant.');
+		} else {
+			setSuccessOrBugMsg("You have correctly calculated the values needed to determine the limiting reactant, but your claim does not include either of those values.");
+		}
+		if (!correct) {
+			backtrack();
+		}
+	}
+}
+
+rule GotPartialEvidenceForLR3 {
+	salience: 20;
+	when {
+		prob: Problem !(prob.lr3EvidenceFound.length === 2) {lr3EvidenceFound: evidence};
+		ratio: KnownQuantity ratio.matchedTo.length && (ratio.type === "molRatio" || ratio.type === "stoichRatio") {fromHypothesis: ratioHyp, value: ratioVal};
+	} then {
+		var newEvidence = evidence.slice();
+		if (evidence.length === 1) {
+			let otherQty = evidence[0];
+			if (otherQty.type !== ratio.type && otherQty.substance === ratio.substance && otherQty.context === ratio.context) {
+				newEvidence[ratio.type === "stoichRatio" ? "unshift" : "push"](ratio);
+			} else {
+				backtrack();
+			}
+		} else {
+			newEvidence.push(ratio);
+		}
+		modify(prob, "lr3EvidenceFound", newEvidence);
+	}
+}
+
+rule PredictLRClaim3 {
+	when {
+		prob: Problem prob.searching && prob.lr3EvidenceFound.length && prob.inputType === "lrClaim" {input: probInput};
+		studentClaim: LimitingReagentClaim studentClaim === probInput[0] && studentClaim.fieldsFilled {value1: claimExp1, value2: claimExp2, substance: claimSub, comparator: claimComp};
+		sr: KnownQuantity sr.type === "stoichRatio" {value: srTutorVal, substance: srSub, context: srContext};
+		mr: KnownQuantity mr.type === "molRatio" && mr.substance === srSub && mr.context === srContext {value: mrTutorVal};
+	} then {
+		var lrRight,
+			lrWrong,
+			lesserRatio,
+			lesserRatioVal,
+			greaterRatio,
+			greaterRatioVal;
+		if (claimComp === ">") {
+			let tmp = claimExp1;
+			claimExp1 = claimExp2;
+			claimExp2 = tmp;
+			claimComp = "<";
+		}
+		if (srTutorVal < mrTutorVal) {
+			lesserRatio = sr;
+			lesserRatioVal = srTutorVal;
+			greaterRatio = mr;
+			greaterRatioVal = mrTutorVal;
+			lrRight = srContext;
+			lrWrong = srSub;
+		} else {
+			lesserRatio = mr;
+			lesserRatioVal = mrTutorVal;
+			greaterRatio = sr;
+			greaterRatioVal = srTutorVal;
+			lrRight = srSub;
+			lrWrong = srContext
+		}
+		var claimVal1 = claimExp1.string;
+		var claimVal2 = claimExp2.string;
+		var correct = false;
+		var substanceCorrect = (claimSub === lrRight); //substance matches predicted
+		var val1Correct = compValues(claimVal1, lesserRatioVal, IMPRECISION_MARGIN);	//right value, right field
+		var matchedToVal1 = val1Correct ? claimExp1 : (compValues(claimVal2, lesserRatioVal, IMPRECISION_MARGIN) ? claimExp2 : null); //right value
+		var compCorrect = (claimComp === "<"); //right comparator
+		var val2Correct = compValues(claimVal2, greaterRatioVal, IMPRECISION_MARGIN); //right value, right field
+		var matchedToVal2 = val2Correct ? claimExp2 : (compValues(claimVal1, greaterRatioVal, IMPRECISION_MARGIN) ? claimExp1 : null); //right value
+		var matchedToMolRatio = (matchedToVal1 && lesserRatio.type === "molRatio") ? matchedToVal1 : ((matchedToVal2 && greaterRatio.type === "molRatio") ? matchedToVal2 : null);
+		var matchedToStoichRatio = (matchedToVal1 && lesserRatio.type === "stoichRatio") ? matchedToVal1 : ((matchedToVal2 && greaterRatio.type === "stoichRatio") ? matchedToVal2 : null);
+		var si = getStudentInput();
+		
+		modify(studentClaim, "fieldsFilled", false);
+		
+		if (checkSAI({selection: si.selection, action: '', input: ''}, function() {
+			correct = substanceCorrect && val1Correct && val2Correct && compCorrect;
+			return correct;
+		})) {
+			//claim correct
+			workspace.lockClaim("limiting_reagent_claim");
+			
+			let phaseIdx = prob.data.phases.indexOf("determineLimitingReagent");
+			modify(prob, "phase", prob.data.phases[phaseIdx+1]);
+			if (!prob.data.phase2Reaction) {
+				modify(prob, "readyForFinalQty", true);
+			}
+			modify(prob, "keepChain", true);
+			addScoreLabels("lr_claim");
+		} else if (matchedToVal1 && matchedToVal2) {
+			setChainPriority(2);
+			setSuccessOrBugMsg("You're comparing the right values, but the comparison is incorrect.  Check your reasoning.");
+		} else if (matchedToMolRatio && !matchedToStoichRatio) {
+			setChainPriority(1);
+			setSuccessOrBugMsg("You've determined the mols of "+srSub+" present per mol of "+srContext+" ("+
+					matchedToMolRatio.roundedString+"). Compare that to the parts "+srSub+" consumed per part "+srContext+
+					" as dictated by the reaction."
+			);
+		} else if (matchedToStoichRatio && !matchedToMolRatio) {
+			setChainPriority(1);
+			setSuccessOrBugMsg("You've determined the parts of "+srSub+" consumed by the reaction per part of "+srContext+
+					' ('+matchedToStoichRatio.roundedString+'). Compare that to the mols of '+srSub+' present per mol of '+srContext+'.'
+			);
+		} else {
+			setSuccessOrBugMsg("You have correctly calculated the values needed to determine the limiting reactant, but your claim does not include either of those values.");
+		}
+		if (!correct) {
+			backtrack();
+		}
+	}
+}
+
+rule GotPartialEvidenceForLR4 {
+	salience: 20;
+	when {
+		prob: Problem !(prob.lr4EvidenceFound.length === 2) {lr4EvidenceFound: evidence};
+		qty: KnownQuantity qty.matchedTo.length && qty.context === "initial" || qty.context === "required" {fromHypothesis: hyp, value: ratioVal};
+		exp: Expression exp.creator === "student" && qty in exp.matchedTo;
+	} then {
+		var newEvidence = evidence.slice();
+		if (evidence.length === 1) {
+			let otherQty = evidence[0];
+			if (otherQty.context !== qty.context && otherQty.substance === qty.substance && otherQty.unit === qty.unit) {
+				newEvidence[qty.context === "required" ? "unshift" : "push"](qty);
+			} else {
+				backtrack();
+			}
+		} else {
+			newEvidence.push(qty);
+		}
+		modify(prob, "lr4EvidenceFound", newEvidence);
+	}
+}
+
+rule PredictLRClaim4 {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && prob.lr4EvidenceFound.length && prob.inputType === "lrClaim" {input: probInput};
+		studentClaim: LimitingReagentClaim studentClaim === probInput[0] && studentClaim.fieldsFilled {value1: claimExp1, value2: claimExp2, substance: claimSub, comparator: claimComp};
+		required: KnownQuantity required.context === "required" {substance: requiredSub, fromHypothesis: requiredHyp, unit: requiredUnit, value: requiredVal};
+		present: KnownQuantity present.context === "initial" && present.substance === requiredSub && present.unit === requiredUnit {value: presentVal};
+		hyp: Hypothesis hyp.type === "limitingReagent" && hyp.isTrue {claims: hypClaims};
+		ri: ReactionInstance ri === hypClaims[0];
+		template: Reaction template === ri.instanceOf && template.id === prob.data.phase1Reaction;
+	} then {
+		if (claimComp === ">") {
+			let tmp = claimExp1;
+			claimExp1 = claimExp2;
+			claimExp2 = tmp;
+			claimComp = "<";
+		}
+		var lesser, greater;
+		if (parseFloat(requiredVal) < parseFloat(presentVal)) {
+			lesser = required;
+			greater = present;
+		} else {
+			lesser = present;
+			greater = required;
+		}
+		var claimVal1 = claimExp1.string;
+		var claimVal2 = claimExp2.string;
+		var correct = false;
+		var lrRight = hypClaims[1].substance; 
+		var substanceCorrect = (claimSub === lrRight); //substance matches predicted
+		var compCorrect = (claimComp === "<"); //right comparator
+		var val1Correct = compValues(claimVal1, lesser.value, IMPRECISION_MARGIN);	//right value, right field
+		var val2Correct = compValues(claimVal2, greater.value, IMPRECISION_MARGIN); //right value, right field
+		var matchedToVal1 = val1Correct ? claimExp1 : (!val2Correct && compValues(claimVal2, lesser.value, IMPRECISION_MARGIN) ? claimExp2 : null); //right value
+		var matchedToVal2 = val2Correct ? claimExp2 : (!val1Correct && compValues(claimVal1, greater.value, IMPRECISION_MARGIN) ? claimExp1 : null); //right value
+		var si = getStudentInput();
+		
+		modify(studentClaim, "fieldsFilled", false);
+		
+		console.log("predictLRclaim4, matchedToVal1 = ");
+		console.log(matchedToVal1);
+		console.log("predictLRclaim4, matchedToVal2 = ");
+		console.log(matchedToVal2);
+		
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: lrRight+','+claimVal1+'<'+claimVal2}, function() {
+			correct = substanceCorrect && val1Correct && val2Correct && compCorrect;
+			return correct;
+		})) {
+			//claim correct
+			workspace.lockClaim("limiting_reagent_claim");
+			
+			let phaseIdx = prob.data.phases.indexOf("determineLimitingReagent");
+			modify(prob, "phase", prob.data.phases[phaseIdx+1]);
+			if (!prob.data.phase2Reaction) {
+				modify(prob, "readyForFinalQty", true);
+			}
+			modify(prob, "keepChain", true);
+			addScoreLabels("lr_claim");
+		} else if (matchedToVal1 && matchedToVal2) {
+			setChainPriority(2);
+			setSuccessOrBugMsg("You're comparing the right values, but the comparison is incorrect.  Check your reasoning.");
+		} else if ((matchedToVal1 && !matchedToVal2) || (matchedToVal2 && !matchedToVal1)) {
+			setChainPriority(1);
+			var matchedVal = matchedToVal1 || matchedToVal2;
+			var matchedToRequired = (matchedToVal1 && lesser === required) || (matchedToVal2 && greater === required);
+			var reqStr = "the amount of "+required.substance+" that would be consumed if "+requiredHyp.claims[1].substance+" were the limiting reactant";
+			var presentStr = "the initial quantity of "+present.substance;
+			setSuccessOrBugMsg(matchedVal.roundedString+' is '+ (matchedToRequired ? reqStr : presentStr) + '.' +
+								' Try comparing that to ' + (matchedToRequired ? presentStr : reqStr) + '.');
+		} else {
+			setSuccessOrBugMsg("You have correctly calculated the values needed to determine the limiting reactant, but your claim does not include either of those values.");
+		}
+		if (!correct) {
+			backtrack();
+		}
+	}
+}
+
+rule HintDetermineFinalQuantityClaim {
+	when {
+		prob: Problem prob.hintSearching && prob.readyForFinalQty;
+		fq: KnownQuantity fq.context === "final" && fq.isFinalAnswer && !fq.matchedByClaim {fromHypothesis: fqfh, substance: fqSub}; //correct final qty
+		fqHyp: Hypothesis fqHyp.type === "limitingReagent" && fqHyp === fqfh && fqHyp.isTrue;
+		reaction: Reaction reaction.reagents.length > 1 {reagents: reagentList, products: productList};
+//		claim: FinalQuantityClaim !claim.matched && claim.substance === fqSub;
+	} then {
+		//determine type of qty
+		
+		var isLR = false,
+			isReactant = false,
+			isProduct = false,
+			claim = getFacts("FinalQuantityClaim").find((fqc)=>!fqc.matched && fqc.substance);
+		
+		if (claim) {
+			fq = getFacts("KnownQuantity").find((kq)=> kq.substance === claim.substance && kq.isFinalAnswer && kq.fromHypothesis.isTrue);
+			fqSub = fq.substance;
+			fqHyp = fq.fromHypothesis;
+		}
+		var lrSub = fqHyp.claims[1].substance;
+		
+		assert(new Hint("Now that you know the limiting reactant, determine the final amount in "+fq.unit+" of "+fqSub));
+		
+		var rOrP;
+		if (fqSub === fqHyp.claims[1].substance) {
+			isLR = true;
+		} else {
+			rOrP = reagentList.find((r)=>r.substance === fqSub) ? "reactant" : "product";
+		}
+		fqSub = formatChemStr(fqSub);
+		if (isLR) {
+			assert(new Hint("You know that "+fqSub+" is the limiting reactant.  What does that mean about how much will be left after the reaction is complete?"));
+			assert(new Hint("The entire quantity of the limiting reactant, in this case "+fqSub+", will be consumed."));
+		} else if (rOrP === "reactant") {
+			assert(new Hint("Use the initial moles of the limiting reactant to determine how much "+fqSub+" will be consumed.  Then subtract that from the initial amount of that reactant to determine the final amount left over."));
+			assert(new Hint("The mols of "+fqSub+" that will be consumed is equal to the initial mols of "+lrSub+" divided by the stoichiometric coefficient of "+lrSub+", times the stoichiometric coefficient of "+fqSub));	
+		} else {
+			assert(new Hint("Use the initial moles of the limiting reactant to determine how much "+fqSub+" will be produced."));
+			assert(new Hint("The mols of "+fqSub+" that will be produced is equal to the initial mols of "+lrSub+" divided by the stoichiometric coefficient of "+lrSub+", times the stoichiometric coefficient of "+fqSub));
+		}
+		assert(new CustomField("step_id", getStepIDFromQty(fq)));
+		backtrack();
+	}
+}
+
+rule DoneDetermineFinalMolValues {
+	salience: 20;
+	when {
+		prob: Problem prob.phase === "determineFinalValues";
+		hyp: Hypothesis hyp.type === "limitingReagent" && hyp.isTrue;
+		exists( qty1: KnownQuantity qty1.unit === "mol" && qty1.context === "final" );
+		not( qty2: KnownQuantity !qty2.matchedTo.length && qty2.context === "final" && qty2.unit === "mol" && qty2.fromHypothesis === hyp );
+	} then {
+		modify(prob, "phase", "convertFinalsToGrams");
+	}
+}
+
+rule HintWrongUnit {
+	salience: 20;
+	when {
+		prob: Problem prob.hintSearching && prob.readyForFinalQty;
+		finalQty: KnownQuantity finalQty.isFinalAnswer && !finalQty.matchedTo.length {substance: goalSub, unit: goalUnit};
+		claim: FinalQuantityClaim claim.substance === goalSub {value: claimExp};
+		matchedExp: Expression matchedExp === claimExp {matchedTo: matches};
+		otherQty: KnownQuantity otherQty in matches && otherQty.substance === goalSub && otherQty.context === finalQty.context && otherQty.unit !== goalUnit {fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh && hyp.isTrue;
+	} then {
+		assert(new Hint("The final quantity of "+formatChemStr(goalSub)+" must be expressed in "+goalUnit+'.'));
+		assert(new Hint("Convert the quantity of "+matchedExp.roundedString+" "+otherQty.unit+" to "+goalUnit+'.'));
+		
+		assert(new CustomField("step_id", getStepIDFromQty(finalQty)));
+		
+		backtrack();
+	}
+}
+
+/***************************************/

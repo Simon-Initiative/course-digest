@@ -1,0 +1,139 @@
+rule DeterminePressureByGasLaw {
+	salience: 20;
+	when {
+		prob: Problem !prob.hintSearching;
+		r: KnownQuantity r.type === "gasConstant";
+		sol: Solution ;
+		n: KnownQuantity n.type === "amount" && n.unit === "mol" && n.state === "gas" && n.solution === sol;
+		vol: KnownQuantity vol.type === "volume" && vol.solution === sol && (vol.unit === "mL" || vol.unit === "L");
+		temp: KnownQuantity temp.type === "temperature" && temp.solution === sol && temp.unit === "degreeK";
+		not( press: KnownQuantity press.type === "pressure" && press.solution === sol );
+	} then {
+		//pv = nrt
+		//p = nrt/v
+		var volVal = vol.unit === "mL" ? vol.value / 1000 : vol.value;
+		var pVal = (n.value * r.value * temp.value)/volVal;
+		
+		var pQty = assert(new KnownQuantity({
+			id: sol.id+"_pressure",
+			substance: sol.substances.join(","),
+			type: "pressure",
+			value: pVal,
+			unit: "atm",
+			context: n.context,
+			fromHypothesis: sol.fromHypothesis,
+			fromRule: "DeterminePressureByGasLaw",
+			fromFacts: [vol, n, temp],
+			variable: "P",
+			solution: sol,
+			hint: ["Use the ideal gas law to calculate the pressure", "The ideal gas law states: PV = nRT, where P is pressure, V is volume, n is amount mol, R is the gas constant, and T is temperature"]
+		}));
+		[vol,n,temp].forEach((qty)=> modify(qty, "toFacts", qty.toFacts.slice().concat(pQty)));
+	}
+}
+
+rule DetermineVolumeByGasLaw {
+	salience: 20;
+	when {
+		prob: Problem !prob.hintSearching;
+		r: KnownQuantity r.type === "gasConstant";
+		sol: Solution ;
+		n: KnownQuantity n.solution === sol && n.type === "amount" && n.unit === "mol" && n.state === "gas";
+		p: KnownQuantity p.solution === sol && p.type === "pressure" && p.unit === "atm";
+		t: KnownQuantity t.solution === sol && t.type === "temperature" && t.unit === "degreeK";
+		not( vol: KnownQuantity vol.type === "volume" && 
+								vol.solution === sol &&
+								vol.substance === n.substance &&
+								vol.context === n.context &&
+								vol.fromHypothesis === n.fromHypothesis );
+	} then {
+		//pv = nrt
+		//v = nrt/p
+		var vVal = (n.value * r.value * t.value)/p.value;
+		
+		var vQty = assert(new KnownQuantity({
+			substance: n.substance,
+			type: "volume",
+			value: vVal,
+			unit: "L",
+			context: n.context,
+			fromHypothesis: n.fromHypothesis,
+			fromRule: "DetermineVolumeByGasLaw",
+			fromFacts: [p, n, t],
+			variable: "V",
+			solution: sol,
+			state: "gas",
+			hint: ["Use the ideal gas law to calculate the volume", "The ideal gas law states: PV = nRT, where P is pressure, V is volume, n is amount mol, R is the gas constant, and T is temperature"]
+		}));
+		[p,n,t].forEach((qty)=> modify(qty, "toFacts", qty.toFacts.slice().concat(vQty)));
+	}
+}
+
+rule DetermineMolByGasLaw {
+	salience: 20;
+	when {
+		prob: Problem !prob.hintSearching;
+		r: KnownQuantity r.type === "gasConstant";
+		sol: Solution;
+		p: KnownQuantity p.solution === sol && p.type === "pressure" && p.unit === "atm";
+		v: KnownQuantity v.solution === sol && v.type === "volume" && (v.unit === "L" || v.unit === "mL");
+		t: KnownQuantity t.solution === sol && t.type === "temperature" && t.unit === "degreeK";
+		not( n: KnownQuantity n.type === "amount" && n.unit === "mol" && n.state === "gas" && n.solution === sol );
+		rvGoal: ReplaceVarGoal rvGoal.expId === "gas_law" && rvGoal.varName === "n"; 
+	} then {
+		//pv = nrt
+		//pv/rt = n
+		var vol = v.unit === "mL" ? v.value/1000 : v.value;
+		var nVal = (p.value * vol)/(r.value * t.value);
+		
+		var nQty = assert(new KnownQuantity({
+			substance: rvGoal.qtyProperties.substance,
+			type: "amount",
+			value: nVal,
+			unit: "mol",
+			context: v.context,
+			fromHypothesis: sol.fromHypothesis,
+			fromRule: "DetermineMolByGasLaw",
+			fromFacts: [p, v, t],
+			variable: "n",
+			solution: sol,
+			state: "gas",
+			hint: ["Use the ideal gas law to calculate the "+p.context+" amount of "+p.substance+" in mol.", "The ideal gas law states: PV = nRT, where P is pressure, V is volume, n is amount mol, R is the gas constant, and T is temperature"]
+		}));
+		
+		[p,v,t].forEach((qty)=> modify(qty, "toFacts", qty.toFacts.slice().concat(nQty)));
+	}
+}
+
+rule DetermineTempByGasLaw {
+	salience: 20;
+	when {
+		prob: Problem !prob.hintSearching;
+		r: KnownQuantity r.type === "gasConstant";
+		sol: Solution;
+		n: KnownQuantity n.solution === sol && n.type === "amount" && n.unit === "mol" && n.state === "gas";
+		p: KnownQuantity p.solution === sol && p.type === "pressure" && p.unit === "atm";
+		v: KnownQuantity v.solution === sol && v.type === "volume" && (v.unit === "L" || v.unit === "mL");
+		not( temp: KnownQuantity temp.solution === sol && temp.type === "temperature" );
+	} then {
+		//pv = nrt
+		//t = pv/nr
+		var vol = v.unit === "mL" ? v.value/1000 : v.value;
+		var tVal = (p.value * vol)/(r.value * n.value);
+		
+		var tQty = assert(new KnownQuantity({
+			substance: p.substance,
+			type: "temperature",
+			value: tVal,
+			unit: "degreeK",
+			context: p.context,
+			fromHypothesis: p.fromHypothesis,
+			fromRule: "DetermineTempByGasLaw",
+			fromFacts: [p, n, v],
+			variable: "T",
+			solution: sol,
+			hint: ["Use the ideal gas law to calculate the temperature", "The ideal gas law states: PV = nRT, where P is pressure, V is volume, n is amount mol, R is the gas constant, and T is temperature"]
+		}));
+		[p,n,v].forEach((qty)=> modify(qty, "toFacts", qty.toFacts.slice().concat(tQty)));
+	}
+}

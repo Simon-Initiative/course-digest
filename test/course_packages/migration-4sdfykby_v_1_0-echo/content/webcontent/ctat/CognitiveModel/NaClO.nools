@@ -1,0 +1,296 @@
+import("stoichRules.nools");
+import("equilibriumRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: "K",
+			hotkey: 'k',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'variable',
+			str: "[OH-]",
+			html: "[OH<sup>-</sup>]",
+			latex: '[O{H}^{-}]',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[ClO-]",
+			html: "[ClO<sup>-</sup>]",
+			latex: '[{ClO}^{-}]',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "[HClO]",
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'variable',
+			str: "x",
+			hotkey: 'x',
+		},
+		{
+			type: 'variable',
+			str: 'pH',
+		},
+		{
+			type: 'variable',
+			str: 'pOH',
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol',
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'%',
+			latex: '\\%',
+			hotkey: '5',
+			modifierKey: 'shift'
+		},
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'operator',
+			str: "sqrt",
+			html: "&#8730",
+			styles: {
+				fontSize: "25px",
+				lineHeight: "45px"
+			}
+		},
+		{
+			type: 'operator',
+			str: "log",
+			html: "log<sub>10</sub>()",
+			styles: {
+				lineHeight: "35px"
+			}
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You can only make a claim when one of the values you have calculated is the correct concentration of one of the species. Please check your work.",
+	claimTypes: [
+		{
+			id: 'smallx',
+			btnText: 'Assume small x',
+			claimText: 'Assume that the value of x is less than 5% of <blank>',
+			onlyOne: true,
+			matchQty: {
+				context: 'majority',
+				type: 'concentration',
+				unit: 'M',
+				lowestMajorityConcentration: true
+			}
+		},{
+			id: 'ph',
+			btnText: 'pH of Solution',
+			claimText: 'The pH of the solution is <blank>',
+			onlyOne: true,
+			needReadyForFinalQty: true,
+			notReadyMsg: "You need to determine a valid value of x before you can make a claim about the pH of the solution",
+			matchQty: {
+				type: 'ph'
+			}
+		},
+		"Validate X Assumption", 
+		"Final Quantity"
+	],
+	usesIceTable: true,
+	usesEqSheet: true,
+	canAssumeX: true,
+	mustValidateXAssumption: true,
+	canSkipAssumeX: true,
+	stoichStepDone: false,
+	preferredEQStrategy: "explicitX",
+	majorityAlias: "initial",
+	contexts: ["initial","changed","equilibrium","assume small x"],
+	probSpecificData: {
+		equations: [
+			{
+				id: "equilibrium_exp",
+				forms: [
+					"K_eq_(&[HClO]&&[OH-]&)/(&[ClO-]&)"
+				],
+				name: "equilibrium expression",
+				substitutions: {}	
+			},
+			{
+				id: "poh_exp",
+				forms: [
+					'pOH_eq_-log(&[OH-]&)'
+				],
+				name: "pOH equation",
+				substitutions: {}
+			}
+		],
+		finalQuantities: [
+			{
+				'type': 'ph',
+				'substance': null,
+				'unit': null,
+				'context': null
+			},
+			{
+				'type': 'concentration',
+				'substance': 'OH-',
+				'unit': 'M',
+				'context': 'equilibrium'
+			}
+		],
+		knowns: [
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['NaClO', 'HClO', 'ClO-'],
+					'context': 'initial'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'substances': 'NaClO,HClO',
+					'context': 'initial',
+					'solution': 's1',
+					'unit': 'L',
+					'value': '1.5'
+				}
+			},
+			{
+				type: 'substance',
+				str:'NaClO',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'NaClO_init_mass',
+					'type': 'mass',
+					'value': '18.2',
+					'displayVal': 'value',
+					'unit': 'g',
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '74.45'
+			},
+			{
+				type: 'substance',
+				str: "HClO",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'HClO_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "OH-",
+				html: 'OH<sup>-</sup>',
+				latex: '{OH}^{-}',
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 'OH-_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "Na+",
+				html: 'Na<sup>+</sup>',
+				latex: '{Na}^{+}',
+				initialData: {
+					'id': 'Na+_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "ClO-",
+				html: 'ClO<sup>-</sup>',
+				latex: '{ClO}^{-}',
+				initialData: {
+					'id': 'ClO-_init_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'unit': 'M',
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id':'eqConst',
+					'type': 'equilibriumConst',
+					'variable': 'K',
+					'value': '3.3e-7',
+					'displayVal': '3.3 &#215 10<sup>-7</sup>',
+					'context': 'initial'
+				}
+			}
+		],
+		data: [],
+		phase1Reaction: 'NaClO_is_Na+_plus_ClO-',
+		phase2Reaction: 'ClO-_plus_H2O_is_HClO_plus_OH-',
+		reactions: {
+			'ClO-_plus_H2O_is_HClO_plus_OH-': {
+				'id' : 'clo-_plus_h2o',
+				'equilibrium': true,
+				'inactive': ['H2O']
+			},
+			'NaClO_is_Na+_plus_ClO-': {
+				'id': 'naclo',
+				'equilibrium': false,
+				'bugMessage': [
+					"Does this reaction alone affect pH?",
+					"Which of the products could react to change the pH?",
+					"What happens when ClO- reacts with water?",
+					"Select the reaction ClO- + H2O → HClO + OH-"
+				]
+			},
+			'2ClO-_is_Cl2_plus_O2': {
+				'id' : '2clo-',
+				'equilibrium': true,
+				'bugMessage': [
+					"Does this reaction affect pH?",
+					"This chemical equation does not balance charge - you need to find a different reaction.",
+					"Select the reaction ClO- + H2O → HClO + OH-"
+				]
+			},
+		},
+		problemStatement: "18.2 g NaClO, common household bleach, is dissolved in enough water to make 1.5 L of solution. Calculate the concentration of OH<sup>-</sup> and the pH of the solution. <br>K<sub>b</sub> of ClO- is 3.3x10<sup>-7</sup><br>The atomic weight of NaClO is 74.45 g/mol" 
+	}
+};

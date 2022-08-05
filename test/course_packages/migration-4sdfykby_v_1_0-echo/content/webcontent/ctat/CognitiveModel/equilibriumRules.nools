@@ -1,0 +1,1369 @@
+/**
+	Overall control flow:
+	
+	1: register changes to interface (components added/values changed) ("...Added/Entered/Changed" family of rules)
+	2: solve for any quantities possible. ("SolveFor..." family of rules)  
+		-If this generates needed final-answer quantites, create expressions for them (rule "GotFinalQuantity")
+	3: Begin search for student/tutor expression matches, generating all possible transformations of predicted tutor expressions
+		-Rules under "Expression Transformations", and "CheckExpressionMatch" (check, if wrong backtrack, transform, check, and so on)
+		-Bulk of conflict tree is here
+		-On successful match:
+			-is it with a needed final answer value?
+				4: retract associated FinalQuantityGoal, halt
+			-else
+				halt
+	5: No match was found, save interface state (rule "SaveInterfaceState")	
+**/
+
+import("baseRules.nools");
+
+global ExpressionOptions = ['replace variable', 'solve quadratic', 'set unit', 'set substance', 'set context'];
+global nRequiredSteps = 5;
+
+/**
+*	Have reversible reaction and initial quantities for each substance involved
+*	->
+*	Create reaction instance fact
+*/
+rule CreateEquilibriumReactionInstance {
+	salience: 20;
+	when {
+		prob: Problem {data: probData};
+		reaction: Reaction reaction.id === probData.phase2Reaction {reagents: rList, products: pList};
+		not( ri: ReactionInstance ri.instanceOf === reaction );
+	} then {
+		var qtys = getFacts("KnownQuantity"),
+			reagents = [],
+			products = [],
+			rSubs = rList.map((r) => r.substance),
+			pSubs = pList.map((p) => p.substance);
+		qtys.forEach((qty) => {
+			var idx;
+			if (qty.context === "majority" && qty.type === "concentration") {
+				if ((idx = rSubs.indexOf(qty.substance)) > -1) {
+					reagents[idx] = qty;
+				} else if ((idx = pSubs.indexOf(qty.substance)) > -1) {
+					products[idx] = qty;
+				}
+			}
+		});
+		assert(new ReactionInstance(reaction, reagents, pSubs, null, products, "positive", prob.stoichStepDone));
+	}
+}
+
+rule HintFirstEQStep {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "determineEQConcentrations";
+		eqExp: Expression eqExp.id === "equilibrium_exp";
+		r: Reaction r.id === prob.data.phase2Reaction;
+	} then {
+		var reactionStr = r.reagents.map((reagent)=>formatChemStr(reagent.substance, 'html')).join(" + ")+" &#8594 "+r.products.map((product)=>formatChemStr(product.substance, 'html')).join(" + ");
+		if (prob.data.preferredEQStrategy === "quadratic" || prob.data.preferredEQStrategy === "explicitX") {
+			assert(new Hint("You can use an ICE table to represent the results of the reaction"));
+			assert(new Hint("Add an ICE table to the interface by clicking the 'Create ICE Table' button"));
+			
+			checkSAI({"selection":"reaction_menu_item_"+r.id, "action":"ButtonPressed", "input":r.id});
+		} else if (prob.data.preferredEQStrategy === "implicitX") {
+			var QNumer = r.products.map((p)=>{return '['+p.substance+']'+(p.moles===1 ? '' : '^'+p.moles)}).join('');
+			var QDenom = r.reagents.map((r)=>{return '['+r.substance+']'+(r.moles===1 ? '' : '^'+r.moles)}).join('');
+			var eqExpStr = "K = "+QNumer+'/'+QDenom;
+			assert(new Hint("You have determined the concentrations of species present after the neutralization reactions. How can you determine the equilibrium concentrations of the remaining species?"));
+			assert(new Hint("Use the law of mass action, K=Q, to determine the concentrations of the species at equilibrium"));
+			assert(new Hint("From K=Q of "+reactionStr+", you can determine the equillibrium concentrations."));
+			assert(new Hint("Enter the expression: "+eqExpStr));
+			
+			assert(new CustomField("step_id", getStepIDFromQty(eqExp)));
+		}
+		backtrack();
+	}
+}
+
+rule IceTableAdded {
+	salience: 20;
+	when {
+		prob: Problem prob.phase === "determineEQConcentrations" {data: probData};
+		table: Table table.reaction === probData.phase2Reaction;
+	} then {
+		modify(prob, "phase", "fillIceTable");
+		modify(prob, "tableToFill", table);
+	}
+}
+
+
+rule HintFillICETable {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "fillIceTable" {tableToFill: t};
+		table: Table table === t {rows: tableRows, reaction: tableReaction, id: tableId};
+		r: Reaction r.id === tableReaction;
+		ri: ReactionInstance ri.instanceOf === r;
+		k: KnownQuantity k.type === "equilibriumConst" {value: kVal};
+	} then {
+		var rowIds = Object.keys(tableRows);
+		var rows = rowIds.map((id) => tableRows[id]).sort((a,b)=>{return parseInt(a.id.replace(tableId+'_row_', '')) - parseInt(a.id.replace(tableId+'_row_', ''))});
+		var substances = ri.reagentNames.concat(ri.productNames);
+		console.log("got table rows", rows);
+		console.log("reactionInstance: ", ri);
+		var qtys = getFacts("KnownQuantity");
+		var tableQtys = {
+			'initial': {matched: [], unmatched: []},
+			'majority': {matched: [], unmatched: []},
+			'changed': {matched: [], unmatched: []},
+			'equilibrium': {matched: [], unmatched: []},
+			'assume small x': {matched: [], unmatched: []}
+		};
+		
+		qtys.forEach((qty)=>{
+			if (substances.includes(qty.substance) && tableQtys[qty.context] && qty.reaction === tableReaction) {
+				tableQtys[qty.context][qty.matchedTo.length ? 'matched' : 'unmatched'].push(qty);
+			}
+		});
+		console.log("tableQtys: ",tableQtys);
+		//initial row
+		var iRow = rows[0],
+			iRowExps = Object.keys(iRow.cells).map((key)=>iRow.cells[key]),
+			cRow = rows[1],
+			cRowExps = cRow && Object.keys(cRow.cells).map((key)=>cRow.cells[key]),
+			eRow = rows[2],
+			eRowExps = eRow && Object.keys(eRow.cells).map((key)=>eRow.cells[key]),
+			aRow = rows[3],
+			aRowExps = aRow && Object.keys(aRow.cells).map((key)=>aRow.cells[key]);
+		var btmOutQty = null;
+		var ma = prob.data.majorityAlias;
+		var nFirstRowMatched = iRowExps.filter((exp)=>exp.matchedTo.length).length;
+		var wrongRowExps;
+		var wrongExp;
+		var tutorAction = {selection: '', action: '', input: ''};
+		var contextHint, unitHint, addRowHint, hintRow;
+		if (iRow.context !== "majority") {
+			contextHint = "Set the name of the first row in the table to \""+ma+"\".  This row will store the given amounts of the substances involved in the reaction.";	
+			hintRow = iRow;
+		} else if (iRow.unit !== "M") {
+			unitHint = "Set the units for the first row to 'M'";
+			hintRow = iRow;
+		} else if (substances.length > nFirstRowMatched) {
+			console.log("first row bad");
+			wrongRowExps = iRowExps.filter((cell)=>!cell.matchedTo.length);
+			if (wrongRowExps.length) { //incorrect vals entered
+				assert(new Hint("At least one of the cells in the '"+ma+"' row is incorrect.  Double-click a table cell to edit it."));
+				wrongExp = wrongRowExps[0];
+			} else if (nFirstRowMatched) { //correct vals entered
+				assert(new Hint("You've correctly entered the "+ma+" amount of at least one substance in the table.  Now fill in the "+ma+" amounts of the remaining substances"));
+			} else { //no vals entered
+				assert(new Hint("Consider the information you have available to you.  This often includes the "+ma+" amounts of substances involved in the equilibrium reaction, which you can enter into the \""+ma+"\" row of the ICE table."));
+			}
+			btmOutQty = tableQtys.majority.matched.filter((q)=>q.matchedTo.length === 1)[0];
+			console.log("\tbtmOutQty is ",btmOutQty);
+		} else if (!cRow) {
+			addRowHint = "Use the \"+ Row\" button to add another row to the table.";
+		} else if (cRow.context !== "changed") {
+			contextHint = "Set the name of the second row in the table to \"changed\".  This row will store values representing the change in the amount of each substance due to the reaction.";
+			hintRow = cRow;
+		} else if (cRow.unit !== "M") {
+			unitHint = "Set the units for the second row to 'M'";
+			hintRow = cRow;
+		} else if (tableQtys['changed'].unmatched.length) {
+			wrongRowExps = cRowExps.filter((cell)=>!cell.matchedTo.length);
+			if (wrongRowExps.length) { //incorrect vals entered
+				assert(new Hint("At least one of the cells in the \"changed\" row is incorrect.  Double-click a table cell to edit it."));
+				wrongExp = wrongRowExps[0];
+			} else if (tableQtys['changed'].matched.length) { //correct vals entered
+				assert(new Hint("You've correctly entered the changed amount of at least one substance in the table.  Now fill in the changed amounts of the remaining substances"));
+			} else { //no vals entered
+				assert(new Hint("The \"changed\" row of the ICE table is for expressions that relate the changes in concentrations to a single unknown variable, x. The value of x can then be determined using the equilibrium constant of the reaction."));
+				assert(new Hint("For a reaction such as 2 A + 3 B → 4 C, the stoichiometry indicates that for every 2 moles of A consumed, 3 moles of B are consumed, and 4 moles of C are produced. We can take advantage of these relationships by using \"-2 x\" for the change in A, \"-3 x\" for the change in B and \"+4 x\" for the change in C. This allows a single variable, x, to describe the changes in all three substances."));
+			}
+			btmOutQty = tableQtys.changed.unmatched[0];
+		} else if (!eRow) {
+			addRowHint = "Use the \"+ Row\" button to add another row to the table.";
+		} else if (eRow.context !== "equilibrium") {
+			contextHint = "Set the name of the third row in the table to \"equilibrium\".  This row will store values representing the amount of each substance once the reaction reaches equilibrium";
+			hintRow = eRow;
+		} else if (eRow.unit !== "M") {
+			unitHint = "Set the units for the third row to 'M'";
+			hintRow = eRow;
+		} else if (tableQtys['equilibrium'].unmatched.length) {
+			wrongRowExps = eRowExps.filter((cell)=>!cell.matchedTo.length);
+			if (wrongRowExps.length) {
+				assert(new Hint("At least one of the cells in the 'equilibrium' row is incorrect.  Double-click a table cell to edit it."));
+				wrongExp = wrongRowExps[0];
+			} else if (tableQtys['equilibrium'].matched.length) {
+				assert(new Hint("You've correctly entered the equilibrium amount of at least one substance in the table.  Now fill in the equilibrium amounts for the remaining substances"));
+			} else {
+				assert(new Hint("Cells in the \"equilibrium\" row of the ICE table combine the \"initial\" amounts of substances and the \"changed\" amounts to express the amounts at \"equilibrium\""));
+				assert(new Hint("The \"equilibrium\" amount = \""+ma+"\" amount of a substance + the \"changed\" amount of that substance."));
+			}
+			btmOutQty = tableQtys.equilibrium.unmatched[0];
+		} else if (aRow) {
+			hintRow = aRow;
+			if (aRow.context !== "assume small x") {
+				contextHint = "Set the name of the fourth row in the table to \"assume small x\".  This row will store values representing the amount of each substance at equilibrium, assuming the value of x is sufficiently small as to be negligible.";
+			} else if (aRow.unit !== "M") {
+				unitHint = "Set the units for the fourth row to 'M'";
+			} else if (tableQtys['assume small x'].unmatched.length) {
+				wrongRowExps = aRowExps.filter((cell)=>!cell.matchedTo.length);
+				if (wrongRowExps.length) {
+					assert(new Hint("At least one of the cells in the \"assume small x\" row is incorrect.  Double-click a table cell to edit it."));
+					wrongExp = wrongRowExps[0];
+				} else if (tableQtys['assume small x'].matched.length) {
+					assert(new Hint("You've correctly entered the amount of at least one substance in the 'assume small x' row of the table.  Now fill in the amounts for the remaining substances"));
+				} else {
+					assert(new Hint("Because K for this reaction is relatively"+(kVal < 1 ? " small " : " large ")+", you can assume for now that x is a small number.  This will allow you to simplify the expressions in the \"equilibrium\" row of the table.  Use the \"assume small x\" row of the table for this.")); 
+					assert(new Hint("When you assume x is small, you can replace expressions such as \"10+2x\" with \"10\".  This is because 2x is so small compared to 10 that it may as well be 0.")); 
+				}
+				btmOutQty = tableQtys["assume small x"].unmatched[0];
+			}
+		} else if (prob.data.preferredEQStrategy === "explicitX") {
+			addRowHint = "Create a new row in the table, and set its context to 'assume small x'.  This row will store values representing the amount of each substance at equilibrium, assuming the value of x is sufficiently small as to be negligible";
+		}
+		if (wrongExp) {
+			console.log("wrongExp is",wrongExp);
+			if (wrongExp.context === "majority") {
+				btmOutQty = tableQtys.majority.matched.find((qty)=>qty.substance === wrongExp.substance);
+			} else {
+				btmOutQty = tableQtys[wrongExp.context].unmatched.find((qty)=>qty.substance === wrongExp.substance);
+			}
+		}
+		console.log("btmOutQty is now:",btmOutQty);
+		//step id either: enter cell, add row, set context, set unit
+		if (btmOutQty) {
+			console.log("got btmOutQty ",btmOutQty);
+			let ctxt = btmOutQty.context === "majority" ? prob.data.majorityAlias : (btmOutQty.context === "initial" ? prob.data.initialAlias : btmOutQty.context);
+			assert(new Hint("Enter "+btmOutQty.getDisplayVal()+" in the "+formatChemStr(btmOutQty.substance,'html')+" column of the "+ctxt+" row of the table."));
+			assert(new CustomField("step_id", getStepIDFromQty(btmOutQty)));
+		} else {
+			if (addRowHint) {
+				tutorAction.selection = tableId+"_add_row_btn";
+				tutorAction.action = "ButtonPressed";
+				tutorAction.input = '-1' ;
+			} else {
+				tutorAction.selection = hintRow.id+(contextHint ? "_context_entry" : "_unit_entry");
+				tutorAction.action = "UpdateComboBox";
+				tutorAction.input = unitHint ? "M" : 
+					(hintRow === iRow ? ma : (hintRow === cRow ? "changed" : (hintRow === eRow ? "equilibrium" : (hintRow === aRow ? "assume small x" : ''))));
+			}
+			checkSAI(tutorAction);
+			assert(new Hint(addRowHint || contextHint || unitHint));
+		} 
+		
+		backtrack();
+	}
+}
+
+rule StoichStepFinished {
+	salience: 19;
+	when {
+		p: Problem !p.stoichStepDone && p.data.phase2Reaction;
+		reaction: ReactionInstance {productNames: pNames, reagentNames: rNames};
+		reactionTemplate: Reaction reactionTemplate === reaction.instanceOf;
+		exists( fQty: KnownQuantity fQty.context === "final" && fQty.type === "concentration" && fQty.fromHypothesis.isTrue && 
+			((fQty.substance in rNames) || (fQty.substance in pNames)) );
+//		not( nmfQty:  KnownQuantity nmfQty.context === "final" && nmfQty.type === "concentration" && nmfQty.fromHypothesis.isTrue && 
+//			((nmfQty.substance in rNames) || (nmfQty.substance in pNames)) && !nmfQty.matchedTo.length );
+	} then {
+		console.log("fire stoichStepFinished");
+//		retract(reactionTemplate);
+//		retract(reaction);
+		modify(p, "stoichStepDone", true);
+		var allQtys = getFacts("KnownQuantity");
+		var finalQtys = [], qtyPairs = {},
+			reactionSubstances = p.data.phase2Reaction.split("_is_").flatMap((side)=>side.split("_plus_"));
+		console.log("allQtys: ");
+		console.log(allQtys);
+		console.log("reactionSubstances: ");
+		console.log(reactionSubstances);
+		allQtys.forEach((qty) => {
+			if (reactionSubstances.indexOf(qty.substance) > -1) {
+				if (qty.context === "initial" && qty.type === "concentration") {
+					console.log("got initial concentration qty: ");
+					console.log(qty);
+					qtyPairs[qty.substance] = [qty];
+				} else if (qty.context === "final" && qty.type === "concentration" && qty.fromHypothesis.isTrue) {
+					console.log("got final concentration qty: ");
+					console.log(qty);
+					finalQtys.push(qty);
+				}
+			}
+		});
+		console.log("qty pairs: ");
+		console.log(qtyPairs);
+		console.log("finalQtys: ");
+		console.log(finalQtys);
+		finalQtys.forEach((qty)=>{
+			var pair;
+			if (pair = qtyPairs[qty.substance]) { 
+				console.log("here1: "+qty.substance);
+				if (pair[0].type === qty.type && pair[0].unit === qty.unit) {
+					console.log("here2: "+qty.substance);
+					var maj = assert(new KnownQuantity({
+						value: qty.value,
+						context: "majority",
+						type: "concentration",
+						unit: "M",
+						reaction: p.data.phase2Reaction,
+						substance: qty.substance,
+						fromHypothesis: qty.fromHypothesis,
+						fromRule: qty.fromRule,
+						fromFacts: qty.fromFacts.slice(),
+						hint: qty.hint
+					}));
+					//modify(pair[0], "value", qty.value);
+					qty.fromFacts.forEach((fromQty) => {
+						modify(fromQty, "toFacts", fromQty.toFacts.slice().concat(maj));
+					});
+				}
+			}
+		});
+	}
+}
+
+/**
+*	Have reaction instance and initial quantity and not final quantity
+*	->
+*	Create quantity for changed amt (w/ x variable)
+*/
+rule DetermineQuantityChangedWithX {
+	salience: 20;
+	when {
+		prob: Problem prob.stoichStepDone;
+		reaction: ReactionInstance {reagents: rList, products: pList, direction: rDir, partsOf: reactionPts};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase2Reaction;
+		iQty: KnownQuantity iQty.context === "majority" && iQty.type === "concentration" && (iQty in rList || iQty in pList) {substance: sub, value: val, type: t, unit: u, fromHypothesis: fh};
+		not(fQty: KnownQuantity fQty.context === "equilibrium" && fQty.substance === sub);
+		not(cQty: KnownQuantity cQty.context === "changed" && cQty.substance === sub && cQty.reaction === iQty.reaction);
+	} then {
+		var isProduct = (pList.indexOf(iQty) >= 0);
+		var sign = (isProduct && rDir === "positive") ? '' : ((!isProduct && rDir === "negative") ? '' : '-');
+		var expString = sign+reactionPts[sub]+'x';
+		console.log("changed w x, iQty.reaction is "+iQty.reaction);
+		let newCQty = assert(new KnownQuantity({
+			substance: sub, 
+			type: t, 
+			value: expString, 
+			unit: u, 
+			context: "changed", 
+			reaction: iQty.reaction,
+			fromHypothesis: fh, 
+			requiredToMatch: ['unit', 'context', 'substance'],
+			fromRule: "DetermineQuantityChangedWithX",
+			fromFacts: [iQty],
+			hint: "Use the variable x to represent the change in the amount of "+sub+"."
+		}));
+		console.log("changed w x, cQty.reaction is "+newCQty.reaction);
+		modify(iQty, "toFacts", iQty.toFacts.slice().concat(newCQty));
+	}
+}
+
+/**
+*	Have reaction instance, initial and changed quantities and not final quantity
+*	->
+*	Create quantity for equilibrium amt (w/ x variable)
+*/
+rule DetermineEquilibriumQuantityWithX {
+	salience: 20;
+	when {
+		iQty: KnownQuantity iQty.context === "majority" && iQty.type === "concentration" {substance: sub, value: iVal, unit: iUnit, type: t, fromHypothesis: fh};
+		cQty: KnownQuantity cQty.context === "changed" && cQty.value.includes('x') && cQty.substance === sub && cQty.unit === iUnit && cQty.fromHypothesis === fh {value: cVal};
+		not(fQty: KnownQuantity fQty.context === "equilibrium" && fQty.substance === sub && fQty.unit === iUnit);
+	} then {
+		var expString = chemSimplify(iVal+'+'+cVal);
+		let eqQty = assert(new KnownQuantity({
+			substance: sub, 
+			type: t, 
+			value: expString, 
+			unit: iUnit, 
+			context: "equilibrium",
+			reaction: cQty.reaction,
+			fromHypothesis: fh, 
+			requiredToMatch: ['unit', 'context', 'substance'],
+			fromRule: "DetermineEquilibriumQuantityWithX",
+			fromFacts: [iQty, cQty],
+			hint: "Combine the initial amount of "+sub+" with the changed amount to determine the amount at equilibrium."
+		}));
+		modify(iQty, "toFacts", iQty.toFacts.slice().concat(eqQty));
+		modify(cQty, "toFacts", cQty.toFacts.slice().concat(eqQty));
+	}
+}
+
+rule AssumeXLessThanK {
+	salience: 20;
+	when {
+		prob: Problem prob.canAssumeX;
+		reaction: ReactionInstance {reagents: riReagents, products: riProducts, reagentNames: rNames, productNames: pNames, instanceOf: template};
+		t: Reaction t === template && t.id === prob.data.phase2Reaction;
+		iQty: KnownQuantity iQty.context === "majority" && ((iQty.substance in rNames) || (iQty.substance in pNames))  {substance: sub};
+		fQty: KnownQuantity fQty.context === "equilibrium" && fQty.substance === sub && fQty.value.includes("x");
+		not(ass: Hypothesis ass.type === "xLessThanK");
+	} then {
+		var lowest = riReagents[0],
+			subs = riReagents.concat(riProducts);
+		
+		for (let i = 1; i < subs.length; i++) {
+			let val = parseFloat(subs[i].value);
+			if ((val > 0) && (val < parseFloat(lowest.value))) {
+				lowest = subs[i]; 
+			}
+		}
+		modify(lowest, "lowestMajorityConcentration", true);
+		var assumption = assert(new Hypothesis("xLessThanK", [lowest], !prob.data.mustValidateXAssumption));
+	}
+}
+
+rule DetermineEquilibriumQuantityWithAssumption {
+	salience: 20;
+	when {	
+		prob: Problem;
+		ass: Hypothesis ass.type === "xLessThanK";
+		ri: ReactionInstance {reagentNames: riReagents, productNames: riProducts};
+		template: Reaction template === ri.instanceOf && template.id === prob.data.phase2Reaction;
+		fQty: KnownQuantity fQty.context === "equilibrium" && fQty.type === "concentration" && 
+			fQty.value.includes("x") && ((fQty.substance in riReagents) || (fQty.substance in riProducts))
+			{value: val, substance: sub, unit: u, type: t};
+		not(qtyWAssumption: KnownQuantity qtyWAssumption.context === "assume small x" && qtyWAssumption.substance === sub && qtyWAssumption.unit === u);
+	} then {
+		console.log("determineEquilibriumQuantityWithAssumption, fQty is ");
+		console.log(fQty);
+		var expString = chemEvaluate(chemSetVariable(val, 'x', '0'));
+		expString = (expString === 0 ? val : expString);
+		let eqQty = assert(new KnownQuantity({
+			substance: sub, 
+			type: t, 
+			value: expString, 
+			unit: u, 
+			context: "assume small x",
+			reaction: fQty.reaction,
+			fromHypothesis: ass, 
+			requiredToMatch: ['unit', 'context', 'substance'],
+			fromRule: "DetermineEquilibriumQuantityWithAssumption",
+			fromFacts: [fQty],
+			hint: "What would be the amount of "+sub+" at equilibrium assuming the value of x is negligibly small?"
+		}));
+		modify(fQty, "toFacts", fQty.toFacts.slice().concat(eqQty));
+	}
+}
+
+rule IceTableFilled {
+	salience: 20;
+	when {
+		prob: Problem prob.phase === "fillIceTable" && prob.tableToFill {tableToFill: iceTable};
+		not( kq: KnownQuantity kq.unit === "M" && kq.reaction === iceTable.reaction &&  
+				(kq.context === "majority" || kq.context === "equilibrium" || kq.context === "changed" || (kq.context === "assume small x" && prob.canAssumeX))
+				&& !kq.matchedTo.length );
+	} then {
+		modify(prob, "phase", "createEquilibriumExpression");
+	}
+}
+
+rule AssumptionMade {
+	salience: 20;
+	when {
+		prob: Problem !prob.assumptionMade;
+		or(
+			assumedQty: KnownQuantity assumedQty.context === "assume small x" && assumedQty.type === "concentration" && assumedQty.matchedTo.length,
+			assumptionClaim: CustomClaim assumptionClaim.type === "smallx" && assumptionClaim.matched
+		);
+	} then {
+		modify(prob, "assumptionMade", true);
+		addScoreLabels("assume_small_x_claim");
+	}
+}
+
+rule DeterminePka {
+	salience: 20;
+	when {
+		eqConst: KnownQuantity eqConst.id === "eqConst" {value: eqConstVal};
+		not (pka: KnownQuantity pka.id === "pKa");
+	} then {
+		var pkaVal = -Math.log10(eqConstVal);
+		let newPka = assert(new KnownQuantity({
+			value: pkaVal,
+			type: 'pKa',
+			id: 'pKa',
+			fromHypothesis: eqConst.fromHypothesis,
+			fromFacts: [eqConst],
+			hint: "Determine the value of pKa by taking the negative log of the equilibrium constant for this reaction."
+		}));
+		modify(eqConst, "toFacts", eqConst.toFacts.slice().concat(newPka));
+	}
+}
+
+rule CheckEquilibriumExpression {
+	salience: 10;
+	when {
+		prob: Problem prob.searching && prob.inputType === "expression" {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.id === prob.activeExpression && studentExp.creator === "student" && studentExp.matchedTo.length === 0;
+		exists(tutorExp: Expression tutorExp.creator === "tutor" && tutorExp.id.includes("equilibrium_exp"));
+	} then {
+		var sides = studentExp.string.split("=");
+		var isQuadratic = sides.every((s)=>s.includes('x'));
+		var xQtys = getFacts("KnownQuantity").filter((kq)=> kq.variable === "x" && 
+														!isNaN(kq.value) &&
+														((isQuadratic && kq.fromRule === "SolveQuadratic") || (!isQuadratic && kq.fromRule === "SolveForAssumedX"))
+													);
+		var xVals = xQtys.map((kq)=>kq.value);	
+		if (xQtys.length) {
+			console.log("xQtys ",xQtys);
+			var tExp = getFacts("Expression").find((e)=>{
+				let id = isQuadratic ? 'equilibrium_exp_quadratic' : 'equilibrium_exp_assumption';
+				console.log("id is "+id);
+				return e.id === id;
+			});
+			
+			if (checkSAI({selection: tExp.id, action: 'tutor_exp', input: tExp.string}, function() {
+				var match = false;
+				if (sides.length === 2) {
+					match = xVals.every((xVal)=> {
+						return compValues(chemEvaluate(chemSetVariable(sides[0], 'x', xVal)), chemEvaluate(chemSetVariable(sides[1], 'x', xVal)), IMPRECISION_MARGIN);
+					});
+				}
+				return match;
+			})) {
+				modify(studentExp, "matchedTo", [tExp]);
+				modify(prob, "keepChain", true);
+				modify(prob, "stepsMatched", prob.stepsMatched.concat({input: studentExp, ruleChain: window.Util.genRuleChain(tExp)}));
+			} else {
+				backtrack();
+			}
+		} else {
+			backtrack();
+		}
+	}
+}
+
+/**
+*	Have reversible reaction instance and not equilibrium expression
+*	->
+*	Create equilibrium expression fact
+*/
+/*
+rule CreateEquilibriumExpression {
+	salience: 20;
+	when {
+		prob: Problem prob.stoichStepDone;
+		reaction: ReactionInstance {reagents: rList, products: pList, partsOf: rPts, instanceOf: template};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase2Reaction;
+		not(exp: Expression exp.creator === "tutor" && exp.id.includes("equilibrium_exp") );
+	} then {
+		var expString = 'K = (';
+		var expId = 'equilibrium_exp';
+		function addQtyToExp(qty) {
+			var sub = qty.substance;
+			var subVar = '['+sub+']';
+			expString += '&'+subVar+'&^'+rPts[sub];
+		};
+		pList.forEach(addQtyToExp);
+		expString += ')/(';
+		rList.forEach(addQtyToExp);
+		expString+=')';
+		assert(new Expression({
+			id: expId,
+			str: expString, 
+			creator: "tutor",
+			fromRule: "CreateEquilibriumExpression",
+			fromFacts: [],
+			name: "equilibrium expression"
+		}));
+	}
+}
+*/
+
+
+rule HintCreateEquilibriumExpression {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "createEquilibriumExpression";
+		eqExp: Expression eqExp.id === "equilibrium_exp";
+	} then {
+		var symbols = prob.data.symbols.filter((s)=>s.type === "variable");
+		var eqExpFormatted = chemParse(eqExp.string).toString();
+		var sides = eqExpFormatted.split("=");
+		var rightFrac = sides[1].split("/");
+		rightFrac = rightFrac.map((term)=>{
+			term = term.replace(/\^(\d)/g, (match)=>match[1] !== '1' ? '<sup>'+match[1]+'</sup>' : '');
+			symbols.forEach((sym)=>{
+				if (sym.html) {
+					term = term.replace(sym.str, sym.html);
+				}
+			});
+			return term;
+		});
+		eqExpFormatted = sides[0]+" = <div class='frac'><span>"+rightFrac[0]+"</span><span class='symbol'>/</span><span class='bottom'>"+rightFrac[1]+"</span></div>";
+		assert(new Hint("In problems involving chemical equilibrium, the equilibrium expression (K=Q) is useful for determining the concentrations of chemical species present at equilibrium.  To add a formula, use the \"Create Formula\" button."));
+		assert(new Hint("Try writing K=Q for the equilibrium reaction of interest here. For example, for a reaction A → 2B + 3C, K = <div class='frac'><span>[B]<sup>2</sup>[C]<sup>3</sup></span><span class='symbol'>/</span><span class='bottom'>[A]</span></div>."));
+		assert(new Hint("Enter the formula: "+eqExpFormatted));
+		
+		assert(new CustomField("step_id", getStepIDFromQty(eqExp)));
+		
+		backtrack();
+	}
+}
+
+/**
+*	Have equilibrium expression and either can't assume x or assumption has been invalidated
+*	->
+*	Set up var replacement to solve w quadratic method
+*/
+rule ReplaceVarsInEqExpQuadratic {
+	salience: 20;
+	when {
+		prob: Problem;
+		reaction: ReactionInstance {reagents: rList, products: pList, partsOf: rPts, instanceOf: template};
+		template: Reaction template === reaction.instanceOf && template.id === prob.data.phase2Reaction;
+		exp: Expression exp.creator === "tutor" && exp.id === "equilibrium_exp" {id: expId};
+		not( quadExp: Expression quadExp.id === "equilibrium_exp_quadratic" );
+		or(
+			assumption: Hypothesis assumption.type === "xLessThanK" && assumption.tested === true && !assumption.isTrue,
+			cantAssume: Boolean cantAssume === true from (!prob.canAssumeX || prob.canSkipAssumeX)
+		);
+		not( rvg: ReplaceVarGoal !rvg.completed );
+	} then {
+		var testForX = function(qty) {
+			return (''+qty.value).includes('x');
+		};
+		var newId = expId+"_quadratic";
+		assert(new Expression({
+			id: newId,
+			str: exp.string,
+			creator: "tutor",
+			unit: exp.unit,
+			context: exp.context,
+			substance: exp.substance,
+			fromRule: "ReplaceVarsInEqExpQuadratic",
+			fromFacts: [],
+			name: "equilibrium expression"
+		}));
+		assert(new ReplaceVarGoal(newId, 'K', {id: 'eqConst'}));
+		pList.concat(rList).forEach((qty)=>{
+			let sub = qty.substance;
+			assert(new ReplaceVarGoal(newId, '['+sub+']', {type: "concentration", substance: sub, context: 'equilibrium'}, testForX));
+		});
+	}
+}
+
+
+/**
+*	Have equilibrium expression and x has been assumed
+*	->
+*	Set up var replacement to solve w/ assumption method
+*/
+rule ReplaceVarsInEqExpAssumption {
+	salience: 20;
+	when {
+		prob: Problem prob.assumptionMade || !prob.data.mustValidateXAssumption;
+		reaction: ReactionInstance reaction.instanceOf.id === prob.data.phase2Reaction {reagents: rList, products: pList, partsOf: rPts};
+		exp: Expression exp.creator === "tutor" && exp.id === "equilibrium_exp" {id: expId};
+		not( assumedExp: Expression assumedExp.id === "equilibrium_exp_assumption" );
+		assumption: Hypothesis assumption.type === "xLessThanK" && !assumption.tested;
+		//not( rvg: ReplaceVarGoal !rvg.completed );
+	} then {
+		var newId = expId+"_assumption";
+		assert(new Expression({
+			id: newId,
+			str: exp.string,
+			creator: "tutor",
+			unit: exp.unit,
+			context: exp.context,
+			substance: exp.substance,
+			fromRule: "ReplaceVarsInEqExpAssumption",
+			fromFacts: [],
+			name: "equilibrium expression"
+		}));
+		assert(new ReplaceVarGoal(newId, 'K', {id: 'eqConst'}));
+		pList.concat(rList).forEach((qty)=>{
+			let sub = qty.substance;
+			assert(new ReplaceVarGoal(newId, '['+sub+']', {type: "concentration", substance: sub, context: 'assume small x'}));
+		});
+	}
+}
+
+
+rule EquilibriumExpressionCreated {
+	salience: 20;
+	when {
+		prob: Problem prob.data.phases.indexOf(prob.phase) < prob.data.phases.indexOf("replaceVariables");
+		tutorExp: Expression tutorExp.creator === "tutor" && tutorExp.id.includes("equilibrium_exp");
+		studentExp: Expression tutorExp in studentExp.matchedTo;
+	} then {
+		modify(prob, "phase", "replaceVariables");
+	}
+}
+
+rule HintReplaceVars {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "replaceVariables" ;
+		reaction: Reaction reaction.id === prob.data.phase2Reaction;
+		studentEqExp: Expression studentEqExp.creator === "student";
+		tutorEqExp: Expression tutorEqExp.id.includes("equilibrium_exp") && tutorEqExp.matchedTo.includes(studentEqExp);
+		exists( rvg: ReplaceVarGoal rvg.expId === tutorEqExp.id );
+	} then {
+		
+		console.log("hint replace vars");
+		
+		var tutorEqExpAssumption = getFacts("Expression").find((e)=>e.id === "equilibrium_exp_assumption" && e.matchedTo.includes(studentEqExp));
+		tutorEqExp = tutorEqExpAssumption || tutorEqExp;
+		var rvGoals = getFacts("ReplaceVarGoal").filter((rvg)=> !rvg.completed && (rvg.expId === tutorEqExp.id));
+		var allQtys = getFacts("KnownQuantity");
+		var qtys = {};
+		
+		var kStr = '';
+		var concs = [];
+		var eqExpReplaced = chemParse(replaceVars(tutorEqExp.string, tutorEqExp.varsReplaced));
+		rvGoals.forEach((rvg)=>{
+			console.log("check rvg: ",rvg);
+			if (rvg.varName === "K") {
+				kStr = 'the value of K';
+				console.log("set kStr = "+kStr);
+			} else {
+				concs.push(rvg.varName);
+			}
+			var qty = allQtys.find((q)=>compObjects(q, rvg.qtyProperties, getObjKeys(rvg.qtyProperties)));
+			
+			eqExpReplaced = chemSetVariable(eqExpReplaced, rvg.varName, qty.value);
+		});
+		eqExpReplaced = chemToPrecision(eqExpReplaced.toString(), 4).result;
+		console.log("\teqExpReplaced: ",eqExpReplaced);
+		let sides = eqExpReplaced.split("="),
+			kSide = sides[0],
+			fracSides = sides[1].split("/").map((fs)=>fs.replace(/\^(\d)/g, (m, g1) => g1 === "1" ? '' : "<sup>"+g1+"</sup>"));
+			numer = fracSides[0].replace('xx', "x<sup>2</sup>"),
+			denom = fracSides[1];
+											
+		let eqExpFormatted = kSide+" = <div class='frac'><span>"+numer+"</span><span class='symbol'>/</span><span class='bottom'>"+denom+"</span></div>";
+		eqExpFormatted = eqExpFormatted.replace(/e(-?\d+)/g, (m,g1)=>"&#215;10<sup>"+g1+"</sup>");
+		var concStr = concs.length === 1 ? 'the concentration value of ' : (concs.length > 1 ? 'the concentration values of ' : '');
+		for (let i = 0; i < concs.length; i++) {
+			concStr += concs[i];
+			if (concs.length > 1) {
+				if (i === concs.length - 2) {
+					concStr += ', and ';
+				} else if (i !== concs.length - 1) {
+					concStr += ', ';
+				}
+			}
+		}
+		concStr && (concStr += ' at equilibrium.');
+		var hintStr = "Now rewrite the equilibrium expression, substituting in "+kStr;
+		if (kStr && concStr) {
+			hintStr += ', as well as ';
+		}
+		hintStr += concStr;
+		let h = assert(new Hint(hintStr));
+		console.log("first hint: "+h.msg);
+		assert(new Hint("You have the equilibrium expression (K=Q). Do you have any information on the <strong>equilibrium</strong> values of the concentrations appearing in this expression?"));
+		if (getFacts("Table").length) {
+			if (prob.assumptionMade) {
+				assert(new Hint("The \"assume small x\" row of your ICE table has values for the equilibrium concentration assuming x is sufficiently small.  Rewrite the equilibrium expression using these values."));
+			} else {
+				assert(new Hint("The \"equilibrium\" row of your ICE table has values for the equilibrium concentrations. Rewrite the equilibrium expression using these values."));
+			}
+		} else {
+			assert(new Hint("A good way to determine the concentrations of these substances at equilibrium is to use an ICE table."));
+		}
+		assert(new Hint("You can also use the \"options > replace variable\" button to replace a variable in a formula with a value or expression."));
+		assert(new Hint("Enter the formula "+eqExpFormatted));
+		
+		assert(new CustomField("step_id", getStepIDFromQty(tutorEqExp)));
+		
+		backtrack();
+	}
+}
+
+rule VariablesReplacedQuadratic {
+	salience: 30;
+	when {
+		prob: Problem prob.data.phases.indexOf(prob.phase) < prob.data.phases.indexOf("solveForX");
+		exp: Expression exp.id === "equilibrium_exp_quadratic" && exp.matchedTo.length {string: expString};
+		exists( rvg1 : ReplaceVarGoal rvg1.expId === "equilibrium_exp_quadratic" );
+		not( rvg2 : ReplaceVarGoal rvg2.expId === "equilibrium_exp_quadratic" && !rvg2.completed );
+	} then {
+		modify(prob, "varReplaced", null);
+		modify(prob, "phase", "solveForX");
+	}
+}
+
+rule VariablesReplacedAssumption {
+	salience: 30;
+	when {
+		prob: Problem prob.data.phases.indexOf(prob.phase) < prob.data.phases.indexOf("solveForX");
+		exp: Expression exp.id === "equilibrium_exp_assumption" && exp.matchedTo.length {string: expString};
+		exists( rvg1 : ReplaceVarGoal rvg1.expId === "equilibrium_exp_assumption" );
+		not( rvg2 : ReplaceVarGoal rvg2.expId === "equilibrium_exp_assumption" && !rvg2.completed );
+	} then {
+		modify(prob, "varReplaced", null);
+		modify(prob, "phase", "solveForX");
+	}
+}
+
+rule HintSolveForXQuadratic {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "solveForX";
+		quadraticForm: Expression quadraticForm.id === "equilibrium_exp_quadratic_form";
+		x: KnownQuantity x.variable === "x";
+		fh: Hypothesis fh === x.fromHypothesis && fh.type === "equilibriumXValue" && fh.isTrue;
+	} then {
+		if (!quadraticForm.matchedTo.length) {
+			assert(new Hint("Rearrange the equilibrium expression to the form \"ax<sup>2</sup> + bx + c = 0\".  Then use the options > solve quadratic button to determine the value of x."));
+			assert(new CustomField("step_id", getStepIDFromQty(quadraticForm)));
+		} else {
+			assert(new Hint("Use the options > solve quadratic button to determine the value of x."));
+			assert(new CustomField("step_id", getStepIDFromQty(x)));
+		}
+		backtrack();
+	}
+}
+
+rule HintSolveForXAssumption {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "solveForX";
+		assumedForm: Expression assumedForm.id === "equilibrium_exp_assumption" && assumedForm.matchedTo.length;
+		assumption: Hypothesis assumption.type === "xLessThanK" && !assumption.tested;
+		x: KnownQuantity x.variable === "x";
+		fh: Hypothesis fh === x.fromHypothesis && fh.type === "xLessThanK";
+	} then {
+		assert(new Hint("Rearrange the equilibrium expression to solve for x"));
+		assert(new CustomField("step_id", getStepIDFromQty(x)));
+		backtrack();
+	}
+}
+
+/**
+*	Have an equilibrium expression in which all vars have been replaced
+*	->
+*	Create version of expression rearranged into quadratic form
+*/
+rule RearrangeToQuadratic {
+	salience: 20;
+	when {
+		prob: Problem ;
+		exp: Expression exp.id === "equilibrium_exp_quadratic" {id: expId};
+		exists( rvg : ReplaceVarGoal rvg.expId === expId );
+		not( rvgIncomplete : ReplaceVarGoal rvgIncomplete.expId === expId && !rvgIncomplete.completed );
+		not( quadExp: Expression quadExp.id === "equilibrium_exp_quadratic_form" );
+	} then {
+		console.log("RearrangeToQuadratic, exp is ",exp.string);
+		var varsReplaced = replaceVars(exp.string, exp.varsReplaced);
+			console.log("\tafter vars replaced is ",varsReplaced);
+		var simpd = chemSimplify(varsReplaced);
+			console.log("\tafter simp is ",simpd);
+		var expTree = chemParse(simpd);
+		var left = expTree.left,
+			right = expTree.right;
+			
+		var rightNumerCopy = chemParse(right.toString());
+		rightNumerCopy.factors = rightNumerCopy.factors.filter((f)=>!f.inverted());
+			
+		var denomFactor = right.factors.find((f)=>f.inverted());
+		var rightDenomCopy = denomFactor.clone();
+		
+		console.log("\tdenomFactor is ",denomFactor);
+		console.log("\trightDenomCopy is ",rightDenomCopy);
+		
+		var newLeft = chemStringify(left) + ' * '+rightDenomCopy.invert().toString()+' - '+chemStringify(rightNumerCopy),
+			newRight = '0',
+			newFull = newLeft +' = '+newRight,
+			newFullNegated = '-('+newLeft+')'+' = '+newRight;
+		
+		console.log("\trearranged to: ",newFull);
+		
+		assert(new Expression({
+			id: "equilibrium_exp_quadratic_form",
+			str: newFull,
+			creator: "tutor",
+			fromRule: "RearrangeToQuadratic",
+			fromFacts: [],
+			name: "equilibrium expression in quadratic form"
+		}));
+		assert(new Expression({
+			id: "equilibrium_exp_quadratic_form_negated", 
+			str: newFullNegated, 
+			creator: "tutor",
+			fromRule: "RearrangeToQuadratic",
+			fromFacts: [],
+			name: "equilibrium expression in quadratic form"
+		}));
+	}
+}
+
+/**
+*	Have an equilibrium expression where all variables have been replaced & x is assumed << K
+*	->
+*	Solve for x
+*/
+rule SolveForAssumedX {
+	salience: 20;
+	when {
+		prob: Problem ;
+		exp: Expression exp.id === "equilibrium_exp_assumption" {id: expId};
+		xAssumption: Hypothesis xAssumption.type === "xLessThanK" && !xAssumption.claims[1];
+		exists( rvg : ReplaceVarGoal rvg.expId === expId );
+		not( rvgIncomplete : ReplaceVarGoal rvgIncomplete.expId === expId && !rvgIncomplete.completed );
+	} then {
+		var varsReplaced = replaceVars(exp.string, exp.varsReplaced);
+		var simpd = chemSimplify(varsReplaced);
+		var expTree = chemParse(simpd);
+		var left = expTree.left; 
+		var right = expTree.right; 
+		var newLeftN;
+		var xFactor;
+		
+		console.log("solveForAssumedX, exp is ",simpd);
+		
+		if (right.operator === "TIMES") {
+			if (right.factors.length !== 2) {
+				throw new Error("equilibrium exp right side has > 2 factors: "+right.toString());
+			}
+			xFactor = right.factors.find((f)=>f.operator === "VAR" || (f.operator === "EXP" && f.base.operator === "VAR"));
+			let constFactor = right.factors.find((f) => f.operator === "CONST");
+			let leftStr = chemStringify(left);
+			if (xFactor.exp < 0) {
+				newLeftN = chemEvaluate(constFactor.toString()+'/('+leftStr+')');
+				xFactor.exp *= -1;
+			} else {
+				newLeftN = chemEvaluate(leftStr+'/('+constFactor.toString()+')');
+			}
+		} else {
+			xFactor = right;
+			newLeftN = chemEvaluate(left);
+		}
+		
+		console.log("\txFactor is "+xFactor.toString());
+		console.log("\tnewLeftN is "+newLeftN);
+		
+		var x;
+		if (xFactor.operator === "EXP") {
+			x = Math.pow(newLeftN, 1/xFactor.exponent.value);
+		} else if (xFactor.operator === "VAR") {
+			x = newLeftN;
+		} else {
+			throw new Error("xFactor not EXP or VAR node: ",xFactor);
+		}
+		var xQty = assert(new KnownQuantity({
+			type: 'variable', 
+			value: x, 
+			fromHypothesis: xAssumption,
+			fromRule: "SolveForAssumedX",
+			fromFacts: [exp],
+			hint: "Rearrange the equilibrium expression to solve for x.",
+			variable: 'x'
+		}));
+		modify(exp, "toFacts", exp.toFacts.slice().concat(xQty));
+		var newClaims = xAssumption.claims.slice().concat(xQty);
+		modify(xAssumption, "claims", newClaims);
+	}
+}
+
+/**
+*	Have an expression fact for an equilibrium expression in quadratic form
+*	->
+*	Solve for roots of that expression
+*/
+rule SolveQuadratic {
+	salience: 20;
+	when {
+		exp: Expression exp.id === "equilibrium_exp_quadratic_form" && !exp.roots && exp.creator === "tutor" {string: expString};
+	} then {
+		console.log("solveQuadratic, expString is "+expString);
+		var coeffs = chemGetQuadraticCoefficients(expString, true);
+		console.log("got coeffs: "+coeffs);
+		var roots = chemSolveQuadratic(...coeffs);
+		console.log("got roots: "+roots);
+		modify(exp, "roots", roots);
+		roots.forEach((root) => {
+			let xHyp = assert(new Hypothesis("equilibriumXValue", [root]));
+			let xQty = assert(new KnownQuantity({
+				type: 'variable', 
+				value: root, 
+				fromHypothesis: xHyp,
+				fromRule: "SolveQuadratic",
+				fromFacts: [exp],
+				hint: "Use the options menu to solve for the roots of the equilibrium expression.",
+				variable: 'x'
+			}));
+			modify(exp, "toFacts", exp.toFacts.slice().concat(xQty));
+		});
+	}
+}
+
+rule DetermineXAsPercentOfConcentration {
+	salience: 20;
+	when {
+		xQty: KnownQuantity xQty.type === 'variable' && xQty.variable === 'x' {value: xVal, fromHypothesis: xQtyHyp};
+		xAssumption: Hypothesis xAssumption.type === "xLessThanK" && !xAssumption.tested && xAssumption === xQtyHyp;
+		concentration: KnownQuantity concentration === xAssumption.claims[0] {value: concVal, substance: concSub};
+		not( ratioQty: KnownQuantity ratioQty.type === "xRatio" );
+	} then {
+		var ratio = parseFloat(xVal)/parseFloat(concVal);
+		var ratioQty = assert(new KnownQuantity({
+			type: 'xRatio', 
+			value: ratio, 
+			context: concSub, 
+			fromHypothesis: xAssumption,
+			fromRule: "DetermineXAsPercentOfConcentration",
+			fromFacts: [xQty, concentration],
+			hint: "Determine the ratio of x to the substance with the smallest initial concentration.  If x is less than 5% of that concentration value, the assumption that x<<K holds."
+		}));
+		modify( xQty, "toFacts", xQty.toFacts.slice().concat(ratioQty));
+		modify( concentration, "toFacts", concentration.toFacts.slice().concat(ratioQty));
+	}
+}
+
+
+/**
+*	Have a hypothesis about a possible x value and a knownquantity that needs x substituted
+*	->
+*	Do the substitution and potentially invalidate the hypothesis
+*/
+rule SubXInQty {
+	salience: 20;
+	when {
+		prob: Problem !prob.searching;
+		xQty: KnownQuantity xQty.type === 'variable' && xQty.variable === 'x' {value: xVal, fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh;
+		qty: KnownQuantity (qty.context === "changed" || qty.context === "equilibrium") && getIsNaN(qty.value) {value: qtyVal};
+		not( newQty : KnownQuantity newQty.substance === qty.substance && newQty.context === qty.context && newQty.fromHypothesis === hyp );
+	} then {
+		var newVal = chemEvaluate(chemSetVariable(qtyVal, 'x', xVal));
+		let subbedQty = assert(new KnownQuantity({
+			substance: qty.substance, 
+			type: qty.type, 
+			value: newVal, 
+			unit: qty.unit, 
+			context: qty.context,
+			reaction: qty.reaction,
+			fromHypothesis: hyp,
+			fromRule: "SubXInQty",
+			fromFacts: [xQty, qty],
+			hint: qty.context === "equilibrium" ? "Now substitute the value of x in the expression "+qty.getDisplayVal() : ''
+		}));
+		modify(qty, "toFacts", qty.toFacts.slice().concat(subbedQty));
+		modify(xQty, "toFacts", xQty.toFacts.slice().concat(subbedQty));
+		if (hyp.type === "equilibriumXValue" && qty.context === "equilibrium" && newVal < 0) {
+			modify(hyp, "tested", true);
+			modify(hyp, "isTrue", false);
+		}
+	}
+}
+
+rule ValidateXLessThanKHypothesis {
+	when {
+		prob: Problem prob.searching && prob.inputType === "xAssumptionClaim" {input: probInput};
+		claim: XAssumptionClaim claim === probInput[0] && claim.fieldsFilled {value: claimExp, validity: claimValid, comparator: claimComp, percent: claimPercent};
+		hyp: Hypothesis hyp.type === "xLessThanK" && hyp.claims.length === 2 && !hyp.tested;
+		reagent: KnownQuantity reagent === hyp.claims[0] {value: reagentVal};
+		ratioQty: KnownQuantity ratioQty.type === "xRatio" {value: ratioQtyVal};
+	} then {
+		var qtyToCompare = claimPercent === "5%" ? parseFloat(ratioQtyVal) * 100 : parseFloat(ratioQtyVal);
+		var valid = ((+ratioQtyVal) < 0.05);
+		modify(hyp, "isTrue", valid);
+		modify(hyp, "tested", true);
+		
+		//predict claim
+		modify(claim, "fieldsFilled", false);
+		var validityRight = valid ? claimValid === "valid" : claimValid === "invalid";
+		var compRight = valid ? claimComp === "<" : claimComp === ">";
+		var valRight = compValues(qtyToCompare, claimExp.string, IMPRECISION_MARGIN);
+		console.log("ValidateXLessThanKHypothesis, comparing "+claimExp.string+" and "+qtyToCompare+" valRight is "+valRight);
+		var si = getStudentInput();
+		var predictionString = valid+", "+qtyToCompare+(valid ? ' < ' : ' > ')+claimPercent;
+		if (checkSAI({selection: si.selection, action: "ButtonPressed", input: predictionString}, 
+				function() {
+					return validityRight && compRight && valRight;
+				})
+			) 
+		{
+			workspace.lockClaim(claim.id);
+			
+			modify(prob, "keepChain", true);
+			addScoreLabels("validate_small_x_claim");
+		} else {
+			backtrack();
+		}
+	}
+}
+
+/**
+*	Have an incorrect x value hypothesis and an inconclusive x value hypothesis
+*	->
+*	validate the inconclusive one
+*/
+rule ValidateXHypothesis2Roots {
+	salience: 20;
+	when {
+		prob: Problem !prob.searching;
+		hyp: Hypothesis hyp.type === "equilibriumXValue" && hyp.tested && hyp.isTrue === false;
+		hyp2: Hypothesis hyp2.type === "equilibriumXValue" && !hyp2.tested;
+	} then {
+		modify(hyp2, "tested", true);
+		modify(hyp2, "isTrue", true);
+	}
+}
+
+/**
+*	Have only one x value hypothesis (equilibrium exp had only one root)
+*	-> 
+*	must be true, validate it
+*/
+rule ValidateXHypothesis1Root {
+	salience: 20;
+	when {
+		prob: Problem !prob.searching;
+		hyp: Hypothesis hyp.type === "equilibriumXValue" && !hyp.tested;
+		not(hyp2: Hypothesis hyp2.type === "equilibriumXValue" && hyp2 !== hyp);
+	} then {
+		modify(hyp, "tested", true);
+		modify(hyp, "isTrue", true);
+	}
+}
+
+rule SolvedForX {
+	salience: 20;
+	when {
+		prob: Problem prob.data.phases.indexOf(prob.phase) <= prob.data.phases.indexOf("solveForX");
+		xQty: KnownQuantity xQty.type === 'variable' && xQty.variable === 'x' && xQty.matchedTo.length {fromHypothesis: fh};
+		xAssumption: Hypothesis xAssumption.type === "xLessThanK" && xAssumption === fh && !xAssumption.tested;
+	} then {
+		modify(prob, "phase", prob.data.phases[prob.data.phases.indexOf("solveForX")+1]);
+	}
+}
+
+rule HintValidateXAssumption {
+	when {
+		prob: Problem prob.hintSearching && prob.phase === "validateXAssumption";
+		xPercentage: KnownQuantity xPercentage.type === "xRatio";
+		assumption: Hypothesis assumption.type === "xLessThanK";
+	} then {
+		var claim = getFacts("XAssumptionClaim")[0];
+		if (!claim) {
+			assert(new Hint("Now that you've solved for x, you can check whether your assumption about x being small is valid"));
+			assert(new Hint("Create a \"Validate X Assumption\" claim"));
+			checkSAI({selection:"claim_menu_item_validate_x_assumption", action: "ButtonPressed", input: "-1"});
+		} else {
+			var smallestConc = assumption.claims[0];
+			var x = assumption.claims[1];
+			assert(new Hint("The approximation of x is valid if the value of x is less than 5% of the smallest non-zero concentration"));
+			//step is either: enter x/conc, select </>, select 0.05/5%, select valid/invalid, press submit
+			if (!claim.value) {
+				var xDivision = "<div class='frac'><span>"+x.getDisplayVal()+"</span><span class='symbol'>/</span><span class='bottom'>"+smallestConc.getDisplayVal()+"</span></div>";
+				assert(new Hint("Divide the value of x by the smallest non-zero initial concentration.  If the result is less than 0.05, the approximation is valid."));
+				assert(new Hint("Enter "+xDivision+" in the claim's input field"));
+				checkSAI({selection:claim.id+"_value_input_ctat", action:"UpdateTextField", input: xPercentage.value});
+			} else if (!claim.percent) {
+				assert(new Hint("Select 0.05 from the rightmost dropdown menu in the claim.  Or, if you multiplied by 100 to get the actual percentage, select 5%"));
+				checkSAI({selection: claim.id+"_percent_menu", action:"UpdateComboBox", input:"0.05"});
+			} else if (!claim.comparator) {
+				assert(new Hint("Select a relational operator from the dropdown menu in the claim."));
+				assert(new Hint("If x is less than 5% of the "+prob.data.majorityAlias+" concentration of "+smallestConc.substance+", select '<';  if it is greater, select '>'"));
+				checkSAI({selection: claim.id+"_comparison_menu", action:"UpdateComboBox", input: (Number(xPercentage.value) < 0.05 ? "<" : ">")});
+			} else if (!claim.validity) {
+				assert(new Hint("Now, based off of the comparison shown in the claim, choose 'valid' or 'invalid' from the first dropdown menu to reflect the validity of the assumption that x << K"));
+				assert(new Hint("If x is less than 5% of the "+prob.data.majorityAlias+" concentration of "+smallestConc.substance+", select \"valid\"; if not, select \"invalid\""));
+				checkSAI({selection:claim.id+"_validity_menu", action:"UpdateComboBox", input:(Number(xPercentage.value) < 0.05 ? "valid" : "invalid")});
+			} else {
+				assert(new Hint("Once the claim is filled out completely, press the \"submit\" button"));
+				checkSAI({selection:claim.id+"_submit_btn", action:"ButtonPressed", input:""});
+			}
+		}
+		backtrack();
+	}
+}
+
+/**
+*/
+rule ValidatedX {
+	salience: 20;
+	when {
+		prob: Problem !prob.readyForFinalQty;
+		xQty: KnownQuantity xQty.type === "variable" && xQty.variable === "x" && xQty.matchedTo.length;
+		hyp: Hypothesis hyp === xQty.fromHypothesis && hyp.isTrue && (hyp.type === "xLessThanK" || !prob.mustValidateXAssumption);
+	} then {
+		modify(prob, "readyForFinalQty", true);
+		modify(prob, "phase", "determineFinalValues");
+/*
+		--commented out b/c caused problems when hint request sent subsequent to solving for x.  Unclear why this rule should checkSAI or modify keepChain--
+
+		let input = getStudentInput();
+		checkSAI({selection: input.selection, action: input.action, input: input.input}, ()=> true);
+		modify(prob, "keepChain", true);
+*/	
+	}
+}
+
+rule HintDetermineEquilibriumConcentrations {
+	when {
+		prob: Problem prob.hintSearching && prob.readyForFinalQty;
+		finalQty: KnownQuantity !finalQty.matchedTo.length && finalQty.isFinalAnswer && finalQty.type === "concentration" && finalQty.context === "equilibrium";
+	} then {
+		var table = getFacts("Table")[0];
+		assert(new Hint("Now that you've determined the value of x, you can determine the equilibrium concentrations."));
+		if (table) {
+			assert(new Hint("The \"equilibrium\" row of your ICE table contains expressions for the equilibrium concentrations. Substitute your value of x into these to get the concentrations at equilibrium."));
+		} else {
+			assert(new Hint("Look back at where you introduced x in your problem solving. How do the equilibrium concentrations of your species depend on x? It is likely that you used x to describe the change in the concentration of some species."));
+			assert(new Hint("Remember that the ICE table is a great way to summarize relationships between concentrations in an equilibrium reaction. Consider creating an ICE table so you know exactly how x relates to the Initial concentrations, the Changes in these concentrations, and the Equilibrium concentrations."));
+		}
+		
+		assert(new CustomField("step_id", getStepIDFromQty(finalQty)));
+		
+		backtrack();
+	}
+}
+
+rule HintDeterminePH {
+	when {
+		prob: Problem prob.hintSearching && prob.readyForFinalQty;
+		ph: KnownQuantity ph.type === 'ph' && ph.isFinalAnswer && !ph.matchedTo.length;
+		xVal: KnownQuantity xVal.type === "variable" && xVal.variable === "x" && xVal.matchedTo.length && !notANumber(xVal.value) {fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh && hyp.isTrue;
+	} then {
+		
+
+		var allQtys = getFacts("KnownQuantity"),
+			h3oplus = allQtys.find((q)=> q.context === "equilibrium" && q.unit === "M" && q.substance === "H3O+" && !notANumber(q.value)),
+			ohminus = allQtys.find((q)=> q.context === "equilibrium" && q.unit === "M" && q.substance === "OH-" && !notANumber(q.value)),
+			poh = allQtys.find((q)=> q.type === "pOH");
+		
+		if (h3oplus) {
+			assert(new Hint("You can use the concentration of H<sub>3</sub>O<sup>+</sup> at equilibrium to determine the pH of the solution"));
+			assert(new Hint("pH = -log( H<sub>3</sub>O<sup>+</sup> )."));
+			assert(new Hint("The concentration of H<sub>3</sub>O<sup>+</sup> at equilibrium is "+h3oplus.getDisplayVal()));
+			assert(new Hint("Enter the following formula: -log("+h3oplus.getDisplayVal()+")"));
+		} else if (ohminus) {
+			assert(new Hint("You can calculate the pH of a solution by subtracting the pOH of that solution from 14"));
+			if (!poh.matchedTo.length) {
+				assert(new Hint("Calculate the pOH of the solution by taking the negative log of the concentration of OH<sup>-</sup> at equilibrium"));
+				assert(new Hint("pOH = -log( OH<sup>-</sup> )."));
+				assert(new Hint("The concentration of OH<sup>-</sup> at equilibrium is "+ohminus.getDisplayVal()));
+				assert(new Hint("Enter the following formula: -log("+ohminus.getDisplayVal()+")"));
+			} else {
+				assert(new Hint("The pOH of the solution is "+poh.getDisplayVal()+".  So, "+poh.getDisplayVal()+" + pH = 14"));
+				assert(new Hint("pH = 14 - "+poh.getDisplayVal()));
+				assert(new Hint("Enter the following formula: 14 - "+poh.getDisplayVal()));
+			}
+		} else {
+			
+		}
+		assert(new CustomField("step_id", getStepIDFromQty(ph)));
+		
+		backtrack();
+	}
+}
+
+rule DeterminePHFromH3OPlus {
+	salience: 20;
+	when {
+		h3oplus: KnownQuantity h3oplus.context === "equilibrium" && h3oplus.unit === "M" && h3oplus.substance === "H3O+" && !notANumber(h3oplus.value) {fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh && hyp.isTrue;
+		not( ph: KnownQuantity ph.type === "ph" );
+	} then {
+		var phVal = -Math.log10(h3oplus.value);
+		var ph = assert(new KnownQuantity({
+			type: "ph", 
+			value: phVal, 
+			fromHypothesis: hyp, 
+			id: 'ph_of_solution',
+			fromRule: "DeterminePH",
+			fromFacts: [h3oplus],
+			hint: ["Determine the pH of the solution by taking the negative log of the concentration of H<sub>3</sub>O<sup>+</sup>.",
+					"The concentration of H<sub>3</sub>O<sup>+</sup> is "+h3oplus.getDisplayVal()+".  Taking the negative log of this value will give you the pH.",
+					"Enter the formula: -log("+h3oplus.getDisplayVal()+")"]
+		}));
+		modify(h3oplus, "toFacts", h3oplus.toFacts.slice().concat(ph));
+	}
+}
+
+rule DeterminePOHFromOHMinus {
+	salience: 20;
+	when {
+		ohminus: KnownQuantity ohminus.context === "equilibrium" && ohminus.unit === "M" && ohminus.substance === "OH-" && !notANumber(ohminus.value) {fromHypothesis: fh};
+		hyp: Hypothesis hyp === fh && hyp.isTrue;
+		not( poh: KnownQuantity poh.type === "pOH" );
+	} then {
+		var pohVal = -Math.log10(ohminus.value);
+		var poh = assert(new KnownQuantity({
+			type: "pOH", 
+			value: pohVal, 
+			fromHypothesis: hyp, 
+			id: 'poh_of_solution',
+			fromRule: "DeterminePOHFromOHMinus",
+			fromFacts: [ohminus],
+			hint: ["Determine the pOH of the solution by taking the negative log of the concentration of OH<sup>-</sup>.",
+					"The concentration of OH<sup>-</sup> is "+ohminus.getDisplayVal()+".  Taking the negative log of this value will give you the pH.",
+					"Enter the formula: -log("+ohminus.getDisplayVal()+")"]
+		}));
+		modify(ohminus, "toFacts", ohminus.toFacts.slice().concat(poh));
+	}
+}
+
+rule DeterminePHFromPOH {
+	salience: 20;
+	when {
+		poh: KnownQuantity poh.type === "pOH" {fromHypothesis: fh};
+		not( ph: KnownQuantity ph.type === "ph" );
+	} then {
+		var pohVal = +poh.value;
+		var ph = assert(new KnownQuantity({
+			type: "ph",
+			value: 14-pohVal,
+			fromHypothesis: fh,
+			id: 'ph_of_solution',
+			fromRule: "DeterminePHFromPOH",
+			fromFacts: [poh],
+			hint: ["The sum of the pH and the POH of a solution is 14",
+					"You can determine the pH of a solution by subtracting the pOH of that solution from 14",
+					"The pOH of the solution is "+poh.getDisplayVal()+".  Subtracting that value from 14 will tell you the pH.",
+					"Enter the formula: 14-"+poh.getDisplayVal()]
+		}));
+		modify(poh, "toFacts", poh.toFacts.slice().concat(ph));
+	}
+}
+
+rule DeterminePHHendersonHasselbalch {
+	salience: 20;
+	when {
+		prob: Problem;
+		pKa: KnownQuantity pKa.id === "pKa" {value: pkaVal};
+		template: Reaction template.id === prob.data.phase2Reaction;
+		reaction: ReactionInstance reaction.instanceOf === template {reagentNames: rReagents, productNames: rProducts};
+		acidAssmptn: KnownQuantity acidAssmptn.context === "assume small x" && !getIsNaN(acidAssmptn.value) && acidAssmptn.substance in rReagents && acidAssmptn.unit === "M";
+		baseAssmptn: KnownQuantity baseAssmptn.context === "assume small x" && !getIsNaN(baseAssmptn.value) && baseAssmptn.substance in rProducts && baseAssmptn.unit === "M";
+		acidMaj: KnownQuantity acidMaj.context === "majority" && !getIsNaN(acidMaj.value) && acidMaj.substance in rReagents && acidMaj.unit === "M";
+		baseMaj: KnownQuantity baseMaj.context === "majority" && !getIsNaN(baseMaj.value) && baseMaj.substance in rProducts && baseMaj.unit === "M";
+		not( ph: KnownQuantity ph.type === "ph" );
+	} then {
+		var acid = prob.data.mustValidateXAssumption ? acidAssmptn : acidMaj;
+		var base = prob.data.mustValidateXAssumption ? baseAssmptn : baseMaj;
+		var phVal = parseFloat(pkaVal) + Math.log10(base.value/acid.value);
+		let newPh = assert(new KnownQuantity({
+			type: "ph",
+			value: phVal,
+			fromHypothesis: acid.fromHypothesis,
+			id: 'ph_of_solution',
+			fromRule: "DeterminePHHendersonHasselbalch",
+			fromFacts: [pKa, acid, base],
+			hint: "Use the Henderson Hasselbalch equation to determine the pH (pH = pKa + log(base/acid))."
+		}));
+		modify( pKa, "toFacts", pKa.toFacts.slice().concat(newPh));
+		modify( acid, "toFacts", acid.toFacts.slice().concat(newPh));
+		modify( base, "toFacts", base.toFacts.slice().concat(newPh));
+	}
+}
+
+rule PredictPHClaim {
+	when {
+		prob: Problem prob.searching && prob.inputType === "phClaim" {input: probInput};
+		phQty: KnownQuantity phQty.isFinalAnswer && !phQty.matchedByClaim {value: phVal};
+		studentClaim: PHClaim studentClaim === probInput[0] && studentClaim.fieldsFilled && !studentClaim.matched {id: claimId, value: claimExp};
+	} then {
+		var si = getStudentInput();
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: phVal}, function() {
+			return compValues(phVal, claimExp.string, IMPRECISION_MARGIN);
+		})) {
+			//claim correct
+			modify(phQty, "matchedByClaim", true);
+			modify(studentClaim, "matched", true);
+			modify(prob, "keepChain", true);
+			
+			addScoreLabels("ph_claim");
+		} else {
+			backtrack();
+		}
+	}
+}

@@ -1,0 +1,117 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Si3N4',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Si',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '2.00',
+					'unit': 'g',
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '28.09'
+			},
+			{
+				type: 'substance',
+				str:"N2",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '1.50',
+					'unit': 'g',
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '28.02'
+			},
+			{
+				type: 'substance',
+				str: "Si3N4",
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					type: "mass",
+					value: '0',
+					unit: 'g',
+					context: "initial",
+					'solution': 's1'
+				},
+				'atomicWeight': '140.31'
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['Si','N2'],
+					'context': 'initial',
+				}
+			}
+		],	
+		phase1Reaction: '3Si_plus_2N2_is_Si3N4',
+		reactions: {
+			'3Si_plus_2N2_is_Si3N4': {
+				'id' : '3Si_plus_2N2',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "Silicon nitride (Si<sub>3</sub>N<sub>4</sub>) is a very hard, high-temperature-resistant ceramic used as a component of turbine blades in jet engines.  It is prepared according to the following equation: <br><br> <strong>3Si + 2N<sub>2</sub> &#8594 Si<sub>3</sub>N<sub>4</sub></strong> <br><br> Which is the limiting reactant when 2.00 g of Si and 1.50 g of N<sub>2</sub> react? After you have determined the limiting reactant, calculate the mass of Si<sub>3</sub>N<sub>4</sub> that will be produced. <br> Use the following molar masses for your calculations:<br><strong>Si</strong>: 28.09 , <strong>N<sub>2</sub></strong>: 28.02 , <strong>Si<sub>3</sub>N<sub>4</sub></strong>: 140.31",
+	},
+	claimTypes: ["Limiting Reagent", "Final Quantity"]
+};

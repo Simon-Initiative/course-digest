@@ -1,0 +1,49 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <title>Vlab3</title>
+    <meta name="description" content="Virtual Lab">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script>
+        var assignmentPath = "default";
+        var userName = null;
+        var session = null;
+        var loggingEnabled = true;
+        var destination = "oli";
+        var buildDate = "Sept 19, 2018";
+        var language = "en";
+        var allowLoadAssignment = true;
+        var showFirstTimeTips = true;
+        var labInfo = null;
+
+
+        function getWorkbenchItems() {
+            return labInfo.getWorkbenchItems();
+        }
+        function isFinishedLoading() {
+            return labInfo.isFinishedLoading();
+        }
+        function getSelectedItem() {
+            return labInfo.getSelectedItem();
+        }
+        function loadAssignment(assignmentPathTemp) {
+            assignmentPath = assignmentPathTemp;
+            if (labInfo)
+                labInfo.loadAssignment();
+        }
+    </script>
+    <!-- endbuild -->
+</head>
+<body>
+<!--[if lt IE 10]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+
+<div id="vlab">
+</div>
+<!-- build:js scripts/main.js -->
+<!-- endbuild -->
+<script type="text/javascript" src="1.bundle.js"></script><script type="text/javascript" src="bundle.js"></script></body>
+</html>

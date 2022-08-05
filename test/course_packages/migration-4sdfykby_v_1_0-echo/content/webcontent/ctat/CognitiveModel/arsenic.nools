@@ -1,0 +1,631 @@
+import("stoichRules.nools");
+
+global problemData = {
+	randomize: true,
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	stoichStepDone: false,
+	claimTypes: ["Limiting Reagent", "Final Quantity"],
+	chooseFrom: [
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO2-',
+					html: 'AsO<sub>2</sub><sup>-</sup>',
+					latex: '{As{O}_{2}}^{-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: "106.9096"
+				},
+				{
+					type: 'substance',
+					str:"S2-",
+					html: "S<sup>2-</sup>",
+					latex: "{S}^{2-}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '32.066'
+				},
+				{
+					type: 'substance',
+					str:"As2S3",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '246.041'
+				},
+				{
+					type: 'substance',
+					str: "OH-",
+					hotkey: '0',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					}
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO2-','S2-'],
+						'context': 'initial',
+					}
+				}
+			],	
+			finalQuantities: [
+				{
+					'substance': 'AsO2-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO2- final'
+				},
+				{
+					'substance': 'S2-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AgNO3 final'
+				}
+			],	
+			phase1Reaction: '2AsO2-_plus_3S2-_plus_4H2O_is_As2S3_plus_8OH-',
+			reactions: {
+				'2AsO2-_plus_3S2-_plus_4H2O_is_As2S3_plus_8OH-': {
+					'id' : '2AsO2-_plus_3S2-_plus_4H2O',
+					'equilibrium': false,
+					"inactive": ['H2O']
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br>2AsO<sub>2</sub><sup>-</sup> + 3S<sup>2-</sup> + 4H<sub>2</sub>O &#8594 As<sub>2</sub>S<sub>3</sub>(s) + 8OH<sup>-</sup> <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO2-_mass_g_initial.displayVal% g of arsenite with %S2-_mass_g_initial.displayVal% g of sulfide.  Use the following molar masses for your calculations:<br><strong>AsO<sub>2</sub><sup>-</sup></strong>: 106.9096 , <strong>S<sup>2-</sup></strong>: 32.066 , <strong>As<sub>2</sub>S<sub>3</sub></strong>: 246.041"
+		},
+
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str:"Fe2+",
+					html: "Fe<sup>2+</sup>",
+					latex: "{Fe}^{2+}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '55.845'  
+				},
+				{
+					type: 'substance',
+					str:"Fe3(AsO4)2",
+					html: "Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>",
+					latex: "{Fe}_{3}{(As{O}_{4})}_{2}",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '445.352'
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO43-','Fe2+'],
+						'context': 'initial',
+					}
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO43- final'
+				},
+				{
+					'substance': 'Fe2+',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Fe2+ final'
+				}
+			],
+			phase1Reaction: '2AsO43-_plus_3Fe2+_is_Fe3(AsO4)2',
+			reactions: {
+				'2AsO43-_plus_3Fe2+_is_Fe3(AsO4)2': {
+					'id' : '2AsO43-_plus_3Fe2+',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br>2AsO<sub>4</sub><sup>-3</sup> + 3Fe<sup>2+</sup> &#8594 Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>(s) <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO43-_mass_g_initial.displayVal% g of arsenate with %Fe2+_mass_g_initial.displayVal% g of iron(II) ion.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>Fe<sup>2+</sup></strong>: 55.845 , <strong>Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub></strong>: 445.352"
+		},
+
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str:"Fe3+",
+					html: "Fe<sup>3+</sup>",
+					latex: "{Fe}^{3+}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '55.845'
+				},
+				{
+					type: 'substance',
+					str: "FeAsO4",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '194.753'
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO43-','Fe3+'],
+						'context': 'initial',
+					}
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO4-3 final'
+				},
+				{
+					'substance': 'Fe3+',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Fe3+ final'
+				}
+			],
+			phase1Reaction: 'AsO43-_plus_Fe3+_is_FeAsO4',
+			reactions: {
+				'AsO43-_plus_Fe3+_is_FeAsO4': {
+					'id' : 'AsO43-_plus_Fe3+',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br> AsO<sub>4</sub><sup>-3</sup> + Fe<sup>3+</sup> &#8594 FeAsO<sub>4</sub>(s) <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO43-_mass_g_initial.displayVal% g of arsenate with %Fe3+_mass_g_initial.displayVal% g of iron(III) ion. Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>Fe<sup>3+</sup></strong>: 55.845 , <strong>FeAsO<sub>4</sub></strong>: 194.753"
+		},
+
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str: "Ca2+",
+					html: "Ca<sup>2+</sup>",
+					latex: "{Ca}^{2+}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '40.078'
+				},
+				{
+					type: 'substance',
+					str: "Ca3(AsO4)2",
+					html: "Ca<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>",
+					latex: "{Ca}_{3}{(As{O}_{4})}_{2}",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '398.051'
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO43-','Ca2+'],
+						'context': 'initial',
+					}
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO4-3 final'
+				},
+				{
+					'substance': 'Ca2+',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Ca2+ final'
+				}
+			],
+			phase1Reaction: '2AsO43-_plus_3Ca2+_is_Ca3(AsO4)2',
+			reactions: {
+				'2AsO43-_plus_3Ca2+_is_Ca3(AsO4)2': {
+					'id' : '2AsO43-_plus_3Ca2+',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br>2AsO<sub>4</sub><sup>-3</sup> + 3Ca<sup>2+</sup> &#8594 Ca<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>(s) <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO43-_mass_g_initial.displayVal% g of arsenate with %Ca2+_mass_g_initial.displayVal% g of calcium ion.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>Ca<sup>2+</sup></strong>: 40.078 , <strong>Ca<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub></strong>: 398.051"
+		},
+
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str:"Ca(OH)2",
+					html: "Ca(OH)<sub>2</sub>",
+					latex: "Ca{(OH)}_{2}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '74.093'
+				},
+				{
+					type: 'substance',
+					str: "Ca5(AsO4)3OH",
+					html: "Ca<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>OH",
+					latex: "{Ca}_{5}{(As{O}_{4})}_{3}OH",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '634.123'
+				},
+				{
+					type: 'substance',
+					str: "OH-",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					}
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO43-','Ca(OH)2'],
+						'context': 'initial',
+					}
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO4-3 final'
+				},
+				{
+					'substance': 'Ca(OH)2',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Ca(OH)2 final'
+				}
+			],	
+			phase1Reaction: '3AsO43-_plus_5Ca(OH)2_is_Ca5(AsO4)3OH(s)_plus_9OH-',
+			reactions: {
+				'3AsO43-_plus_5Ca(OH)2_is_Ca5(AsO4)3OH(s)_plus_9OH-': {
+					'id' : '3AsO43-_plus_5Ca(OH)2',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br> 3AsO<sub>4</sub><sup>-3</sup> + 5Ca(OH)<sub>2</sub> &#8594 Ca<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>OH(s) + 9OH<sup>-</sup> <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO43-_mass_g_initial.displayVal% g of arsenate with %Ca(OH)2_mass_g_initial.displayVal% g of calcium hydroxide.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>Ca(OH)<sub>2</sub></strong>: 74.093 , <strong>Ca<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>OH</strong>: 634.123"
+		},
+
+		{
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str:"PbCl2",
+					html: "PbCl<sub>2</sub>",
+					latex: "Pb{Cl}_{2}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '278.1'
+				},
+				{
+					type: 'substance',
+					str: "Pb5(AsO4)3Cl",
+					html: "Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl",
+					latex: "{Pb}_{5}{(As{O}_{4})}_{3}Cl",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					},
+					atomicWeight: '1488.2'
+				},
+				{
+					type: 'substance',
+					str: "Cl-",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+						'solution': 's1'
+					}
+				},
+				{
+					initialData: {
+						'id': 's1',
+						'type': 'solution',
+						'substances': ['AsO43-','PbCl2'],
+						'context': 'initial',
+					}
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO4-3 final'
+				},
+				{
+					'substance': 'PbCl2',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Ca(OH)2 final'
+				}
+			],	
+			phase1Reaction: '3AsO43-_plus_5PbCl2_is_Pb5(AsO4)3Cl_plus_9Cl-',
+			reactions: {
+				'3AsO43-_plus_5PbCl2_is_Pb5(AsO4)3Cl_plus_9Cl-': {
+					'id' : '3AsO43-_plus_5PbCl2',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br> 3AsO<sub>4</sub><sup>-3</sup> + 5PbCl<sub>2</sub> &#8594 Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl(s) + 9Cl<sup>-</sup> <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO43-_mass_g_initial.displayVal% g of arsenate with %PbCl2_mass_g_initial.displayVal% g of lead(II) chloride.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>PbCl<sub>2</sub></strong>: 278.1 , <strong>Pb<sub>5</sub>(AsO<sub>4</sub>)<sub>3</sub>Cl</strong>: 1488.2"
+		}
+	]
+};

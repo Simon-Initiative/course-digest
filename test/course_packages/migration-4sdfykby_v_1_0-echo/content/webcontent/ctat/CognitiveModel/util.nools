@@ -1,0 +1,794 @@
+global NUM_DEC_PLACES = 3;
+global NUM_SIG_FIGS = 4;
+global NUM_FINAL_ANS_SIG_FIGS = 3;
+global IMPRECISION_MARGIN = 0.01;
+
+global DUMMY_TUTOR_SAI = {
+	selection: "dummy",
+	action: "tutor",
+	input: "sai"
+};
+
+global WILDCARD_SAI = {
+	selection: "don't_care",
+	action: "don't_care",
+	input: "don't_care",
+};
+
+function callWorkspaceFunc(name, args) {
+	return window.workspace[name].apply(window.workspace, args);
+}
+
+function formatChemStr(str, format) {
+	return window.workspace.formatChemStr(str, format);
+}
+
+function isFrom() {
+	var a = Array.prototype.slice.call(arguments),
+	toQty = a[0];
+	for (let i = 1; i < a.length; i++) {
+		if (toQty.fromFacts.indexOf(a[i]) < 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function getRequiredStepCount(problemData) {
+	if (problemData.nRequiredSteps) {
+		return problemData.nRequiredSteps;
+	}
+	var psData = problemData.probSpecificData;
+	var ret = psData.finalQuantities.length;
+	if (!problemData.initReadyForFinalQty) {
+		if (!psData.phase2Reaction) {
+			ret += 1; //LR claim
+		} else if (psData.canAssumeX && psData.mustValidateXAssumption) {
+			ret += 2; // x assumption, validate assumption
+		}
+	}
+	return ret;
+}
+
+function processGivenReaction(str, reactionData) {
+	var sides = str.split("_is_"),
+		reactants = sides[0].split("_plus_"),
+		products = sides[1].split("_plus_"),
+		htmlStr = '',
+		stateRegex = /\[(.*)\]/,
+		partRegex = /^(\d*)([A-z].*)$/;
+	
+	console.log("processGivenReaction: ",str);
+	
+	reactionData.reagents = [];
+	reactionData.products = [];
+	[reactants,products].forEach((subs, listIdx) => {
+		subs.forEach((sub, subIdx) => {
+			let state = '';
+			sub = sub.replace(stateRegex, (match, g1)=> {
+				state = g1;
+				return '';
+			});
+			htmlStr += formatChemStr(sub, 'html');
+			if (subIdx === subs.length - 1) {
+				if (listIdx === 0) {
+					htmlStr += reactionData.equilibrium ? ' &#x21cc ' : ' &#8594 ';
+				}
+			} else {
+				htmlStr += ' + ';
+			}
+			
+			let res = partRegex.exec(sub);
+			var mols = res[1];
+			var subName = res[2];
+			reactionData[listIdx === 0 ? 'reagents' : 'products'].push({
+				'substance': subName,
+				'moles': mols || 1,
+				'state': state
+			});
+		});
+	});
+	
+	reactionData.text = htmlStr;
+	reactionData.type = "reaction_menu_item";
+	
+	return htmlStr;
+}
+
+function processGivenComposition(str) {
+	var sides = str.split("_is_"),
+		compound = sides[0],
+		elements = sides[1].split("_plus_"),
+		compData = {compound: compound, elements: {}};
+		
+	elements.forEach((el) => {
+		var mols = parseInt(el.charAt(0),10),
+			elName = mols ? el.slice(1) : el;
+		compData.elements[elName] = mols || 1;
+	});
+		
+	return compData;
+}
+
+function formatGivens(givens) {
+	givens.knowns.forEach((known) => {
+		if (known.type === "substance") {
+			known.html = known.html || formatChemStr(known.str, 'html');
+			known.latex = known.latex || formatChemStr(known.str, 'latex');
+		}
+	});
+	for (let reactionId in givens.reactions) {
+		processGivenReaction(reactionId, givens.reactions[reactionId]);
+	};
+	if (givens.compositions) {
+		givens.compositions = givens.compositions.map(processGivenComposition);
+	}		
+}
+
+/**
+*	create a shallow copy of the object passed in
+*/
+function shallowCopyObj(obj) {
+	var copy = {};
+	var keys = Object.keys(obj);
+	for (var i = 0; i < keys.length; i++) {
+		copy[keys[i]] = obj[keys[i]];
+	}
+	
+	return copy;
+}
+
+/**
+*	check whether v2 is w/in <marginOfError> range of v1
+*/
+function compValues(v1, v2, marginOfError) {
+	var v1Float = parseFloat(v1),
+		v2Float = parseFloat(v2),
+		moe = marginOfError || 0,
+		marginFloat = Math.abs(v1Float * moe),
+		rangeLowBound = v1Float - marginFloat,
+		rangeHiBound = v1Float + marginFloat,
+		ret = ((v2Float >= rangeLowBound) && (v2Float <= rangeHiBound));
+	
+	return ret;
+}
+
+function getObjKeys(o) {
+	return Object.keys(o);
+}
+
+function getIsNaN(n) {
+	return isNaN(n);
+}
+
+/**
+*	compare two objects according to the list of properties passed in
+*/
+function compObjects(o1, o2, propsToCompare) {
+	var isMatch = true;
+	for (var i = 0; i < propsToCompare.length; i++) {
+		isMatch = (o1[propsToCompare[i]] === o2[propsToCompare[i]]);
+		if (!isMatch) {
+			break;
+		}
+	}
+	return isMatch; 
+}
+
+/**
+*	check whether two expressions are equivalent or identical
+*/
+function compFormulas(f1, f2) {
+	(typeof(f1) !== "string") && (f1 = ''+f1);
+	(typeof(f2) !== "string") && (f2 = ''+f2);
+	var ret = chemEquivalent(f1, f2, false, false) ? "equiv" : null;
+	if (ret && chemIdentical(f1, f2, false)) {
+		ret = "identical";
+	}
+	return ret;
+}
+
+//compare KnownQuantity to student input
+function compareQuantity(studentInput, qty) {
+	var isMatch = true,
+		studentVal = studentInput.string,
+		tutorVal = qty.value,
+		qtyHyp = qty.fromHypothesis,
+		propsToMatch = qty.requiredToMatch,
+		comparator;
+		
+	if (isNaN(tutorVal) || isNaN(studentVal)) {
+		comparator = compFormulas;
+	} else {
+		comparator = compValues;
+	}
+	//check required properties for this qty
+	for(let i = 0; isMatch && i < propsToMatch.length; i++) {
+		isMatch = (studentInput[propsToMatch[i]] === qty[propsToMatch[i]]);
+	}
+	//unit/context/substance either undefined for student or matches tutor
+	isMatch = isMatch && ['unit','context','substance', 'variable'].every((prop)=>{
+		return !studentInput[prop] || studentInput[prop] === qty[prop];
+	});
+	//compare values
+	isMatch = isMatch && (comparator(tutorVal, studentVal, IMPRECISION_MARGIN));
+	
+	return isMatch;
+}
+
+function replaceVars(expString, varsMap) {
+	var ret = expString;
+	for (let varName in varsMap) {
+		ret = chemSetVariable(ret, varName, varsMap[varName].value)
+	}
+	return chemStringify(ret, true);
+}
+
+//compare Expression to student input
+//returns form of expression matched, if any
+function compareExpression(studentInput, exp) {
+	
+	console.log("compareExpression, studentInput is ",studentInput.string," exp id is ",exp.id);
+	
+	let ret = null;
+	let expForms = exp.altForms.concat(exp.string);
+	for (let i = 0; i < expForms.length && !ret; i++) { 
+		//for each form
+		let thisForm = expForms[i],
+			varsReplaced = replaceVars(thisForm, exp.varsReplaced); //sub in variable values
+		console.log("\tcheck thisForm: ",thisForm);	
+		console.log("\tafter var replace: "+varsReplaced);
+		if (exp.checkFunc) {
+			ret = exp.checkFunc(varsReplaced, studentInput.string) ? thisForm : null;
+		} else {
+			ret = compFormulas(varsReplaced, studentInput.string) ? thisForm : null;
+		}
+	}
+	console.log("\tret is ",ret);
+	return ret;
+}
+
+/**
+*	check whether exp (Expression) was matched to a quantity which shares a value w/ kq (KnownQuantity)
+*/
+function matchedToValue(exp, kq) {
+	return exp.matchedTo[0] && (exp.matchedTo[0].value === kq.value)
+}
+
+/**
+	check whether exp (Expression) was matched to any quantity s.t. quantity[property] = value
+	where properties = [[prop1, val1], [prop2, val2], ... [propN, valN]]
+*/
+function matchedToProperties(exp, properties, hypothesis) {
+	let matches = exp.matchedTo;
+	for (let i = 0; i < matches.length; i++) {
+		let match = matches[i], isMatch = true, j = -1;
+		if (match.fromHypothesis.isTrue !== hypothesis) {
+			isMatch = false;
+		}		
+		while (isMatch && ++j < properties.length) {
+			let property = properties[j];
+			if (match[property[0]] !== property[1]) {
+				isMatch = false;
+			}
+		}
+		if (isMatch) {
+			return true;
+		}
+	}
+}
+
+/**
+*	replace display (rounded) values in a string w/ their full-precision counterparts
+*/
+function replaceRounded(string, roundedMap) {
+	console.log("replaceRounded, string is "+string);
+	for (var rounded in roundedMap) {
+		if (roundedMap.hasOwnProperty(rounded)) {
+			var reStr = '\\b0*'+rounded.replaceAll('.', '\\.');
+			reStr += (rounded.includes('.') ? '0*\\b' : '\\b');
+			var roundedRE = new RegExp(reStr, 'g');
+			string = string.replace(roundedRE, roundedMap[rounded]);
+		}
+	}
+	console.log("res is "+string);
+	return string;
+}
+
+/**
+*	add new rounded -> full-precision key-value pairs to the map
+*/
+function updateRoundedMap(map, additions) {
+	for (var newRounded in additions) {
+		if (additions.hasOwnProperty(newRounded)) {
+			let normalized = newRounded;
+			while(normalized.charAt(0) === '0') {
+				normalized = normalized.slice(1);
+			}
+			if (normalized.includes('.')) {
+				while(normalized.charAt(normalized.length-1) === '0' && normalized.charAt(normalized.length-2) !== '.') {
+					normalized = normalized.slice(0, normalized.length - 1)
+				}
+			}
+			map[normalized] = additions[newRounded];
+		}
+	}
+}
+
+function studentValueAdded(newVal, valList) {
+	if (valList.indexOf(newVal) < 0) {
+		valList.push(newVal);
+		valList.sort(function(a, b){ return parseFloat(a)-parseFloat(b) });
+		window.workspace.studentValuesChanged("add", newVal);
+	}
+}
+
+function studentValueRemoved(studentValue, valList) {
+	let oldVal = studentValue.roundedString;
+	getFacts("KnownQuantity").concat(getFacts("Expression").filter((e)=>e.creator === "tutor")).forEach((step)=> {
+		let i = step.matchedTo.indexOf(studentValue);
+		if (i >= 0) {
+			modify(step, "matchedTo", step.matchedTo.filter((mt)=>mt !== studentValue));
+		}
+	});
+	
+	for (var i = 0; i < valList.length; i++) {
+		if (valList[i] === oldVal) {
+			valList.splice(i, 1);
+			break;
+		}
+	}
+	window.workspace.studentValuesChanged("remove", oldVal);
+}
+
+function studentValueChanged(oldVal, newVal, valList) {
+	for (var i = 0; i < valList.length; i++) {
+		if (valList[i] === oldVal) {
+			valList[i] = newVal;
+			break;
+		}
+	}
+	window.workspace.studentValuesChanged("change", newVal, oldVal);
+}
+
+function roundExpString(expString, problemFact, numSigFigs) {
+	numSigFigs = (typeof numSigFigs === "number" && numSigFigs%1 === 0) ? numSigFigs : NUM_SIG_FIGS;
+	var rounded = window.workspace.toPrecision(expString, numSigFigs);
+	var roundedString = rounded.result;
+	console.log("toPrecision "+expString+" gives ",rounded);
+	//add new rounded values to map
+	updateRoundedMap(problemFact.roundedValsMap, rounded.roundedVals);
+	
+	return roundedString;
+}
+
+/**
+*	simplify an expression using chemSimplify, round the result, and update the roundedValues map
+*/
+function simplifyExpString(expString, problemFact, wrapSymbols, simpLevel) {
+	console.log("simplifyExpString "+expString, "wrapSymbols ",wrapSymbols,"simpLevel",simpLevel);
+	//simplify
+	if (simpLevel === "simplify") {
+		expString = chemSimplify(expString, false, wrapSymbols);
+	} else if (simpLevel === "computeConstants") {
+		expString = chemComputeConstants(expString, wrapSymbols);
+	}
+	
+	return expString;
+}
+
+/**
+*	there's a new expression in town
+*/
+global expN = 0;
+function expressionAdded(expString, problemFact, options) {
+	options = options || {};
+	expString = chemStringify(chemParse(expString), true);
+	
+	var expId = options.id || "expression_"+(expN++);
+	var simped = false;
+	var sides = expString.split("=");
+	var roundedSides = [];
+	var varSide = null,
+		numSide = null;
+	
+	console.log("expressionAdded: ",expString);
+	
+	sides = sides.map((side, idx) => {
+		console.log("\tprocess side: ",side);
+		let roundedSide,
+			simpMethod = null;
+		//eval if possible
+		if (options.forceSimplify || (!chemGetVariables(side).length && !chemSimplified(side))) {
+			simpMethod = "simplify";
+		} else if (!chemConstantsComputed(side)) {
+			simpMethod = "computeConstants";
+		}
+		//replace any recognized rounded values w/ full precision counterparts
+		side = replaceRounded(side, problemFact.roundedValsMap);
+		if (simpMethod) {
+			var simplified = simplifyExpString(side, problemFact, true, simpMethod);
+			side = simplified;
+			simped = true;
+			
+			console.log("\tsimplified: ",side);
+		} 
+		
+		//round result
+		roundedSide = roundExpString(side, problemFact, options.sigFigs);
+		
+		console.log("\trounded: ",roundedSide);
+		
+		roundedSides[idx] = roundedSide;
+		if (!numSide && !isNaN(side)) {
+			numSide = idx === 0 ? "left" : "right";
+		}
+		if (!varSide && chemParse(side).operator === "VAR") {
+			varSide = idx === 0 ? "left" : "right";
+		}
+		return side;
+	});
+	//create wm representation
+	var roundedString, 
+		varName = null;
+		
+	if (varSide && numSide) {
+		expString = numSide === "left" ? sides[0] : sides[1];
+		roundedString = numSide === "left" ? roundedSides[0] : roundedSides[1]; 
+		varName = varSide === "left" ? chemParse(sides[0]).variable : chemParse(sides[1]).variable;
+	} else {
+		expString = sides.join("=");
+		roundedString = roundedSides.join("=");
+	}
+	var newExp = assert(new Expression({
+		id: expId,
+		inputID: options.inputID, 
+		str: expString,
+		creator: "student",
+		unit: options.unit,
+		context: options.context,
+		substance: options.substance,
+		label: options.label,
+		roundedStr: roundedString,
+		variable: varName || options.variable
+	}));
+	modify(problemFact, "activeExpression", expId);
+	return {exp: newExp, wasSimplified: simped};
+}
+
+global tableN = 0;
+function tableAdded(reactionStr, problemFact, nRows) {
+	var reactionData = problemFact.data.reactions[reactionStr];
+	var tableId = "reaction_table_"+(tableN++);
+	var substances = reactionStr.split("_is_").map(function(side){return side.split("_plus_").map(function(tok){return tok.replace(/^[0-9]+/g, '')})}).flat();
+	var newTable = assert(new Table(tableId, reactionStr, substances, reactionData.equilibrium, reactionData.inactive, nRows));
+	modify(problemFact, "activeExpression", tableId);
+	return newTable;
+}
+
+function getRandFloat(min, max, numSigFigs) {
+	console.log("getRandFloat, min is "+min+" max is "+max+" sigFigs is "+numSigFigs);
+	numSigFigs = (typeof numSigFigs === "number" && numSigFigs%1 === 0) ? numSigFigs : NUM_SIG_FIGS;
+	min = +min;
+	max = +max;
+	var rand = min+(Math.random() * (max - min));
+	rand = window.workspace.toPrecision(rand, numSigFigs);
+	console.log("returning");
+	console.log(rand);
+	return rand.result;
+}
+
+function getRandInt(min, max) {
+	console.log("getRandInt, min is "+min+" max is "+max);
+	min = +min;
+	max = +max;
+	var rand = min + (Math.floor(Math.random() * Math.floor(max - min)));
+	console.log("returning");
+	console.log(rand);
+	return rand;
+}
+
+function randomizeValues(knownList) {
+	
+	var randomizeValue = function(valueData) {
+		if (valueData.value.includes("rand")) {
+			if (valueData.range) {
+				valueData.value = ''+getRandFloat(valueData.range[0], valueData.range[1], valueData.sigFigs);
+			} else if (valueData.set) {
+				valueData.value = ''+valueData.set[getRandInt(0, valueData.set.length)];
+			} else {
+				console.error("no range given for rand val");
+			}
+		}
+	};
+	
+	knownList.forEach(function(known) {
+		let iData = known.initialData;
+		if (iData) {
+			if (iData.type !== "solution") {
+				randomizeValue(iData);
+			}
+		}
+	});
+	return knownList;
+}
+
+function assertKnowns(knownList, dh, initialReaction) {
+	console.log("assertKnowns, initialReaction is "+initialReaction);
+	//generate solution facts
+	var solutions = knownList.filter((k)=>k.initialData && k.initialData.type === "solution").map((s)=> {
+		s.initialData.fromHypothesis = dh;
+		s.initialData.context = s.initialData.context || "initial";
+		var sol = assert(new Solution(s.initialData));
+		
+		return sol; 	
+	});
+	
+	var kqList = knownList.map(function(known) {
+		let fact = null;
+		let iData = known.initialData;
+		let s;
+		if (iData && iData.type !== "solution") {
+			console.log("assert known: "+known+" in solution "+iData.solution);
+			if (iData.solution) {
+				s = solutions.find((sol) => sol.id === iData.solution);
+			}
+			console.log("got solution fact ",s);
+			fact = assert(new KnownQuantity({
+					substance: iData.substance || known.str,
+					type: iData.type,
+					value: chemEvaluate(iData.value),
+					unit: iData.unit,
+					context: iData.context || "initial", 
+					fromHypothesis: dh,
+					requiredToMatch: iData.requiredToMatch,
+					matched: true,
+					id: iData.id,
+					fromRule: "given",
+					fromFacts: [],
+					reaction: initialReaction,
+					solution: s,
+					state: iData.state
+				}));
+			if (iData.displayVal && iData.displayVal !== "value") {
+				fact.displayVal = iData.displayVal;
+			}
+		}		
+		if (known.atomicWeight) {
+			assert(new GeneralData("atomicWeight", known.str, chemEvaluate(known.atomicWeight), "g/mol"));
+		}
+		return fact;
+	}).filter((kq)=> !!kq);
+	return kqList.concat(solutions);
+}
+
+function assertUnknowns(unknownList) {
+	unknownList.forEach(function(unknown) {
+		assert(new UnknownQuantityGoal(unknown.substance, unknown.type, unknown.requiredToSolve));
+	});
+}
+
+function assertFinalQuantityGoals(fqList) {
+	var quantities = [];
+	fqList.forEach(function(fq) {
+		quantities.push(assert(new FinalQuantityGoal(fq.label, fq.substance, fq.type, fq.unit, fq.context, fq.solution)));
+	});
+	return quantities;
+}
+
+function assertGoals(gList) {
+	console.log("assertGoals: ",gList);
+	if (gList && typeof gList === "array") {
+		gList.forEach((g) => {
+			switch(g.type) {
+				case 'MixSolution':
+						assert(new MixSolutionGoal(g.id1, g.id2, g.contexts, g.unit));
+					break;
+				default:
+					throw new Error("bad goal type: "+g.type);
+			}
+		});
+	}
+}
+
+function assertGeneralData(dataList) {
+	dataList.forEach(function(d) {
+		assert(new GeneralData(d.type, d.substance, chemEvaluate(d.value), d.unit));
+	});
+}
+
+function claimHasUnsubmittedValues(claimId) {
+	return workspace.claimHasUnsubmittedValues(claimId);
+}
+
+function notANumber(n) {
+	return isNaN(n);
+}
+
+function getStepIDFromQty(qty) {
+	return "[[\""+qty.id+"\",\""+qty.fromRule+"\",\""+qty.fromFacts.map((ff)=>ff.id).join("\",\"")+"\"]]";
+}
+
+function qtyMatched(qty) {
+	var stepChain = genRuleChain(qty); //[[rule, [fact1,fact2]],[rule, [fact1,fact2]]]
+	stepChain = stepChain.map((step) => {
+		var rule = step[0],
+			facts = step[1];
+		
+		return [rule, ...facts.map((fact) => {
+			if (!fact.matched) {
+				modify(fact, "matched", true);
+			}
+			return fact.id;
+		})];
+	});
+	
+	console.log("got stepchain: ");
+	console.log(stepChain);
+
+	return stepChain;
+}
+
+function beforeOrAtPhase(problem, phase) {
+	let phaseIdx = problem.data.phases.indexOf(phase);
+	return (phaseIdx > -1) && (problem.data.phases.indexOf(problem.phase) <= phaseIdx); 
+}
+
+function compareEqExpressions(e1, e2) {
+	let xVals = ["-1","0","1"];
+	let e1Sides = e1.split("="),
+		e2Sides = e2.split("="),
+		e1Left = e1Sides[0],
+		e1Right = e1Sides[1],
+		e2Left = e2Sides[0],
+		e2Right = e2Sides[1];
+	
+	if (!e1Right || !e2Right) {
+		return false;
+	}
+	
+	function compareSides(s1, s2) {
+		var match = true;
+		for (let i = 0; i < 3; i++) {
+			let x = xVals[i];
+			if (!(match = chemEquivalent(chemSetVariable(s1, 'x', x), chemSetVariable(s2, 'x', x), false, false))) {
+				break;
+			}
+		}
+		return match;
+	}
+	
+	var e1MatchIdx = [-1,-1];
+	e1Sides.forEach((side, idx) => {
+		for (let i = 0; i < e2Sides.length; i++) {
+			if (compareSides(side, e2Sides[i])) {
+				e2Sides.splice(i, 1);
+				break;
+			}
+		}
+	});
+	return e2Sides.length === 0;
+}
+
+function getUnmatchedQtyList () {
+	var allUnmatched = getFacts("KnownQuantity").filter((q)=>!q.isBug && !q.matchedTo.length),
+		tabs = [
+			{
+				name: "amount",
+				properties: [
+					{
+						name: "unit",
+						options: []
+					},{
+						name: "context",
+						options: []
+					},{
+						name: "substance",
+						options: []
+					},{
+						name: "assumption",
+						options: [],
+						harvestFunc: function(qty) {
+							if (qty.fromHypothesis.type === "limitingReagent") {
+								return qty.fromHypothesis.claims[1].substance+" is limiting";
+							}
+							return null;
+						},
+						compFunc: function(filterVal, qty) {
+							if (filterVal.includes("limiting") && qty.fromHypothesis.type === "limitingReagent") {
+								return filterVal === (qty.fromHypothesis.claims[1].substance+" is limiting");
+							}
+							return false;
+						}
+					}
+				],
+				quantities: []
+			},{
+				name: "heat/energy",
+				properties: [
+					{
+						name: "unit",
+						options: []
+					},{
+						name: "context",
+						options: []
+					},{
+						name: "substance",
+						options: []
+					}
+				],
+				quantities: []
+			},{
+				name: "pH",
+				properties: [],
+				quantities: []
+			},{
+				name: "variable",
+				properties: [
+					{
+						name: "variable",
+						options: [],
+						harvestFunc: function(qty) {
+							return qty.context;
+						},
+						compFunc: function(filterVal, qty) {
+							return qty.context === filterVal;
+						}
+					}
+				],
+				quantities: []
+			}
+		];
+	
+	allUnmatched.forEach((qty)=> {
+		var tab;
+		switch(qty.type) {
+			case "amount":
+			case "mass":
+			case "concentration":
+				tab = tabs[0];
+				break;
+			case "temperature":
+			case "energy":
+			case "enthalpy":
+				tab = tabs[1];
+				break;
+			case "ph":
+				tab = tabs[2];
+				break;
+			case "variable":
+				tab = tabs[3];
+				break;
+		}
+		if (tab) {
+			tab.quantities.push(qty);
+			tab.properties.forEach((property,idx)=>{
+				var pOps = property.options;
+				var pName = property.name;
+				var pVal = property.harvestFunc ? property.harvestFunc(qty) : qty[pName];
+				if (pVal && pOps.indexOf(pVal) < 0) {
+					pOps.push(pVal);
+				}
+			});
+		}
+	});
+	console.log(tabs);
+	tabs = tabs.filter((tab)=>tab.quantities.length);
+	return tabs;
+}
+
+function genIdForHypothesis(hyp) {
+	let id = '';
+	switch(hyp.type) {
+		case "limitingReagent": 
+			id = "assume_"+hyp.claims[1].substance+"_is_lr";
+			break;
+		case "xLessThanK":
+			id = "assume_x_lt_k";
+			break;
+		case "equilibriumXValue":
+			id = "assume_x_is_"+hyp.claims[0];
+			break;
+	}
+	return id;
+}

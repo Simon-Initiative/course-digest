@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE embed_activity PUBLIC "-//Carnegie Mellon University//DTD Embed 1.1//EN" "http://oli.cmu.edu/dtd/oli-embed-activity_1.0.dtd"> 
+<embed_activity id="thermo1_2_highstakes" width="835" height="850" activity_type="CTAT">     
+	<title>NaOH and Water</title>     
+	<source>webcontent/ctat/oli.v2.min.js</source>     
+	<assets>         
+		<asset name="brd">webcontent/ctat/CognitiveModel/NaOHandWater.nools</asset>          
+		<asset name="style">webcontent/ctat/HTML/Assets/styles.css</asset>
+		<asset name="style">https://cdn.ctat.cs.cmu.edu/releases/lab/CTAT.css</asset>
+		<asset name="style">https://cdn.ctat.cs.cmu.edu/releases/lab/guppy/guppy-default.min.css</asset>
+
+		<asset name="javascript">https://cdn.ctat.cs.cmu.edu/releases/lab/nools.js</asset>
+		<asset name="javascript">https://cdn.ctat.cs.cmu.edu/releases/lab/ctat.min.js</asset>
+		<asset name="javascript">webcontent/ctat/HTML/Assets/bundled.js</asset>
+		<asset name="javascript">https://cdn.ctat.cs.cmu.edu/releases/lab/guppy/guppy.min.js</asset>
+		<asset name="javascript">https://code.jquery.com/jquery-3.3.1.min.js</asset>
+		<asset name="layout">webcontent/ctat/HTML/expression_builder_fragment.html</asset>
+		
+	</assets>
+</embed_activity>	

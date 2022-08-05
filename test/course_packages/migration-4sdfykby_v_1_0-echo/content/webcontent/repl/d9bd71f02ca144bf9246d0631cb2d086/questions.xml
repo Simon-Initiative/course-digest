@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+  <question id="d11e97308b2042fe8db75da279100c1b">
+    <part id="d11e97308b2042fe8db75da279100c1b_1">
+        <initeditortext><![CDATA[x = 7;
+print(x);
+print("lucky", x);
+print("x is", x);]]></initeditortext>
+        
+        
+    </part>
+  </question>
+
+</root>

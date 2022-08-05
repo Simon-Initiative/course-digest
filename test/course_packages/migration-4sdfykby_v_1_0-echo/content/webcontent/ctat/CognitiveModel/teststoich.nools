@@ -1,0 +1,128 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	stoichStepDone: false,
+	claimTypes: ["Limiting Reagent", "Final Quantity"],
+	probSpecificData: {
+			knowns: [
+				{
+					type: 'substance',
+					str:'AsO43-',
+					html: 'AsO<sub>4</sub><sup>3-</sup>',
+					latex: '{As{O}_{4}}^{3-}',
+					hotkey: '7',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+					},
+					atomicWeight: '138.9084'
+				},
+				{
+					type: 'substance',
+					str:"Fe2+",
+					html: "Fe<sup>2+</sup>",
+					latex: "{Fe}^{2+}",
+					hotkey: '8',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': 'rand',
+						'range': [0.1,3],
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+					},
+					atomicWeight: '55.845'  
+				},
+				{
+					type: 'substance',
+					str:"Fe3(AsO4)2",
+					html: "Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>",
+					latex: "{Fe}_{3}{(As{O}_{4})}_{2}",
+					hotkey: '9',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '0',
+						'sigFigs': 3,
+						'displayVal': "value",
+						'unit': 'g',
+					},
+					atomicWeight: '445.352'
+				}
+			],
+			finalQuantities: [
+				{
+					'substance': 'AsO43-',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g AsO43- final'
+				},
+				{
+					'substance': 'Fe2+',
+					'type': 'mass',
+					'unit': 'g',
+					'context': 'final',
+					'label': 'g Fe2+ final'
+				}
+			],
+			phase1Reaction: '2AsO43-_plus_3Fe2+_is_Fe3(AsO4)2',
+			reactions: {
+				'2AsO43-_plus_3Fe2+_is_Fe3(AsO4)2': {
+					'id' : '2AsO43-_plus_3Fe2+',
+					'equilibrium': false
+				}
+			},
+			problemStatement: "One approach to arsenic remediation is to use a reaction that forms a solid compound with the arsenic. The solid will precipitate from the water and remove the arsenic. In these cases, it's important to know what remains in the solution after the precipitation since both reactants may be undesirable.  One of the proposed reactions is:<br><br>2AsO<sub>4</sub><sup>-3</sup> + 3Fe<sup>2+</sup> &#8594 Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub>(s) <br><br> Your goal here is to determine how much of each reactant will remain when we mix a diluted solution that contains %AsO4-3_mass_g_initial.displayVal% g of arsenate with %Fe2+_mass_g_initial.displayVal% g of iron(II) ion.  Use the following molar masses for your calculations:<br><strong>AsO<sub>4</sub><sup>3-</sup></strong>: 138.9084 , <strong>Fe<sup>2+</sup></strong>: 55.845 , <strong>Fe<sub>3</sub>(AsO<sub>4</sub>)<sub>2</sub></strong>: 445.352"
+		}
+};
+	

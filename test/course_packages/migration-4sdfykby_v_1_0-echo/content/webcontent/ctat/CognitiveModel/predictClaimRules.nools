@@ -1,0 +1,48 @@
+rule predictQH2OClaim {
+	when {
+		prob: Problem prob.searching && prob.inputType === "qH2OClaim" {input: probInput};
+		qH2O: KnownQuantity qH2O.type === "energy" && qH2O.context === "changed" && qH2O.substance === "H2O" && qH2O.unit === "kJ" && !qH2O.matchedByClaim {value: qH2OVal};
+		studentClaim: QH2OClaim studentClaim === probInput[0] && studentClaim.fieldsFilled && !studentClaim.matched {id: claimId, value: claimExp};
+	} then {
+		var si = getStudentInput(),
+			valCorrect = compValues(qH2OVal, claimExp.string, IMPRECISION_MARGIN);
+		
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: qH2OVal+' kJ H2O'}, function() {
+			return valCorrect;
+		})) {
+			//claim correct
+			assert(new TPA(claimId+"_substance_menu", "lock", true));
+			assert(new TPA(claimId+"_unit_menu", "lock", true));
+			modify(fq, "matchedByClaim", true);
+			modify(studentClaim, "matched", true);
+			modify(prob, "keepChain", true);
+		} else {
+			backtrack();
+		}
+	}
+}
+
+rule predictEnthalpyClaim {
+	when {
+		prob: Problem prob.searching && prob.inputType === "enthalpyClaim" {input: probInput};
+		enthalpy: KnownQuantity enthalpy.type === "enthalpy" && enthalpy.context === "changed" && enthalpy.unit === "kJ/mol" && !enthalpy.matchedByClaim {value: enthalpyVal};
+		studentClaim: EnthalpyClaim studentClaim === probInput[0] && studentClaim.fieldsFilled && !studentClaim.matched {id: claimId, value: claimExp};
+	} then {
+		var si = getStudentInput(),
+			valCorrect = compValues(enthalpyVal, claimExp.string, IMPRECISION_MARGIN);
+		
+		if (checkSAI({selection: si.selection, action: 'ButtonPressed', input: enthalpyVal+' kJ H2O'}, function() {
+			return valCorrect;
+		})) {
+			//claim correct
+			assert(new TPA(claimId+"_substance_menu", "lock", true));
+			assert(new TPA(claimId+"_unit_menu", "lock", true));
+			modify(fq, "matchedByClaim", true);
+			modify(studentClaim, "matched", true);
+			modify(prob, "keepChain", true);
+		} else {
+			backtrack();
+		}
+	}
+}
+
