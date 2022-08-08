@@ -65,6 +65,9 @@
                     <item id="bca2e88983a62dd699" scoring_mode="default">
                       <resourceref idref="video" />
                     </item>
+                    <item id="bca2e88983a62dd6ddd99" scoring_mode="default">
+                      <resourceref idref="tables" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>
