@@ -1,5 +1,5 @@
 import { maybe } from 'tsmonad';
-import { guid, replaceAll } from '../../utils/common';
+import { guid, replaceAll } from 'src/utils/common';
 
 export function getChild(collection: any, named: string) {
   const items = collection.filter((e: any) => named == e.type);
@@ -50,6 +50,18 @@ export function buildStem(question: any) {
   };
 }
 
+export function buildStemFromText(text: string) {
+  return {
+    content: buildContentModelFromText(text),
+  };
+}
+
+export function buildContentModelFromText(text: string) {
+  return {
+    model: [{ type: 'p', children: [{ text }] }],
+  };
+}
+
 export function shuffleTransformation() {
   return {
     id: guid(),
@@ -59,7 +71,7 @@ export function shuffleTransformation() {
 }
 
 export function buildChoices(question: any, from = 'multiple_choice') {
-  const choices = getChild(question.children, from).children;
+  const choices = getChild(question.children, from).children as any[];
 
   return choices.map((c: any) => ({
     content: { model: ensureParagraphs(c.children) },
@@ -146,8 +158,8 @@ export function hint() {
   };
 }
 
-export function ensureThree(hints: any) {
-  if (hints.length === 0) {
+export function ensureThree(hints?: any[]) {
+  if (hints === undefined || hints.length === 0) {
     return [hint(), hint(), hint()];
   }
   if (hints.length === 1) {

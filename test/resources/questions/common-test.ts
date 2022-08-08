@@ -1,7 +1,7 @@
-import { standardContentManipulations } from '../../../src/resources/common';
-import { isSubmitAndCompare } from '../../../src/resources/questions/common';
+import { standardContentManipulations } from 'src/resources/common';
+import { isSubmitAndCompare } from 'src/resources/questions/common';
 import * as cheerio from 'cheerio';
-import { toJSON } from '../../../src/utils/xml';
+import { toJSON } from 'src/utils/xml';
 
 it('should return submitAndCompare status', async () => {
   const content1 = `
@@ -82,7 +82,7 @@ it('should return submitAndCompare status', async () => {
     </question>
   `;
 
-  const getQuestionEl = (root) => root.children[0];
+  const getQuestionEl = (root: any) => root.children[0];
 
   const $1 = cheerio.load(content1, {
     normalizeWhitespace: true,

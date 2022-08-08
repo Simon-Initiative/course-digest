@@ -20,6 +20,8 @@ it('should locate two references', async () => {
 
   const r = locateImageReferences(layout, 'content/test/file/path/layout.xml');
   expect(r.length).toBe(1);
-  expect(r[0].assetReference).toBe('content/test/file/path/liquid_flask.png');
-  expect(r[0].originalReference).toBe('liquid_flask.png');
+  expect((r[0] as any).assetReference).toBe(
+    'content/test/file/path/liquid_flask.png'
+  );
+  expect((r[0] as any).originalReference).toBe('liquid_flask.png');
 });

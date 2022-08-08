@@ -1,11 +1,11 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
-import { ItemReference } from '../utils/common';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 import { processCodeblock } from './common';
 import * as Formative from './formative';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 
 export function convertToFormative($: any) {
   $('multiple_choice').each((i: any, item: any) => {
@@ -55,7 +55,7 @@ export class Summative extends Resource {
   restructure($: any): any {
     // We simplify the handling of the differing Summative and Formative models
     // by converting the more restrictive Summative to the more flexible Formative
-    // model.  This alllows then one set of restructuring code to exist.
+    // model.  This allows then one set of restructuring code to exist.
     convertToFormative($);
     Formative.performRestructure($);
   }
@@ -70,6 +70,7 @@ export class Summative extends Resource {
       unresolvedReferences: [],
       content: {},
       isGraded: true,
+      isSurvey: false,
       objectives: [],
     };
 
@@ -111,7 +112,7 @@ export class Summative extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -122,7 +123,7 @@ export class Summative extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'assessment') {

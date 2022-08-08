@@ -8,7 +8,7 @@ export type SummaryResult = Summary | MissingResource;
 export function summarize(file: string): Promise<Summary | string> {
   return new Promise((resolve, _reject) => {
     determineResourceType(file).then((t: ResourceType) => {
-      resolve(create(t, file, false).summarize(file));
+      resolve(create(t, file, false).summarize());
     });
   });
 }

@@ -58,7 +58,6 @@ export function transformToFlatDirectory(
     // Flatten this file reference into our single, virtual directory
     const ref = { filePath, assetReference };
     const url = flatten(ref, summary);
-    console.log(`${url} vs ${JSON.stringify(ref)}`)
 
     // Update the URL in the XML DOM
     if (url !== null) {
@@ -208,6 +207,14 @@ function findFromDOM($: any): Record<string, Array<string>> {
   });
 
   $('audio track').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
+  $('video').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
+  $('video source').each((i: any, elem: any) => {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 

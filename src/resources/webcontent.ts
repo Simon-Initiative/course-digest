@@ -1,5 +1,5 @@
-import { MediaSummary } from 'media';
-import { guid } from '../utils/common';
+import { MediaSummary } from 'src/media';
+import { guid } from 'src/utils/common';
 import * as glob from 'glob';
 import * as fs from 'fs';
 import * as path from 'path';

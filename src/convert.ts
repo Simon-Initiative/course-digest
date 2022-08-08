@@ -7,8 +7,8 @@ import {
   NonDirectImageReference,
 } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
-import { executeSerially, guid } from './utils/common';
-import { wrapContentInGroup } from './resources/common';
+import { executeSerially, guid, valueOr } from './utils/common';
+import { wrapContentInSurveyOrGroup } from './resources/common';
 import * as Media from './media';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
@@ -67,8 +67,16 @@ export function updateDerivativeReferences(
 
   const resourceActivityRefs = createResourceActivityRefs(resources);
 
+  const legacyMyResponseFeedbackIds =
+    findLegacyMyResponseFeedbackIds(resources);
+
   return resources.map((parent: TorusResource) =>
-    updateParentReference(parent, byLegacyId, resourceActivityRefs)
+    updateParentReference(
+      parent,
+      byLegacyId,
+      resourceActivityRefs,
+      legacyMyResponseFeedbackIds
+    )
   );
 }
 
@@ -87,7 +95,7 @@ export function createProducts(
       return () => o.translateProduct(xml, $);
     });
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     executeSerially(exceptPrimaryOrg).then((results: TorusResource[]) => {
       const products = results.map((r: any) => {
         r.type = 'Product';
@@ -163,6 +171,16 @@ function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
   }, {});
 }
 
+function findLegacyMyResponseFeedbackIds(resources: TorusResource[]) {
+  return resources.reduce((m: any, r: TorusResource) => {
+    if (r.type === 'Page' && (r as Page).isSurvey === true) {
+      m[r.id] = true;
+    }
+
+    return m;
+  }, {});
+}
+
 const selection = {
   selection: {
     anchor: { offset: 0, path: [0, 0] },
@@ -197,19 +215,21 @@ function handleOnePlaceholder(
   m: any,
   byLegacyId: DerivedResourceMap,
   pageMap: any,
-  page: Page
+  page: Page,
+  legacyMyResponseFeedbackIds: Record<string, boolean>
 ) {
   const derived = byLegacyId[m.idref];
 
   if (derived !== undefined) {
     return [
       ...entries,
-      wrapContentInGroup(
+      wrapContentInSurveyOrGroup(
         derived.map((d) => {
           if (d.type === 'Activity') {
             return {
               type: 'activity-reference',
               activity_id: d.id,
+              id: guid(),
             };
           }
           if (d.type === 'TemporaryContent') {
@@ -222,7 +242,8 @@ function handleOnePlaceholder(
             };
           }
         }),
-        m.purpose
+        m,
+        legacyMyResponseFeedbackIds
       ),
     ];
   }
@@ -230,9 +251,10 @@ function handleOnePlaceholder(
     const page = pageMap[m.idref];
     return [
       ...entries,
-      wrapContentInGroup(
+      wrapContentInSurveyOrGroup(
         [createContentWithLink(page.title, m.idref)],
-        m.purpose
+        m,
+        legacyMyResponseFeedbackIds
       ),
     ];
   }
@@ -247,16 +269,25 @@ function handleOnePlaceholder(
 function updateParentReference(
   parent: TorusResource,
   byLegacyId: DerivedResourceMap,
-  pageMap: any
+  pageMap: any,
+  legacyMyResponseFeedbackIds: Record<string, boolean>
 ): TorusResource {
   if (parent.type === 'Page') {
     const page = parent as Page;
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
         if (m.type === 'activity_placeholder') {
-          return handleOnePlaceholder(entries, m, byLegacyId, pageMap, page);
+          return handleOnePlaceholder(
+            entries,
+            m,
+            byLegacyId,
+            pageMap,
+            page,
+            legacyMyResponseFeedbackIds
+          );
         } else if (m.type === 'group') {
           const group = Object.assign({}, m, {
+            purpose: valueOr(m.purpose, 'none'),
             children: m.children.map((c: any) => {
               if (c.type === 'activity_placeholder') {
                 return handleOnePlaceholder(
@@ -264,7 +295,8 @@ function updateParentReference(
                   c,
                   byLegacyId,
                   pageMap,
-                  page
+                  page,
+                  legacyMyResponseFeedbackIds
                 )[0];
               } else {
                 return c;

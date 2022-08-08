@@ -1,7 +1,7 @@
-import * as Histogram from '../utils/histogram';
+import * as Histogram from 'src/utils/histogram';
 import { Resource, TorusResource, Summary, Page } from './resource';
-import { guid } from '../utils/common';
-import * as XML from '../utils/xml';
+import { guid } from 'src/utils/common';
+import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
 
 export class Superactivity extends Resource {
@@ -49,6 +49,7 @@ export class Superactivity extends Resource {
                 unresolvedReferences: [],
                 content: { model },
                 isGraded: true,
+                isSurvey: false,
                 objectives: [],
               };
               resolve([page, activity]);
@@ -68,9 +69,9 @@ export class Superactivity extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const id = Maybe.maybe(
-      file.split('\\')?.pop()?.split('/')?.pop()?.split('.').shift()
+      this.file.split('\\')?.pop()?.split('/')?.pop()?.split('.').shift()
     ).caseOf({
       just: (id) => id,
       nothing: () => '',
@@ -85,7 +86,7 @@ export class Superactivity extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      XML.visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
       })
         .then((_result) => {

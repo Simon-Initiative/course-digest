@@ -1,13 +1,13 @@
-import * as Histogram from '../utils/histogram';
-import { ItemReference, guid } from '../utils/common';
+import * as Histogram from 'src/utils/histogram';
+import { ItemReference, guid } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 import {
   standardContentManipulations,
   processCodeblock,
   wrapContentInGroup,
 } from './common';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 import { convertImageCodingActivities } from './image';
 import { maybe } from 'tsmonad';
 import { convertBibliographyEntries } from './bibentry';
@@ -42,6 +42,7 @@ export class WorkbookPage extends Resource {
       unresolvedReferences: [],
       content: {},
       isGraded: false,
+      isSurvey: false,
       objectives: [],
     };
 
@@ -76,12 +77,17 @@ export class WorkbookPage extends Resource {
     const bibrefs: number[] = [];
     $('cite').each((i: any, elem: any) => {
       const entry = $(elem).attr('entry');
-      bibrefs.push(bibEntries.get(entry).id);
-      $(elem).replaceWith(
-        `<cite id="${entry}" bibref="${
-          bibEntries.get(entry).id
-        }">[citation]</cite>`
-      );
+      const bibRef = bibEntries.get(entry);
+      if (bibRef) {
+        bibrefs.push(bibRef.id);
+        $(elem).replaceWith(
+          `<cite id="${entry}" bibref="${
+            bibEntries.get(entry).id
+          }">[citation]</cite>`
+        );
+      } else {
+        $(elem).remove();
+      }
     });
     xml = $.html();
 
@@ -108,7 +114,7 @@ export class WorkbookPage extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -119,7 +125,7 @@ export class WorkbookPage extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      XML.visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      XML.visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'workbook_page') {
@@ -159,7 +165,7 @@ export class WorkbookPage extends Resource {
 // { type: activity_placeholder ...}
 // { type: p, ...}
 //
-// This function returns a content element collection that is reforumulated as:
+// This function returns a content element collection that is reformulated as:
 //
 // { type: content, children: [{ type: p, ...}, {type: image, ...}]}
 // { type: content, children: [{ ... ]}
@@ -173,10 +179,10 @@ const selection = {
   },
 };
 
-function introduceStructuredContent(content: any) {
-  const asStructured = (attrs: Record<string, unknown>) =>
-    Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
+const asStructured = (attrs: Record<string, unknown>) =>
+  Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
 
+function introduceStructuredContent(content: any) {
   const startNewContent = (u: any) =>
     u.length === 0 || u[u.length - 1].type === 'activity_placeholder';
 

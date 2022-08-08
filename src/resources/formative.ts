@@ -1,6 +1,6 @@
-import { visit } from '../utils/xml';
-import * as Histogram from '../utils/histogram';
-import { guid, ItemReference, replaceAll } from '../utils/common';
+import { visit } from 'src/utils/xml';
+import * as Histogram from 'src/utils/histogram';
+import { guid, ItemReference, replaceAll } from 'src/utils/common';
 import {
   Resource,
   TorusResource,
@@ -19,8 +19,8 @@ import {
 } from './questions/custom-dnd';
 import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
-import * as DOM from '../utils/dom';
-import * as XML from '../utils/xml';
+import * as DOM from 'src/utils/dom';
+import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
 
 function usesSimpleModel(responses: any[]) {
@@ -145,6 +145,66 @@ function buildOrderingPart(question: any) {
   };
 }
 
+function buildLikertSeriesItems(question: any) {
+  const items = question.children.filter((p: any) => p.type === 'item');
+
+  return items.map((item: any) => ({
+    content: { model: Common.ensureParagraphs(item.children) },
+    id: item.id,
+    required: item.required,
+  }));
+}
+
+function buildLikertItems(question: any) {
+  const stem = Common.getChild(question.children, 'stem');
+
+  return [
+    {
+      content: {
+        model: Common.ensureParagraphs(stem.children),
+      },
+      id: guid(),
+      required: false,
+    },
+  ];
+}
+
+function buildLikertParts(question: any, items: any[]) {
+  const firstChoice = Common.buildChoices(question, 'likert_scale')[0];
+
+  return items.map((i) => ({
+    gradingApproach: 'automatic',
+    hints: Common.ensureThree(),
+    id: i.id,
+    outOf: null,
+    responses: [
+      {
+        id: guid(),
+        score: 1,
+        rule: `input like {${firstChoice.id}}`,
+        feedback: {
+          id: guid(),
+          content: { model: [{ type: 'p', children: [{ text: 'Correct.' }] }] },
+        },
+      },
+      {
+        id: guid(),
+        score: 0,
+        rule: `input like {.*}`,
+        feedback: {
+          id: guid(),
+          content: {
+            model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
+          },
+        },
+      },
+    ],
+    scoringStrategy: 'average',
+    objectives: [],
+    targeted: [],
+  }));
+}
+
 function mcq(question: any) {
   const part = buildMCQPart(question);
   const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
@@ -232,6 +292,47 @@ function single_response_text(question: any) {
   };
 }
 
+function likertOrLikertSeries(question: any) {
+  const isLikertSeries =
+    question.children.filter((p: any) => p.type === 'item').length > 0;
+
+  return isLikertSeries ? likertSeries(question) : likert(question);
+}
+
+function likertSeries(question: any) {
+  const items = buildLikertSeriesItems(question);
+
+  return {
+    stem: Common.buildStem(question),
+    choices: Common.buildChoices(question, 'likert_scale'),
+    items: buildLikertSeriesItems(question),
+    orderDescending: false,
+    authoring: {
+      parts: buildLikertParts(question, items),
+      transformations: [],
+      previewText: '',
+      targeted: [],
+    },
+  };
+}
+
+function likert(question: any) {
+  const items = buildLikertItems(question);
+
+  return {
+    stem: Common.buildStemFromText(''),
+    choices: Common.buildChoices(question, 'likert_scale'),
+    items,
+    orderDescending: false,
+    authoring: {
+      parts: buildLikertParts(question, items),
+      transformations: [],
+      previewText: '',
+      targeted: [],
+    },
+  };
+}
+
 function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_multiple_choice') {
     return [mcq(question), []];
@@ -248,6 +349,9 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_custom_dnd') {
     const multipart = buildMulti(question, true);
     return processCustomDnd(multipart, baseFileName);
+  }
+  if (subType === 'oli_likert') {
+    return [likertOrLikertSeries(question)];
   }
 
   return [single_response_text(question), []];
@@ -303,7 +407,8 @@ type ItemTypes =
   | 'oli_check_all_that_apply'
   | 'oli_short_answer'
   | 'oli_ordering'
-  | 'oli_multi_input';
+  | 'oli_multi_input'
+  | 'oli_likert';
 
 export function determineSubType(question: any): ItemTypes {
   const mcq = Common.getChild(question.children, 'multiple_choice');
@@ -331,6 +436,11 @@ export function determineSubType(question: any): ItemTypes {
     }
 
     return 'oli_multi_input';
+  }
+
+  const likert_scale = Common.getChild(question.children, 'likert_scale');
+  if (likert_scale !== undefined) {
+    return 'oli_likert';
   }
 
   return 'oli_short_answer';
@@ -386,7 +496,7 @@ export class Formative extends Resource {
     });
   }
 
-  summarize(file: string): Promise<string | Summary> {
+  summarize(): Promise<string | Summary> {
     const foundIds: ItemReference[] = [];
     const summary: Summary = {
       type: 'Summary',
@@ -397,7 +507,7 @@ export class Formative extends Resource {
     };
 
     return new Promise((resolve, reject) => {
-      visit(file, (tag: string, attrs: Record<string, unknown>) => {
+      visit(this.file, (tag: string, attrs: Record<string, unknown>) => {
         Histogram.update(summary.elementHistogram, tag, attrs);
 
         if (tag === 'assessment') {
@@ -430,6 +540,7 @@ export function processAssessmentModel(
       const a = {
         type: 'activity-reference',
         activity_id: activity.id,
+        id: guid(),
       } as any;
 
       if (pageId !== null) {

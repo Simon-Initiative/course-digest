@@ -1,69 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE organization PUBLIC "-//Carnegie Mellon University//DTD Content Organization Simple 2.3//EN" "http://oli.web.cmu.edu/dtd/oli_content_organization_simple_2_3.dtd">
 <organization id="migration-4sdfykby-1.0_default" version="1.0">
-	<title>
+    <title>
 		Default Organization
 	</title>
-	<description>
+    <description>
 		Sample organization included with the OLI project template.
 	</description>
-	<audience>
+    <audience>
 		This organization is intended as an example for OLI content authors.
 	</audience>
-	<labels sequence="Sequence" unit="Unit" module="Module" section="Section" />
-	<sequences>
-		<sequence id="part1" category="content" audience="all">
-			<title>
+    <labels sequence="Sequence" unit="Unit" module="Module" section="Section" />
+    <sequences>
+        <sequence id="part1" category="content" audience="all">
+            <title>
 				Project Template
 			</title>
-			<unit id="lesson1">
-				<title>
+            <unit id="pre_student_survey">
+                <title>Student Feedback</title>
+                <module id="pre_survey">
+                    <title>Pre-Course Student Expectations</title>
+                    <item>
+                        <resourceref idref="pre_course_survey"/>
+                    </item>
+                </module>
+            </unit>
+            <unit id="lesson1">
+                <title>
 					Lesson 1
 				</title>
-				<module id="introduction">
-					<title>
+                <module id="introduction">
+                    <title>
 						Introduction
 					</title>
-					<item id="bca2e8dcf45e4ca5889891c18a62d648" scoring_mode="default">
-						<resourceref idref="welcome" />
-					</item>
-					<item id="ebe32e4f2039442896f67b64a54acd0d" scoring_mode="default">
-						<resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93" />
-					</item>
-				</module>
-				<module id="corecomponents">
-					<title>
+                    <item id="bca2e8dcf45e4ca5889891c18a62d648" scoring_mode="default">
+                        <resourceref idref="welcome" />
+                    </item>
+                    <item id="ebe32e4f2039442896f67b64a54acd0d" scoring_mode="default">
+                        <resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93" />
+                    </item>
+                </module>
+                <module id="corecomponents">
+                    <title>
 						Core Page Components
 					</title>
-					<item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
-						<resourceref idref="extra" />
-					</item>
-					<item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
-						<resourceref idref="mathml" />
-					</item>
-					<item id="bca2e8dc245e4ca5889891c18a62d699" scoring_mode="default">
-						<resourceref idref="entities" />
-					</item>
-					<item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
-						<resourceref idref="materials" />
-					</item>
-					<item id="bca2e889891c18a62d699" scoring_mode="default">
-						<resourceref idref="composite" />
-					</item>
-					<item id="bca2e88983a62d699" scoring_mode="default">
-						<resourceref idref="styled_lists" />
-					</item>
-				</module>
-				<module id="variables">
-					<title>
+                    <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="extra" />
+                    </item>
+                    <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="mathml" />
+                    </item>
+                    <item id="bca2e8dc245e4ca5889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="entities" />
+                    </item>
+                    <item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="materials" />
+                    </item>
+                    <item id="bca2e889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="composite" />
+                    </item>
+                    <item id="bca2e88983a62d699" scoring_mode="default">
+                        <resourceref idref="styled_lists" />
+                    </item>
+                    <item id="bca2e88983a62dd699" scoring_mode="default">
+                      <resourceref idref="video" />
+                    </item>
+                </module>
+                <module id="variables">
+                    <title>
 						Dynamic Questions
 					</title>
-					<item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
-						<resourceref idref="assessment_with_selection" />
-					</item>
-				</module>
-				<module id="dnd">
-					<title>
+                    <item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
+                        <resourceref idref="assessment_with_selection" />
+                    </item>
+                </module>
+                <module id="dnd">
+                    <title>
 						Drag and Drop Questions
 					</title>
 					<item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">

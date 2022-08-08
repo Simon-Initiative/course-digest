@@ -1,6 +1,6 @@
-import { ItemReference, guid } from '../utils/common';
-import * as Histogram from '../utils/histogram';
-import * as DOM from '../utils/dom';
+import { ItemReference, guid } from 'src/utils/common';
+import * as Histogram from 'src/utils/histogram';
+import * as DOM from 'src/utils/dom';
 
 export interface HasReferences {
   found: () => ItemReference[];
@@ -132,7 +132,17 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
-  DOM.renameAttribute($, 'video source', 'type', 'format');
+  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
+  DOM.renameAttribute($, 'video source', 'src', 'url');
+
+  $('video').each((i: any, item: any) => {
+    const src = $(item).attr('src');
+
+    if (src !== undefined && src !== null && src.trim() !== null) {
+      $(item).html(`<source contenttype="video/mp4" url="${src}"></source>`);
+    }
+  });
+
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
@@ -302,12 +312,31 @@ function getPurpose(purpose?: string) {
   return 'none';
 }
 
+export function wrapContentInSurveyOrGroup(
+  content: any[],
+  m: any,
+  legacyMyResponseFeedbackIds: Record<string, boolean>
+) {
+  const isSurvey = legacyMyResponseFeedbackIds[m.idref];
+  return isSurvey
+    ? wrapContentInSurvey(content)
+    : wrapContentInGroup(content, m.purpose);
+}
+
 export function wrapContentInGroup(content: any[], purpose?: string) {
   return {
     type: 'group',
     id: guid(),
     layout: 'vertical',
     purpose: getPurpose(purpose),
+    children: content,
+  };
+}
+
+export function wrapContentInSurvey(content: any[]) {
+  return {
+    type: 'survey',
+    id: guid(),
     children: content,
   };
 }
