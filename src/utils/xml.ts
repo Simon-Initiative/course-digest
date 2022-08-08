@@ -311,6 +311,17 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const convertTableAttrstoNumbers = () => {
+        if (tag === 'td' || tag === 'th') {
+          if (top().colspan !== undefined) {
+            top().colspan = parseInt(top().colspan);
+          }
+          if (top().rowspan !== undefined) {
+            top().rowspan = parseInt(top().rowspan);
+          }
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -340,6 +351,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         unescapeVariableData();
         setTransformationData();
         setVideoAttributes();
+        convertTableAttrstoNumbers();
 
         if (top() && top().children === undefined) {
           top().children = [];

@@ -155,7 +155,7 @@ function sideBySideMaterials($: any) {
   });
   $('materials').each((i: any, item: any) => {
     item.tagName = 'table';
-    $(item).attr('borderStyle', 'hidden');
+    $(item).attr('border', 'hidden');
     const orientation = $(item).attr('orient');
 
     if (
