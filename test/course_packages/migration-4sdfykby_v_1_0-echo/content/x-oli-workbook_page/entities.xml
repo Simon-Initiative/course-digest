@@ -8,10 +8,11 @@
 	</head>
 	<body>
 		<p>
-			The following paragraph contains several HTML entities
+			The following paragraphs contains several HTML entities
 		</p>
 		<p>
-			Times: &times; Registered: &reg; Beta: &beta;
+			copyright: &copy; Times: &times; Registered: &reg; Beta: &beta;
 		</p>
+    <p>Less than &lt; greater than &gt; double quote &quot; apos &apos; amp &amp; copyright &#169; delta &#8710;</p>
 	</body>
 </workbook_page>

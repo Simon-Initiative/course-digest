@@ -2,6 +2,7 @@
 import * as stream from 'stream';
 import * as fs from 'fs';
 import { decodeEntities } from './common';
+import { decode } from 'html-entities';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -137,13 +138,6 @@ export function replaceAll(s: string, t: string, w: string) {
   return s.replace(re, w);
 }
 
-export function replaceUnicodeReferences(s: string): string {
-  return s.replace(/&#x.*?;/g, (matched, _index, _original) => {
-    const parsed = parseInt(matched.substring(3, matched.length - 1), 16);
-    return String.fromCharCode(parsed);
-  });
-}
-
 export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
   const root: any = {};
   root.children = [];
@@ -180,10 +174,11 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
             }
           });
           Object.keys(attrs).forEach((k) => {
-            object[k] =
-              typeof attrs[k] === 'string'
-                ? replaceUnicodeReferences(attrs[k])
-                : attrs[k];
+            object[k] = attrs[k];
+            if (typeof attrs[k] === 'string') {
+              const text = replaceAll(attrs[k], '&amp;', '&');
+              object[k] = decode(text, { level: 'html5' });
+            }
           });
           if (top() !== undefined) {
             top().children.push(object);
@@ -362,13 +357,11 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
     });
 
     parser.on('text', (raw: string) => {
-      let text = replaceAll(raw, '&quot;', '"');
-      text = replaceAll(text, '&amp;', '&');
-      text = replaceAll(text, '&lt;', '<');
-      text = replaceAll(text, '&gt;', '>');
-      text = replaceAll(text, '&apos;', "'");
-
-      text = replaceUnicodeReferences(text);
+      // Cheerio will encode ampersands in non supported XML entities like &times; to be &amp;times;
+      // So to handle these we first decode only ampersands, then feed that result through the
+      // html-entities library's decode to handle all other HTML5 entities.
+      let text = replaceAll(raw, '&amp;', '&');
+      text = decode(text, { level: 'html5' });
 
       const object: any = Object.assign({}, { text }, inlinesToObject(inlines));
       top().children.push(object);
