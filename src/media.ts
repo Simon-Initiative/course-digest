@@ -62,11 +62,17 @@ export function transformToFlatDirectory(
     // Update the URL in the XML DOM
     if (url !== null) {
       paths[assetReference].forEach((elem) => {
-        if($(elem)[0].name === 'source'){
-          $(elem).replaceWith(`<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`);
-        } else if($(elem)[0].name === 'asset'){
+        if ($(elem)[0].name === 'source') {
+          $(elem).replaceWith(
+            `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
+          );
+        } else if ($(elem)[0].name === 'asset') {
           const name = $(elem).attr('name');
-          $(elem).replaceWith(`<asset name="${name}">${url.slice(url.lastIndexOf('media/') + 6)}</asset>`);
+          $(elem).replaceWith(
+            `<asset name="${name}">${url.slice(
+              url.lastIndexOf('media/') + 6
+            )}</asset>`
+          );
         } else {
           $(elem).attr('src', url);
         }
@@ -170,13 +176,12 @@ function generateNewName(
 // of the project
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
-  if(reference.assetReference.startsWith('webcontent')){
-    dir = reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) + 'content/'
+  if (reference.assetReference.startsWith('webcontent')) {
+    dir =
+      reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
+      'content/';
   }
-  return path.resolve(
-    dir,
-    reference.assetReference
-  );
+  return path.resolve(dir, reference.assetReference);
 }
 
 // Uploads a collection of media items to an S3 bucket, staging them for
@@ -223,7 +228,7 @@ function findFromDOM($: any): Record<string, Array<string>> {
   });
 
   $('asset').each((i: any, elem: any) => {
-    if($(elem).text().includes('webcontent')) {
+    if ($(elem).text().includes('webcontent')) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
     }
   });
