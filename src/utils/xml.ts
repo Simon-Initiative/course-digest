@@ -313,7 +313,6 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
 
       const convertTableAttrstoNumbers = () => {
         if (tag === 'td' || tag === 'th') {
-          
           if (top().colspan !== undefined) {
             top().colspan = parseInt(top().colspan);
           }
