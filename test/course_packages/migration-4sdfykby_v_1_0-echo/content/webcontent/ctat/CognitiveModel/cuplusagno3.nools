@@ -1,0 +1,171 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Cu',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Cu final'
+			},
+			{
+				'substance': 'AgNO3',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'final',
+				'label': 'M AgNO3 final'
+			},
+			{
+				'substance': 'Ag',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Ag final'
+			},
+			{
+				'substance': 'Cu(NO3)2',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'final',
+				'label': 'M Cu(NO3)2 final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Cu',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '5.900',
+					'range': [3,9],
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'g',
+					'solution': 's1'
+				},
+				atomicWeight: '63.54'
+			},
+			{
+				type: 'substance',
+				str:"AgNO3",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0.400',
+					'range': [0.100,0.450],
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'mol',
+					'solution': 's1'
+				},
+				atomicWeight: '169.888' 
+			},
+			{
+				type: 'substance',
+				str:"Cu(NO3)2",
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'mol',
+					'solution': 's1'
+				},
+				atomicWeight: '187.556'
+			},
+			{
+				type: 'substance',
+				str: "Ag",
+				hotkey: '0',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g',
+					'solution': 's1'
+				},
+				atomicWeight: '107.880 '
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['AgNO3','Cu(NO3)2'],
+					'context': 'initial',
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '50',
+					'unit': 'mL',
+					'substance': 'AgNO3,Cu(NO3)2',
+					'solution': 's1'
+				}
+			}
+		],
+		phase1Reaction: 'Cu_plus_2AgNO3_is_Cu(NO3)2_plus_2Ag',
+		reactions: {
+			'Cu_plus_2AgNO3_is_Cu(NO3)2_plus_2Ag': {
+				'id' : 'Cu_plus_2AgNO3',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "Copper undergoes oxidation when placed in a solution of silver nitrate.  %Cu_mass_g_initial.displayVal% %Cu_mass_g_initial.unit% of solid copper is placed in 50.0 mL of a AgNO<sub>3</sub> solution.  The AgNO<sub>3</sub> solution contains %AgNO3_mass_mol_initial.displayVal% %AgNO3_mass_mol_initial.unit% AgNO<sub>3</sub>.  The reaction shown below occurs:  <br><br> Cu(s) + 2AgNO<sub>3</sub>(aq) &#8594 Cu(NO<sub>3</sub>)<sub>2</sub>(aq) + 2Ag(s) <br><br> At the end of the reaction, what are (i) the masses in grams of Cu(s) and Ag(s), and (ii) the concentrations in mol/L<sup>&#8224</sup> of Cu(NO<sub>3</sub>)<sub>2</sub> and AgNO<sub>3</sub>?<br>Use the following molar masses for your calculations:<br>Cu: 63.54 , Ag: 107.880 , Cu(NO<sub>3</sub>)<sub>2</sub>: 187.556 , AgNO<sub>3</sub>: 169.888 <br> <sup>&#8224</sup>Assume the volume of the solution remains constant"
+	},	
+	stoichStepDone: false,
+	usesIceTable: false,
+	claimTypes: ["Limiting Reagent", "Final Quantity"]
+};

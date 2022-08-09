@@ -1,0 +1,202 @@
+// (grams to mols conversion) mols = g/atomic_wt
+rule ConvertGramsToMols {
+	salience: 20;
+	when {
+		prob: Problem ;
+		gramsQty: KnownQuantity gramsQty.unit === "g" {substance: s, value: gramsVal, context: gramsQtyContext};
+		atomicWeight: GeneralData atomicWeight.substance === s && atomicWeight.type === "atomicWeight" {value: atomicWeightVal};
+		not( molsQty: KnownQuantity molsQty.substance === s && molsQty.unit === "mol" && molsQty.context === gramsQtyContext);
+	} then {
+		var molsVal = (+gramsVal)/(+atomicWeightVal);
+		var molQty = assert(new KnownQuantity({
+			substance: s,
+			type: "amount",
+			value: molsVal,
+			unit: 'mol', 
+			context: gramsQtyContext, 
+			reaction: gramsQty.reaction,
+			fromHypothesis: gramsQty.fromHypothesis,
+			fromRule: "ConvertGramsToMols",
+			fromFacts: [gramsQty],
+			hint: ["Use the atomic weight of "+s+" to convert its mass in grams to mols.", 
+				"The atomic weight of "+s+" is "+atomicWeightVal+".  Divide the amount of "+s+" in grams by that number to get the amount in mols.",
+				"Enter the formula: "+gramsQty.getDisplayVal()+"/"+atomicWeightVal],
+			solution: gramsQty.solution,
+			state: gramsQty.state
+		}));
+		modify(gramsQty, "toFacts", gramsQty.toFacts.slice().concat(molQty));
+	}
+}
+
+function calculateParticles(molsQty) {
+	return (molsQty.value * (6.022 * (10**23))).toPrecision(15);
+}
+rule ConvertMolesToParticles {
+	salience: 20;
+	when {
+		prob: Problem;
+		molsQty: KnownQuantity molsQty.unit === "mol" {substance: s, value: molsVal, context: molsQtyContext};
+		not( pQty: KnownQuantity pQty.unit === "particle" && pQty.substance === s && pQty.context === molsQtyContext &&
+			 pQty.value == calculateParticles(molsQty) );
+	} then {
+		var pVal = calculateParticles(molsQty);
+		var pQ = assert(new KnownQuantity({
+			substance: s,
+			type: "amount",
+			value: pVal,
+			unit: 'particle', 
+			context: molsQtyContext, 
+			reaction: molsQty.reaction,
+			fromHypothesis: molsQty.fromHypothesis,
+			fromRule: "ConvertMolesToParticles",
+			fromFacts: [molsQty],
+			hint: "Multiply the number of moles of "+s+" by Avogadro's number (6.022*10<sup>23</sup>) to determine the number of particles of "+s+".",
+			solution: molsQty.solution,
+			state: molsQty.state
+		}));
+		
+		modify(molsQty, "toFacts", molsQty.toFacts.slice().concat(pQ));
+	}
+}
+
+function calculateMass(mol, atmWeight) {
+	return ((+mol.value)*(+atmWeight.value)).toPrecision(15);
+}
+// (mols to grams conversion) grams = mols*atomic_wt
+rule ConvertMolsToGrams {
+	salience: 20;
+	when {
+		molsQty: KnownQuantity molsQty.unit === "mol" {substance: s, value: molsVal, context: molsQtyContext, fromHypothesis: ass};
+		atomicWeight: GeneralData atomicWeight.substance === s && atomicWeight.type === "atomicWeight" {value: atomicWeightVal};
+		not( gramsQty: KnownQuantity gramsQty.substance === s && gramsQty.unit === "g" &&
+			 gramsQty.context === molsQtyContext && gramsQty.fromHypothesis === ass &&
+			 gramsQty.value == calculateMass(molsQty, atomicWeight));
+	} then {
+		var gramsVal = calculateMass(molsQty, atomicWeight);
+		var gQty = assert(new KnownQuantity({
+			substance: s,
+			type: "mass",
+			value: gramsVal,
+			unit: 'g', 
+			context: molsQtyContext,
+			reaction: molsQty.reaction,
+			fromHypothesis: ass,
+			fromRule: "ConvertMolsToGrams",
+			fromFacts: [molsQty],
+			hint: "Use the molar mass of "+s+" to convert the amount in mols to grams.",
+			solution: molsQty.solution,
+			state: molsQty.state,
+			isBug: molsQty.isBug,
+			bugMsg: molsQty.bugMsg
+		}));
+		modify(molsQty, "toFacts", molsQty.toFacts.slice().concat(gQty));
+	}
+}
+
+function calculateConcentration(volume, mol) {
+	let vol = +volume.value;
+	if (volume.unit === "mL") vol /= 1000;
+	let conc = (+mol.value)/vol;
+	return conc.toPrecision(15);
+}
+
+rule DetermineConcentration {
+	salience: 20;
+	when {
+		molQty: KnownQuantity molQty.unit === "mol" {substance: sub, value: molsVal, context: ctxt, fromHypothesis: molHyp};
+		sol: Solution sol === molQty.solution ;
+		vol: KnownQuantity vol.type === "volume" && vol.solution === sol {value: volVal, unit: volUnit};
+		molFh: Hypothesis molFh === molHyp;
+		not( concQty: KnownQuantity concQty.type === "concentration" && concQty.substance === sub &&
+			 concQty.context === ctxt && concQty.fromHypothesis === molFh && concQty.solution === sol &&
+			 concQty.value == calculateConcentration(vol, molQty) );
+	} then {
+		volVal = +volVal;
+		if (volUnit === "mL") {
+			volVal = volVal/1000;
+		}
+		console.log("determine concentration volVal is "+volVal+" molsVal is "+molsVal);
+		var concentrationVal = calculateConcentration(vol, molQty);
+		let conc = assert(new KnownQuantity({
+			substance: sub, 
+			type: "concentration", 
+			value: concentrationVal, 
+			unit: 'M', 
+			context: ctxt,
+			reaction: molQty.reaction,
+			fromHypothesis: molFh,
+			fromRule: "DetermineConcentration",
+			fromFacts: [molQty, vol],
+			hint: "Use the amount in mols of "+sub+" to determine the concentration in mols/L.",
+			solution: sol,
+			state: molQty.state,
+			isBug: molQty.isBug,
+			bugMsg: molQty.bugMsg
+		}));
+		modify(molQty, "toFacts", molQty.toFacts.slice().concat(conc));
+		modify(vol, "toFacts", vol.toFacts.slice().concat(conc));
+	}
+}
+
+rule ConvertConcentrationToMol {
+	salience: 20;
+	when {
+		concentration: KnownQuantity concentration.type === "concentration" && !getIsNaN(concentration.value) {substance: sub, value: concVal, fromHypothesis: fh, context: ctxt};
+		hyp: Hypothesis hyp === concentration.fromHypothesis;
+		sol: Solution sol === concentration.solution;
+		vol: KnownQuantity vol.type === "volume" && vol.solution === sol {value: volVal, unit: volUnit};
+		not( molarQty: KnownQuantity molarQty.unit === "mol" && molarQty.substance === concentration.substance &&
+			 molarQty.context === concentration.context && molarQty.fromHypothesis === hyp && molarQty.solution === sol );
+	} then {
+		
+		volVal = +volVal;
+		if (volUnit === "mL") {
+			volVal = volVal/1000;
+		}
+		var molVal = (+concVal)*volVal;
+		var massQty = assert(new KnownQuantity({
+			substance: sub, 
+			type: "amount", 
+			value: molVal, 
+			unit: "mol", 
+			context: ctxt,
+			reaction: concentration.reaction,
+			fromHypothesis: fh,
+			fromRule: "ConvertConcentrationToMol",
+			fromFacts: [concentration, vol],
+			hint: "Use the concentration of "+sub+" to determine the amount in mols.",
+			solution: sol,
+			state: concentration.state
+		}));
+		modify(concentration, "toFacts", concentration.toFacts.slice().concat(massQty));
+		modify(vol, "toFacts", vol.toFacts.slice().concat(massQty));
+	}
+}
+
+rule ConvertCelsiusToKelvin {
+	salience: 20;
+	when {
+		prob: Problem !prob.hintSearching;
+		degreeC: KnownQuantity degreeC.type === "temperature" && degreeC.unit === "degreeC";
+		hyp: Hypothesis hyp === degreeC.fromHypothesis;
+		not( degreeK : KnownQuantity degreeK.type === "temperature" && degreeK.unit === "degreeK" &&
+									 degreeK.substance === degreeC.substance && degreeK.context === degreeC.context &&
+									 degreeK.fromHypothesis === hyp );
+	} then {
+		var kVal = (+degreeC.value) + 273.15;
+		var kQty = assert(new KnownQuantity({
+			substance: degreeC.substance,
+			type: "temperature",
+			value: kVal,
+			unit: "degreeK",
+			context: degreeC.context,
+			fromHypothesis: hyp,
+			fromRule: "ConvertCelsiusToKelvin",
+			fromFacts: [degreeC],
+			solution: degreeC.solution,
+			state: degreeC.state,
+			hint: ["Convert the "+degreeC.context+" temperature of "+degreeC.substance+" from celsius to kelvin.", "To convert to kelvin, add 273.15 to the amount in celsius."]
+		}));
+		modify(degreeC, "toFacts", degreeC.toFacts.slice().concat(kQty));
+	}
+}

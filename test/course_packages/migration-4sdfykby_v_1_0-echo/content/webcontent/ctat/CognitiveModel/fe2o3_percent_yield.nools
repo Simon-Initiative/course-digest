@@ -1,0 +1,137 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'determineLimitingReagent',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Fe2O3',
+				'type': 'percentYield',
+				'unit': 'percent',
+				'context': 'percent yield',
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'FeS2',
+				html:'FeS<sub>2</sub>',
+				latex:'{FeS}_{2}',
+				hotkey: 'f',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'amount',
+					'value': '2.5',
+					'unit': 'mol',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str:"O2",
+				hotkey: 'o',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'amount',
+					'value': '6.5',
+					'sigFigs': 3,
+					'unit': 'mol',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '32.00'
+			},
+			{
+				type: 'substance',
+				str: "Fe2O3",
+				html: "Fe<sub>2</sub>O<sub>3</sub>",
+				latex: "{Fe}_{2}{O}_{3}",
+				hotkey: '4',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'amount',
+					'value': '0',
+					'unit': 'mol',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "SO2",
+				html: "SO<sub>2</sub>",
+				latex: "{SO}_{2}",
+				hotkey: 's',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'amount',
+					'value': '0',
+					'unit': 'mol',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'type': 'amount',
+					'context': 'actual yield',
+					'value': '0.850',
+					'unit': 'mol',
+					'displayVal': 'value',
+					'substance': 'Fe2O3'
+				}
+			}
+		],
+		phase1Reaction: '4FeS2_plus_11O2_is_2Fe2O3_plus_8SO2',
+		reactions: {
+			'4FeS2_plus_11O2_is_2Fe2O3_plus_8SO2': {
+				'id' : '4FeS2_plus_11O2',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "2.5 mols of FeS<sub>2</sub> is burned with 6.5 mols of O<sub>2</sub>, producing 0.850 mols of Fe<sub>2</sub>O<sub>3</sub> according to the reaction: <br> 4FeS<sub>2</sub> + 11O<sub>2</sub> &#8594 2Fe<sub>2</sub>O<sub>3</sub> + 8SO<sub>2</sub> <br> What is the percent yield of Fe<sub>2</sub>O<sub>3</sub>?"
+	},
+	claimTypes: ["Limiting Reagent", {
+		id: 'percentyield', //type of claim
+		btnText: 'Percent Yield', //what the button in the claim menu will say
+		claimText: 'The percent yield of Fe<sub>2</sub>O<sub>3</sub> is <blank> %', //what the claim will say (<blank> replaced by input box)
+		onlyOne: true, //whether to disallow adding multiple of this claim type
+		matchQty: { //properties of the quantity fact that this claim is associated with
+			context: 'percent yield',
+			type: 'percentYield',
+			substance: 'Fe2O3',
+			unit: 'percent'
+		},
+		needReadyForFinalQty: true,
+		notReadyMsg: "You need to determine the limiting reactant before you can calculate the percent yield."
+	}]
+};

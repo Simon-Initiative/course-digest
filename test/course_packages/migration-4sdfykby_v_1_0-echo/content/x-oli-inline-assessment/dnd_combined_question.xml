@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="dnd_combined_question">
+    <title>Tutor</title>
+    <question id="q1">
+        <body>
+            <p>A balloon is filled with 1.5 L of hydrogen at a temperature of 294 K
+                and a pressure of 745 torr. At a high altitude of 20 km 
+                 the temperature is 225 K and the pressure is 41.2 torr. What is the volume of the ballon at this altitude?</p>
+            <p>The combined gas law equation is seen below. Match the value of each of the variables
+                to its symbol in the equation. Match the ? to the unknown variable.</p>
+            <custom type="javascript" height="500" width="680" id="dragDrop"
+                layout="../webcontent/combined_dnd_layout.xml">
+                <param name="showInputs">false</param>
+            </custom>
+        </body>
+        <fill_in_the_blank id="p1_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="v1_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="t1_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="p2_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+        </fill_in_the_blank>
+        <fill_in_the_blank id="v2_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="t2_area" shuffle="false">
+            <choice value="p1">p1</choice>
+            <choice value="v1">v1</choice>
+            <choice value="t1">t1</choice>
+            <choice value="p2">p2</choice>
+            <choice value="v2">v2</choice>
+            <choice value="t2">t2</choice>
+
+        </fill_in_the_blank>
+
+
+
+        <part>
+            <response input="p1_area" match="p1" score="1">
+                <feedback>Correct.</feedback>
+            </response>
+            <response input="p1_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="v1_area" match="v1" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+
+            <response input="v1_area" match="*">
+                <feedback>Incorrect.</feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="t1_area" match="t1" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+
+            <response input="t1_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="p2_area" match="p2" score="1">
+                <feedback>Correct.</feedback>
+            </response>
+            <response input="p2_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="v2_area" match="v2" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+
+            <response input="v2_area" match="*">
+                <feedback>Incorrect.</feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="t2_area" match="t2" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+
+            <response input="t2_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+
+
+
+    </question>
+    <question id="q2">
+        <body>Based on the equation you set up in the previous activity, calculate the value of the
+            unknown variable. <p><input_ref input="q1numeric"/> L </p>
+        </body>
+        <numeric id="q1numeric" size="small"/>
+        <part>
+            <response match="[20.7,21]" score="10" input="q1numeric">
+                <feedback>Correct. </feedback>
+            </response>
+            <response match="*" input="q1numeric">
+                <feedback>Incorrect. Try again. Perform the calculation from the activity
+                    above.</feedback>
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+    </question>
+
+</assessment>
+<?oxy_options track_changes="on"?>

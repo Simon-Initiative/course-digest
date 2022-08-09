@@ -1,0 +1,169 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Zn',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Zn final'
+			},
+			{
+				'substance': 'FeSO4',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'final',
+				'label': 'M FeSO4 final'
+			},
+			{
+				'substance': 'Fe',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Fe final'
+			},
+			{
+				'substance': 'ZnSO4',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'final',
+				'label': 'M ZnSO4 final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Zn',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '6.200',
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'g',
+					'solution': 's1'
+				},
+				atomicWeight: '65.38'
+			},
+			{
+				type: 'substance',
+				str:"FeSO4",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0.2500',
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'mol',
+					'solution': 's1'
+				},
+				atomicWeight: '151.91' 
+			},
+			{
+				type: 'substance',
+				str:"ZnSO4",
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'mol',
+					'solution': 's1'
+				},
+				atomicWeight: '161.44'
+			},
+			{
+				type: 'substance',
+				str: "Fe",
+				hotkey: '0',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g',
+					'solution': 's1'
+				},
+				atomicWeight: '55.85 '
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['FeSO4','ZnSO4'],
+					'context': 'initial'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '50',
+					'unit': 'mL',
+					'substance': 'FeSO4,ZnSO4',
+					'solution': 's1'
+				}
+			}
+		],
+		phase1Reaction: 'Zn_plus_FeSO4_is_ZnSO4_plus_Fe',
+		reactions: {
+			'Zn_plus_FeSO4_is_ZnSO4_plus_Fe': {
+				'id' : 'Zn_plus_FeSO4',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "Zinc undergoes oxidation when placed in a solution of iron (<span>&#8545</span>) sulfate.  %Zn_mass_g_initial.displayVal% %Zn_mass_g_initial.unit% of solid zinc is placed in 50.0 mL of a FeSO<sub>4</sub> solution.  The FeSO<sub>4</sub> solution contains %FeSO4_mass_mol_initial.displayVal% %FeSO4_mass_mol_initial.unit% FeSO<sub>4</sub>.  The reaction shown below occurs:  <br><br> Zn(s) + FeSO<sub>4</sub>(aq) &#8594 ZnSO<sub>4</sub>(aq) + Fe(s) <br><br> At the end of the reaction, what are (i) the masses in grams of Zn(s) and Fe(s), and (ii) the concentrations in mol/L<sup>&#8224</sup> of FeSO<sub>4</sub> and ZnSO<sub>4</sub>?<br>Use the following molar masses for your calculations:<br>Zn: 65.38 , Fe: 55.85 , FeSO<sub>4</sub>: 151.91 , ZnSO<sub>4</sub>: 161.44 <br> <sup>&#8224</sup>Assume the volume of the solution remains constant"
+	},	
+	stoichStepDone: false,
+	usesIceTable: false,
+	claimTypes: ["Limiting Reagent", "Final Quantity"]
+};

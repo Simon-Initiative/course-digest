@@ -1,0 +1,172 @@
+/** CTAT MESSAGE TYPES **/
+
+define StudentValues {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s, a, i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+define TPA {
+	selection: null,
+	action: null,
+	input: null,
+	constructor: function(s, a, i) {
+		this.selection = s;
+		this.action = a;
+		this.input = i;
+	}
+}
+
+define Hint {
+  precedence: 0,
+  msg: "",
+  constructor: function(m, optPrecedence) {
+  	this.msg = m;
+  	this.precedence = optPrecedence || 0;
+  }
+}
+
+/** PROBLEM TYPE **/
+define Problem {
+	activeExpression: null,
+	searching: false,
+	stateModified: false,
+	finalQuantityMatched: null,
+	constructor: function() {
+	
+	}
+}
+
+/** INTERFACE COMPONENTS **/
+define Expression {
+	id: null,
+	label: null,
+	unit: null,
+	context: null,
+	string: null,
+	creator: null,
+	constructor: function(i, str, cr, u, c, l) {
+		this.id = i;
+		this.string = round(''+str);
+		this.creator = cr;
+		u && (this.unit = u);
+		c && (this.context = c);
+		l && (this.label = l);
+		this.copies = 0;
+		this.simplifications = 0;
+	}	
+}
+
+define Table {
+	id: null,
+	reaction: null,
+	rows: null,
+	numRows: 0,
+	constructor: function(i, r) {
+		this.id = i;
+		this.reaction = r;
+		var row1Key = i+"_row_"+(this.numRows++);
+		this.rows = {};
+		this.rows[row1Key] = {cells: {}}
+	}
+}
+
+define KnownQuantity {
+	substance: null,
+	type: null,
+	value: null,
+	unit: null,
+	context: null,
+	constructor: function(s, t, v, u, c) {
+		this.id = s+"_"+t+"_"+(u || '')+"_"+(c || '');
+		this.substance = s;
+		this.type = t;
+		this.value = round(v);
+		this.unit = u;
+		this.context = c;
+	}
+}
+
+define Reaction {
+	reagents: null,
+	products: null,
+	constructor: function(r, p) {
+		this.reagents = [];
+		this.products = [];
+		r.forEach(function(reagent) {
+			this.reagents.push({substance: reagent.substance, moles: reagent.moles});
+		}, this);
+		p.forEach(function(product) {
+			this.products.push({substance: product.substance, moles: product.moles});
+		}, this);
+	}
+}
+
+define ReactionInstance {
+	instanceOf: null,
+	reagents: null,
+	limitingReagent: null,
+	partsOf: null,
+	calculated: false,
+	constructor: function(io, r, lr) {
+		this.instanceOf = io;
+		this.reagents = r;
+		this.limitingReagent = lr;
+		this.partsOf = {};
+		io.reagents.forEach(function(reagent) {
+			this.partsOf[reagent.substance] = reagent.moles;
+		}, this);
+	}
+}
+
+/** GOAL TYPES **/
+define AddEquationGoal {
+	
+	constructor: function(eqData) {
+		
+	}
+}
+
+define ReplaceVarGoal {
+	expId: null,
+	varName: null,
+	varValue: null,
+	constructor: function(e, vn, vv) {
+		this.expId = e;
+		this.varName = vn;
+		this.varValue = round(vv);
+	}
+}
+
+define UnknownQuantityGoal {
+	substance: null,
+	type: null,
+	requiredToSolve: false,
+	constructor: function(s, t, r) {
+		this.substance = s;
+		this.type = t;
+		this.requiredToSolve = r;
+	}
+}
+
+define FinalQuantityGoal {
+	id: null,
+	label: null,
+	substance: null,
+	type: null,
+	unit: null,
+	context: null,
+	constructor: function(l, s, t, u, c) {
+		this.id = s+"_"+t+"_"+(u || '')+"_"+(c || '');
+		this.label = l;
+		this.substance = s;
+		this.type = t;
+		this.unit = u;
+		this.context = c;
+	}
+}

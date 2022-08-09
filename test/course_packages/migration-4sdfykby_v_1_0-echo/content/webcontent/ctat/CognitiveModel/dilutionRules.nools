@@ -1,0 +1,103 @@
+rule MixSolutions {
+	salience: 19;
+	when {
+		s1: Solution;
+		vol1: KnownQuantity vol1.type === "volume" && vol1.solution === s1;
+		s2: Solution s2 !== s1 && s2.fromHypothesis === s1.fromHypothesis {volume: vol2};
+		vol2: KnownQuantity vol2.type === "volume" && vol2.solution === s2;
+		mixGoal: MixSolutionGoal mixGoal.id1 === s1.id && mixGoal.id2 === s2.id && !mixGoal.done;
+	} then {
+		var v1 = vol1.value,
+			u1 = vol1.unit,
+			v2 = vol2.value,
+			u2 = vol2.unit;
+			
+		if (u1 !== u2) {
+			v2 = convertTo(v2, u2, u1);
+		}
+		var v3 = (+v1) + (+v2),
+			u3 = u1,
+			subs3 = s1.substances.concat(s2.substances);
+		
+		subs3 = subs3.filter((s,idx)=> subs3.indexOf(s) === idx);
+		var s3Id = s1.id+'+'+s2.id;
+		var s3 = assert(new Solution({
+			'substances': subs3,
+			'value': ''+v3,
+			'unit': u3,
+			'fromHypothesis': s1.fromHypothesis,
+			'id': s1.id+'+'+s2.id,
+			'constituents': [s1, s2]
+		}));
+		var s3Volume = assert(new KnownQuantity({
+			substance: subs3.join(","),
+			type: "volume",
+			value: v3,
+			unit: u3,
+			fromHypothesis: s1.fromHypothesis,
+			id: s3Id+"_volume",
+			fromRule: "MixSolutions",
+			fromFacts: [vol1, vol2],
+			solution: s3
+		}));
+		modify(vol1, "toFacts", vol1.toFacts.slice().concat(s3Volume));
+		modify(vol2, "toFacts", vol2.toFacts.slice().concat(s3Volume));
+		var allQtys = getFacts("KnownQuantity"),
+			s1Qtys = [],
+			s2Qtys = [];
+			
+		allQtys.forEach((qty)=>{
+			if (mixGoal.contexts.includes(qty.context) && mixGoal.unit === qty.unit) {
+				if (qty.solution === s1) {
+					s1Qtys.push(qty);
+				} else if (qty.solution === s2) {
+					s2Qtys.push(qty);
+				}
+			}
+		});
+		
+		s1Qtys.forEach((s1Qty) => {
+			let other = s2Qtys.find((q) => q.substance === s1Qty.substance && q.context === s1Qty.context);
+			let newAmt;
+			if (other) {
+				newAmt = (+s1Qty.value)+(+other.value);
+				s2Qtys.splice(s2Qtys.indexOf(other), 1);
+			} else {
+				newAmt = s1Qty.value;
+			}
+			let fromFacts = [s1Qty];
+			other && fromFacts.push(other);
+			assert(new KnownQuantity({
+				substance: s1Qty.substance,
+				type: s1Qty.type,
+				value: newAmt+'',
+				unit: s1Qty.unit, 
+				context: s1Qty.context,
+				reaction: s1Qty.reaction,
+				fromHypothesis: s1Qty.fromHypothesis,
+				fromRule: "MixSolutions",
+				fromFacts: fromFacts,
+				hint: "How much "+s1Qty.substance+" will there be when the two solutions are mixed?",
+				solution: s3
+			}));
+		});
+		
+		s2Qtys.forEach((s2Qty) => {
+			assert(new KnownQuantity({
+				substance: s2Qty.substance,
+				type: s2Qty.type,
+				value: s2Qty.value,
+				unit: s2Qty.unit, 
+				context: s2Qty.context,
+				reaction: s2Qty.reaction,
+				fromHypothesis: s2Qty.fromHypothesis,
+				fromRule: "MixSolutions",
+				fromFacts: [s2Qty],
+				hint: "How much "+s1Qty.substance+" will there be when the two solutions are mixed?",
+				solution: s3
+			}));
+		});
+	
+		modify(mixGoal, "done", true);
+	}
+}

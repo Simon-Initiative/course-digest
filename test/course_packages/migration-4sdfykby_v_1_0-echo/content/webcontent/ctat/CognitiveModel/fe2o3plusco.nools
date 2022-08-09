@@ -1,0 +1,166 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Fe2O3',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Fe2O3 final'
+			},
+			{
+				'substance': 'CO',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g CO final'
+			},
+			{
+				'substance': 'Fe',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Fe final'
+			},
+			{
+				'substance': 'CO2',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g CO2 final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Fe2O3',
+				html:'Fe<sub>2</sub>O<sub>3</sub>',
+				latex:'{Fe}_{2}{O}_{3}',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '6.2',
+					'range': [4,8],
+					'sigFigs': 3,
+					'unit': 'g',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '159.7'
+			},
+			{
+				type: 'substance',
+				str:"CO",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '4.5',
+					'range': [10,20],
+					'sigFigs': 3,
+					'unit': 'g',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '28.011'
+			},
+			{
+				type: 'substance',
+				str: "Fe",
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'unit': 'g',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '55.85'
+			},
+			{
+				type: 'substance',
+				str: "CO2",
+				html: "CO<sub>2</sub>",
+				latex: "{CO}_{2}",
+				hotkey: '0',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'unit': 'g',
+					'displayVal': "value",
+					'context': 'initial',
+					'solution': 's1'
+				},
+				'atomicWeight': '44.011'
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['Fe2O3','CO'],
+					'context': 'initial',
+				}
+			}
+		],
+		phase1Reaction: 'Fe2O3_plus_3CO_is_2Fe_plus_3CO2',
+		reactions: {
+			'Fe2O3_plus_3CO_is_2Fe_plus_3CO2': {
+				'id' : 'Fe2O3_plus_CO',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "Iron(III) oxide reacts with carbon monoxide according to the following reaction: <br><br> Fe<sub>2</sub>O<sub>3</sub> + 3CO &#8594 2Fe + 3CO<sub>2</sub> <br><br> %Fe2O3_mass_g_initial.value% %Fe2O3_mass_g_initial.unit% iron(III) oxide reacts with %CO_mass_g_initial.value% %CO_mass_g_initial.unit% carbon monoxide, how many grams of each of the products will be produced? How many grams of each reactant will remain after the reaction is complete? Use the following molar masses for your calculations:<br> Fe<sub>2</sub>O<sub>3</sub>: 159.7 , CO: 28.011 , Fe: 55.85 , CO<sub>2</sub>: 44.011"
+	},
+	claimTypes: ["Limiting Reagent", "Final Quantity"]
+};

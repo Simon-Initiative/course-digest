@@ -1,0 +1,148 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: false,
+	notReadyForFinalQtyMsg: "You must identify the limiting reagent before determining the final quantities of the substances.  Make a claim about the limiting reagent using the 'Make Claim' button.",
+	preferredLRStrategy: "4",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'Cu2O',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Cu2O final'
+			},
+			{
+				'substance': 'Cu2S',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Cu2S final'
+			},
+			{
+				'substance': 'Cu',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g Cu final'
+			},
+			{
+				'substance': 'SO2',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+				'label': 'g SO2 final'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'Cu2O',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '413',
+					'range': [325,425],
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g'
+				},
+				atomicWeight: "63.55*2+15.99"
+			},
+			{
+				type: 'substance',
+				str:"Cu2S",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '203',
+					'range': [155,245],
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g'
+				}, 
+				atomicWeight: '63.55*2+32.07'
+			},
+			{
+				type: 'substance',
+				str: "Cu",
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'displayVal': "value",
+					'unit': 'g'
+				},
+				atomicWeight: '63.55'
+			},
+			{
+				type: 'substance',
+				str: "SO2",
+				hotkey: '0',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'displayVal': "value",
+					'unit': 'g'
+				},
+				atomicWeight: '32.07+2*15.99'
+			}
+		],
+		phase1Reaction: '2Cu2O_plus_Cu2S_is_6Cu_plus_SO2',
+		reactions: {
+			'2Cu2O_plus_Cu2S_is_6Cu_plus_SO2': {
+				'id' : '2cu2o_plus_cu2s',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "One of the steps sometimes used to convert copper ores to metallic copper is the reaction of the oxide (Cu<sub>2</sub>O) with the sulfide (Cu<sub>2</sub>S) producing copper metal (Cu) and sulfur dioxide (SO<sub>2</sub>) as seen in the reaction below. <br><br> 2Cu<sub>2</sub>O + Cu<sub>2</sub>S &#8594 6Cu + SO<sub>2</sub> <br><br> If the reaction is carried out with %Cu2O_mass_g_initial.displayVal% %Cu2O_mass_g_initial.unit% of the oxide and %Cu2S_mass_g_initial.displayVal% %Cu2S_mass_g_initial.unit% of the sulfide, what masses (in grams) of each of the substances would you expect to remain after the reaction is complete? <br> Use the following molar masses for your calculations:<br>Cu<sub>2</sub>O: 143.09 , Cu<sub>2</sub>S: 159.17 , Cu: 63.55 , SO<sub>2</sub>: 64.05"
+	},	
+	claimTypes: ["Limiting Reagent", "Final Quantity"],
+	stoichStepDone: false,
+	usesIceTable: false
+};

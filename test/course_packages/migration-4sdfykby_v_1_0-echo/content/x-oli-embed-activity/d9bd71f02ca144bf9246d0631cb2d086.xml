@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE embed_activity PUBLIC "-//Carnegie Mellon University//DTD Embed 1.1//EN"
+        "http://oli.cmu.edu/dtd/oli-embed-activity_1.0.dtd">
+<embed_activity id="d9bd71f02ca144bf9246d0631cb2d086" height="600" width="670" activity_type="REPL">
+    <title>New REPL Activity</title>
+    <source>webcontent/repl/repl.js</source>
+    <assets>
+        <asset name="layout">webcontent/repl/d9bd71f02ca144bf9246d0631cb2d086/layout.html</asset>
+        <asset name="emstyles">webcontent/repl/emstyles.css</asset>
+        <asset name="controls">webcontent/repl/controls.html</asset>
+        <asset name="questions">webcontent/repl/d9bd71f02ca144bf9246d0631cb2d086/questions.xml</asset>
+        <asset name="solutions">webcontent/repl/d9bd71f02ca144bf9246d0631cb2d086/solutions.xml</asset>
+    </assets>
+</embed_activity>

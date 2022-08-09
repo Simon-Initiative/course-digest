@@ -62,7 +62,20 @@ export function transformToFlatDirectory(
     // Update the URL in the XML DOM
     if (url !== null) {
       paths[assetReference].forEach((elem) => {
-        $(elem).attr('src', url);
+        if ($(elem)[0].name === 'source') {
+          $(elem).replaceWith(
+            `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
+          );
+        } else if ($(elem)[0].name === 'asset') {
+          const name = $(elem).attr('name');
+          $(elem).replaceWith(
+            `<asset name="${name}">${url.slice(
+              url.lastIndexOf('media/') + 6
+            )}</asset>`
+          );
+        } else {
+          $(elem).attr('src', url);
+        }
       });
     }
   });
@@ -162,10 +175,13 @@ function generateNewName(
 // XML document, into a reference that is relative to the root directory
 // of the project
 export function resolve(reference: MediaItemReference): string {
-  return path.resolve(
-    path.dirname(reference.filePath),
-    reference.assetReference
-  );
+  let dir = path.dirname(reference.filePath);
+  if (reference.assetReference.startsWith('webcontent')) {
+    dir =
+      reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
+      'content/';
+  }
+  return path.resolve(dir, reference.assetReference);
 }
 
 // Uploads a collection of media items to an S3 bucket, staging them for
@@ -207,6 +223,16 @@ function findFromDOM($: any): Record<string, Array<string>> {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
+  $('source').each((i: any, elem: any) => {
+    paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+  });
+
+  $('asset').each((i: any, elem: any) => {
+    if ($(elem).text().includes('webcontent')) {
+      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+    }
+  });
+
   Object.keys(paths)
     .filter((src: string) => !isLocalReference(src))
     .forEach((src: string) => delete paths[src]);
@@ -215,5 +241,5 @@ function findFromDOM($: any): Record<string, Array<string>> {
 }
 
 function isLocalReference(src: string): boolean {
-  return src.startsWith('.');
+  return src.startsWith('.') || src.startsWith('webcontent');
 }

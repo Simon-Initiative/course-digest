@@ -1,0 +1,170 @@
+import("stoichRules.nools");
+
+rule JtokJ {
+	salience: 19;
+	when {
+		prob: Problem ;
+		joulesQty: KnownQuantity joulesQty.unit === "J" {substance: s, value: joulesVal, context: joulesQtyContext};
+		not( KjoulesQty: KnownQuantity KjoulesQty.substance === s && KjoulesQty.unit === "kJ" && KjoulesQty.context === joulesQtyContext);
+	} then {
+		var KjoulesVal = (+joulesVal)/(1000);
+		var KjoulesQty = assert(new KnownQuantity({
+			name: joulesQty.name,
+			substance: s,
+			type: "energy",
+			value: KjoulesVal,
+			unit: 'kJ',
+			context: joulesQtyContext, 
+			reaction: joulesQty.reaction,
+			fromHypothesis: joulesQty.fromHypothesis,
+			fromRule: "JtokJ",
+			fromFacts: [joulesQty],
+			hint: ["You have an amount in J (joules) that can be converted to kJ (kilojoules)",
+				"Use the conversion factor of 1 kJ = 1000 J to convert joules to kilojoules.",
+				"Divide the value in joules by 1000.",
+				"Enter the formula: "+joulesQty.getDisplayVal()+"/1000"]
+		}));
+		modify(joulesQty, "toFacts", joulesQty.toFacts.slice().concat(KjoulesQty));
+	}
+}
+
+
+rule deltaT {
+	salience: 20;
+	when {
+		prob: Problem ;
+		initialTQty: KnownQuantity initialTQty.unit === "degreeC" && initialTQty.context === "inital" {substance: s, value: initialTVal, context: initialTQtyContext};
+		finalTQty: KnownQuantity finalTQty.unit === "degreeC" && finalTQty.context === "final" && finalTQty.substance === s {value: finalTVal, context: finalTQtyContext}; 
+		not( TdiffQty: KnownQuantity TdiffQty.substance === s && TdiffQty.unit === "degreeC" && TdiffQty.context === "changed");
+	} then {
+		var TdiffVal = (+finalTVal)-(+initialTVal);
+		var TdiffQty = assert(new KnownQuantity({
+			name: "&Delta;T",
+			substance: s,
+			type: "temperature",
+			value: TdiffVal,
+			unit: 'degreeC', 
+			context: "changed", 
+			reaction: finalTQty.reaction,
+			fromHypothesis: finalTQty.fromHypothesis,
+			fromRule: "deltaT",
+			fromFacts: [initialTQty, finalTQty],
+			hint: ["&Delta;T represents change in temperature.  This is the difference between the final temperature and the initial temperature.",
+				"You can get &Delta;T by subtracting the initial temperature from the final temperature.",
+				"Enter the formula: "+finalTQty.getDisplayVal()+" - "+initialTQty.getDisplayVal()
+			],
+			variable: "deltaT"
+		}));
+		modify(initialTQty, "toFacts", initialTQty.toFacts.slice().concat(TdiffQty));
+		modify(finalTQty, "toFacts", finalTQty.toFacts.slice().concat(TdiffQty));
+	}
+}
+
+
+rule qh2ocalc {
+	salience: 20;
+	when {
+		prob: Problem ;
+		gramsQty: KnownQuantity gramsQty.unit === "g" {substance: s, value: gramsVal, context: gramsQtyContext};
+		TdiffQty: KnownQuantity TdiffQty.unit === "degreeC" && TdiffQty.context === "changed" && TdiffQty.substance === s {value: TdiffVal, context: TdiffQtyContext};
+		specificHeat: KnownQuantity specificHeat.substance === s && specificHeat.type === "specificHeat" && specificHeat.unit === "J/g degreeC" {value: specificHeatVal};
+		not( qh2oQty: KnownQuantity qh2oQty.substance === s && qh2oQty.unit === "J" && qh2oQty.context === "changed" );
+	} then {
+		var qh2oVal = (+gramsVal)*(+specificHeatVal)*(+TdiffVal);
+		var qh2oQty = assert(new KnownQuantity({
+			name: "q<sub>"+s+"</sub>",
+			substance: s,
+			type: "energy",
+			value: qh2oVal,
+			unit: 'J', 
+			context: "changed", 
+			reaction: gramsQty.reaction,
+			fromHypothesis: gramsQty.fromHypothesis,
+			fromRule: "qh2ocalc",
+			fromFacts: [gramsQty, TdiffQty],
+			hint: ["If you know the mass in grams of a substance, the specific heat of that substance, and its change in temperature, you can calculate the change in energy.",
+				"The formula to do this is: q = mc&Delta;T, where q is change in energy, m is the mass in grams, c is the specific heat, and &Delta;T is the change in temperature.",
+				"Multiply the grams of "+s+" ("+gramsQty.getDisplayVal()+"), the specific heat of "+s+" ("+specificHeatVal+"), and the change in temperature ("+TdiffQty.getDisplayVal()+").",
+				"Enter the formula: "+gramsQty.getDisplayVal()+" * "+specificHeatVal+" * "+TdiffQty.getDisplayVal()
+			],
+			variable: "q"
+		}));
+		modify(gramsQty, "toFacts", gramsQty.toFacts.slice().concat(qh2oQty));
+		modify(TdiffQty, "toFacts", TdiffQty.toFacts.slice().concat(qh2oQty));
+	}
+}
+
+rule qh2otoqrxn {
+	salience: 20;
+	when {
+		prob: Problem ;
+		qh2oQty: KnownQuantity qh2oQty.type === "energy" && qh2oQty.context === "changed" && qh2oQty.unit === "kJ" {substance: s, value: qh2oVal, context: qh2oQtyContext};
+		not( qrxnQty: KnownQuantity qrxnQty.substance === "reaction" && qrxnQty.unit === "kJ" && qrxnQty.context === qh2oQtyContext );
+	} then {
+		var qrxnVal = (+qh2oVal)*(-1);
+		var qrxnQty = assert(new KnownQuantity({
+			name: "change in energy of the reaction",
+			substance: "reaction",
+			type: "energy",
+			value: qrxnVal,
+			unit: qh2oQty.unit, 
+			context: qh2oQtyContext, 
+			reaction: qh2oQty.reaction,
+			fromHypothesis: qh2oQty.fromHypothesis,
+			fromRule: "qh2otoqrxn",
+			fromFacts: [qh2oQty],
+			hint: ["The change in energy of the reaction is the inverse of the change in energy of the water.",
+				"You can then determine q<sub>reaction</sub> by multiplying q<sub>H2O</sub> by -1.",
+				"Enter the formula: "+qh2oQty.getDisplayVal()+" * -1"
+			]
+		}));
+		modify(qh2oQty, "toFacts", qh2oQty.toFacts.slice().concat(qrxnQty));
+	}
+}
+
+
+rule deltaH {
+	salience: 20;
+	when {
+		prob: Problem ;
+		molsQty: KnownQuantity molsQty.unit === "mol" && molsQty.substance !== "H2O" {substance: s, value: molsVal, context: molsQtyContext};
+		qrxnQty: KnownQuantity qrxnQty.unit === "kJ" && qrxnQty.substance === "reaction" {substance: qrxnSub, value: qrxnVal, context: qrxnQtyContext};
+		not( deltaHQty: KnownQuantity deltaHQty.substance === "reaction" && deltaHQty.unit === "kJ/mol" && deltaHQty.context === "changed");
+	} then {
+		var deltaHVal = (+qrxnVal)/(+molsVal);
+		var deltaHQty = assert(new KnownQuantity({
+			name: "&Delta;H",
+			substance: "reaction",
+			type: "enthalpy",
+			value: deltaHVal,
+			unit: 'kJ/mol',
+			context: "changed", 
+			reaction: molsQty.reaction,
+			fromHypothesis: molsQty.fromHypothesis,
+			fromRule: "deltaH",
+			fromFacts: [molsQty, qrxnQty],
+			hint: ["If you know the change in energy of a dissolution reaction, and the amount in mols of the substance dissolved, you can calculate the change in enthalpy", 
+				"The formula to do this is: &Delta;H = q/n, where &Delta;H is the change in enthalpy, q is the energy change of the reaction, and n is the number of mols of the substance dissolved.",
+				"Divide the change in energy of the reaction ("+qrxnQty.getDisplayVal()+") by the number of mols of "+s+" ("+molsQty.getDisplayVal()+") to determine &Delta;H",
+				"Enter the formula: "+qrxnQty.getDisplayVal()+" / "+molsQty.getDisplayVal()
+			]
+		}));
+		
+		assert(new KnownQuantity({
+			substance: "reaction",
+			type: "enthalpy",
+			value: -deltaHVal,
+			unit: 'kJ/mol',
+			context: "changed", 
+			reaction: molsQty.reaction,
+			fromHypothesis: molsQty.fromHypothesis,
+			fromRule: "deltaH",
+			fromFacts: [molsQty, qrxnQty],
+			isBug: true,
+			bugMsg: "Not quite. You did your calculations correctly, but this is an exothermic reaction. Exothermic reactions have a negative value for delta H."
+		}));
+		
+		modify(molsQty, "toFacts", molsQty.toFacts.slice().concat(deltaHQty));
+		modify(qrxnQty, "toFacts", qrxnQty.toFacts.slice().concat(deltaHQty));
+	}
+}

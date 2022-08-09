@@ -1,0 +1,77 @@
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	initialPhase: 'convertKnowns',
+	stoichStepDone: false,
+	claimTypes: ["Final Quantity"],
+	probSpecificData: {
+		knowns: [
+			{
+				type: 'substance',
+				str:'KClO3',
+				hotkey: 'k',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'mass',
+					'value': '10.53',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'g',
+				},
+				atomicWeight: "122.55"
+			},
+			{
+				type: 'substance',
+				str: "O2",
+				hotkey: 'o',
+				modifierKey: 'shift',
+				initialData: {
+					'type': 'amount',
+					'value': '0',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'mol',
+				},
+				atomicWeight: '32.00'
+			}
+		],	
+		finalQuantities: [
+			{
+				'substance': 'O2',
+				'type': 'mass',
+				'unit': 'g',
+				'context': 'final',
+			}
+		],	
+		phase1Reaction: '2KClO3_is_2KCl_plus_3O2',
+		reactions: {
+			'2KClO3_is_2KCl_plus_3O2': {
+				'id' : '2KClO3',
+				'equilibrium': false,
+			}
+		},
+		problemStatement: "Calulate the number of grams of oxygen produced when 10.53 grams of KClO<sub>3</sub> react according to the reaction below: <br> 2KClO<sub>3</sub> &#8594 2KCl + 3O<sub>2</sub> <br> The atomic weight of KClO<sub>3</sub> is 122.55 g/mol.  The atomic weight of O<sub>2</sub> is 32.00 g/mol."
+	}
+
+};

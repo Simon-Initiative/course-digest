@@ -81,11 +81,19 @@
                     <title>
 						Drag and Drop Questions
 					</title>
-                    <item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
-                        <resourceref idref="customdnd" />
-                    </item>
-                </module>
-            </unit>
-        </sequence>
-    </sequences>
+					<item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
+						<resourceref idref="customdnd" />
+					</item>
+				</module>
+				<module id="super">
+					<title>
+						Super Activities
+					</title>
+					<item id="bca2e8dcf45e4ca5836d29" scoring_mode="default">
+						<resourceref idref="embed_super" />
+					</item>
+				</module>
+			</unit>
+		</sequence>
+	</sequences>
 </organization>

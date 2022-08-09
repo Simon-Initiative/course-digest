@@ -1,0 +1,135 @@
+import("dilutionRules.nools");
+import("stoichRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'L', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'mL', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'M',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		finalQuantities: [
+			{
+				'substance': 'NaCl',
+				'type': 'concentration',
+				'unit': 'M',
+				'context': 'initial',
+				'label': 'M NaCl initial',
+				'solution': 's1+s2'
+			}
+		],
+		knowns: [
+			{
+				type: 'substance',
+				str:'NaCl',
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'id': 's1_concentration',
+					'type': 'concentration',
+					'value': 'rand',
+					'range': [0.5,3.5],
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'M',
+					'solution': 's1'
+				},
+				atomicWeight: '22.991+35.457'
+			},
+			{
+				type: 'substance',
+				str:'NaCl',
+				initialData: {
+					'id': 's2_concentration',
+					'type': 'concentration',
+					'value': '0',
+					'sigFigs': 2,
+					'displayVal': "value",
+					'unit': 'M',
+					'solution': 's2'
+				},
+				atomicWeight: '22.991+35.457'
+			},
+			{
+				initialData: {
+					'id': 's1',
+					'type': 'solution',
+					'substances': ['NaCl'],
+					'value': 'rand',
+					'range': [2,5],
+					'unit': 'L',
+					'volume': {
+						'value': 'rand',
+						'range': [2,5],
+						'unit': 'L'
+					},
+					'context': 'initial'
+				}
+			},
+			{
+				initialData: {
+						'id': 's2',
+						'type': 'solution',
+						'substances': ['NaCl'],
+						'value': 'rand',
+						'range': [2,5],
+						'unit': 'L',
+						'volume': {
+							'value': 'rand',
+							'range': [2,5],
+							'unit': 'L'
+						},
+						'context': 'initial'
+					}
+			}
+		],
+		goals: [
+			{
+				'type': 'MixSolution',
+				'id1': 's1',
+				'id2': 's2',
+				'contexts': ['initial'],
+				'unit': 'mol'
+			}
+		],
+		problemStatement: "%s1.volume.value% L of a solution with concentration %s1_concentration.value% M NaCl is mixed with %s2.volume.value% L of distilled water. What is the concentration of NaCl in the resulting solution? <br>The atomic weight of NaCl is 58.448 g/mol"
+	},	
+	stoichStepDone: false,
+	usesIceTable: false,
+	claimTypes: ["Final Quantity"]
+};

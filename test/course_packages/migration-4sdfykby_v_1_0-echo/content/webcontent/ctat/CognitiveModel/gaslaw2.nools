@@ -1,0 +1,249 @@
+import("stoichRules.nools");
+
+
+global problemData = {
+	symbols: [
+		{
+			type: 'variable',
+			str: 'P',
+			hotkey: 'p'
+		},
+		{
+			type: 'variable',
+			str: 'V',
+			hotkey: 'v'
+		},
+		{
+			type: 'variable',
+			str: 'n',
+			hotkey: 'n'
+		},
+		{
+			type: 'variable',
+			str: 'R',
+			hotkey: 'r'
+		},
+		{
+			type: 'variable',
+			str: 'T',
+			hotkey: 't'
+		},
+		{
+			type: 'unit',
+			str:'L',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'degreeC',
+			html: '&#8451',
+			latex:'^{\\circ}C',
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'atm', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g', 
+			hotkey: '4',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	preferredLRStrategy: "1",
+	initialPhase: 'convertKnowns',
+	probSpecificData: {
+		equations: [
+			{
+				id: "gas_law",
+				forms: [
+					"PV_eq_nRT",
+					"P_eq_nRT/V",
+					"V_eq_nRT/P",
+					"n_eq_PV/(RT)",
+					"T_eq_PV/(nR)"
+				],
+				context: "final",
+				name: "gas law equation",
+				substitutions: {
+					"P": {
+						type: "pressure",
+						unit: "atm",
+						substance: "N2",
+						context: "final"
+					},
+					"V": {
+						type: "volume",
+						unit: "L",
+						substance: "N2",
+						context: "final",
+					},
+					"n": {
+						type: "amount",
+						unit: "mol",
+						substance: "N2",
+						context: "final"
+					},
+					"R": {
+						type: "gasConstant",
+						unit: "(L * atm)/(mol * degreeK)"
+					},
+					"T": {
+						type: "temperature",
+						unit: "degreeK",
+						substance: "N2",
+						context: "final"
+					}
+				}
+			}
+		],
+		finalQuantities: [
+			{
+				'substance': 'H2',
+				'type': 'volume',
+				'unit': 'L',
+				'context': 'final'
+			}
+		],
+		knowns: [
+			{
+				initialData: {
+					type: 'gasConstant',
+					unit: '(L * atm)/(mol * degreeK)',
+					value: "0.08205"
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_temperature',
+					'type': 'temperature',
+					'value': '19.5',
+					'sigFigs': 3,
+					'displayVal': "value",
+					'unit': 'degreeC',
+					'substance': "Mg,HCl",
+					'context': "initial",
+					'solution': 's1'
+				}, 
+			},
+			{
+				initialData: {
+					'id': 's1_pressure',
+					'type': 'pressure',
+					'value': '1',
+					'displayVal': "value",
+					'unit': 'atm',
+					'substance': "Mg,HCl",
+					'context': "initial",
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id': 's1_volume',
+					'type': 'volume',
+					'value': '25',
+					'displayVal': "value",
+					'unit': 'mL',
+					'substance': "Mg,HCl",
+					'context': "initial",
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: "Mg",
+				hotkey: '7',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'amount',
+					'value': '0.582',
+					'displayVal': "value",
+					'unit': 'g',
+					'context': 'initial',
+					'solution': "s1"
+				},
+				atomicWeight: '24.32'
+			},
+			{
+				type: 'substance',
+				str: "HCl",
+				hotkey: '8',
+				modifierKey: 'ctrl',
+				initialData: {
+					'type': 'concentration',
+					'value': '1.5',
+					'displayVal': "value",
+					'unit': 'M',
+					'context': 'initial',
+					'solution': "s1"
+				},
+				atomicWeight: '36.457'
+			},
+			{
+				type: 'substance',
+				str: 'MgCl2',
+				hotkey: '9',
+				modifierKey: 'ctrl',
+				atomicWeight: '24.32+(2*35.457)',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'unit': 'g',
+					'solution': 's1'
+				}
+			},
+			{
+				type: 'substance',
+				str: 'H2',
+				hotkey: '0',
+				modifierKey: 'ctrl',
+				atomicWeight: '2.016',
+				initialData: {
+					'type': 'mass',
+					'value': '0',
+					'unit': 'g',
+					'state': 'gas',
+					'solution': 's1'
+				}
+			},
+			{
+				initialData: {
+					'id'  :'s1',
+					'type': 'solution',
+					'substances': ['Mg', 'HCl', 'H2', 'MgCl2'],
+					'context': 'initial'
+				}
+			}
+		],
+		phase1Reaction: 'Mg[solid]_plus_2HCl[liquid]_is_MgCl2[solid]_plus_H2[gas]',
+		reactions: {
+			'Mg[solid]_plus_2HCl[liquid]_is_MgCl2[solid]_plus_H2[gas]': {
+				'id' : 'Mg_plus_2HCl',
+				'equilibrium': false
+			}
+		},
+		problemStatement: "A 0.582 g piece of magnesium metal is added to 25.00 mL of 1.50 M hydrochloric acid producing hydrogen gas as seen in the equation below.<br><br>Mg(s) + 2 HCl(aq)  →  MgCl<sub>2</sub>(aq) + H<sub>2</sub>(g)<br><br>What volume of hydrogen gas will be produced at a temperature of 19.5 oC and ambient pressure of 1.0 atm? <br><br> Use the following values for your calculations: <br> Molar Mass of Mg: 24.3 g/mol <br> Ideal Gas Constant: 0.08205"
+	},	
+	claimTypes: ["Limiting Reagent", "Final Quantity"],
+	stoichStepDone: false,
+	usesIceTable: false
+};

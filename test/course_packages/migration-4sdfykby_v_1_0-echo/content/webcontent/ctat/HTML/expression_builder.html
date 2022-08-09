@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="Assets/styles.css">
+		<link rel="stylesheet" type="text/css" href="Assets/CTAT.css">
+		<link rel="stylesheet" href="https://cdn.ctat.cs.cmu.edu/releases/lab/guppy/guppy-default.min.css">
+
+		<!-- 
+		
+		JS 
+		
+		
+		<script type="text/javascript" src="Assets/guppy.min.js"></script>
+		-->
+		
+		<script
+		  src="https://code.jquery.com/jquery-3.3.1.min.js"
+		  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		  crossorigin="anonymous">
+		</script>
+		<script type="text/javascript" src="https://cdn.ctat.cs.cmu.edu/releases/lab/guppy/guppy.min.js"></script>
+		<script src="Assets/ctat.min.js"></script>
+		<script src="https://cdn.ctat.cs.cmu.edu/releases/lab/nools.js"></script>
+		<script src="Assets/bundled.js"></script>
+		<script src="Assets/ctatloader.js"></script>
+		<script>
+
+		</script>
+<!--	
+-->	
+	</head>
+	<body>
+		<div id="main_container">
+			<div id="workspace_scrim" class="can_hide">
+				<div id="domain_browser_popup" class="menu can_hide"></div>
+				<div id="problem_values_popup" class="menu can_hide"></div>
+				<div id="reaction_popup" class="menu can_hide"></div>
+				<div id="claim_popup" class="menu can_hide"></div>
+				<div id="equation_sheet" class="menu can_hide">
+					<div class="close_btn" onclick="window.workspace.hideEquationSheet();">&#215;</div>
+					<div id="equation_sheet_content" class="flex_row">
+						<div id="equation_sheet_equations">
+						
+						</div>
+						<div id="equation_sheet_keys">
+						
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="workspace_container">
+			<!--
+				<div id="scratch_pad" data-ctat-tab-on-enter="false" data-ctat-tutor="false" class="CTATTextArea" placeholder="use this area for notes">
+					Use this area for notes:
+				</div>
+			-->	
+				
+				<div id="workspace">
+					<div id="workspace_area">
+						<div id="workspace_bottom_section">
+							<div id="symbol_container" class="can_hide">
+							
+							</div>
+							<div id="workspace_btn_row" class="workspace_btn_row"></div>
+						</div>
+					</div>
+				</div>
+				<table id="hint_container">
+					<tbody>
+						<tr height="125">
+							<td>
+								<div class="CTATHintWindow CTATComponent" id="ctatdiv59" data-ctat-component="CTATHintWindow" onkeypress="return noenter(event)" data-ctat-enabled="true"></div>
+							</td>
+							<td width="64" style="padding-top: 0px; padding-bottom: 0px;">
+								<div style="margin-bottom: 2px" class="CTATHintButton CTATComponent" data-ctat-component="CTATHintButton" data-ctat-enabled="true"></div>
+								<div id="done" class="CTATDoneButton CTATComponent" data-ctat-component="CTATDoneButton" data-ctat-enabled="true"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="info_container">
+				<div id="problem_statement" class="CTATTextField">	</div>
+				<div id="notes" data-ctat-tab-on-enter="false" data-ctat-tutor="false" class="CTATTextArea" placeholder="use this area for notes">
+					Use this area for notes:
+				</div>
+			</div>
+		</div>
+		<div id="var_popup_menu" class="popup_menu can_hide">
+			<div class="var_popup_option" id="replace">Replace</div>
+			<div class="var_popup_option" id="calculate">Calculate</div>
+			<div class="var_popup_option" id="enter">Enter</div>
+		</div>
+		<div id="replace_submenu" class="popup_menu can_hide">
+			<div class="var_popup_option" id="prob_statement_popup_option">Problem Statement</div>
+			<div class="var_popup_option" id="chem_data_popup_option">Chemical Data</div>
+		</div>
+		<div id="secret_guppy" style="display: none !important;"></div>
+	</body>
+</html>

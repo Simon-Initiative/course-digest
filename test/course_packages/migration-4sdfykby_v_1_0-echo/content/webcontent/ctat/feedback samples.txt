@@ -1,0 +1,14 @@
+"Your expression is not valid. Possible reasons for this are:
+ - An incomplete expression such as "a = " or "a +"
+-  A unclosed parenthesis or bracket "( " or " (( )"
+
+"Your expression is not valid. Possible reasons for this are:
+- An incomplete expression such as "a = " or "a +"
+- A unclosed parenthesis or bracket "( " or " (( )" 
+ - Chemical reactions such as Na + Cl --> NaCl should not be enterred as expressions. 
+From David Yaron to Everyone:  10:42 AM
+
+"Please check that your answer is the units requested in the problem statement"
+
+for missing claim:
+"Please check that you have provided all values and information requested in the problem statement"

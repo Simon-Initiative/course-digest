@@ -26,7 +26,7 @@ export class Superactivity extends Resource {
           if (!defaults) {
             resolve(['']);
           } else {
-            if (navigable) {
+            if (file.includes('x-oli-embed-activity-highstakes') || navigable) {
               const activity = toActivity(
                 toActivityModel(defaults.base, defaults.src, title, xml),
                 guid(),

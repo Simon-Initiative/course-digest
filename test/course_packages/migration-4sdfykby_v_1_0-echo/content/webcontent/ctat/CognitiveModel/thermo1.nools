@@ -1,0 +1,41 @@
+import("thermoRules.nools");
+
+global problemStatement = "A solar plant converts energy from the sun into electricity by using thousands of mirrors to reflect sunlight to a tower. Thermal energy from the reflected sunlight is transferred to a liquid pumped to the top of the tower. A chemist wants to determine the specific heat capacity of the liquid being used. She adds 2.5 kJ of heat to a 20.0 g sample of the liquid and observes that the temperature increases from 23.0 oC to 116.9 oC. What is the specific heat capacity of the liquid in J/g oC? Please use the label \"C metal\" for your final answer.";
+global config = {};
+global problemData = {
+	type: "solveFor",
+	finalQuantities: [
+		{
+			'substance': 'liquid',
+			'type': 'heatCapacity',
+			'unit': 'J/(gC)',
+			'label': 'C metal'
+		}
+	],/*
+	unknowns: [
+		{
+			substance: "liquid",
+			type: "heatCapacity"
+		},
+	],*/
+	knowns: [
+		{
+			substance: "liquid",
+			type: "heat",
+			value: '2500',
+			unit: "J"
+		},
+		{
+			substance: "liquid",
+			type: "mass",
+			value: '20',
+			unit: "g"
+		},
+		{
+			substance: "liquid",
+			type: "deltaTemperature",
+			value: '116.9-23',
+			unit: "C"
+		}
+	]
+};

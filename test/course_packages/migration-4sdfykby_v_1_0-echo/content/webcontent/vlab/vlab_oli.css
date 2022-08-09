@@ -1,0 +1,22 @@
+p {
+	font-size: 1.143em;
+}
+.control_container {        
+    display: flex;
+    align-items: flex-start;
+}
+.vlab_button {
+	border-radius: 0.25rem;
+	background: #1E88E5;
+	color: white;
+}
+
+.fade_me_up {
+  animation-duration: 0.5s;
+  animation-name: fadeup;
+}
+
+@keyframes fadeup {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}

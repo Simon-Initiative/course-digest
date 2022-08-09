@@ -1,0 +1,244 @@
+import("thermoRules.nools");
+
+global problemData = {
+	symbols: [
+		{
+			type: "variable",
+			str: "q", 
+			hotkey: "q"
+		},
+		{
+			type: "variable",
+			str: "m",
+			hotkey: "m"
+		},
+		{
+			type: "variable",
+			str: "C",
+			hotkey: "c"
+		},
+		{
+			type: "variable",
+			str: "deltaT",
+			html: "&#916T",
+			latex: "{\\Delta}T",
+			hotkey: "t"
+		},
+		{
+			type: 'unit',
+			str:'g',
+			hotkey: '1',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mol', 
+			hotkey: '2',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'g/mol', 
+			hotkey: '3',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'J', 
+			hotkey: '4',
+			modifierKey: 'ctrl'			
+		},
+		{
+			type: 'unit',
+			str:'kJ', 
+			hotkey: '5',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'degreeC',
+			html: '&#8451',
+			latex:'^{\\circ}C',
+			hotkey: '6',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'kJ/mol',
+			hotkey: '7',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'mL',
+			hotkey: '8',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'J/g degreeC',
+			html: 'J/g&#8451',
+			latex: '\\frac{J}{g ^{\\circ}C}',
+			hotkey: '9',
+			modifierKey: 'ctrl'
+		},
+		{
+			type: 'unit',
+			str:'J/mol degreeC',
+			html: 'J/mol&#8451',
+			latex: '\\frac{J}{mol ^{\\circ}C}',
+			hotkey: '0',
+			modifierKey: 'ctrl'
+		}
+	],
+	initReadyForFinalQty: true,
+	notReadyForFinalQtyMsg: "You must identify the the heat of the water before determining the final change in enthalpy.  Make a claim about the qh2o using the 'Make Claim' button.",
+	initialPhase: 'determineqh2o',
+	stoichStepDone: false,
+	usesEqSheet: false,
+	claimTypes: [ //I made a new way to define claims so no need to change any of this
+		{
+			id: 'qh2o', //type of claim
+			btnText: 'Value of q<sub>H2O</sub>', //what the button in the claim menu will say
+			claimText: 'The value of q<sub>H2O</sub> is <blank> kJ', //what the claim will say (<blank> replaced by input box)
+			onlyOne: true, //whether to disallow adding multiple of this claim type
+			matchQty: { //properties of the quantity fact that this claim is associated with
+				context: 'changed',
+				type: 'energy',
+				substance: 'H2O',
+				unit: 'kJ'
+			}
+		},{
+			id: 'enthalpy',
+			btnText: 'Change in Enthalpy',
+			claimText: 'The change in enthalpy for the dissolution process is <blank> kJ/mol',
+			onlyOne: true,
+			matchQty: {
+				context: 'changed',
+				type: 'enthalpy',
+				unit: 'kJ/mol',
+				substance: 'reaction',
+			}
+		}
+	],
+	probSpecificData: {
+		equations: [
+			{
+				id: "q_is_mcdt",
+				forms: [
+					"q_eq_mCdeltaT"
+				],
+				name: "q equals mCdeltaT",
+				substitutions: {
+					"q": {
+						type: "energy",
+						unit: "J",
+						substance: "H2O",
+						context: "changed"
+					},
+					"m": {
+						type: "mass",
+						unit: "g",
+						substance: "H2O",
+						context: "initial",
+					},
+					"C": {
+						type: "specificHeat",
+						unit: "J/g degreeC",
+						substance: "H2O",
+					},
+					"deltaT": {
+						type: "temperature",
+						unit: "degreeC",
+						context: "changed",
+						substance: "H2O"
+					}
+				}
+			}
+		],
+			knowns: [
+				{
+					type: 'substance',
+					str:'NaOH',
+					hotkey: 'b',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '5.0',
+						'sigFigs': 2,
+						'displayVal': "value",
+						'unit': 'g'
+					},
+					atomicWeight: "40"
+				},
+				{
+					type: 'substance',
+					str:"H2O",
+					html: "H<sub>2</sub>O",
+					hotkey: 'd',
+					modifierKey: 'ctrl',
+					initialData: {
+						'type': 'mass',
+						'value': '80',
+						'sigFigs': 2,
+						'displayVal': "value",
+						'unit': 'g'
+					},
+					atomicWeight: '18'
+				},
+				{
+					initialData: {
+						'type': 'temperature',
+						'value': '27.0',
+						'sigFigs': '3',
+						'displayVal': "value",
+						'unit': "degreeC",
+						'substance': 'H2O',
+						'context': "inital"
+					}
+				},
+				{
+					initialData: {
+						'type': 'temperature',
+						'value': '70.0',
+						'sigFigs': '3',
+						'displayVal': "value",
+						'unit': "degreeC",
+						'substance': 'H2O',
+						'context': "final"
+					}
+				},
+				{
+					initialData: {
+						'type': "specificHeat",
+						'value': '4.184',
+						'unit': 'J/g degreeC',
+						'substance': 'H2O'
+					}
+				},
+				{
+					initialData: {
+						'type': "specificHeat",
+						'value': "75.38",
+						'unit': "J/mol degreeC",
+						'substance': 'H2O'
+					}
+				}
+			],	
+			finalQuantities: [
+				{
+					'substance': 'H2O',
+					'type': 'energy',
+					'unit': 'kJ',
+					'context': 'changed'
+				},
+				{
+					'substance': 'reaction',
+					'type': 'enthalpy',
+					'unit': 'kJ/mol',
+					'context': 'changed'
+				}
+			],	  
+			problemStatement: "5.0 g of NaOH was dissolved in 80 mL of water. The temperature increased from 27.0&#8451 to 70.0&#8451. Calculate q<sub>H2O</sub>, then estimate the enthalpy change for the dissolution of NaOH. Assume the heat capacity of the solution is only from the water. <br><br> Specific heat of water: 4.184 J/g&#8451 <br> Molar heat capacity of water: 75.38 J/mol&#8451 <br>Density of water: 1 g/mL <br><br> Use the following molar masses for your calculations: <br> H<sub>2</sub>O: 18 g/mol NaOH: 40 g/mol"
+		},
+};

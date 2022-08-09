@@ -1,0 +1,166 @@
+rule HintResolveUnmatchedQuantity {
+	salience: 13;//-1;
+	when {
+		p: Problem p.hintSearching && p.unmatchedExp && !p.hintTargetQty;
+		e: Expression e === p.unmatchedExp;
+	} then {
+		var missing = ['substance','unit','context'].filter((p)=>!e[p]);
+		if (missing.length) {
+			let missingStr;
+			if (missing.length > 1) {
+				missing[missing.length-1] = "and/or "+missing[missing.length-1];
+				missingStr = missing.join(missing.length > 2 ? ", " : " ");
+			} else {
+				missingStr = missing[0];
+			}
+			var allQtys = getFacts("KnownQuantity").filter((q)=>!q.isBug).map((q)=>q.getName());
+			console.log("allQtys: ",allQtys);
+			assert(new Hint("I'm not sure what "+e.label+" is meant to be.  Use the dialog above to select the quantity you were trying to calculate."));
+			
+		} else {
+			
+		}
+		backtrack();
+	}
+}
+
+rule HintResolveQuantity {
+	salience: 13;//-1;
+	when {
+		p: Problem p.hintSearching;
+		exists( e: Expression e.creator === "student" && e.matchedTo.length > 1 && (!e.unit || !e.substance || !e.context));
+	} then {
+		var mostRecentExpr = getFacts("Expression").filter((e) => {
+			return e.creator === "student" && e.matchedTo.length &&
+				(!e.unit || !e.context || !e.substance);
+		}).pop();
+		if (mostRecentExpr) {
+			var val = mostRecentExpr.roundedString;
+			var matches = mostRecentExpr.matchedTo;
+			var potentialUnits = matches.map((q)=> q.unit).filter((u)=>!!u);
+			var potentialSubs = matches.map((q) => q.substance).filter((s)=>!!s);
+			var potentialCtxt = matches.map((q) => q.context).filter((c)=>!!c && c !== "context");
+			var aspectsNeeded = [];
+			if (!mostRecentExpr.unit && potentialUnits.length) {
+				aspectsNeeded.push("unit");
+			}
+			if (!mostRecentExpr.substance && potentialSubs.length) {
+				aspectsNeeded.push("substance");
+			}
+			if (!mostRecentExpr.context && potentialCtxt.length) {
+				aspectsNeeded.push("context");
+			}
+			var hintStr = '';
+			if (aspectsNeeded.length) {
+				hintStr += 'Please enter a ';
+				aspectsNeeded.forEach((aspect, idx)=> {
+					if (aspectsNeeded.length > 1 && idx === aspectsNeeded.length-1) {
+						hintStr+='and ';
+					}
+					hintStr+=aspect;
+					if (idx === aspectsNeeded.length-1) {
+						hintStr+=' for the quantity '+mostRecentExpr.roundedString+' using the options menu.';
+					} else {
+						hintStr+=', ';
+					}
+				});
+				assert(new Hint(hintStr));
+			}
+		}
+		backtrack();
+	}
+}
+
+rule ResolveUnmatchedQuantity {
+	salience: 11; //should fire before search starts
+	when {
+		prob: Problem !prob.searching && !prob.varReplaced && prob.inputType === "expression" && prob.unmatchedExp {input: probInput};
+		studentExp: Expression studentExp in probInput && studentExp.aspectResolved && studentExp === prob.unmatchedExp {string: studentVal};
+	} then {
+		let property = studentExp.aspectResolved;
+		let tInput = '';
+		let newMatches = [];
+		var potentialMatches = getFacts("KnownQuantity").filter((q)=>{
+			return !q.isBug && ['unit','substance','context'].every((p)=> !studentExp[p] || studentExp[p] === q[p]);
+		});
+		console.log("potentialMatches: ",potentialMatches);
+		let bug = false;
+		let sv = getStudentInput();
+		if (potentialMatches.length) {
+			if (potentialMatches.length === 1) {
+				setSuccessOrBugMsg("Looks like you're trying to calculate "+potentialMatches[0].getName()+".  Press the hint button for some help on how to do that.");
+				modify(prob, "hintTargetQty", potentialMatches[0]);
+				modify(prob, "unmatchedExp", null);
+			} else {
+				setSuccessOrBugMsg("There are multiple quantities with those properties.  Can you specify the value any further?");
+			}
+		} else {
+			bug = true;
+			setSuccessOrBugMsg("I don't see any quantity with those properties.");
+		}
+		checkSAI({selection: sv.selection, action: sv.action, input: sv.input}, ()=>true, bug);
+		modify(prob,"stateModified",false);
+		modify(prob, "input", []);
+		modify(prob, "inputType", null);
+		halt();
+		
+		modify(studentExp, "aspectResolved", null);
+	}
+}
+
+function generateHintChain(targetQty) {
+	let allHints = [];
+	while (targetQty.fromFacts.length && !targetQty.fromFacts.every((ff)=>ff.matchedTo.length)) {
+		
+		//FIXME: newTarget can be null
+		let newTarget = targetQty.fromFacts.find((ff)=>!ff.matchedTo.length);
+		//
+		console.log("newTarget is ",newTarget);
+		allHints.push("In order to determine "+targetQty.getName()+" you first need to determine "+newTarget.getName());
+		targetQty = newTarget;
+	}
+	
+	allHints = allHints.concat(targetQty.hint);
+	return allHints;
+}
+
+rule HintNextQuantity {
+	salience: 12;//-2;
+	when {
+		p: Problem p.hintSearching; 
+	} then {
+		var resolvedExpr = getFacts("Expression").filter((e) => {
+			return e.creator === "student" && e.matchedTo.length === 1;
+		});
+		var targetQty;
+		var givens = getFacts("KnownQuantity").filter((kq)=>kq.fromRule === "given");
+		var startQtys = givens.concat(resolvedExpr.map((re)=>re.matchedTo).flat());
+		var destQty = p.hintTargetQty || getFacts("KnownQuantity").filter((q)=>q.isFinalAnswer).find((q)=>!q.matchedTo.length);
+		var minDistance = Infinity;
+		console.log("hintNextQty startQtys are ",startQtys);
+		console.log("hintNextQty destQty is ",destQty);
+		if (!destQty) {
+			console.log("all final qtys matched, nothing to do here");
+		} else {
+			for(let i = startQtys.length-1; i >=0; i--) {
+				let startQty = startQtys[i];
+				let nextQty = window.Util.getNextQtyForward(startQty, destQty);
+				if (nextQty.qty && nextQty.qty.hint && nextQty.distance < minDistance) {
+					targetQty = nextQty.qty;
+					minDistance = nextQty.distance;
+				}
+			}
+			
+			if (targetQty) {
+				hint = targetQty.hint;
+				console.log("hintNextQty hinting ",targetQty);
+				console.log("hint",hint);
+				let allHints = generateHintChain(targetQty);
+				allHints.forEach((h)=>assert(new Hint(h)));
+			} else {
+				console.log("hintNextQty couldn't generate a hint");
+			}
+		}
+		backtrack();
+	}
+}

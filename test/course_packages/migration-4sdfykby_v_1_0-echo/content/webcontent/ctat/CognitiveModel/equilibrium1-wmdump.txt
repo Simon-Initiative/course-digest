@@ -1,0 +1,458 @@
+[
+   {
+      "id": "PCl5_init_concentration",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "1.000000000",
+      "unit": "M",
+      "context": "initial",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": true,
+      "displayVal": "1.00"
+   },
+   {
+      "id": "PCl3_init_concentration",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "0.000000000",
+      "unit": "M",
+      "context": "initial",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": true,
+      "displayVal": "0.00"
+   },
+   {
+      "id": "Cl2_init_concentration",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "0.000000000",
+      "unit": "M",
+      "context": "initial",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": true
+   },
+   {
+      "id": "eqConst",
+      "type": "equilibriumConst",
+      "value": "0.02110000000",
+      "context": "initial",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [],
+      "matched": true,
+      "displayVal": "0.0211"
+   },
+   {
+      "id": "Cl2_concentration_M_change",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "1x",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "Cl2_concentration_M_equilibrium",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "x",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "PCl3_concentration_M_change",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "1x",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "PCl3_concentration_M_equilibrium",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "x",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "PCl5_concentration_M_change",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "-1x",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "PCl5_concentration_M_equilibrium",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "1-x",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "default",
+         "claims": [],
+         "isTrue": true,
+         "tested": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [
+         "unit",
+         "context",
+         "substance"
+      ],
+      "matched": false
+   },
+   {
+      "id": "null_x__variable",
+      "substance": null,
+      "type": "x",
+      "value": "-0.1561910056",
+      "unit": null,
+      "context": "variable",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "null_x__variable",
+      "substance": null,
+      "type": "x",
+      "value": "0.1350910056",
+      "unit": null,
+      "context": "variable",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "PCl5_concentration_M_equilibrium",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "0.8649089944",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "isFinalAnswer": true,
+      "requiredToMatch": [],
+      "matched": true,
+      "matchedByClaim": true
+   },
+   {
+      "id": "PCl5_concentration_M_change",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "-0.1350910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "requiredToMatch": [],
+      "matched": false
+   },
+   {
+      "id": "PCl3_concentration_M_equilibrium",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "0.1350910056",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "isFinalAnswer": true,
+      "requiredToMatch": [],
+      "matched": true,
+      "matchedByClaim": true
+   },
+   {
+      "id": "PCl3_concentration_M_change",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "0.1350910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "Cl2_concentration_M_equilibrium",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "0.1350910056",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "isFinalAnswer": true,
+      "requiredToMatch": [],
+      "matched": true,
+      "matchedByClaim": true
+   },
+   {
+      "id": "Cl2_concentration_M_change",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "0.1350910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "PCl5_concentration_M_equilibrium",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "1.156191006",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": false
+   },
+   {
+      "id": "PCl5_concentration_M_change",
+      "substance": "PCl5",
+      "type": "concentration",
+      "value": "0.1561910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": false
+   },
+   {
+      "id": "PCl3_concentration_M_equilibrium",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "-0.1561910056",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "PCl3_concentration_M_change",
+      "substance": "PCl3",
+      "type": "concentration",
+      "value": "-0.1561910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "Cl2_concentration_M_equilibrium",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "-0.1561910056",
+      "unit": "M",
+      "context": "equilibrium",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "Cl2_concentration_M_change",
+      "substance": "Cl2",
+      "type": "concentration",
+      "value": "-0.1561910056",
+      "unit": "M",
+      "context": "change",
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": false
+      },
+      "requiredToMatch": [],
+      "matched": true
+   },
+   {
+      "id": "ph_of_solution",
+      "substance": null,
+      "type": "ph",
+      "value": "0.8693735655",
+      "unit": null,
+      "context": null,
+      "fromHypothesis": {
+         "type": "equilibriumXValue",
+         "claims": [],
+         "tested": true,
+         "isTrue": true
+      },
+      "isFinalAnswer": false,
+      "requiredToMatch": [],
+      "matched": false
+   }
+]
