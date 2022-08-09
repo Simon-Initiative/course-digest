@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="tables">
+	<head>
+		<title>
+			Table formatting
+		</title>
+		<objref idref="c47ac29051ed427984e2b6f76d09fa8e" />
+	</head>
+	<body>
+		<p>
+			Row style alternating
+		</p>
+		<table rowstyle="alternating"><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr></table>
+    <p>
+			Row style plain
+		</p>
+		<table rowstyle="plain"><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr></table>
+
+    <p>
+			Cell align right
+		</p>
+		<table><tr><td>This is long</td></tr><tr><td>2</td></tr><tr><td align="right">3</td></tr></table>
+
+    <p>
+			Cell align left
+		</p>
+		<table><tr><td>This is long</td></tr><tr><td>2</td></tr><tr><td align="left">3</td></tr></table>
+
+    <p>
+			Cell align center
+		</p>
+		<table><tr><td>This is long</td></tr><tr><td>2</td></tr><tr><td align="center">3</td></tr></table>
+	
+    <p>
+			Colspan
+		</p>
+		<table>
+      <tr>
+        <th>Month</th>
+        <th>Savings</th>
+      </tr>
+      <tr>
+        <td>January</td>
+        <td>$100</td>
+      </tr>
+      <tr>
+        <td>February</td>
+        <td>$80</td>
+      </tr>
+      <tr>
+        <td colspan="2">Sum: $180</td>
+      </tr>
+    </table>
+
+    <p>row span</p>
+
+    <table>
+      <tr>
+        <th>Month</th>
+        <th>Savings</th>
+        <th>Savings for holiday</th>
+      </tr>
+      <tr>
+        <td>January</td>
+        <td>$100</td>
+        <td rowspan="2">$50</td>
+      </tr>
+      <tr>
+        <td>February</td>
+        <td>$80</td>
+      </tr>
+    </table>
+
+
+	</body>
+</workbook_page>

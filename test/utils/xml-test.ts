@@ -1,18 +1,6 @@
-import { visit, toJSON, replaceUnicodeReferences } from 'src/utils/xml';
+import { visit, toJSON } from 'src/utils/xml';
 
 const preserved = { p: true, em: true, li: true };
-
-describe('unicode conversion', () => {
-  test('should convert the references', () => {
-    const r = replaceUnicodeReferences('This is a test&#x2014;');
-    expect(r).toEqual('This is a test\u2014');
-
-    const t = replaceUnicodeReferences(
-      'This is a test&#x2014; with two &#x2014;'
-    );
-    expect(t).toEqual('This is a test\u2014 with two \u2014');
-  });
-});
 
 describe('xml visiting', () => {
   test('should find all tags', () => {
