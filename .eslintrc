@@ -14,6 +14,8 @@
     ],
     "ignorePatterns": [
       "test/**/webcontent",
+      "test/content/**",
+      "test/course_packages/**",
       "src/utils/parser.js"
     ],
     "rules": {
