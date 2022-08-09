@@ -26,13 +26,13 @@ jobs:
       - name: Install node_module dependencies 📦
         run: yarn --frozen-lockfile
 
-      - name: 🤖 Auto lint
+      - name: 🤖 Auto format
         run: npm run format
 
       - name: ✅ Commit
         uses: EndBug/add-and-commit@v9
         with:
-          message: Auto lint
+          message: Auto format
           committer_name: Simon Bot (GitHub Actions)
           committer_email: simondevbot@gmail.com
 
