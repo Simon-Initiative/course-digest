@@ -21,7 +21,8 @@ export function convert(
   mediaSummary: Media.MediaSummary,
   file: string,
   navigable: boolean
-): Promise<(TorusResource | string)[]> { return determineResourceType(file).then((t: ResourceType) => {
+): Promise<(TorusResource | string)[]> {
+  return determineResourceType(file).then((t: ResourceType) => {
     const item = create(t, file, navigable);
 
     // print out current filename for progress/diagnostics
