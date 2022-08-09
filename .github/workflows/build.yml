@@ -33,14 +33,13 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: '*.ts'
-          message: Auto lint [skip ci]
+          message: Auto lint
           committer_name: Simon Bot (GitHub Actions)
           committer_email: actions@github.com
 
   build-test:
     needs: auto-format
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     steps:
       - name: 🛎️ Checkout
