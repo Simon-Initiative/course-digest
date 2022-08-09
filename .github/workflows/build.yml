@@ -35,7 +35,7 @@ jobs:
           add: '*.ts'
           message: Auto lint
           committer_name: Simon Bot (GitHub Actions)
-          committer_email: actions@github.com
+          committer_email: simondevbot@gmail.com
 
   build-test:
     needs: auto-format
