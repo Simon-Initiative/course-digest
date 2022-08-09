@@ -1,7 +1,7 @@
 {
   "name": "course-digest",
   "version": "1.0.0",
-  "description": "Utility for migrating legacy OLI courses by generating an OLI Torus digest from an XML course package",
+  "description": "Utility for migrating legacy OLI content by generating an OLI Torus digest from an XML course package",
   "main": "index.js",
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
