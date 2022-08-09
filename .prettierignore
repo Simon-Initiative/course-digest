@@ -7,3 +7,5 @@ out/
 /out.zip
 /.idea/
 webcontent
+/test/content
+/test/course_packages
