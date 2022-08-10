@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE objectives PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd"><objectives id="dd83841bc84045138faf6f3b7868c6dc"><title>Created In Editor</title><objective id="c47ac29051ed427984e2b6f76d09fa8e">Default objective</objective></objectives>
+<!DOCTYPE objectives PUBLIC "-//Carnegie Mellon University//DTD Learning Objectives 2.0//EN" "http://oli.web.cmu.edu/dtd/oli_learning_objectives_2_0.dtd">
+<objectives id="dd83841bc84045138faf6f3b7868c6dc">
+	<title>
+		Created In Editor
+	</title>
+	<objective id="c47ac29051ed427984e2b6f76d09fa8e">
+		Default objective
+	</objective>
+  <objective_skill idref="c47ac29051ed427984e2b6f76d09fa8e">
+    <skillref idref="cd6bb81e2b0f4705ac48346f36bfda52"/>
+  </objective_skills>
+</objectives>
