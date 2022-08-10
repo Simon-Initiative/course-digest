@@ -10,6 +10,10 @@ export class Skills extends Resource {
 
   translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
     const objectives: TorusResource[] = [];
+    let parentId = '';
+    $('skills').each((i: any, elem: any) => {
+      parentId = $(elem).attr('id');
+    });
 
     $('skill').each((i: any, elem: any) => {
       const id = $(elem).attr('id');
@@ -18,6 +22,7 @@ export class Skills extends Resource {
       const o = {
         type: 'Objective',
         id,
+        parentId,
         originalFile: '',
         title,
         tags: [],

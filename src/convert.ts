@@ -135,16 +135,32 @@ export function globalizeObjectiveReferences(
   const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {
       m[r.id] = `${r.id}-${r.parentId}`;
+      r.id = `${r.id}-${r.parentId}`;
       return m;
     }
     return m;
   }, {});
 
+  const mapArray = (arr: string[]) => arr.map((id) => localToGlobal[id]);
+
   return resources.map((r: TorusResource) => {
-    if (r.type === 'Page') {
-      (r as Page).objectives = (r as Page).objectives.map(
-        (id) => localToGlobal[id]
-      );
+    if (r.type === 'Page' || r.type === 'Objective') {
+      (r as Page).objectives = mapArray((r as Page).objectives);
+      return r;
+    }
+    if (r.type === 'Activity') {
+      if (typeof (r as any).objectives === 'object') {
+        const objectives = Object.keys((r as Activity).objectives).reduce(
+          (m: any, k: any) => {
+            m[k] = mapArray((r as Activity).objectives[k]);
+            return m;
+          },
+          {}
+        );
+
+        (r as Activity).objectives = objectives;
+      }
+
       return r;
     }
     return r;
