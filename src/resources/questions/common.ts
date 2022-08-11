@@ -106,6 +106,18 @@ const shortAnswerExplanationOrDefaultModel = (question: any) =>
 const getParts = (question: any): any[] =>
   question.children.filter((c: any) => c.type === 'part');
 
+export function getFeedbackModel(response: any) {
+  if (response.children === undefined || response.children.length === 0) {
+    return [
+      {
+        type: 'p',
+        children: [{ text: ' ' }],
+      },
+    ];
+  }
+  return ensureParagraphs(response.children[0].children);
+}
+
 export function buildTextPart(id: string, question: any) {
   const responses = getChild(question.children, 'part').children.filter(
     (p: any) => p.type === 'response'

@@ -112,7 +112,7 @@ function buildCATAPart(question: any) {
         name: r.name,
         feedback: {
           id: guid(),
-          content: { model: Common.ensureParagraphs(r.children[0].children) },
+          content: { model: Common.getFeedbackModel(r) },
         },
       };
     }),

@@ -1,7 +1,5 @@
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
-import * as DOM from 'src/utils/dom';
-import { Maybe } from 'tsmonad';
 
 export interface Summary {
   type: 'Summary';
@@ -39,6 +37,7 @@ export interface TorusResource {
   title: string;
   tags: string[];
   unresolvedReferences: string[];
+  warnings: ContentWarning[];
 }
 
 export interface Container {
@@ -66,6 +65,11 @@ export interface Hierarchy extends TorusResource {
 export interface TemporaryContent extends TorusResource {
   type: 'TemporaryContent';
   content: Record<string, unknown>;
+}
+
+export interface ContentWarning {
+  idref: string | null;
+  description: string;
 }
 
 export interface Unknown extends TorusResource {
@@ -133,22 +137,7 @@ export abstract class Resource {
     return;
   }
 
-  restructure(_$: any): any {
-    return;
-  }
-
-  abstract translate(xml: string, $: any): Promise<(TorusResource | string)[]>;
-
-  convert(): Promise<(TorusResource | string)[]> {
-    const $ = DOM.read(this.file);
-    this.restructure($);
-    return Maybe.maybe($?.root()?.html()).caseOf({
-      just: (xml) => this.translate(xml, $),
-      nothing: () => {
-        throw Error('Failed to convert: html element not found');
-      },
-    });
-  }
+  abstract translate($: any): Promise<(TorusResource | string)[]>;
 
   mapElementName(element: string): string {
     return elementNameMap[element] === undefined

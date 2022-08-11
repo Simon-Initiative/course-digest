@@ -38,11 +38,7 @@ export function convert(
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
 
-    item.restructure($);
-
-    const xml = $.html();
-
-    return item.translate(xml, $);
+    return item.translate($);
   });
 }
 
@@ -90,9 +86,7 @@ export function createProducts(
     .map((path) => {
       const o = new Organization(path, false);
       const $ = DOM.read(path, { normalizeWhitespace: true });
-      o.restructureProduct($);
-      const xml = $.html();
-      return () => o.translateProduct(xml, $);
+      return () => o.translateProduct($);
     });
 
   return new Promise((resolve, _reject) => {

@@ -2,7 +2,7 @@ import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
-import { processCodeblock } from './common';
+import { processCodeblock, flagStandardContentWarnigns } from './common';
 import * as Formative from './formative';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -52,6 +52,10 @@ export class Summative extends Resource {
     processCodeblock($);
   }
 
+  flagContentWarnigns($: any, page: Page) {
+    flagStandardContentWarnigns($, page);
+  }
+
   restructure($: any): any {
     // We simplify the handling of the differing Summative and Formative models
     // by converting the more restrictive Summative to the more flexible Formative
@@ -60,7 +64,7 @@ export class Summative extends Resource {
     Formative.performRestructure($);
   }
 
-  translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
+  translate($: any): Promise<(TorusResource | string)[]> {
     const page: Page = {
       type: 'Page',
       id: '',
@@ -72,7 +76,12 @@ export class Summative extends Resource {
       isGraded: true,
       isSurvey: false,
       objectives: [],
+      warnings: [],
     };
+
+    this.flagContentWarnigns($, page);
+    this.restructure($);
+    const xml = $.html();
 
     $('activity_placeholder').each((i: any, elem: any) => {
       page.unresolvedReferences.push($(elem).attr('idref'));

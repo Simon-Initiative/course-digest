@@ -190,7 +190,7 @@ function buildDropdownPart(part: any, _i: number) {
         legacyMatch: m,
         feedback: {
           id: guid(),
-          content: { model: Common.ensureParagraphs(r.children[0].children) },
+          content: { model: Common.getFeedbackModel(r) },
         },
       };
     }),
@@ -223,7 +223,7 @@ export function buildTextPart(part: any, _i: number) {
           id: guid(),
           content: {
             id: guid(),
-            model: Common.ensureParagraphs(r.children[0].children),
+            model: Common.getFeedbackModel(r),
           },
         },
       };

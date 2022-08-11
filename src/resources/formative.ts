@@ -49,7 +49,7 @@ function buildMCQPart(question: any) {
     legacyMatch: replaceAll(r.match, '\\*', '.*'),
     feedback: {
       id: guid(),
-      content: { model: Common.ensureParagraphs(r.children[0].children) },
+      content: { model: Common.getFeedbackModel(r) },
     },
   }));
 
@@ -130,7 +130,7 @@ function buildOrderingPart(question: any) {
         legacyRule: replaceAll(r.match, '\\*', '.*'),
         feedback: {
           id: guid(),
-          content: { model: Common.ensureParagraphs(r.children[0].children) },
+          content: { model: Common.getFeedbackModel(r) },
         },
       };
     }),
@@ -374,6 +374,7 @@ export function toActivity(
     objectives: [],
     legacyId,
     subType,
+    warnings: [],
   };
 
   activity.id = legacyId + '-' + question.id;
@@ -475,11 +476,9 @@ export class Formative extends Resource {
     processVariables($);
   }
 
-  restructure($: any): any {
+  translate($: any): Promise<(TorusResource | string)[]> {
     performRestructure($);
-  }
-
-  translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+    const xml = $.html();
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
@@ -627,6 +626,7 @@ export function processAssessmentModel(
         content,
         objectives: [],
         legacyId,
+        warnings: [],
       } as TemporaryContent);
 
       return content;

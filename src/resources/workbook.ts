@@ -5,6 +5,7 @@ import {
   standardContentManipulations,
   processCodeblock,
   wrapContentInGroup,
+  flagStandardContentWarnigns,
 } from './common';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -32,7 +33,11 @@ export class WorkbookPage extends Resource {
     DOM.rename($, 'activity_link', 'a');
   }
 
-  translate(originalXml: string, $: any): Promise<(TorusResource | string)[]> {
+  flagContentWarnigns($: any, page: Page) {
+    flagStandardContentWarnigns($, page);
+  }
+
+  translate($: any): Promise<(TorusResource | string)[]> {
     const page: Page = {
       type: 'Page',
       id: '',
@@ -44,7 +49,11 @@ export class WorkbookPage extends Resource {
       isGraded: false,
       isSurvey: false,
       objectives: [],
+      warnings: [],
     };
+
+    this.flagContentWarnigns($, page);
+    this.restructure($);
 
     $('activity_placeholder').each((i: any, elem: any) => {
       page.unresolvedReferences.push($(elem).attr('idref'));
@@ -184,7 +193,9 @@ const asStructured = (attrs: Record<string, unknown>) =>
 
 function introduceStructuredContent(content: any) {
   const startNewContent = (u: any) =>
-    u.length === 0 || u[u.length - 1].type === 'activity_placeholder';
+    u.length === 0 ||
+    u[u.length - 1].type === 'activity_placeholder' ||
+    u[u.length - 1].type === 'group';
 
   return content.reduce((u: any, e: any) => {
     if (e.type === 'activity_placeholder') {

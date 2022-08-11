@@ -65,6 +65,7 @@ export function convertBibliographyEntries(
       children: [],
       content: { data: cslJson },
       objectives: [],
+      warnings: [],
     } as TorusResource;
 
     found.set(cslJson[0].id, b);

@@ -4,11 +4,7 @@ import { Resource, TorusResource, Summary } from './resource';
 import * as XML from 'src/utils/xml';
 
 export class Skills extends Resource {
-  restructure(_$: any): any {
-    return;
-  }
-
-  translate(xml: string, $: any): Promise<(TorusResource | string)[]> {
+  translate($: any): Promise<(TorusResource | string)[]> {
     const objectives: TorusResource[] = [];
     let parentId = '';
     $('skills').each((i: any, elem: any) => {
@@ -30,6 +26,7 @@ export class Skills extends Resource {
         children: [],
         content: {},
         objectives: [],
+        warnings: [],
       } as TorusResource;
 
       objectives.push(o);
