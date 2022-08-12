@@ -66,7 +66,7 @@ export function standardContentManipulations($: any) {
   // Convert all inline markup elements to <em> tags, this
   // greatly simplifies downstream conversionto JSON
   $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
-  $('term').each((i: any, item: any) => $(item).attr('style', 'code'));
+  $('term').each((i: any, item: any) => $(item).attr('style', 'term'));
   $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
   $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
   DOM.rename($, 'var', 'em');
