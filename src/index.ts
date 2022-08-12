@@ -35,7 +35,7 @@ const optionDefinitions = [
   { name: 'mediaUrlPrefix', type: String },
 ];
 
-interface CmdOptions extends commandLineArgs.CommandLineOptions {
+export interface CmdOptions extends commandLineArgs.CommandLineOptions {
   operation: 'summarize' | 'convert' | 'upload';
   mediaManifest: string;
   outputDir: string;

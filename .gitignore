@@ -9,3 +9,4 @@ out.zip
 /.idea/
 amisc/
 test/course_packages/**/.svn
+dist
