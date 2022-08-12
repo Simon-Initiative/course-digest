@@ -71,6 +71,9 @@
                     <item id="bca2e88983a62dd6ddd99" scoring_mode="default">
                       <resourceref idref="tables" />
                     </item>
+                    <item id="bca2e88dad983a62dd6ddd99" scoring_mode="default">
+                      <resourceref idref="inquiry" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>

@@ -181,9 +181,17 @@ export function standardContentManipulations($: any) {
 
   handleFormulaMathML($);
   sideBySideMaterials($);
+  handleInquiry($);
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleInquiry($: any) {
+  DOM.rename($, 'inquiry title', 'p');
+  DOM.rename($, 'inquiry question', 'p');
+  DOM.rename($, 'inquiry answer', 'p');
+  DOM.stripElement($, 'inquiry');
 }
 
 function sideBySideMaterials($: any) {
