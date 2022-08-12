@@ -147,6 +147,15 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'composite_activity', 'group');
   DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'group');
+
+  $('example').each((i: any, item: any) => {
+    $(item).attr('purpose', 'example');
+    $(item).attr(
+      'id',
+      $(item).attr('id') === undefined ? guid() : $(item).attr('id')
+    );
+  });
+
   DOM.rename($, 'example', 'group');
   DOM.rename($, 'group title', 'p');
 
@@ -157,9 +166,9 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
+
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
-
   $('video').each((i: any, item: any) => {
     const src = $(item).attr('src');
 

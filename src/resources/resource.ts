@@ -1,5 +1,9 @@
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
+import * as DOM from 'src/utils/dom';
+import * as tmp from 'tmp';
+import * as fs from 'fs';
+import { Maybe } from 'tsmonad';
 
 export interface Summary {
   type: 'Summary';
@@ -135,6 +139,23 @@ export abstract class Resource {
 
   restructurePreservingWhitespace(_$: any): any {
     return;
+  }
+
+  convert(): Promise<(TorusResource | string)[]> {
+    let $ = DOM.read(this.file, { normalizeWhitespace: false });
+    this.restructurePreservingWhitespace($);
+
+    const tmpobj = tmp.fileSync();
+    fs.writeFileSync(tmpobj.name, $.html());
+
+    $ = DOM.read(tmpobj.name);
+
+    return Maybe.maybe($?.root()?.html()).caseOf({
+      just: (_xml) => this.translate($),
+      nothing: () => {
+        throw Error('Failed to convert: html element not found');
+      },
+    });
   }
 
   abstract translate($: any): Promise<(TorusResource | string)[]>;

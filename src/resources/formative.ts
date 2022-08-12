@@ -71,8 +71,12 @@ function buildMCQPart(question: any) {
   // and no catch-all response
   if (shouldUseSimpleModel(r)) {
     const incorrect = r.filter((r: any) => r.score === 0)[0];
-    const other = r.filter((r: any) => r.score !== 0)[0];
+    let other = r.filter((r: any) => r.score !== 0)[0];
     incorrect.rule = 'input like {.*}';
+
+    if (other === null || other === undefined) {
+      other = r.filter((r: any) => r.id !== incorrect.id)[0];
+    }
 
     // Ensure the catch-all is last
     model.responses = [other, incorrect];

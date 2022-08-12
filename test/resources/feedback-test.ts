@@ -197,6 +197,7 @@ describe('convert feedback', () => {
       title: 'Pre-Course Student Survey',
       tags: [],
       unresolvedReferences: [],
+      warnings: [],
       content: {
         model: [
           {
@@ -258,6 +259,7 @@ describe('convert feedback', () => {
       originalFile: file,
       title: '',
       tags: [],
+      warnings: [],
       unresolvedReferences: [],
       imageReferences: undefined,
       content: {
@@ -378,6 +380,7 @@ describe('convert feedback', () => {
       originalFile: file,
       title: '',
       tags: [],
+      warnings: [],
       unresolvedReferences: [],
       imageReferences: undefined,
       content: {
@@ -680,6 +683,7 @@ describe('convert feedback', () => {
       originalFile: file,
       title: '',
       tags: [],
+      warnings: [],
       unresolvedReferences: [],
       imageReferences: undefined,
       content: {
@@ -834,6 +838,7 @@ describe('convert feedback', () => {
       title: '',
       tags: [],
       unresolvedReferences: [],
+      warnings: [],
       imageReferences: [],
       content: {
         stem: {
@@ -909,6 +914,7 @@ describe('convert feedback', () => {
       originalFile: file,
       title: '',
       tags: [],
+      warnings: [],
       unresolvedReferences: [],
       imageReferences: [],
       content: {

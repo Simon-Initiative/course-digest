@@ -21,6 +21,7 @@ describe('convert workbook', () => {
         originalFile: '',
         title: 'Welcome!',
         tags: [],
+        warnings: [],
         unresolvedReferences: [
           'newca1a54a0f56a4d429f5aff2c515cab08',
           'newc72f87db5a5543b5ae8582d2d4cd34a7',
@@ -58,8 +59,7 @@ describe('convert workbook', () => {
                   children: [
                     {
                       children: [{ text: 'Example Title' }],
-                      id: expect.any(String),
-                      type: 'h2',
+                      type: 'p',
                     },
                     {
                       type: 'p',
@@ -123,6 +123,7 @@ describe('convert workbook', () => {
         children: [],
         content: expect.any(Object),
         objectives: [],
+        warnings: [],
       },
       {
         type: 'Bibentry',
@@ -135,6 +136,7 @@ describe('convert workbook', () => {
         children: [],
         content: expect.any(Object),
         objectives: [],
+        warnings: [],
       },
       {
         type: 'Bibentry',
@@ -147,6 +149,7 @@ describe('convert workbook', () => {
         children: [],
         content: expect.any(Object),
         objectives: [],
+        warnings: [],
       },
     ]);
   });

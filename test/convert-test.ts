@@ -109,7 +109,7 @@ it('should convert content with purpose to groups', async () => {
                 id: expect.any(String),
                 children: expect.arrayContaining([
                   expect.objectContaining({
-                    type: 'h2',
+                    type: 'p',
                     children: expect.arrayContaining([
                       expect.objectContaining({ text: 'Example Title' }),
                     ]),
