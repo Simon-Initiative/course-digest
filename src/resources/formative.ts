@@ -42,17 +42,23 @@ function buildMCQPart(question: any) {
     (p: any) => p.type === 'skillref'
   );
 
-  const r = responses.map((r: any) => ({
-    id: guid(),
-    score: r.score === undefined ? 0 : parseFloat(r.score),
-    rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
-    legacyMatch: replaceAll(r.match, '\\*', '.*'),
-    feedback: {
+  const r = responses.map((r: any) => {
+    const item: any = {
       id: guid(),
-      content: { model: Common.getFeedbackModel(r) },
-    },
-    showPage: Common.getBranchingTarget(r),
-  }));
+      score: r.score === undefined ? 0 : parseFloat(r.score),
+      rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
+      legacyMatch: replaceAll(r.match, '\\*', '.*'),
+      feedback: {
+        id: guid(),
+        content: { model: Common.getFeedbackModel(r) },
+      },
+    };
+    const showPage = Common.getBranchingTarget(r);
+    if (showPage !== undefined) {
+      item.showPage = showPage;
+    }
+    return item;
+  });
 
   const model = {
     id: '1',
@@ -128,7 +134,7 @@ function buildOrderingPart(question: any) {
     id: '1',
     responses: responses.map((r: any) => {
       const id = guid();
-      return {
+      const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
         rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
@@ -137,8 +143,12 @@ function buildOrderingPart(question: any) {
           id: guid(),
           content: { model: Common.getFeedbackModel(r) },
         },
-        showPage: Common.getBranchingTarget(r),
       };
+      const showPage = Common.getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({

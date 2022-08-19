@@ -183,7 +183,7 @@ function buildDropdownPart(part: any, _i: number) {
     id,
     responses: responses.map((r: any) => {
       const m = replaceAll(r.match, '\\*', '.*');
-      return {
+      const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${m}}`,
@@ -192,8 +192,12 @@ function buildDropdownPart(part: any, _i: number) {
           id: guid(),
           content: { model: Common.getFeedbackModel(r) },
         },
-        showPage: Common.getBranchingTarget(r),
       };
+      const showPage = Common.getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({
@@ -216,7 +220,7 @@ export function buildTextPart(part: any, _i: number) {
     id,
     responses: responses.map((r: any) => {
       const cleanedMatch = replaceAll(r.match, '\\*', '.*');
-      return {
+      const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${cleanedMatch}}`,
@@ -227,8 +231,12 @@ export function buildTextPart(part: any, _i: number) {
             model: Common.getFeedbackModel(r),
           },
         },
-        showPage: Common.getBranchingTarget(r),
       };
+      const showPage = Common.getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({

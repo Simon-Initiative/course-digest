@@ -140,7 +140,7 @@ export function buildTextPart(id: string, question: any) {
     id: '1',
     responses: responses.map((r: any) => {
       const cleanedMatch = replaceAll(r.match, '\\*', '.*');
-      return {
+      const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${cleanedMatch}}`,
@@ -154,8 +154,12 @@ export function buildTextPart(id: string, question: any) {
             }),
           },
         },
-        showPage: getBranchingTarget(r),
       };
+      const showPage = getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: ensureThree(
       hints.map((r: any) => ({
