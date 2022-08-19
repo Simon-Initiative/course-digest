@@ -51,6 +51,7 @@ function buildMCQPart(question: any) {
       id: guid(),
       content: { model: Common.getFeedbackModel(r) },
     },
+    showPage: Common.getBranchingTarget(r),
   }));
 
   const model = {
@@ -136,6 +137,7 @@ function buildOrderingPart(question: any) {
           id: guid(),
           content: { model: Common.getFeedbackModel(r) },
         },
+        showPage: Common.getBranchingTarget(r),
       };
     }),
     hints: Common.ensureThree(
@@ -365,7 +367,8 @@ export function toActivity(
   question: any,
   subType: ItemTypes,
   legacyId: string,
-  baseFileName: string
+  baseFileName: string,
+  pageIdIndex: string[]
 ) {
   const activity: Activity = {
     type: 'Activity',
@@ -388,6 +391,25 @@ export function toActivity(
     question,
     baseFileName
   );
+
+  content.authoring.parts.forEach((p: any) => {
+    p.responses = p.responses.map((r: any) => {
+      if (r.showPage !== undefined) {
+        const replacement = pageIdIndex.findIndex(
+          (id) => id.length > 1 && id.substring(1) === r.showPage
+        );
+        if (replacement !== -1) {
+          return Object.assign({}, r, { showPage: replacement });
+        } else {
+          console.log(
+            'Warning: could not replace page id with index in branching assessment: ' +
+              legacyId
+          );
+        }
+      }
+      return r;
+    });
+  });
 
   activity.content = content;
   activity.imageReferences = imageReferences;
@@ -534,10 +556,20 @@ export function processAssessmentModel(
   const unresolvedReferences: any = [];
   let title = 'Unknown';
 
-  const handleNestableItems = (item: any, pageId: string | null) => {
+  const handleNestableItems = (
+    item: any,
+    pageId: string | null,
+    pageIdIndex: string[]
+  ) => {
     if (item.type === 'question') {
       const subType = determineSubType(item);
-      const activity = toActivity(item, subType, legacyId, baseFileName);
+      const activity = toActivity(
+        item,
+        subType,
+        legacyId,
+        baseFileName,
+        pageIdIndex
+      );
       items.push(activity);
 
       const a = {
@@ -569,7 +601,8 @@ export function processAssessmentModel(
                 c,
                 subType,
                 legacyId,
-                baseFileName
+                baseFileName,
+                pageIdIndex
               );
               pooledActivity.tags = [tagId];
               pooledActivity.scope = 'banked';
@@ -647,6 +680,8 @@ export function processAssessmentModel(
     return modelItems;
   };
 
+  const pageIdIndex = createPageIdIndex(children);
+
   const model = children
     .reduce((previous: any, item: any, index) => {
       if (item.type === 'title') {
@@ -664,12 +699,12 @@ export function processAssessmentModel(
             ...previous,
             ...item.children
               .filter((c: any) => c.type !== 'title')
-              .map((c: any) => handleNestableItems(c, pageId)),
+              .map((c: any) => handleNestableItems(c, pageId, pageIdIndex)),
           ],
           index
         );
       } else {
-        return [...previous, handleNestableItems(item, null)];
+        return [...previous, handleNestableItems(item, null, pageIdIndex)];
       }
       return previous;
     }, [])
@@ -681,4 +716,11 @@ export function processAssessmentModel(
     title,
     unresolvedReferences,
   };
+}
+
+// Takes a collection of items, filters down to only pages,
+function createPageIdIndex(children: any) {
+  return children
+    .filter((c: any) => c.type === 'page')
+    .map((page: any) => (page.id === undefined ? null : page.id));
 }

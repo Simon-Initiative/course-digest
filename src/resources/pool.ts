@@ -37,7 +37,8 @@ export class Pool extends Resource {
                     c,
                     subType,
                     legacyId,
-                    this.file
+                    this.file,
+                    []
                   );
                   pooledActivity.tags = [tagId];
                   pooledActivity.scope = 'banked';

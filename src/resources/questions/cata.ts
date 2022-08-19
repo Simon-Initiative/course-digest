@@ -114,6 +114,7 @@ function buildCATAPart(question: any) {
           id: guid(),
           content: { model: Common.getFeedbackModel(r) },
         },
+        showPage: Common.getBranchingTarget(r),
       };
     }),
     hints: Common.ensureThree(

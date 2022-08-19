@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">		
+#q2_target_container0 {  
+    margin: auto;
+    position:relative; <!-- This is important-->
+    width: 680px;  
+    height: 250px;
+   
+}	
+	.tbody .th {
+    text-align: center;
+}		
+			.target {  
+			  border: 2px;
+			  border-style: dashed;
+			  border-color: #999999; 
+			  display: inline-block; 
+			  position: absolute; 
+			  min-width: 200px;  
+			  width: 250px;  
+			  min-height: 40px; 
+			  height: 40px;
+			  
+			}
+			
+			
+			.initiator
+			{
+				display: inline-block;
+				min-height: 20px;
+				height: 50px;
+				min-width: 60px;
+				width: 580px;
+				background: #ffc;
+				text-align: center;
+				padding: 4px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			.dragdropspacer
+			{
+				height: 30px;
+			}
+			
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+		<div id="q2_target_container0">
+
+
+<div id="lefttitle" style="position:absolute;top:30px; left:5px" ><b>Element</b></div>
+<div id="micdletitle" style="position:absolute;top:115px; left:5px" ><b>Compound</b></div>
+
+<div id="bottomtitle" style="position:absolute;top:190px; left:5px" ><b>Mixture</b></div>
+
+
+
+
+<div input_ref="element_area" class="target"  style="left:80px; top:25px; width:600px; height:60px;"> </div>
+
+<div input_ref="compound_area" class="target" style="left:80px;top:95px; width:600px; height:60px;"> </div>
+
+
+<div input_ref="mixture_area" class="target"  style="left:80px; top:155px; width:600px; height:60px;"> </div>
+
+
+
+
+		    </div>
+			
+		]]>
+    </targetArea>
+    
+    <initiators>
+        <![CDATA[			
+        	<div input_val="element" class="initiator">A substance that cannot be broken down into simpler substances through chemical changes.</div>
+			<div input_val="mixture" class="initiator">A combination of pure substances that can be separated by physical means.</div>
+		
+			<div input_val="compound" class="initiator">A substance that can be browken down into simpler substances through chemical changes, but 
+			not physical changes.</div>
+			
+			
+			
+					
+		]]>
+    </initiators>
+    
+</dragdrop>

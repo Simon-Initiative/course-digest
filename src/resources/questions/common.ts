@@ -118,6 +118,13 @@ export function getFeedbackModel(response: any) {
   return ensureParagraphs(response.children[0].children);
 }
 
+export function getBranchingTarget(response: any) {
+  if (response.children === undefined || response.children.length === 0) {
+    return undefined;
+  }
+  return response.children[0]['xml:lang'];
+}
+
 export function buildTextPart(id: string, question: any) {
   const responses = getChild(question.children, 'part').children.filter(
     (p: any) => p.type === 'response'
@@ -147,6 +154,7 @@ export function buildTextPart(id: string, question: any) {
             }),
           },
         },
+        showPage: getBranchingTarget(r),
       };
     }),
     hints: ensureThree(

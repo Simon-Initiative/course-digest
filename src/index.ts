@@ -186,6 +186,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         updated = filterOutTemporaryContent(updated);
         updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
         updated = Convert.globalizeObjectiveReferences(updated);
+        updated = Convert.setGroupPaginationModes(updated);
 
         return Convert.createProducts(updated, orgPaths, specificOrg).then(
           (updated) => {

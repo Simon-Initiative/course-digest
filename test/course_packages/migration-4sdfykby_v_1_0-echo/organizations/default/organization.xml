@@ -40,6 +40,15 @@
                         <resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93" />
                     </item>
                 </module>
+                <module id="br">
+                  <title>
+          Branching assessments
+        </title>
+                  <item id="bca2e8dcf45e89891c18a62d648" scoring_mode="default">
+                      <resourceref idref="branching_page" />
+                  </item>
+                 
+              </module>
                 <module id="corecomponents">
                     <title>
 						Core Page Components

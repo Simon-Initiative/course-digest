@@ -192,6 +192,7 @@ function buildDropdownPart(part: any, _i: number) {
           id: guid(),
           content: { model: Common.getFeedbackModel(r) },
         },
+        showPage: Common.getBranchingTarget(r),
       };
     }),
     hints: Common.ensureThree(
@@ -226,6 +227,7 @@ export function buildTextPart(part: any, _i: number) {
             model: Common.getFeedbackModel(r),
           },
         },
+        showPage: Common.getBranchingTarget(r),
       };
     }),
     hints: Common.ensureThree(
