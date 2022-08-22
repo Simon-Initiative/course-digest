@@ -17,7 +17,9 @@ export class Pool extends Resource {
     Formative.performRestructure($);
   }
 
-  translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+  translate($: any): Promise<(TorusResource | string)[]> {
+    this.restructure($);
+    const xml = $.html();
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
@@ -35,7 +37,8 @@ export class Pool extends Resource {
                     c,
                     subType,
                     legacyId,
-                    this.file
+                    this.file,
+                    []
                   );
                   pooledActivity.tags = [tagId];
                   pooledActivity.scope = 'banked';

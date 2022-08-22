@@ -42,16 +42,23 @@ function buildMCQPart(question: any) {
     (p: any) => p.type === 'skillref'
   );
 
-  const r = responses.map((r: any) => ({
-    id: guid(),
-    score: r.score === undefined ? 0 : parseFloat(r.score),
-    rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
-    legacyMatch: replaceAll(r.match, '\\*', '.*'),
-    feedback: {
+  const r = responses.map((r: any) => {
+    const item: any = {
       id: guid(),
-      content: { model: Common.ensureParagraphs(r.children[0].children) },
-    },
-  }));
+      score: r.score === undefined ? 0 : parseFloat(r.score),
+      rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
+      legacyMatch: replaceAll(r.match, '\\*', '.*'),
+      feedback: {
+        id: guid(),
+        content: { model: Common.getFeedbackModel(r) },
+      },
+    };
+    const showPage = Common.getBranchingTarget(r);
+    if (showPage !== undefined) {
+      item.showPage = showPage;
+    }
+    return item;
+  });
 
   const model = {
     id: '1',
@@ -71,8 +78,12 @@ function buildMCQPart(question: any) {
   // and no catch-all response
   if (shouldUseSimpleModel(r)) {
     const incorrect = r.filter((r: any) => r.score === 0)[0];
-    const other = r.filter((r: any) => r.score !== 0)[0];
+    let other = r.filter((r: any) => r.score !== 0)[0];
     incorrect.rule = 'input like {.*}';
+
+    if (other === null || other === undefined) {
+      other = r.filter((r: any) => r.id !== incorrect.id)[0];
+    }
 
     // Ensure the catch-all is last
     model.responses = [other, incorrect];
@@ -123,16 +134,21 @@ function buildOrderingPart(question: any) {
     id: '1',
     responses: responses.map((r: any) => {
       const id = guid();
-      return {
+      const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
         rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
         legacyRule: replaceAll(r.match, '\\*', '.*'),
         feedback: {
           id: guid(),
-          content: { model: Common.ensureParagraphs(r.children[0].children) },
+          content: { model: Common.getFeedbackModel(r) },
         },
       };
+      const showPage = Common.getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({
@@ -361,7 +377,8 @@ export function toActivity(
   question: any,
   subType: ItemTypes,
   legacyId: string,
-  baseFileName: string
+  baseFileName: string,
+  pageIdIndex: string[]
 ) {
   const activity: Activity = {
     type: 'Activity',
@@ -374,6 +391,7 @@ export function toActivity(
     objectives: [],
     legacyId,
     subType,
+    warnings: [],
   };
 
   activity.id = legacyId + '-' + question.id;
@@ -383,6 +401,25 @@ export function toActivity(
     question,
     baseFileName
   );
+
+  content.authoring.parts.forEach((p: any) => {
+    p.responses = p.responses.map((r: any) => {
+      if (r.showPage !== undefined) {
+        const replacement = pageIdIndex.findIndex(
+          (id) => id.length > 1 && id.substring(1) === r.showPage
+        );
+        if (replacement !== -1) {
+          return Object.assign({}, r, { showPage: replacement });
+        } else {
+          console.log(
+            'Warning: could not replace page id with index in branching assessment: ' +
+              legacyId
+          );
+        }
+      }
+      return r;
+    });
+  });
 
   activity.content = content;
   activity.imageReferences = imageReferences;
@@ -475,11 +512,9 @@ export class Formative extends Resource {
     processVariables($);
   }
 
-  restructure($: any): any {
+  translate($: any): Promise<(TorusResource | string)[]> {
     performRestructure($);
-  }
-
-  translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+    const xml = $.html();
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
         (r: any) => {
@@ -531,10 +566,20 @@ export function processAssessmentModel(
   const unresolvedReferences: any = [];
   let title = 'Unknown';
 
-  const handleNestableItems = (item: any, pageId: string | null) => {
+  const handleNestableItems = (
+    item: any,
+    pageId: string | null,
+    pageIdIndex: string[]
+  ) => {
     if (item.type === 'question') {
       const subType = determineSubType(item);
-      const activity = toActivity(item, subType, legacyId, baseFileName);
+      const activity = toActivity(
+        item,
+        subType,
+        legacyId,
+        baseFileName,
+        pageIdIndex
+      );
       items.push(activity);
 
       const a = {
@@ -566,7 +611,8 @@ export function processAssessmentModel(
                 c,
                 subType,
                 legacyId,
-                baseFileName
+                baseFileName,
+                pageIdIndex
               );
               pooledActivity.tags = [tagId];
               pooledActivity.scope = 'banked';
@@ -627,6 +673,7 @@ export function processAssessmentModel(
         content,
         objectives: [],
         legacyId,
+        warnings: [],
       } as TemporaryContent);
 
       return content;
@@ -642,6 +689,8 @@ export function processAssessmentModel(
 
     return modelItems;
   };
+
+  const pageIdIndex = createPageIdIndex(children);
 
   const model = children
     .reduce((previous: any, item: any, index) => {
@@ -660,12 +709,12 @@ export function processAssessmentModel(
             ...previous,
             ...item.children
               .filter((c: any) => c.type !== 'title')
-              .map((c: any) => handleNestableItems(c, pageId)),
+              .map((c: any) => handleNestableItems(c, pageId, pageIdIndex)),
           ],
           index
         );
       } else {
-        return [...previous, handleNestableItems(item, null)];
+        return [...previous, handleNestableItems(item, null, pageIdIndex)];
       }
       return previous;
     }, [])
@@ -677,4 +726,11 @@ export function processAssessmentModel(
     title,
     unresolvedReferences,
   };
+}
+
+// Takes a collection of items, filters down to only pages,
+function createPageIdIndex(children: any) {
+  return children
+    .filter((c: any) => c.type === 'page')
+    .map((page: any) => (page.id === undefined ? null : page.id));
 }

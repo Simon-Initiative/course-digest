@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="branching">
+    <title>tutor</title>
+    <short_title>reveal</short_title>
+    <page id="p1">
+        <question id="q1">
+
+            <body><em>The guide explains that gold is a(n)</em>
+                <input_ref input="first"/>
+              <em> and iron pyrite, which has a chemical formula of Fe<sub>2</sub>S is a(n)</em>
+                <input_ref input="second"/>. </body>
+
+            <fill_in_the_blank id="first" shuffle="false">
+                <choice value="A">element</choice>
+                <choice value="B">compound</choice>
+                <choice value="C">mixture</choice>
+
+            </fill_in_the_blank>
+
+            <fill_in_the_blank id="second" shuffle="false">
+                <choice value="A">element</choice>
+                <choice value="B">compound</choice>
+                <choice value="C">mixture</choice>
+
+            </fill_in_the_blank>
+
+            <part id="first" score_out_of="1">
+                <response match="A" input="first" score="1">
+                    <feedback>Correct. An element is smallest particle of an element that can enter
+                        into a chemical combination. Gold is an element.</feedback>
+                </response>
+                <response match="B" input="first" score="0">
+                    <feedback xml:lang="2">Incorrect. </feedback>
+                </response>
+                <response match="C" input="first" score="0">
+                    <feedback xml:lang="2">Incorrect. </feedback>
+                </response>
+
+
+            </part>
+
+
+            <part id="second" score_out_of="1">
+                <response match="A" input="second" score="0">
+                    <feedback xml:lang="2">Incorrect.</feedback>
+                </response>
+                <response match="B" input="second" score="1">
+                    <feedback>Correct. A compound is a combination of two or more elements that
+                        are chemically combined. Iron pyrite, Fe<sub>2</sub>S, is a
+                        compound.</feedback>
+                </response>
+                <response match="C" input="second" score="0">
+                    <feedback xml:lang="2">Incorrect.</feedback>
+                </response>
+
+            </part>
+
+
+        </question>
+    </page>
+    <page id="p2">
+
+        <!--  <question id="q2">
+            
+            <body>words <input_ref input="first"/> more words <input_ref
+                input="second"/>, and yet more words <input_ref
+                    input="third"/>. </body>
+            
+            <fill_in_the_blank id="first" shuffle="true">
+                <choice value="A">a </choice>
+                <choice value="B">b</choice>
+                <choice value="C">c</choice>
+                <choice value="D">d</choice>
+            </fill_in_the_blank>
+            
+            <fill_in_the_blank id="second" shuffle="true">
+                <choice value="A">a</choice>
+                <choice value="B">b</choice>
+                <choice value="C">c</choice>
+            </fill_in_the_blank>
+            
+            <fill_in_the_blank id="third" shuffle="true">
+                <choice value="A">a </choice>
+                <choice value="B">b</choice>
+                <choice value="C">c</choice>
+                <choice value="D">d</choice>
+                
+            </fill_in_the_blank>
+            
+            <part id="first" score_out_of="1">
+                <response match="A" input="first" score="1">
+                    <feedback>Correct </feedback>
+                </response>
+                <response match="B" input="first" score="0">
+                    <feedback>Incorrect </feedback>
+                </response>
+                <response match="C" input="first" score="0">
+                    <feedback>Incorrect  </feedback>
+                </response>
+                <response match="D" input="first">
+                    <feedback>Incorrect </feedback>
+                </response>
+                
+            </part>
+            
+            
+            <part id="second" score_out_of="1">
+                <response match="A" input="second" score="1">
+                    <feedback>Correct</feedback>
+                </response>
+                <response match="B" input="second" score="0">
+                    <feedback>Incorrect </feedback>
+                </response>
+                <response match="C" input="second" score="0">
+                    <feedback>Incorrect</feedback>
+                </response>
+                <hint>hint</hint>
+            </part>
+            
+            <part id="third" score_out_of="1">
+                <response match="A" input="third" score="1">
+                    <feedback>Correct</feedback>
+                </response>
+                <response match="B" input="third" score="0">
+                    <feedback>Incorrect</feedback>
+                </response>
+                <response match="C" input="third" score="0">
+                    <feedback>Incorrect</feedback>
+                </response>
+                <response match="D" input="third">
+                    <feedback>Incorrect</feedback>
+                </response>
+                
+            </part>
+            
+        </question>-->
+
+        <question id="q2">
+            <body>
+                <p><em>Match the description to the term.</em></p>
+                <custom type="javascript" height="500" width="680" id="dragDrop"
+                    layout="./element_compound_adapt_layout.xml">
+                    <param name="showInputs">false</param>
+                </custom>
+            </body>
+            <fill_in_the_blank id="mixture_area" shuffle="false">
+                <choice value="mixture">mixture</choice>
+                <choice value="compound">compound</choice>
+                <choice value="element">element</choice>
+
+
+            </fill_in_the_blank>
+            <fill_in_the_blank id="compound_area" shuffle="false">
+                <choice value="mixture">mixture</choice>
+                <choice value="compound">compound</choice>
+                <choice value="element">element</choice>
+
+
+
+            </fill_in_the_blank>
+            <fill_in_the_blank id="element_area" shuffle="false">
+                <choice value="mixture">mixture</choice>
+                <choice value="compound">compound</choice>
+                <choice value="element">element</choice>
+
+
+
+            </fill_in_the_blank>
+
+
+
+            <part>
+                <response input="mixture_area" match="mixture" score="1">
+                    <feedback>Correct. A mixture is a physical combination of elements and
+                        compounds.</feedback>
+                </response>
+                <response input="mixture_area" match="compound">
+                    <feedback>Incorrect. A mixture is a physical combination of elements and
+                        compounds</feedback>
+                </response>
+                <response input="mixture_area" match="element">
+                    <feedback>Incorrect. A mixture is a physical combination of elements and
+                        compounds</feedback>
+                </response>
+
+
+            </part>
+            <part>
+                <response input="compound_area" match="mixture" score="0">
+                    <feedback>Incorrect. A compound is a combination of two or more elements that
+                        are chemically combined. Iron pyrite, Fe<sub>2</sub>S, is a
+                        compound.</feedback>
+                </response>
+                <response input="compound_area" match="compound" score="1">
+                    <feedback>Correct. A compound is a combination of two or more elements that are
+                        chemically combined. Iron pyrite, Fe<sub>2</sub>S, is a compound.</feedback>
+                </response>
+                <response input="compound_area" match="element">
+                    <feedback>Incorrect. A compound is a combination of two or more elements that
+                        are chemically combined. Iron pyrite, Fe<sub>2</sub>S, is a
+                        compound.</feedback>
+                </response>
+
+
+
+            </part>
+            <part>
+                <response input="element_area" match="mixture" score="0">
+                    <feedback>Incorrect. An element is smallest particle of an element that can enter
+                        into a chemical combination. Gold is an element.</feedback>
+                </response>
+                <response input="element_area" match="compound" score="0">
+                    <feedback>Incorrect. An element is smallest particle of an element that can enter
+                        into a chemical combination. Gold is an element.</feedback>
+                </response>
+                <response input="element_area" match="element" score="1">
+                    <feedback>Correct. An element is smallest particle of an element that can enter
+                        into a chemical combination. Gold is an element.</feedback>
+                </response>
+
+
+
+            </part>
+
+
+
+
+        </question>
+
+    </page>
+</assessment>

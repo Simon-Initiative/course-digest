@@ -106,6 +106,25 @@ const shortAnswerExplanationOrDefaultModel = (question: any) =>
 const getParts = (question: any): any[] =>
   question.children.filter((c: any) => c.type === 'part');
 
+export function getFeedbackModel(response: any) {
+  if (response.children === undefined || response.children.length === 0) {
+    return [
+      {
+        type: 'p',
+        children: [{ text: ' ' }],
+      },
+    ];
+  }
+  return ensureParagraphs(response.children[0].children);
+}
+
+export function getBranchingTarget(response: any) {
+  if (response.children === undefined || response.children.length === 0) {
+    return undefined;
+  }
+  return response.children[0]['xml:lang'];
+}
+
 export function buildTextPart(id: string, question: any) {
   const responses = getChild(question.children, 'part').children.filter(
     (p: any) => p.type === 'response'
@@ -121,7 +140,7 @@ export function buildTextPart(id: string, question: any) {
     id: '1',
     responses: responses.map((r: any) => {
       const cleanedMatch = replaceAll(r.match, '\\*', '.*');
-      return {
+      const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${cleanedMatch}}`,
@@ -136,6 +155,11 @@ export function buildTextPart(id: string, question: any) {
           },
         },
       };
+      const showPage = getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: ensureThree(
       hints.map((r: any) => ({

@@ -5,11 +5,12 @@ import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
 
 export class Superactivity extends Resource {
-  restructure(_$: any): any {
+  flagContentWarnigns(_$: any, _page: Page) {
     return;
   }
 
-  translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+  translate($: any): Promise<(TorusResource | string)[]> {
+    const xml = $.html();
     const file = this.file;
     const navigable = this.navigable;
     return new Promise((resolve, _reject) => {
@@ -51,6 +52,7 @@ export class Superactivity extends Resource {
                 isGraded: true,
                 isSurvey: false,
                 objectives: [],
+                warnings: [],
               };
               resolve([page, activity]);
             } else {
@@ -116,6 +118,7 @@ function toActivity(
     objectives: [],
     legacyId,
     subType,
+    warnings: [],
   };
 }
 

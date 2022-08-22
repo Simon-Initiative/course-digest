@@ -97,10 +97,9 @@ export class Feedback extends Resource {
     Formative.performRestructure($);
   }
 
-  translate(
-    xml: string,
-    _$: cheerio.Root
-  ): Promise<(TorusResource | string)[]> {
+  translate($: cheerio.Root): Promise<(TorusResource | string)[]> {
+    this.restructure($);
+    const xml = $.html();
     const page: Page = {
       type: 'Page',
       id: '',
@@ -112,6 +111,7 @@ export class Feedback extends Resource {
       isGraded: false,
       isSurvey: true,
       objectives: [],
+      warnings: [],
     };
 
     return new Promise((resolve, _reject) =>

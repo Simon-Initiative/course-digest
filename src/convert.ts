@@ -38,11 +38,7 @@ export function convert(
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
 
-    item.restructure($);
-
-    const xml = $.html();
-
-    return item.translate(xml, $);
+    return item.translate($);
   });
 }
 
@@ -90,9 +86,7 @@ export function createProducts(
     .map((path) => {
       const o = new Organization(path, false);
       const $ = DOM.read(path, { normalizeWhitespace: true });
-      o.restructureProduct($);
-      const xml = $.html();
-      return () => o.translateProduct(xml, $);
+      return () => o.translateProduct($);
     });
 
   return new Promise((resolve, _reject) => {
@@ -377,6 +371,74 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   });
 
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
+}
+
+// For every group that contained a branching assessment, set the paginationMode attr
+// to 'automatedReveal'
+export function setGroupPaginationModes(
+  resources: TorusResource[]
+): TorusResource[] {
+  const items = resources
+    .filter((r) => {
+      if (r.type === 'Activity') {
+        return (r as any).content.authoring.parts.some((part: any) => {
+          return part.responses.some((r: any) => r.showPage !== undefined);
+        });
+      }
+      return false;
+    })
+    .reduce((m: any, a) => {
+      m[a.id] = a;
+      return m;
+    }, {});
+
+  let activitiesRemaining = Object.keys(items).length;
+  // Written in an imperative style, as it is far easier to optimze the performance. If
+  // there are no branching activites, we do nothing, otherwise we only traverse the
+  // content of pages until we find all the activities.
+  for (let i = 0; i < resources.length && activitiesRemaining > 0; i++) {
+    const resource = resources[i];
+    if (resource.type === 'Page' && resource.unresolvedReferences.length > 0) {
+      activitiesRemaining -= setGroupPaginationModesForPage(
+        resource as Page,
+        items
+      );
+    }
+  }
+
+  return resources;
+}
+
+// Traverse the content of the given page, looking at all activity-references within a
+// group to see if any of these activities match those referenced by 'items'.  If so,
+// mark that group pagination mode as 'automatedReveal', and return all items that matched.
+function setGroupPaginationModesForPage(page: Page, items: any) {
+  let count = 0;
+  for (let i = 0; i < (page.content as any).model.length; i++) {
+    const child = (page.content as any).model[i];
+    count = count + setGroupPaginationModesForPageHelper(child, items);
+  }
+  return count;
+}
+
+function setGroupPaginationModesForPageHelper(item: any, items: any) {
+  if (item.type === 'group') {
+    let count = 0;
+    for (let i = 0; i < item.children.length; i++) {
+      const child = item.children[i];
+      if (
+        child.type === 'activity-reference' &&
+        items[child.activity_id] !== undefined
+      ) {
+        count++;
+        item.paginationMode = 'automatedReveal';
+      } else if (child.type === 'group') {
+        count = count + setGroupPaginationModesForPageHelper(child, items);
+      }
+    }
+    return count;
+  }
+  return 0;
 }
 
 export function output(

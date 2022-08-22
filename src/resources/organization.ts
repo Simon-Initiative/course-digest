@@ -44,7 +44,9 @@ export class Organization extends Resource {
     DOM.rename($, 'section', 'container');
   }
 
-  translate(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+  translate($: any): Promise<(TorusResource | string)[]> {
+    this.restructure($);
+    const xml = $.html();
     const h: Hierarchy = {
       type: 'Hierarchy',
       id: '',
@@ -53,6 +55,7 @@ export class Organization extends Resource {
       tags: [],
       unresolvedReferences: [],
       children: [],
+      warnings: [],
     };
 
     return new Promise((resolve, _reject) => {
@@ -63,7 +66,9 @@ export class Organization extends Resource {
     });
   }
 
-  translateProduct(xml: string, _$: any): Promise<(TorusResource | string)[]> {
+  translateProduct($: any): Promise<(TorusResource | string)[]> {
+    this.restructureProduct($);
+    const xml = $.html();
     const h: Hierarchy = {
       type: 'Hierarchy',
       id: '',
@@ -72,6 +77,7 @@ export class Organization extends Resource {
       tags: [],
       unresolvedReferences: [],
       children: [],
+      warnings: [],
     };
 
     return new Promise((resolve, _reject) => {

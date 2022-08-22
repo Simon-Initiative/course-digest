@@ -22,6 +22,24 @@ export function mapResources(directory: string): Promise<ResourceMap> {
   });
 }
 
+export function mapResourcesInNamedDirectory(
+  root: string,
+  directory: string
+): Promise<ResourceMap> {
+  return new Promise((resolve, _reject) => {
+    glob(`${root}/**/${directory}/*.xml`, {}, (_err: any, files: any) => {
+      const result = files.reduce((p: any, c: string) => {
+        const filename = c.substr(c.lastIndexOf('/') + 1);
+        const id = filename.substr(0, filename.lastIndexOf('.xml'));
+        p[id] = c;
+        return p;
+      }, {});
+
+      resolve(result);
+    });
+  });
+}
+
 export function collectOrgItemReferences(packageDirectory: string, id = '') {
   return Orgs.locate(packageDirectory).then((orgs) =>
     executeSerially(
@@ -71,13 +89,15 @@ export function collectOrgItemReferences(packageDirectory: string, id = '') {
 }
 
 export function getLearningObjectiveIds(packageDirectory: string) {
-  return mapResources(
-    `${packageDirectory}/content/x-oli-learning_objectives`
+  return mapResourcesInNamedDirectory(
+    `${packageDirectory}/content`,
+    'x-oli-learning_objectives'
   ).then((map) => Object.keys(map));
 }
 
 export function getSkillIds(packageDirectory: string) {
-  return mapResources(`${packageDirectory}/content/x-oli-skills_model`).then(
-    (map) => Object.keys(map)
-  );
+  return mapResourcesInNamedDirectory(
+    `${packageDirectory}/content`,
+    'x-oli-skills_model'
+  ).then((map) => Object.keys(map));
 }

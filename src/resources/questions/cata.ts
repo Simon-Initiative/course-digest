@@ -105,16 +105,21 @@ function buildCATAPart(question: any) {
     id: '1',
     responses: responses.map((r: any) => {
       const id = guid();
-      return {
+      const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
         rule: r.match,
         name: r.name,
         feedback: {
           id: guid(),
-          content: { model: Common.ensureParagraphs(r.children[0].children) },
+          content: { model: Common.getFeedbackModel(r) },
         },
       };
+      const showPage = Common.getBranchingTarget(r);
+      if (showPage !== undefined) {
+        item.showPage = showPage;
+      }
+      return item;
     }),
     hints: Common.ensureThree(
       hints.map((r: any) => ({

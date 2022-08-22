@@ -109,14 +109,18 @@ export function flatten(
   summary: MediaSummary
 ): string | null {
   const absolutePath = resolve(ref);
-  const md5 = md5File.sync(absolutePath);
 
-  const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
-  const toURL = (name: string) => summary.urlPrefix + '/' + md5 + '/' + name;
+  const decodedPath = decodeURIComponent(absolutePath);
 
-  const name = getName(absolutePath);
+  if (fs.existsSync(decodedPath)) {
+    const md5 = md5File.sync(decodedPath);
 
-  if (fs.existsSync(absolutePath)) {
+    const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
+    const toURL = (name: string) =>
+      summary.urlPrefix + '/' + md5 + '/' + encodeURIComponent(name);
+
+    const name = getName(decodedPath);
+
     // Is this the first time we have encountered this specific physical file
     if (summary.mediaItems[absolutePath] === undefined) {
       // See if we need to rename this file to avoid conflicts with an already
@@ -126,8 +130,8 @@ export function flatten(
         : name;
 
       summary.mediaItems[absolutePath] = {
-        file: absolutePath,
-        fileSize: getFilesizeInBytes(absolutePath),
+        file: decodedPath,
+        fileSize: getFilesizeInBytes(decodedPath),
         name,
         flattenedName,
         md5,

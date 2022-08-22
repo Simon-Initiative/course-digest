@@ -7,7 +7,7 @@ export class Other extends Resource {
     return;
   }
 
-  translate(_xml: string, _$: any): Promise<(TorusResource | string)[]> {
+  translate(_$: any): Promise<(TorusResource | string)[]> {
     return Promise.resolve([
       {
         type: 'Unknown',
@@ -18,6 +18,7 @@ export class Other extends Resource {
         unresolvedReferences: [],
         content: {},
         objectives: [],
+        warnings: [],
       },
     ]);
   }

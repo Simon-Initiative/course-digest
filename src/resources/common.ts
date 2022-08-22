@@ -1,6 +1,7 @@
 import { ItemReference, guid } from 'src/utils/common';
 import * as Histogram from 'src/utils/histogram';
 import * as DOM from 'src/utils/dom';
+import { TorusResource } from './resource';
 
 export interface HasReferences {
   found: () => ItemReference[];
@@ -53,11 +54,19 @@ export function processVariables($: any) {
   });
 }
 
+export function addWarning(
+  resource: TorusResource,
+  description: string,
+  idref = null
+) {
+  resource.warnings.push({ idref, description });
+}
+
 export function standardContentManipulations($: any) {
   // Convert all inline markup elements to <em> tags, this
   // greatly simplifies downstream conversionto JSON
   $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
-  $('term').each((i: any, item: any) => $(item).attr('style', 'code'));
+  $('term').each((i: any, item: any) => $(item).attr('style', 'term'));
   $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
   $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
   DOM.rename($, 'var', 'em');
@@ -108,23 +117,48 @@ export function standardContentManipulations($: any) {
   $('vimeo').remove();
   // $('cite').remove();
 
-  DOM.stripElement($, 'li p');
-  DOM.stripElement($, 'p quote');
-
-  $('pullout title').remove();
-  DOM.stripElement($, 'pullout');
-
-  $('p title').remove();
-  $('ol title').remove();
-  $('ul title').remove();
+  DOM.stripElement($, 'p ol');
+  DOM.stripElement($, 'p ul');
+  DOM.stripElement($, 'p li');
+  DOM.stripElement($, 'p ol');
+  DOM.stripElement($, 'p ul');
+  DOM.stripElement($, 'p li');
+  DOM.stripElement($, 'p ol');
+  DOM.stripElement($, 'p ul');
+  DOM.stripElement($, 'p li');
+  DOM.stripElement($, 'p p');
 
   $('dl title').remove();
   DOM.rename($, 'dd', 'li');
   DOM.rename($, 'dt', 'li');
   DOM.rename($, 'dl', 'ul');
 
+  DOM.stripElement($, 'li p');
+  DOM.rename($, 'li img', 'img_inline');
+  DOM.stripElement($, 'p quote');
+
+  $('p table').remove();
+  $('p title').remove();
+  $('ol title').remove();
+  $('ul title').remove();
+
   DOM.rename($, 'quote', 'blockquote');
+  DOM.rename($, 'composite_activity title', 'p');
   DOM.rename($, 'composite_activity', 'group');
+  DOM.rename($, 'pullout title', 'p');
+  DOM.rename($, 'pullout', 'group');
+
+  $('example').each((i: any, item: any) => {
+    $(item).attr('purpose', 'example');
+    $(item).attr(
+      'id',
+      $(item).attr('id') === undefined ? guid() : $(item).attr('id')
+    );
+  });
+
+  DOM.rename($, 'example', 'group');
+  DOM.rename($, 'group title', 'p');
+
   $('group').each((i: any, item: any) => {
     $(item).attr('layout', 'vertical');
     $(item).attr(
@@ -132,9 +166,9 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
+
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
-
   $('video').each((i: any, item: any) => {
     const src = $(item).attr('src');
 
@@ -147,6 +181,17 @@ export function standardContentManipulations($: any) {
 
   handleFormulaMathML($);
   sideBySideMaterials($);
+  handleInquiry($);
+
+  DOM.rename($, 'li formula', 'formula_inline');
+  DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleInquiry($: any) {
+  DOM.rename($, 'inquiry title', 'p');
+  DOM.rename($, 'inquiry question', 'p');
+  DOM.rename($, 'inquiry answer', 'p');
+  DOM.stripElement($, 'inquiry');
 }
 
 function sideBySideMaterials($: any) {
@@ -167,6 +212,53 @@ function sideBySideMaterials($: any) {
     } else {
       const tr = $('<tr></tr>');
       $(item).children().wrap(tr);
+    }
+  });
+}
+
+export function ensureParentHasId($: any, item: any) {
+  if ($(item).parent().attr('id') === undefined) {
+    $(item).parent().attr('id', guid());
+  }
+  return $(item).parent().attr('id');
+}
+export function flagStandardContentWarnigns($: any, resource: TorusResource) {
+  $('p table').each((_i: any, item: any) => {
+    addWarning(resource, 'table within paragraph', ensureParentHasId($, item));
+  });
+  $('p ul').each((_i: any, item: any) => {
+    addWarning(
+      resource,
+      'unordered list within paragraph',
+      ensureParentHasId($, item)
+    );
+  });
+  $('p ol').each((_i: any, item: any) => {
+    addWarning(
+      resource,
+      'ordered list within paragraph',
+      ensureParentHasId($, item)
+    );
+  });
+  $('p dl').each((_i: any, item: any) => {
+    addWarning(
+      resource,
+      'definition list within paragraph',
+      ensureParentHasId($, item)
+    );
+  });
+  $('p p').each((_i: any, item: any) => {
+    addWarning(
+      resource,
+      'paragraph within paragraph',
+      ensureParentHasId($, item)
+    );
+  });
+
+  $('materials material').each((i: any, _item: any) => {
+    if (i === 0) {
+      // Flag only the first material, not all of them
+      addWarning(resource, 'materials material');
     }
   });
 }

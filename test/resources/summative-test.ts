@@ -22,6 +22,7 @@ describe('convert summative', () => {
         title: 'Inline Summative Assessment',
         tags: [],
         unresolvedReferences: [],
+        warnings: [],
         content: {
           model: [
             {
@@ -78,6 +79,7 @@ describe('convert summative', () => {
         title: '',
         tags: [],
         unresolvedReferences: [],
+        warnings: [],
         content: {
           type: 'content',
           id: expect.any(String),
@@ -114,6 +116,7 @@ describe('convert summative', () => {
         title: '',
         tags: [],
         unresolvedReferences: [],
+        warnings: [],
         content: {
           stem: {
             content: {
@@ -359,6 +362,7 @@ describe('convert summative', () => {
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
         subType: 'oli_multiple_choice',
         imageReferences: [],
+        warnings: [],
       },
     ]);
   });
