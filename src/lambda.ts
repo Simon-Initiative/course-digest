@@ -1,4 +1,3 @@
-
 type LambdaEvent = {
   svnUrl: string;
 };
@@ -9,7 +8,6 @@ type LambdaEvent = {
  * @param {string} event.svnUrl
  */
 export const handler = async (event: LambdaEvent) => {
-
   return {
     hello: 'world',
     url: event.svnUrl,
