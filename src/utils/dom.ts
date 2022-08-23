@@ -40,10 +40,18 @@ export function eliminateLevel($: any, selector: string) {
 export function flattenResourceRefs($: any) {
   const refs = $('item resourceref');
 
+  const allItems: any = {};
+
   refs.each((i: any, elem: any) => {
     const id = $(elem).attr('idref');
-    $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
+    if (allItems[id] === undefined) {
+      allItems[id] = true;
+      $(elem).parent().replaceWith(`<item idref="${id}"></item>`);
+    } else {
+      $(elem).parent().replaceWith(`<duplicate></duplicate>`);
+    }
   });
+  $('duplicate').remove();
 }
 
 // Utility function that allows determining whether an instance of a mixed type element (e.g. formula) is
