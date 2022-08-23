@@ -191,6 +191,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
     parser.on('closetag', (tag: string) => {
       if (isInline(tag)) {
         inlines.pop();
+
         return;
       }
 
@@ -367,7 +368,9 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
       top().children.push(object);
     });
     parser.on('cdata', (cdata: string) => {
-      top().children.push({ text: cdata });
+      const text = cdata;
+      const object: any = Object.assign({}, { text }, inlinesToObject(inlines));
+      top().children.push(object);
     });
 
     parser.on('finish', () => {
