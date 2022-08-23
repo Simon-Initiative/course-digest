@@ -107,6 +107,13 @@ function toActivity(
 ) {
   const id = guid();
 
+  const partIds: any[] = content.authoring.parts.map((p: any) => p.id);
+
+  const objectives = partIds.reduce((m: any, id: any) => {
+    m[id] = [];
+    return m;
+  }, {});
+
   return {
     type: 'Activity',
     id,
@@ -115,7 +122,7 @@ function toActivity(
     tags: [],
     unresolvedReferences: [],
     content,
-    objectives: [],
+    objectives,
     legacyId,
     subType,
     warnings: [],
