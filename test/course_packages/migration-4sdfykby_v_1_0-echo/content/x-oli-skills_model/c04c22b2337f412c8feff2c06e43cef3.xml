@@ -7,4 +7,10 @@
 	<skill id="cd6bb81e2b0f4705ac48346f36bfda52">
 		Default skill
 	</skill>
+  <skill id="my-skill">
+		My skill
+	</skill>
+  <skill id="existing">
+		Existing skill
+	</skill>
 </skills>

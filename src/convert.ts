@@ -126,6 +126,14 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     }
   });
 
+  const byObjectiveId = createMap('objective');
+  m.objectives.forEach((a: Magic.SpreadsheetObjective) => {
+    const objective = byObjectiveId[a.id];
+    if (objective !== undefined) {
+      objective.objectives = [...objective.objectives, ...a.skillIds];
+    }
+  });
+
   return [
     ...resources,
     ...createOrUpdate('skill', m.skills),

@@ -29,6 +29,7 @@ export class Objectives extends Resource {
         type: 'Objective',
         id,
         parentId,
+        originalType: 'objective',
         parameters: {
           category: attr($, elem, 'category', null),
           process: attr($, elem, 'process', null),

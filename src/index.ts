@@ -33,6 +33,7 @@ const optionDefinitions = [
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
   { name: 'mediaUrlPrefix', type: String },
+  { name: 'spreadsheetPath', type: String },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {

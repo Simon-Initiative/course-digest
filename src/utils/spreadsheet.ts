@@ -96,8 +96,8 @@ function extractLORefs(
         parameters: {
           lowOpportunity: false,
           minPractice: 2,
-          lowCutoff: 3.5,
-          moderateCutoff: 7.0,
+          mediumMastery: 3.5,
+          highMastery: 7.0,
         },
         skillIds: [],
       };
@@ -131,8 +131,8 @@ function extractLOs(
           parameters: {
             lowOpportunity: false,
             minPractice: 2,
-            lowCutoff: 3.5,
-            moderateCutoff: 7.0,
+            mediumMastery: 3.5,
+            highMastery: 7.0,
           },
           skillIds: [],
         };
@@ -141,8 +141,8 @@ function extractLOs(
       all[id].parameters = {
         lowOpportunity: sheet['B' + row].v !== 'N',
         minPractice: sheet['C' + row].v,
-        lowCutoff: sheet['D' + row].v,
-        moderateCutoff: sheet['E' + row].v,
+        mediumMastery: sheet['D' + row].v,
+        highMastery: sheet['E' + row].v,
       };
       all[id].skillIds = ['F', 'G', 'H', 'I', 'J', 'K']
         .map((col: string) => sheet[col + row])

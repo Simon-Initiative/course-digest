@@ -7,6 +7,9 @@
 	<objective id="c47ac29051ed427984e2b6f76d09fa8e">
 		Default objective
 	</objective>
+  <objective id="existing">
+		Existing objective
+	</objective>
   <objective_skill idref="c47ac29051ed427984e2b6f76d09fa8e">
     <skillref idref="cd6bb81e2b0f4705ac48346f36bfda52"/>
   </objective_skills>
