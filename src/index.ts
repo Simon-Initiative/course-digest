@@ -141,6 +141,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const outputDirectory = options.outputDir;
   const specificOrgId = options.specificOrgId;
   const specificOrg = options.specificOrg;
+  const spreadsheetPath = options.spreadsheetPath;
 
   return executeSerially([
     () => mapResources(packageDirectory),
@@ -187,6 +188,10 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
         updated = Convert.globalizeObjectiveReferences(updated);
         updated = Convert.setGroupPaginationModes(updated);
+
+        if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
+          updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
+        }
 
         return Convert.createProducts(updated, orgPaths, specificOrg).then(
           (updated) => {

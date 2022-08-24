@@ -1,5 +1,6 @@
 import {
   TorusResource,
+  Objective,
   TemporaryContent,
   ResourceType,
   Page,
@@ -14,6 +15,7 @@ import * as DOM from './utils/dom';
 import * as fs from 'fs';
 import * as tmp from 'tmp';
 import { Organization } from './resources/organization';
+import * as Magic from './utils/spreadsheet';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
@@ -40,6 +42,95 @@ export function convert(
 
     return item.translate($);
   });
+}
+
+export function applyMagicSpreadsheet(
+  resources: TorusResource[],
+  spreadsheetPath: string
+): TorusResource[] {
+  const magic = Magic.process(spreadsheetPath);
+
+  if (magic !== null) {
+    return applyMagic(resources, magic);
+  }
+  console.log(
+    'Magic spreadsheet could not be found or is invalid. Check the names of the tabs within the sheet'
+  );
+  process.exit(1);
+}
+
+function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
+  const createMap = (originalType: string) =>
+    resources.reduce((m: any, o) => {
+      if (
+        o.type === 'Objective' &&
+        (o as Objective).originalType === originalType
+      ) {
+        m[(o as Objective).originalId] = o;
+      }
+      return m;
+    }, {});
+
+  const createOrUpdate = (
+    originalType: string,
+    collection: Magic.SpreadsheetObjective[] | Magic.SpreadsheetSkill[]
+  ): TorusResource[] => {
+    const byId = createMap(originalType);
+
+    // Create new or update existing from the skills found in the spreadsheet
+    return (collection as any).reduce((m: any, s: any) => {
+      if (byId[s.id] === undefined) {
+        const newObjective = {
+          type: 'Objective',
+          id: s.id,
+          originalType,
+          parameters: s.parameters,
+          originalFile: '',
+          title: s.title,
+          tags: [],
+          unresolvedReferences: [],
+          content: {},
+          objectives: [],
+          warnings: [],
+        } as TorusResource;
+
+        return [...m, newObjective];
+      } else {
+        const existing = byId[s.id];
+        existing.parameters = s.parameters;
+
+        return m;
+      }
+    }, []);
+  };
+
+  const byActivityId = resources.reduce((m: any, o) => {
+    if (o.type === 'Activity') {
+      m[(o as Activity).legacyId + '@' + o.id] = o;
+    }
+    return m;
+  }, {});
+
+  m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
+    const activity = byActivityId[a.resourceId + '@' + a.questionId];
+    if (activity !== undefined) {
+      const objectives = activity.objectives;
+      if (a.partId === null) {
+        Object.keys(objectives).reduce((m: any, k: string) => {
+          m[k] = a.skillIds;
+          return m;
+        }, {});
+      } else {
+        objectives[a.partId] = a.skillIds;
+      }
+    }
+  });
+
+  return [
+    ...resources,
+    ...createOrUpdate('skill', m.skills),
+    ...createOrUpdate('objective', m.objectives),
+  ];
 }
 
 // For a collection of TorusResources, find all derivative resources
@@ -129,7 +220,9 @@ export function globalizeObjectiveReferences(
   const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {
       m[r.id] = `${r.id}-${r.parentId}`;
+      (r as Objective).originalId = r.id;
       r.id = `${r.id}-${r.parentId}`;
+
       return m;
     }
     return m;

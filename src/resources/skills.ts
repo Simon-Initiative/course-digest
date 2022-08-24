@@ -3,6 +3,13 @@ import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary } from './resource';
 import * as XML from 'src/utils/xml';
 
+function attr($: any, e: any, name: string, defaultValue: any) {
+  if ($(e).attr(name) !== undefined && $(e).attr(name) !== null) {
+    $(e).attr(name);
+  }
+  return defaultValue;
+}
+
 export class Skills extends Resource {
   translate($: any): Promise<(TorusResource | string)[]> {
     const objectives: TorusResource[] = [];
@@ -19,6 +26,13 @@ export class Skills extends Resource {
         type: 'Objective',
         id,
         parentId,
+        originalType: 'skill',
+        parameters: {
+          p: attr($, elem, 'p', 0.7),
+          gamma0: attr($, elem, 'gamma0', 0.7),
+          gamma1: attr($, elem, 'gamma1', 0.7),
+          lambda0: attr($, elem, 'lambda0', 1.0),
+        },
         originalFile: '',
         title,
         tags: [],

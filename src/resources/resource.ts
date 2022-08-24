@@ -57,6 +57,9 @@ export interface PageReference {
 
 export interface Objective {
   id: string;
+  originalId: string;
+  originalType: 'objective' | 'skill';
+  parameters: Record<string, any>;
   title: string;
   children: Objective[];
 }
