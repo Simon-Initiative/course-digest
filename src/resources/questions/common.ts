@@ -9,6 +9,10 @@ export function getChild(collection: any, named: string) {
   return undefined;
 }
 
+export function getChildren(collection: any, named: string) {
+  return collection.filter((e: any) => named == e.type);
+}
+
 export function convertAutoGenResponses(model: any) {
   const autoGens = model.authoring.parts[0].responses.filter(
     (r: any) => r.name !== undefined && r.name.indexOf('AUTOGEN') > -1
@@ -116,6 +120,12 @@ export function getFeedbackModel(response: any) {
     ];
   }
   return ensureParagraphs(response.children[0].children);
+}
+
+export function getPartIds(question: any): string[] {
+  return getChildren(question.children, 'part').map((p: any) =>
+    p.id === undefined ? guid() : p.id
+  );
 }
 
 export function getBranchingTarget(response: any) {

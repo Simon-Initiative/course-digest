@@ -60,7 +60,7 @@ export function applyMagicSpreadsheet(
 }
 
 function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
-  const createMap = (originalType: string) =>
+  const createMap = (originalType: string, resources: TorusResource[]) =>
     resources.reduce((m: any, o) => {
       if (
         o.type === 'Objective' &&
@@ -71,18 +71,21 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
       return m;
     }, {});
 
+  let byObjectiveId = createMap('objective', resources);
+  let bySkillId = createMap('skill', resources);
+
   const createOrUpdate = (
+    byId: any,
     originalType: string,
     collection: Magic.SpreadsheetObjective[] | Magic.SpreadsheetSkill[]
   ): TorusResource[] => {
-    const byId = createMap(originalType);
-
     // Create new or update existing from the skills found in the spreadsheet
     return (collection as any).reduce((m: any, s: any) => {
       if (byId[s.id] === undefined) {
         const newObjective = {
           type: 'Objective',
           id: s.id,
+          originalId: s.id,
           originalType,
           parameters: s.parameters,
           originalFile: '',
@@ -104,41 +107,60 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     }, []);
   };
 
+  const updatedResources = [
+    ...resources,
+    ...createOrUpdate(bySkillId, 'skill', m.skills),
+    ...createOrUpdate(byObjectiveId, 'objective', m.objectives),
+  ];
+
+  byObjectiveId = createMap('objective', updatedResources);
+  bySkillId = createMap('skill', updatedResources);
+
   const byActivityId = resources.reduce((m: any, o) => {
     if (o.type === 'Activity') {
-      m[(o as Activity).legacyId + '@' + o.id] = o;
+      m[o.id] = o;
     }
     return m;
   }, {});
-
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-    const activity = byActivityId[a.resourceId + '@' + a.questionId];
+    const activity = byActivityId[a.resourceId + '-' + a.questionId];
     if (activity !== undefined) {
       const objectives = activity.objectives;
+
+      const mappedSkillIds = a.skillIds.map((id) => {
+        return bySkillId[id].id;
+      });
+
       if (a.partId === null) {
-        Object.keys(objectives).reduce((m: any, k: string) => {
-          m[k] = a.skillIds;
-          return m;
-        }, {});
+        activity.objectives = Object.keys(objectives).reduce(
+          (m: any, k: string) => {
+            m[k] = mappedSkillIds;
+            return m;
+          },
+          {}
+        );
       } else {
-        objectives[a.partId] = a.skillIds;
+        objectives[a.partId] = mappedSkillIds;
       }
+    } else {
+      console.log(
+        `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
+      );
     }
   });
 
-  const byObjectiveId = createMap('objective');
   m.objectives.forEach((a: Magic.SpreadsheetObjective) => {
     const objective = byObjectiveId[a.id];
     if (objective !== undefined) {
-      objective.objectives = [...objective.objectives, ...a.skillIds];
+      const mappedSkillIds = a.skillIds.map((id) => {
+        return bySkillId[id].id;
+      });
+
+      objective.objectives = [...objective.objectives, ...mappedSkillIds];
     }
   });
 
-  return [
-    ...resources,
-    ...createOrUpdate('skill', m.skills),
-    ...createOrUpdate('objective', m.objectives),
-  ];
+  return updatedResources;
 }
 
 // For a collection of TorusResources, find all derivative resources

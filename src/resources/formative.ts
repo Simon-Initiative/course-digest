@@ -61,7 +61,7 @@ function buildMCQPart(question: any) {
   });
 
   const model = {
-    id: '1',
+    id: Common.getPartIds(question)[0],
     responses: r,
     hints: Common.ensureThree(
       hints.map((r: any) => ({
@@ -131,7 +131,7 @@ function buildOrderingPart(question: any) {
   );
 
   return {
-    id: '1',
+    id: Common.getPartIds(question)[0],
     responses: responses.map((r: any) => {
       const id = guid();
       const item: any = {
@@ -301,7 +301,7 @@ function single_response_text(question: any) {
     inputType: 'text',
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
-      parts: [Common.buildTextPart('1', question)],
+      parts: [Common.buildTextPart(Common.getPartIds(question)[0], question)],
       transformations: transformation === undefined ? [] : [transformation],
       previewText: '',
     },

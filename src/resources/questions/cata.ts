@@ -102,7 +102,7 @@ function buildCATAPart(question: any) {
   );
 
   const part = {
-    id: '1',
+    id: Common.getPartIds(question)[0],
     responses: responses.map((r: any) => {
       const id = guid();
       const item: any = {
