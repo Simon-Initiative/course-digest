@@ -60,6 +60,7 @@ export function applyMagicSpreadsheet(
 }
 
 function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
+  // A helper function to create a mapping of original id to resource
   const createMap = (originalType: string, resources: TorusResource[]) =>
     resources.reduce((m: any, o) => {
       if (
@@ -74,6 +75,8 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
   let byObjectiveId = createMap('objective', resources);
   let bySkillId = createMap('skill', resources);
 
+  // Helper function to either update or create TorusResources based off of spreadsheet
+  // equivalents.
   const createOrUpdate = (
     byId: any,
     originalType: string,
@@ -107,12 +110,15 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     }, []);
   };
 
+  // Now lets update and create skills and objectives from the sheets, combining the new resources with
+  // the existing resources into a new array that we will use as the return value
   const updatedResources = [
     ...resources,
     ...createOrUpdate(bySkillId, 'skill', m.skills),
     ...createOrUpdate(byObjectiveId, 'objective', m.objectives),
   ];
 
+  // But first, we need to update activity attachments:
   byObjectiveId = createMap('objective', updatedResources);
   bySkillId = createMap('skill', updatedResources);
 
@@ -131,6 +137,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         return bySkillId[id].id;
       });
 
+      // If no partId specified, apply the skills to all parts present in the activity
       if (a.partId === null) {
         activity.objectives = Object.keys(objectives).reduce(
           (m: any, k: string) => {
@@ -149,6 +156,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     }
   });
 
+  // Finally, update the objective-skill parent-child relationships
   m.objectives.forEach((a: Magic.SpreadsheetObjective) => {
     const objective = byObjectiveId[a.id];
     if (objective !== undefined) {
