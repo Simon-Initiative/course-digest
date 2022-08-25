@@ -161,7 +161,7 @@ describe('convert summative', () => {
             version: 2,
             parts: [
               {
-                id: '1',
+                id: expect.any(String),
                 responses: [
                   {
                     id: expect.any(String),
@@ -240,7 +240,7 @@ describe('convert summative', () => {
             targeted: [],
           },
         },
-        objectives: { '1': [] },
+        objectives: expect.any(Object),
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
         subType: 'oli_multiple_choice',
         imageReferences: [],
@@ -287,7 +287,7 @@ describe('convert summative', () => {
             version: 2,
             parts: [
               {
-                id: '1',
+                id: expect.any(String),
                 responses: [
                   {
                     id: expect.any(String),
@@ -358,7 +358,7 @@ describe('convert summative', () => {
             targeted: [],
           },
         },
-        objectives: { '1': [] },
+        objectives: expect.any(Object),
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
         subType: 'oli_multiple_choice',
         imageReferences: [],

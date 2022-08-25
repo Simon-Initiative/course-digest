@@ -860,7 +860,7 @@ describe('convert feedback', () => {
         authoring: {
           parts: [
             {
-              id: '1',
+              id: expect.any(String),
               responses: [
                 {
                   id: expect.any(String),
@@ -1080,7 +1080,7 @@ describe('convert feedback', () => {
           version: 2,
           parts: [
             {
-              id: '1',
+              id: expect.any(String),
               responses: [
                 {
                   id: expect.any(String),

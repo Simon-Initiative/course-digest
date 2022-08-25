@@ -38,8 +38,8 @@ describe('magic spreadsheet processing', () => {
     expect(specificObjective.parameters).toEqual({
       lowOpportunity: false,
       minPractice: 2,
-      lowCutoff: 1.5,
-      moderateCutoff: 2.5,
+      mediumMastery: 1.5,
+      highMastery: 2.5,
     });
 
     expect(specificObjective.skillIds).toEqual([
