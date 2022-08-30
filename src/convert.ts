@@ -1,5 +1,6 @@
 import {
   TorusResource,
+  Objective,
   TemporaryContent,
   ResourceType,
   Page,
@@ -14,6 +15,7 @@ import * as DOM from './utils/dom';
 import * as fs from 'fs';
 import * as tmp from 'tmp';
 import { Organization } from './resources/organization';
+import * as Magic from './utils/spreadsheet';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
@@ -40,6 +42,133 @@ export function convert(
 
     return item.translate($);
   });
+}
+
+export function applyMagicSpreadsheet(
+  resources: TorusResource[],
+  spreadsheetPath: string
+): TorusResource[] {
+  const magic = Magic.process(spreadsheetPath);
+
+  if (magic !== null) {
+    return applyMagic(resources, magic);
+  }
+  console.log(
+    'Magic spreadsheet could not be found or is invalid. Check the names of the tabs within the sheet'
+  );
+  process.exit(1);
+}
+
+function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
+  // A helper function to create a mapping of original id to resource
+  const createMap = (originalType: string, resources: TorusResource[]) =>
+    resources.reduce((m: any, o) => {
+      if (
+        o.type === 'Objective' &&
+        (o as Objective).originalType === originalType
+      ) {
+        m[(o as Objective).originalId] = o;
+      }
+      return m;
+    }, {});
+
+  let byObjectiveId = createMap('objective', resources);
+  let bySkillId = createMap('skill', resources);
+
+  // Helper function to either update or create TorusResources based off of spreadsheet
+  // equivalents.
+  const createOrUpdate = (
+    byId: any,
+    originalType: string,
+    collection: Magic.SpreadsheetObjective[] | Magic.SpreadsheetSkill[]
+  ): TorusResource[] => {
+    // Create new or update existing from the skills found in the spreadsheet
+    return (collection as any).reduce((m: any, s: any) => {
+      if (byId[s.id] === undefined) {
+        const newObjective = {
+          type: 'Objective',
+          id: s.id,
+          originalId: s.id,
+          originalType,
+          parameters: s.parameters,
+          originalFile: '',
+          title: s.title,
+          tags: [],
+          unresolvedReferences: [],
+          content: {},
+          objectives: [],
+          warnings: [],
+        } as TorusResource;
+
+        return [...m, newObjective];
+      } else {
+        const existing = byId[s.id];
+        existing.parameters = s.parameters;
+
+        return m;
+      }
+    }, []);
+  };
+
+  // Now lets update and create skills and objectives from the sheets, combining the new resources with
+  // the existing resources into a new array that we will use as the return value
+  const updatedResources = [
+    ...resources,
+    ...createOrUpdate(bySkillId, 'skill', m.skills),
+    ...createOrUpdate(byObjectiveId, 'objective', m.objectives),
+  ];
+
+  // But first, we need to update activity attachments:
+  byObjectiveId = createMap('objective', updatedResources);
+  bySkillId = createMap('skill', updatedResources);
+
+  const byActivityId = resources.reduce((m: any, o) => {
+    if (o.type === 'Activity') {
+      m[o.id] = o;
+    }
+    return m;
+  }, {});
+  m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
+    const activity = byActivityId[a.resourceId + '-' + a.questionId];
+    if (activity !== undefined) {
+      const objectives = activity.objectives;
+
+      const mappedSkillIds = a.skillIds.map((id) => {
+        return bySkillId[id].id;
+      });
+
+      // If no partId specified, apply the skills to all parts present in the activity
+      if (a.partId === null) {
+        activity.objectives = Object.keys(objectives).reduce(
+          (m: any, k: string) => {
+            m[k] = mappedSkillIds;
+            return m;
+          },
+          {}
+        );
+      } else {
+        objectives[a.partId] = mappedSkillIds;
+      }
+    } else {
+      console.log(
+        `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
+      );
+    }
+  });
+
+  // Finally, update the objective-skill parent-child relationships
+  m.objectives.forEach((a: Magic.SpreadsheetObjective) => {
+    const objective = byObjectiveId[a.id];
+    if (objective !== undefined) {
+      const mappedSkillIds = a.skillIds.map((id) => {
+        return bySkillId[id].id;
+      });
+
+      objective.objectives = [...objective.objectives, ...mappedSkillIds];
+    }
+  });
+
+  return updatedResources;
 }
 
 // For a collection of TorusResources, find all derivative resources
@@ -129,7 +258,9 @@ export function globalizeObjectiveReferences(
   const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {
       m[r.id] = `${r.id}-${r.parentId}`;
+      (r as Objective).originalId = r.id;
       r.id = `${r.id}-${r.parentId}`;
+
       return m;
     }
     return m;
