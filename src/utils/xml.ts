@@ -37,6 +37,9 @@ function isBlockElement(name: string) {
     ol: true,
     ul: true,
     table: true,
+    dialog: true,
+    definition: true,
+    figure: true,
   };
   return (blocks as any)[name];
 }
@@ -218,6 +221,9 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
         return null;
       };
+      const getAllOfType = (children: any, type: string) => {
+        return children.filter((t: any) => t.type === type);
+      };
 
       const elevatePopoverContent = () => {
         if (tag === 'popup' && top().children.length === 2) {
@@ -307,6 +313,19 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const ensureTextDoesNotLeadBlockElement = (e: string) => {
+        if (tag === e) {
+          if (top() && top().children.length >= 2) {
+            const first = top().children[0];
+            const second = top().children[1];
+
+            if (first.text === ' ' && isBlockElement(second.type)) {
+              top().children = top().children.slice(1);
+            }
+          }
+        }
+      };
+
       const convertTableAttrstoNumbers = () => {
         if (tag === 'td' || tag === 'th') {
           if (top().colspan !== undefined) {
@@ -315,6 +334,56 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
           if (top().rowspan !== undefined) {
             top().rowspan = parseInt(top().rowspan);
           }
+        }
+      };
+
+      const elevateDefinitionComponents = () => {
+        if (tag === 'definition') {
+          const pronunciation = getOneOfType(top().children, 'pronunciation');
+          const translations = getAllOfType(top().children, 'translation');
+          const meanings = getAllOfType(top().children, 'meaning');
+
+          if (pronunciation !== null) {
+            top().pronunciation = pronunciation;
+          }
+          top().meanings = meanings;
+          top().translations = translations;
+          top().children = [];
+        }
+      };
+
+      const moveMediaItem = (kind: string) => {
+        const item = getOneOfType(top().children, kind);
+        if (item !== null) {
+          // This repositions the media item as the sibling ahead of the
+          // just parsed dialog
+          if (stack.length > 1) {
+            const previousParent = stack[stack.length - 2];
+            previousParent.children.splice(
+              previousParent.children.length - 1,
+              0,
+              item
+            );
+          }
+        }
+      };
+
+      const elevateDialogComponents = () => {
+        if (tag === 'dialog') {
+          const speakers = getAllOfType(top().children, 'speaker');
+          const lines = getAllOfType(top().children, 'dialog-line');
+
+          speakers.forEach((s: any) => (s.children = []));
+
+          moveMediaItem('audio');
+          moveMediaItem('video');
+          moveMediaItem('youtube');
+          moveMediaItem('image');
+          moveMediaItem('iframe');
+
+          top().speakers = speakers;
+          top().lines = lines;
+          top().children = [];
         }
       };
 
@@ -338,6 +407,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureTextDoesNotSurroundBlockElement('td');
         ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');
+        elevateCaption('figure');
         elevateCaption('iframe');
         elevateCaption('youtube');
         elevateTableCaption();
@@ -348,6 +418,11 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         setTransformationData();
         setVideoAttributes();
         convertTableAttrstoNumbers();
+        elevateDefinitionComponents();
+        elevateDialogComponents();
+        ensureTextDoesNotSurroundBlockElement('figure');
+        ensureTextDoesNotLeadBlockElement('figure');
+        ensureTextDoesNotSurroundBlockElement('figure');
 
         if (top() && top().children === undefined) {
           top().children = [];

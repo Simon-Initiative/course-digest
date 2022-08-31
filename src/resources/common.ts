@@ -63,6 +63,8 @@ export function addWarning(
 }
 
 export function standardContentManipulations($: any) {
+  DOM.rename($, 'definition term', 'definition-term');
+
   // Convert all inline markup elements to <em> tags, this
   // greatly simplifies downstream conversionto JSON
   $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
@@ -168,6 +170,7 @@ export function standardContentManipulations($: any) {
   });
 
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
+  DOM.renameAttribute($, 'pronunciation', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
   $('video').each((i: any, item: any) => {
     const src = $(item).attr('src');
@@ -182,9 +185,60 @@ export function standardContentManipulations($: any) {
   handleFormulaMathML($);
   sideBySideMaterials($);
   handleInquiry($);
+  handleDefinitions($);
+  handleFigures($);
+  handleDialogs($);
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleDialogs($: any) {
+  DOM.stripElement($, 'line material');
+  DOM.stripElement($, 'line translation');
+  DOM.rename($, 'line', 'dialog-line');
+
+  $('speaker img').each((i: any, elem: any) => {
+    $(elem).parent().attr('src', $(elem).attr('src'));
+    $(elem).remove();
+  });
+
+  $('speaker').each((i: any, elem: any) => {
+    $(elem).attr('name', $(elem).text());
+  });
+
+  const items = $('dialog');
+  items.each((i: any, elem: any) => {
+    const title = $(elem).children('title').text();
+    $(elem).children().remove('title');
+
+    if (title) {
+      $(elem).attr('title', title);
+    }
+  });
+}
+
+function handleDefinitions($: any) {
+  $('definition title').remove();
+
+  $('definition').each((i: any, elem: any) => {
+    const term = $(elem).children('definition-term').text();
+    $(elem).children().remove('definition-term');
+    $(elem).attr('term', term);
+  });
+}
+
+function handleFigures($: any) {
+  const items = $('figure');
+
+  items.each((i: any, elem: any) => {
+    const title = $(elem).children('title').html();
+    $(elem).children().remove('title');
+
+    if (title) {
+      $(elem).attr('title', title);
+    }
+  });
 }
 
 function handleInquiry($: any) {

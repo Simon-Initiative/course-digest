@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:theme="http://oli.web.cmu.edu/presentation/" xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="definitions">
+	<head>
+		<title>
+			Definitions
+		</title>
+	</head>
+	<body>
+		<p>A full definition</p>
+
+    <definition>
+      <title>With a title</title>
+      <term>the <em>term</em></term>
+      <pronunciation src="../webcontent/sample-3s.mp3" type="audio/mpeg">pronunciation <em>with markup</em></pronunciation>
+      <translation>translation 1 <em>with markup</em></translation>
+      <translation>translation 2 <em>with markup</em></translation>
+      <meaning>meaning 1 <em>with markup</em></meaning>
+      <meaning>meaning 2 <em>with markup</em></meaning>
+    </definition>
+
+	</body>
+</workbook_page>
