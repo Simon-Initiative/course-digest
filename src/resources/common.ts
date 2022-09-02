@@ -186,7 +186,6 @@ export function standardContentManipulations($: any) {
   sideBySideMaterials($);
   handleInquiry($);
   handleDefinitions($);
-  handleFigures($);
   handleDialogs($);
 
   DOM.rename($, 'li formula', 'formula_inline');
@@ -196,10 +195,10 @@ export function standardContentManipulations($: any) {
 function handleDialogs($: any) {
   DOM.stripElement($, 'line material');
   DOM.stripElement($, 'line translation');
-  DOM.rename($, 'line', 'dialog-line');
+  DOM.rename($, 'line', 'dialog_line');
 
   $('speaker img').each((i: any, elem: any) => {
-    $(elem).parent().attr('src', $(elem).attr('src'));
+    $(elem).parent().attr('image', $(elem).attr('src'));
     $(elem).remove();
   });
 
@@ -225,19 +224,6 @@ function handleDefinitions($: any) {
     const term = $(elem).children('definition-term').text();
     $(elem).children().remove('definition-term');
     $(elem).attr('term', term);
-  });
-}
-
-function handleFigures($: any) {
-  const items = $('figure');
-
-  items.each((i: any, elem: any) => {
-    const title = $(elem).children('title').html();
-    $(elem).children().remove('title');
-
-    if (title) {
-      $(elem).attr('title', title);
-    }
   });
 }
 

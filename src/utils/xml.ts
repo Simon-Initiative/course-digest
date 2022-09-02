@@ -214,6 +214,16 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const ensureParagraph = (e: string) => {
+        if (tag === e) {
+          if (top() && top().children.length > 0) {
+            if (top().children.every((e: any) => e.text !== undefined)) {
+              top().children = [{ type: 'p', children: top().children }];
+            }
+          }
+        }
+      };
+
       const getOneOfType = (children: any, type: string) => {
         const results = children.filter((t: any) => t.type === type);
         if (results.length > 0) {
@@ -371,7 +381,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
       const elevateDialogComponents = () => {
         if (tag === 'dialog') {
           const speakers = getAllOfType(top().children, 'speaker');
-          const lines = getAllOfType(top().children, 'dialog-line');
+          const lines = getAllOfType(top().children, 'dialog_line');
 
           speakers.forEach((s: any) => (s.children = []));
 
@@ -384,6 +394,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
           top().speakers = speakers;
           top().lines = lines;
           top().children = [];
+        }
+      };
+
+      const renameCaptionForFigure = () => {
+        if (tag === 'figure') {
+          if (top().caption !== null && top().caption !== undefined) {
+            top().title = top().caption;
+            delete top().caption;
+          }
         }
       };
 
@@ -423,6 +442,11 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureTextDoesNotSurroundBlockElement('figure');
         ensureTextDoesNotLeadBlockElement('figure');
         ensureTextDoesNotSurroundBlockElement('figure');
+        renameCaptionForFigure();
+        ensureNotEmpty('translation');
+        ensureNotEmpty('pronunciation');
+        ensureParagraph('translation');
+        ensureParagraph('pronunciation');
 
         if (top() && top().children === undefined) {
           top().children = [];
