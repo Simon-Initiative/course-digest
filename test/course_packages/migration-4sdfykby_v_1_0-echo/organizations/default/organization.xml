@@ -83,6 +83,15 @@
                     <item id="bca2e88dad983a62dd6ddd99" scoring_mode="default">
                       <resourceref idref="inquiry" />
                     </item>
+                    <item id="bca2s99" scoring_mode="default">
+                      <resourceref idref="definitions" />
+                    </item>
+                    <item id="bca2a2dd6ddd99" scoring_mode="default">
+                      <resourceref idref="figures" />
+                    </item>
+                    <item id="bca2a2dad6ddd99" scoring_mode="default">
+                      <resourceref idref="dialog" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>
