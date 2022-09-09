@@ -103,7 +103,8 @@ export class Feedback extends Resource {
     const page: Page = {
       type: 'Page',
       id: '',
-      originalFile: '',
+      legacyPath: '',
+      legacyId: '',
       title: '',
       tags: [],
       unresolvedReferences: [],

@@ -34,6 +34,7 @@ const optionDefinitions = [
   { name: 'specificOrgId', type: String },
   { name: 'mediaUrlPrefix', type: String },
   { name: 'spreadsheetPath', type: String },
+  { name: 'svnRoot', type: String },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
@@ -41,6 +42,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   mediaManifest: string;
   outputDir: string;
   inputDir: string;
+  svnRoot: string;
   specificOrg: string;
   specificOrgId: string;
   mediaUrlPrefix: string;
@@ -49,6 +51,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
 interface ConvertedResults {
   packageDirectory: string;
   outputDirectory: string;
+  svnRoot: string;
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
@@ -140,6 +143,7 @@ function uploadAction(options: CmdOptions) {
 export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
+  const svnRoot = options.svnRoot;
   const specificOrgId = options.specificOrgId;
   const specificOrg = options.specificOrg;
   const spreadsheetPath = options.spreadsheetPath;
@@ -189,6 +193,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
         updated = Convert.globalizeObjectiveReferences(updated);
         updated = Convert.setGroupPaginationModes(updated);
+        updated = Convert.relativizeLegacyPaths(updated, svnRoot);
 
         if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
           updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
@@ -207,6 +212,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
               return Promise.resolve({
                 packageDirectory,
                 outputDirectory,
+                svnRoot,
                 hierarchy,
                 finalResources: updated,
                 mediaItems,
@@ -222,6 +228,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 function writeConvertedResults({
   packageDirectory,
   outputDirectory,
+  svnRoot,
   hierarchy,
   finalResources,
   mediaItems,
@@ -229,6 +236,7 @@ function writeConvertedResults({
   return Convert.output(
     packageDirectory,
     outputDirectory,
+    svnRoot,
     hierarchy,
     finalResources,
     mediaItems

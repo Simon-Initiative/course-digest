@@ -383,7 +383,7 @@ export function toActivity(
   const activity: Activity = {
     type: 'Activity',
     id: '',
-    originalFile: baseFileName,
+    legacyPath: baseFileName,
     title: '',
     tags: [],
     unresolvedReferences: [],
@@ -667,7 +667,7 @@ export function processAssessmentModel(
       items.push({
         type: 'TemporaryContent',
         id: content.id,
-        originalFile: '',
+        legacyPath: '',
         title: '',
         tags: [],
         unresolvedReferences: [],

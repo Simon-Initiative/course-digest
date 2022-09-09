@@ -88,10 +88,11 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         const newObjective = {
           type: 'Objective',
           id: s.id,
+          legacyPath: '',
+          legacyId: s.id,
           originalId: s.id,
           originalType,
           parameters: s.parameters,
-          originalFile: '',
           title: s.title,
           tags: [],
           unresolvedReferences: [],
@@ -479,6 +480,22 @@ export function updateNonDirectImageReferences(
   });
 }
 
+export function relativizeLegacyPaths(
+  resources: TorusResource[],
+  svnRoot: string
+): TorusResource[] {
+  const lastSvnDir = svnRoot.substring(svnRoot.lastIndexOf('/') + 1);
+  return resources.map((r: TorusResource) => {
+    const { legacyPath } = r;
+    if (legacyPath !== null && legacyPath !== undefined && legacyPath !== '') {
+      r.legacyPath = r.legacyPath.substring(
+        r.legacyPath.indexOf(lastSvnDir) + lastSvnDir.length
+      );
+    }
+    return r;
+  });
+}
+
 export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   const tags: any = {};
 
@@ -488,7 +505,8 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
         if (tags[t] === undefined) {
           tags[t] = {
             type: 'Tag',
-            originalFile: null,
+            legacyPath: null,
+            legacyId: t,
             id: t,
             title: `Legacy Pool: ${t}`,
             tags: [],
@@ -575,13 +593,14 @@ function setGroupPaginationModesForPageHelper(item: any, items: any) {
 export function output(
   courseDirectory: string,
   outputDirectory: string,
+  svnRoot: string,
   hierarchy: TorusResource,
   converted: TorusResource[],
   mediaItems: Media.MediaItem[]
 ) {
   return executeSerially([
     () => wipeAndCreateOutput(outputDirectory),
-    () => outputManifest(courseDirectory, outputDirectory),
+    () => outputManifest(courseDirectory, outputDirectory, svnRoot),
     () => outputHierarchy(outputDirectory, hierarchy),
     () => outputMediaManifest(outputDirectory, mediaItems),
     ...converted.map((r) => () => outputResource(outputDirectory, r)),
@@ -618,7 +637,11 @@ async function wipeAndCreateOutput(outputDir: string) {
   );
 }
 
-function outputManifest(courseDir: string, outputDirectory: string) {
+function outputManifest(
+  courseDir: string,
+  outputDirectory: string,
+  svnRoot: string
+) {
   const $ = DOM.read(`${courseDir}/content/package.xml`);
   const title = $('package title').text();
   const description = $('package description').text();
@@ -626,6 +649,7 @@ function outputManifest(courseDir: string, outputDirectory: string) {
   const manifest = {
     title,
     description,
+    svnRoot,
     type: 'Manifest',
   };
 

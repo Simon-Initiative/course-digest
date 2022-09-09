@@ -12,7 +12,8 @@ export class Other extends Resource {
       {
         type: 'Unknown',
         id: '',
-        originalFile: '',
+        legacyPath: '',
+        legacyId: '',
         title: '',
         tags: [],
         unresolvedReferences: [],

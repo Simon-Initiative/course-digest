@@ -41,7 +41,8 @@ export class WorkbookPage extends Resource {
     const page: Page = {
       type: 'Page',
       id: '',
-      originalFile: '',
+      legacyPath: this.file,
+      legacyId: '',
       title: '',
       tags: [],
       unresolvedReferences: [],
@@ -108,6 +109,7 @@ export class WorkbookPage extends Resource {
           );
 
           page.id = r.children[0].id;
+          page.legacyId = page.id;
 
           if (page.objectives === []) {
             page.objectives = r.children[0].children[0].children.map(
