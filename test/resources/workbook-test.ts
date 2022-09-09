@@ -18,7 +18,8 @@ describe('convert workbook', () => {
       {
         type: 'Page',
         id: 'welcome',
-        originalFile: '',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
         title: 'Welcome!',
         tags: [],
         warnings: [],
@@ -115,7 +116,8 @@ describe('convert workbook', () => {
       {
         type: 'Bibentry',
         id: expect.any(String),
-        originalFile: '',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
         title:
           '"The amygdala and the emotions." In Anatomy of the Mind (chap. 9)',
         tags: [],
@@ -128,7 +130,8 @@ describe('convert workbook', () => {
       {
         type: 'Bibentry',
         id: expect.any(String),
-        originalFile: '',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
         title:
           'Preliminary analysis of functions of the temporal lobes in monkeys',
         tags: [],
@@ -141,7 +144,8 @@ describe('convert workbook', () => {
       {
         type: 'Bibentry',
         id: expect.any(String),
-        originalFile: '',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
         title:
           'Long-term potentiation in the amygdala: A cellular mechanism of fear learning and memory',
         tags: [],
