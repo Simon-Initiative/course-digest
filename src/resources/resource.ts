@@ -35,7 +35,8 @@ export type TorusResourceType =
 
 export interface TorusResource {
   type: string;
-  originalFile: string;
+  legacyPath: string;
+  legacyId: string;
   id: string;
   parentId?: string;
   title: string;

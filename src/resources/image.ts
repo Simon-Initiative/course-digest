@@ -196,13 +196,13 @@ function toActivity(content: any) {
   return {
     type: 'Activity',
     id,
-    originalFile: '',
+    legacyPath: '',
+    legacyId: id,
     title: 'Image coding activity',
     tags: [],
     unresolvedReferences: [],
     content,
     objectives: [],
-    legacyId: id,
     subType: 'oli_image_coding',
   };
 }

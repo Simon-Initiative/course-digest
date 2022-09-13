@@ -58,7 +58,8 @@ export function convertBibliographyEntries(
     const b = {
       type: 'Bibentry',
       id: guid(),
-      originalFile: '',
+      legacyPath: '',
+      legacyId: '',
       title,
       tags: [],
       unresolvedReferences: [],

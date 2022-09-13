@@ -193,7 +193,8 @@ describe('convert feedback', () => {
     expect(page).toStrictEqual({
       type: 'Page',
       id: 'pre_course_student_survey',
-      originalFile: '',
+      legacyPath: expect.any(String),
+      legacyId: expect.any(String),
       title: 'Pre-Course Student Survey',
       tags: [],
       unresolvedReferences: [],
@@ -256,7 +257,7 @@ describe('convert feedback', () => {
     expect(activity1_likert).toStrictEqual({
       type: 'Activity',
       id: expect.stringContaining('pre_course_student_survey-'),
-      originalFile: file,
+      legacyPath: file,
       title: '',
       tags: [],
       warnings: [],
@@ -377,7 +378,7 @@ describe('convert feedback', () => {
     expect(activity2_likert).toStrictEqual({
       type: 'Activity',
       id: expect.stringContaining('pre_course_student_survey-'),
-      originalFile: file,
+      legacyPath: file,
       title: '',
       tags: [],
       warnings: [],
@@ -680,7 +681,7 @@ describe('convert feedback', () => {
     expect(activity3_likert).toStrictEqual({
       type: 'Activity',
       id: expect.stringContaining('pre_course_student_survey-'),
-      originalFile: file,
+      legacyPath: file,
       title: '',
       tags: [],
       warnings: [],
@@ -834,7 +835,7 @@ describe('convert feedback', () => {
     expect(activity4_single_response).toStrictEqual({
       type: 'Activity',
       id: 'pre_course_student_survey-gender',
-      originalFile: file,
+      legacyPath: file,
       title: '',
       tags: [],
       unresolvedReferences: [],
@@ -911,7 +912,7 @@ describe('convert feedback', () => {
     expect(activity5_multiple_choice).toStrictEqual({
       type: 'Activity',
       id: 'pre_course_student_survey-race',
-      originalFile: file,
+      legacyPath: file,
       title: '',
       tags: [],
       warnings: [],

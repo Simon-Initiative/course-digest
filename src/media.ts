@@ -90,7 +90,7 @@ export function transformToFlatDirectoryURLReferences(
   assetReferences.forEach((item: any) => {
     // Flatten this file reference into our single, virtual directory
     const { assetReference, originalReference } = item;
-    const ref = { filePath: activity.originalFile, assetReference };
+    const ref = { filePath: activity.legacyPath, assetReference };
     const url = flatten(ref, summary);
 
     // Update the URL in the XML DOM

@@ -18,7 +18,8 @@ describe('convert summative', () => {
       {
         type: 'Page',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
-        originalFile: '',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
         title: 'Inline Summative Assessment',
         tags: [],
         unresolvedReferences: [],
@@ -75,7 +76,7 @@ describe('convert summative', () => {
       {
         type: 'TemporaryContent',
         id: expect.any(String),
-        originalFile: '',
+        legacyPath: expect.any(String),
         title: '',
         tags: [],
         unresolvedReferences: [],
@@ -112,7 +113,7 @@ describe('convert summative', () => {
       {
         type: 'Activity',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-newc72f87db5a5543b5ae8582d2d4cd34a7_1a',
-        originalFile: file,
+        legacyPath: expect.any(String),
         title: '',
         tags: [],
         unresolvedReferences: [],
@@ -253,7 +254,7 @@ describe('convert summative', () => {
       {
         type: 'Activity',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-e652695935d04ce089f473330345ecf5',
-        originalFile: file,
+        legacyPath: expect.any(String),
         title: '',
         tags: [],
         unresolvedReferences: [],

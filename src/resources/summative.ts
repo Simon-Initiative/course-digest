@@ -68,7 +68,8 @@ export class Summative extends Resource {
     const page: Page = {
       type: 'Page',
       id: '',
-      originalFile: '',
+      legacyPath: this.file,
+      legacyId: '',
       title: '',
       tags: [],
       unresolvedReferences: [],
@@ -107,6 +108,7 @@ export class Summative extends Resource {
             );
 
           page.id = r.children[0].id;
+          page.legacyId = r.children[0].id;
           page.objectives = r.children[0].children[0].children.map(
             (o: any) => o.idref
           );

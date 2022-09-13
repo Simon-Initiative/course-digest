@@ -44,7 +44,8 @@ export class Superactivity extends Resource {
               const page: Page = {
                 type: 'Page',
                 id: legacyId,
-                originalFile: '',
+                legacyPath: '',
+                legacyId,
                 title,
                 tags: [],
                 unresolvedReferences: [],
@@ -117,7 +118,7 @@ function toActivity(
   return {
     type: 'Activity',
     id,
-    originalFile: '',
+    legacyPath: '',
     title,
     tags: [],
     unresolvedReferences: [],

@@ -50,7 +50,8 @@ export class Organization extends Resource {
     const h: Hierarchy = {
       type: 'Hierarchy',
       id: '',
-      originalFile: '',
+      legacyPath: '',
+      legacyId: '',
       title: '',
       tags: [],
       unresolvedReferences: [],
@@ -72,7 +73,8 @@ export class Organization extends Resource {
     const h: Hierarchy = {
       type: 'Hierarchy',
       id: '',
-      originalFile: '',
+      legacyPath: '',
+      legacyId: '',
       title: '',
       tags: [],
       unresolvedReferences: [],
