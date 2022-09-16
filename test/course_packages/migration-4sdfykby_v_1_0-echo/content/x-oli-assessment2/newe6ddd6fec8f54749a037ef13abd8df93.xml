@@ -18,6 +18,29 @@
 				Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.
 			</p>
 		</content>
+    <numeric id="q2">
+      <body>
+          <p>Record the density of each solution.</p>
+          <p>Density of Alcohol Solution A: <input_ref input="ans1"/> g/mL </p>
+          <p>Density of Alcohol Solution B: <input_ref input="ans2"/> g/mL </p>
+      </body>
+      <part>
+          <response input="ans1" match="[0.97,0.98]" score="10">
+              <feedback>Correct. </feedback>
+          </response>
+          <response input="ans1" match="*">
+              <feedback>Incorrect. </feedback>
+          </response>
+      </part>
+      <part>
+          <response input="ans2" match="[0.91,0.92]" score="10">
+              <feedback>Correct. </feedback>
+          </response>
+          <response input="ans2" match="*">
+              <feedback>Incorrect. </feedback>
+          </response>
+      </part>
+  </numeric>
 		<multiple_choice id="newe6ddd6fec8f54749a037ef13abd8df93_1a" grading="automatic" select="single">
 			<body>
 				<p id="cf1293ee77c049cd8ef9458213523f74">

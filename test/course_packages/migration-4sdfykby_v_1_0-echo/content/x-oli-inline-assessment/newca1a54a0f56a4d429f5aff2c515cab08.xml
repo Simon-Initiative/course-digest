@@ -10,6 +10,226 @@
             </p>
             <p id="f82a7495c6fb4ee9bbc7235f6e5e7278">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p>
         </content>
+        <question id="weird-no-score">
+
+          <body>
+              <p>17.5 gal
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input_ref
+                      input="q1numeric"/><input_ref input="first"
+                      />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input_ref
+                      input="q3numeric"/><input_ref input="third"/></p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <image src="../webcontent/multiply.png" width="40"/>
+                  <image src="../webcontent/multi_line.png" width="300"/>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<image
+                      src="../webcontent/multiply.png" width="40"/><image
+                      src="../webcontent/multi_line.png" width="300"/>
+              </p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input_ref
+                      input="q2numeric"/><input_ref input="second"
+                      />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input_ref
+                      input="q4numeric"/><input_ref input="four"/></p>
+          </body>
+          <numeric id="q1numeric" size="small"/>
+          <numeric id="q2numeric" size="small"/>
+          <numeric id="q3numeric" size="small"/>
+          <numeric id="q4numeric" size="small"/>
+          <fill_in_the_blank id="first" shuffle="false">
+              <choice value="A">mL </choice>
+              <choice value="B">L</choice>
+              <choice value="C">gal</choice>
+
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="second" shuffle="false">
+              <choice value="A">mL </choice>
+              <choice value="B">L</choice>
+              <choice value="C">gal</choice>
+
+          </fill_in_the_blank>
+          <fill_in_the_blank id="third" shuffle="false">
+              <choice value="A">mL </choice>
+              <choice value="B">L</choice>
+              <choice value="C">gal</choice>
+
+          </fill_in_the_blank>
+          <fill_in_the_blank id="four" shuffle="false">
+              <choice value="A">mL </choice>
+              <choice value="B">L</choice>
+              <choice value="C">gal</choice>
+
+          </fill_in_the_blank>
+
+
+
+          <part id="first" score_out_of="1">
+              <response match="A" input="first" score="0">
+                  <feedback>Incorrect. The first step is to convert from gal to L. </feedback>
+              </response>
+              <response match="B" input="first" score="1">
+                  <feedback>Correct. The first step is to convert from gal to L. </feedback>
+              </response>
+              <response match="C" input="first" score="0">
+                  <feedback>Incorrect. The first step is to convert from gal to L. </feedback>
+              </response>
+
+
+          </part>
+
+
+          <part id="second" score_out_of="1">
+              <response match="A" input="second" score="0">
+                  <feedback>Incorrect. You want the gal unit to cancel.</feedback>
+              </response>
+              <response match="B" input="second" score="0">
+                  <feedback>Incorrect. You want the gal unit to cancel. </feedback>
+              </response>
+              <response match="C" input="second" score="1">
+                  <feedback>Correct. You want the gal unit to cancel.</feedback>
+              </response>
+
+          </part>
+          <part id="third" score_out_of="1">
+              <response match="A" input="third" score="1">
+                  <feedback>Correct. The final step is to convert from L to mL.</feedback>
+              </response>
+              <response match="B" input="third" score="0">
+                  <feedback>Incorrect. The final step is to convert from L to mL. </feedback>
+              </response>
+              <response match="C" input="third" score="0">
+                  <feedback>Incorrect. The final step is to convert from L to mL.</feedback>
+              </response>
+
+          </part>
+          <part id="four" score_out_of="1">
+              <response match="A" input="four" score="0">
+                  <feedback>Incorrect. You want the L unit to cancel.</feedback>
+              </response>
+              <response match="B" input="four" score="1">
+                  <feedback>Correct. You want the L unit to cancel. </feedback>
+              </response>
+              <response match="C" input="four" score="0">
+                  <feedback>Incorrect. You want the L unit to cancel.</feedback>
+              </response>
+
+          </part>
+          <part>
+              <response match="[3.78,3.79]" score="10" input="q1numeric">
+                  <feedback>Correct. 1 gal = 3.785 L </feedback>
+              </response>
+              <response match="*" input="q1numeric">
+                  <feedback>Incorrect. 1 gal = 3.785 L </feedback>
+              </response>
+
+          </part>
+          <part>
+              <response match="1" score="10" input="q2numeric">
+                  <feedback>Correct. 1 gal = 3.785 L </feedback>
+              </response>
+              <response match="*" input="q2numeric">
+                  <feedback>Incorrect. 1 gal = 3.785 L </feedback>
+              </response>
+
+          </part>
+          <part>
+              <response match="1000" score="10" input="q3numeric">
+                  <feedback>Correct. 1 L = 1000 mL </feedback>
+              </response>
+              <response match="*" input="q3numeric">
+                  <feedback>Incorrect. 1 L = 1000 mL </feedback>
+              </response>
+
+          </part>
+          <part>
+              <response match="1" score="10" input="q4numeric">
+                  <feedback>Correct. 1 L = 1000 mL </feedback>
+              </response>
+              <response match="*" input="q4numeric">
+                  <feedback>Incorrect. 1 L = 1000 mL </feedback>
+              </response>
+
+          </part>
+
+
+      </question>
+        <question id="multiple-dropdowns">
+          
+          <body>
+              
+              <p>A hot metal bar is put into a cup of cool water. What are the signs of <em style="italic">q</em>?</p>
+              
+              <p><em style="italic">q</em><sub>water</sub> is <input_ref input="first"/> </p>
+              
+              <p><em style="italic">q</em><sub>bar</sub> is <input_ref
+              input="second"/></p> </body>
+          
+          <fill_in_the_blank id="first" shuffle="false">
+              <choice value="A">positive </choice>
+              <choice value="B">negative</choice>
+              
+          </fill_in_the_blank>
+          
+          <fill_in_the_blank id="second" shuffle="false">
+              <choice value="A">positive</choice>
+              <choice value="B">negative</choice>
+             
+          </fill_in_the_blank>
+          
+         
+          
+          <part id="first" score_out_of="1">
+              <response match="A" input="first" score="1">
+                  <feedback>Correct. The cool water gains heat, which means its energy is increasing.</feedback>
+              </response>
+              <response match="B" input="first" score="0">
+                  <feedback>Incorrect. The cool water gains heat, which means its energy is increasing.</feedback>
+              </response>
+             
+              
+          </part>
+          
+          
+          <part id="second" score_out_of="1">
+              <response match="A" input="second" score="0">
+                  <feedback>Incorrect.The hot metal loses heat, which means its energy is decreasing.</feedback>
+              </response>
+              <response match="B" input="second" score="1">
+                  <feedback>Correct. The hot metal loses heat, which means its energy is decreasing.</feedback>
+              </response>
+            
+              
+          </part>
+          
+        
+      </question>
+        <question id="q18">
+            
+          <body>
+              Have your students provided any feedback about using OLI in your course this week?
+              
+              <input_ref input="one"/> </body>
+          
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">yes</choice>
+              <choice value="B">no</choice>
+              
+          </fill_in_the_blank>
+          
+          
+          
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+              
+              
+          </part>
+          
+          
+          
+          
+      </question>
         <question id="q3">
           <!--LO:-->
           <body>
