@@ -425,6 +425,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('li');
         ensureNotEmpty('formula');
         ensureNotEmpty('callout');
+        ensureNotEmpty('formula_inline');
+        ensureNotEmpty('callout_inline');
         ensureTextDoesNotSurroundBlockElement('td');
         ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');

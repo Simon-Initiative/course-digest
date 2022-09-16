@@ -92,12 +92,16 @@ export function buildStem(
   };
 }
 
-export function buildChoices(question: any, from = 'fill_in_the_blank') {
+export function buildChoices(
+  question: any,
+  partId: string,
+  from = 'fill_in_the_blank'
+) {
   const choices = Common.getChild(question.children, from).children;
 
   return choices.map((c: any) => ({
     content: c.children,
-    id: c.value,
+    id: partId + '_' + c.value,
   }));
 }
 
@@ -117,7 +121,7 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
     part = buildDropdownPart(p, i);
     input.inputType = 'dropdown';
 
-    choices = buildChoices({ children: [item] }, 'fill_in_the_blank');
+    choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);
 
     if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
@@ -159,9 +163,18 @@ function collectItemsParts(question: any) {
     );
   });
 
-  const parts = question.children.filter((c: any) => {
+  const originalParts = question.children.filter((c: any) => {
     return c.type === 'part';
   });
+
+  const partsByFirstReponseInput = originalParts.reduce((m: any, p: any) => {
+    const firstInput = p.children.filter((p: any) => p.type === 'response')[0]
+      .input;
+    m[firstInput] = p;
+    return m;
+  }, {});
+
+  const parts = items.map((item: any) => partsByFirstReponseInput[item.id]);
 
   return { items, parts };
 }
@@ -186,7 +199,7 @@ function buildDropdownPart(part: any, _i: number) {
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: `input like {${m}}`,
+        rule: m === '.*' ? `input like {${m}}` : `input like {${id + '_' + m}}`,
         legacyMatch: m,
         feedback: {
           id: guid(),

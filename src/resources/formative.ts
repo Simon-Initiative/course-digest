@@ -481,6 +481,30 @@ export function determineSubType(question: any): ItemTypes {
     return 'oli_likert';
   }
 
+  // Handle the case where the original question was a multi-input type but it did not
+  // specify any '<input>' elements.  In thise case we restore its orginal type and we
+  // create enough input elements (of the correct type) to allow it to convert correctly.
+  if (
+    question.originalType !== undefined &&
+    Common.getChild(question.children, 'numeric') === undefined &&
+    Common.getChild(question.children, 'text') === undefined &&
+    Common.getChild(question.children, 'fill_in_the_blank') === undefined &&
+    Common.getChildren(question.children, 'part').length > 1
+  ) {
+    const parts = Common.getChildren(question.children, 'part');
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const firstResponse = Common.getChild(part.children, 'response');
+      question.children.push({
+        type: question.originalType,
+        id: firstResponse.input,
+      });
+    }
+
+    return 'oli_multi_input';
+  }
+
   return 'oli_short_answer';
 }
 

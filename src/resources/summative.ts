@@ -28,6 +28,16 @@ export function convertToFormative($: any) {
   DOM.rename($, 'essay input', 'e_temp');
   DOM.rename($, 'image_hotspot input', 'i_temp');
 
+  // For these three types, add an attr to preserve their original types, as there can
+  // be cases where will not have a input level element
+  $('fill_in_the_blank').each((i: any, item: any) =>
+    $(item).attr('originalType', 'fill_in_the_blank')
+  );
+  $('numeric').each((i: any, item: any) =>
+    $(item).attr('originalType', 'numeric')
+  );
+  $('text').each((i: any, item: any) => $(item).attr('originalType', 'text'));
+
   DOM.rename($, 'multiple_choice', 'question');
   DOM.rename($, 'ordering', 'question');
   DOM.rename($, 'short_answer', 'question');
