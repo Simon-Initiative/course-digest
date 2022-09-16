@@ -149,28 +149,23 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
       part.responses.forEach((r: any) => {
         targeted.push([[r.legacyMatch], r.id]);
       });
-      part.responses.push({
-        id: guid(),
-        score: 0,
-        rule: `input like {.*}`,
-        feedback: {
-          id: guid(),
-          content: {
-            id: guid(),
-            model: [
-              {
-                type: 'p',
-                children: [{ text: 'Incorrect' }],
-              },
-            ],
-          },
-        },
-      });
     }
   }
 
   input.id = item.id;
   input.partId = part.id;
+
+  if (!Common.hasCatchAllRule(part.responses)) {
+    part.responses.push({
+      id: guid(),
+      score: 0,
+      rule: 'input like {.*}',
+      feedback: {
+        id: guid(),
+        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+      },
+    });
+  }
 
   return { input, part, choices, targeted };
 }

@@ -4,6 +4,110 @@
     <title>Learn by doing activity</title>
     <page id="ae87f8253f3040659447a74c3494c36a">
         <title>Page 1</title>
+        <question id="missing-catch-all">
+          <body>
+            <p id="e656a6fe908545db912295809521704e"> In the following equation, determine which
+              element is the <em style="emphasis">oxidizing agent</em> and which is <em
+                style="emphasis">reducing agent</em> . (Enter the element name or symbol.) </p>
+            <formula>$$2\;\mathrm{PbS}\;+\;3\;{\mathrm
+              O}_2\;\;\rightarrow\;\;2\;\mathrm{PbO}\;+\;2\;{\mathrm{SO}}_2$$</formula>
+            <p id="b75034e42ef1488c91afab3e366a22d8">
+              <input_ref input="e75bba15a39a459c990bbe28425849a9"/> is the oxidizing agent. </p>
+            <p id="f630edb4f0c34a9a85c8d8fc3c316f27">
+              <input_ref input="c049428db6774cc8bc82ad5dfff382df"/> is the reducing agent.
+            </p>
+          </body>
+          <text id="e75bba15a39a459c990bbe28425849a9" size="small" whitespace="trim"
+            case_sensitive="false"/>
+          <text id="c049428db6774cc8bc82ad5dfff382df" size="small" whitespace="trim"
+            case_sensitive="false"/>
+          <part id="d590353dacae4feca94c1fc4cb36b628">
+            <response match="O" score="1" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="a4b6456068014ef7b1f2dda1cc191a79">Correct. Oxygen decreases in
+                  oxidation state. It is reduced, therefore it is the oxidizing agent.</p>
+              </feedback>
+            </response>
+            <response match="Oxygen" score="1" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="a42f25ea433e4372ac2b48a523289636">Correct. Oxygen decreases in
+                  oxidation state. It is reduced, therefore it is the oxidizing agent.</p>
+              </feedback>
+            </response>
+            <response
+              match="S"
+              score="0" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="fe4b83dd001648d087aafe7128ddde9e">Incorrect. Remember that the substance that is reduced is the oxidizing agent. Sulfur increases in oxidation state in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="sulfur"
+              score="0" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="fe307b55ff0e4096b112bd8e8a8beac3">Incorrect. Remember that the substance that is reduced is the oxidizing agent. Sulfur increases in oxidation state in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="Pb"
+              score="0" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="bc090087712248d78aae03a92261d69b">Incorrect. The oxidation state of the lead is unchanged in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="lead"
+              score="0" input="e75bba15a39a459c990bbe28425849a9">
+              <feedback>
+                <p id="e077f4bd9e774c6fa1f73590854cc42d">Incorrect. The oxidation state of the lead is unchanged in this reaction.</p>
+              </feedback>
+            </response>
+          </part>
+          <part id="b5cb8af090634b188653f1f93e72481c">
+            <response
+              match="S"
+              score="1" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="ce80e9e8c90643c5b4aadc931a7f7ab3">Correct. Sulfur increases in oxidation state. It is oxidized, therefore it is the reducing agent.</p>
+              </feedback>
+            </response>
+            <response
+              match="sulfur"
+              score="1" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="f3dd80ed21e24770ae7a66e78694b19e">Correct. Sulfur increases in oxidation state. It is oxidized, therefore it is the reducing agent.</p>
+              </feedback>
+            </response>
+            <response
+              match="O"
+              score="0" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="e26ed5a0a9174a3aaadf1bbfbcbc186e">Incorrect. Remember that the substance that is oxidized is the reducing agent. Oxygen decreases in oxidation state in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="oxygen"
+              score="0" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="e3382d5bdd7146a3a88536cc6c02aa0d">Incorrect. Remember that the substance that is oxidized is the reducing agent. Oxygen decreases in oxidation state in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="Pb"
+              score="0" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="aec319342dc794acbabe6bb48dff20b7a">Incorrect. The oxidation state of the lead is unchanged in this reaction.</p>
+              </feedback>
+            </response>
+            <response
+              match="lead"
+              score="0" input="c049428db6774cc8bc82ad5dfff382df">
+              <feedback>
+                <p id="ae4ac0efd3c4d4f8e94a6ef543d10dbf5">Incorrect. The oxidation state of the lead is unchanged in this reaction.</p>
+              </feedback>
+            </response>
+          </part>
+        </question>
         <question id="q1">
 
           <body> Date <input_ref input="one"/>/<input_ref input="two"/>/<input_ref input="three"/>
