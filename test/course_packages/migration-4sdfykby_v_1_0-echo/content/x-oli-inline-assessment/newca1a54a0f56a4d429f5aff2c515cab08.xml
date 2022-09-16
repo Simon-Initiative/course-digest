@@ -10,6 +10,38 @@
             </p>
             <p id="f82a7495c6fb4ee9bbc7235f6e5e7278">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p>
         </content>
+        <question id="q3">
+          <!--LO:-->
+          <body>
+              <p> Half-Reactions</p>
+              <formula>$$\begin{array}{l}\mathrm{oxidation}\;(\mathrm{balanced}):\;\;\;\;\;\;\;\;\;\;\;\;\;\;{\mathrm
+                  H}_2\;\;\rightarrow\;\;2\;\mathrm H^+\;+\;2\;\mathrm
+                  e^-\\\\\mathrm{reduction}\;(\mathrm{unbalanced}):\;\;\;\;\;\;\;\mathrm{Cu}^{2+}\;\;\rightarrow\;\;\mathrm{Cu}\end{array}$$</formula>
+              <p>What needs to be done to the reduction half reaction to balance it? Select all
+                  that apply.</p>
+          </body>
+          <multiple_choice shuffle="true" select="multiple">
+              <choice value="A">Add H<sup>+</sup> to the right side of the equation.</choice>
+              <choice value="B">Add electrons to the right side of the equation.</choice>
+              <choice value="C">Add H<sup>+</sup> to the left side of the equation.</choice>
+              <choice value="D">Add electrons to the left side of the equation.</choice>
+              <choice value="E">Add H<sub>2</sub>O to the left side of the equation.</choice>
+              <choice value="F">Add H<sub>2</sub>O to the right side of the equation.</choice>
+              <choice value="G">Change a coefficient to balance an element other than H and
+                  O.</choice>
+          </multiple_choice>
+          <part>
+              <response match="D" score="1">
+                  <feedback>Correct. Here only the charge needs balanced with the addition of
+                      electrons.</feedback>
+              </response>
+              <response match="*" score="0">
+                  <feedback>Incorrect. Here only the charge needs balanced with the addition of
+                      electrons.</feedback>
+              </response>
+
+          </part>
+      </question>
         <question id="newca1a54a0f56a4d429f5aff2c515cab08_1a">
             <body>
                 <p id="b501c495edb44f05b7966855cd421732">

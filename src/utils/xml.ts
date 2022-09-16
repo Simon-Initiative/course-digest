@@ -423,6 +423,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
         ensureNotEmpty('li');
+        ensureNotEmpty('formula');
+        ensureNotEmpty('callout');
         ensureTextDoesNotSurroundBlockElement('td');
         ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');

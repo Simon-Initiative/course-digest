@@ -183,7 +183,9 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
         resourceMap
       ).then((converted: Resources.TorusResource[]) => {
         const filterOutTemporaryContent = (updated: any) =>
-          updated.filter((u: any) => u.type !== 'TemporaryContent');
+          updated.filter(
+            (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
+          );
 
         let updated = converted;
 

@@ -11,6 +11,8 @@
 		<p>
 			Here is an image with spaces and an ampersand in the file name.
 		</p>
-		<image src="../webcontent/polar%20%26%20bear.jpg" width="600" height="400" />
+		<image src="../webcontent/polar%20%26%20bear.jpg" width="600" height="400">
+      <alternate>This is <em>bold</em></alternate>
+      </image>
 	</body>
 </workbook_page>

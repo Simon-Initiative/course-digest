@@ -406,7 +406,7 @@ export function toActivity(
     p.responses = p.responses.map((r: any) => {
       if (r.showPage !== undefined) {
         const replacement = pageIdIndex.findIndex(
-          (id) => id.length > 1 && id.at(1) === r.showPage
+          (id) => id !== null && id.length > 1 && id.at(1) === r.showPage
         );
         if (replacement !== -1) {
           return Object.assign({}, r, { showPage: replacement });
