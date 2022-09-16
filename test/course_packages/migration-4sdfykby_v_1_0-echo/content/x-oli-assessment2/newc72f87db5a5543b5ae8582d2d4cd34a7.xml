@@ -1,2 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd"><assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="newc72f87db5a5543b5ae8582d2d4cd34a7" recommended_attempts="3" max_attempts="3"><title>Inline Summative Assessment</title><page id="b749f85cbddc4660a195fef26fb87422"><title>Page 1</title><content available="always"><p id="d052cd7721c249f3939fd19e4e0271cf"><em>THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.</em></p><p id="ea8acc135ecc4b74a9f3b903f54388f1">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p></content><multiple_choice id="newc72f87db5a5543b5ae8582d2d4cd34a7_1a" grading="automatic" select="single"><body><p id="f4ce7ca7312d41a4a8861473a4aa85bd"><em>THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.</em></p><p id="b86fe531f3924139980084844fc8adaa">Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: </p></body><input shuffle="false" id="ans" labels="false"><choice value="yes">Acceptable</choice><choice value="no">Unacceptable</choice></input><part id="d8af2d70160147508b161f1beeba155a"><response match="yes" score="0"><feedback><p id="b58e46d68e0140659b55ef63299b3a1d">Incorrect; using another student&apos;s password is not acceptable, even if it&apos;s left out in the open. Further, Albert has assumed his girlfriend&apos;s identity by using her account, which is also a violation of the Computing Policy.</p></feedback></response><response match="no" score="1"><feedback><p id="f277ed5de9c949138801d812b4a9cc3a">Correct; this is a pretty clear violation of the policy, including using another person&apos;s account and impersonating another individual.</p></feedback></response></part></multiple_choice></page><page id="e34a049fc4d54f118a914c39d58937e9"><title>New Page 2</title><multiple_choice id="e652695935d04ce089f473330345ecf5" grading="automatic" select="single"><body><p id="d3786bde78b943a9a4404313d0a8400d">MCQ page 2</p></body><input shuffle="true" id="d81ed1c4cb2b4f209b6cb564071e8942" labels="false"><choice value="f3d408f2b88c4e15891a3da9d4848b91">choice 1</choice><choice value="dd1a0ca00db246d3adafbb4b025ba017">choice 2</choice></input><part id="cc45e5f6b7424cb2b031cb2924a1ee48"><response match="f3d408f2b88c4e15891a3da9d4848b91" score="1"><feedback><p id="c9d611862b9f4d7f9fa7d554373bf9aa" /></feedback></response><response match="dd1a0ca00db246d3adafbb4b025ba017" score="0"><feedback><p id="e047a90c8651468bb8c09e6b99f8d681" /></feedback></response></part></multiple_choice></page></assessment>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="newc72f87db5a5543b5ae8582d2d4cd34a7" recommended_attempts="3" max_attempts="3">
+	<title>
+		Inline Summative Assessment
+	</title>
+	<page id="b749f85cbddc4660a195fef26fb87422">
+		<title>
+			Page 1
+		</title>
+    <numeric id="q1-no-right-answer">
+      <body>
+          <p>Calculate the volume of 1.0 M glucose needed to prepare 150.0 mL of a 
+              0.0750 M solution and record below.</p>
+          <p>
+              <input_ref input="ans"/> mL 1.0 M glucose</p>
+      </body>
+      <part>
+          <response input="ans" match="[11.2,11.3]">
+              <feedback>Correct. $$\begin{array}{l}C_1V_1\;=\;C_2V_2\\(1.00\;\mathrm
+                  M)\;V_1\;=\;(0.0750\;\mathrm
+                  M)\;(\;150.0\;\mathrm{mL})\\V_{1\;}=\;11.2\;\mathrm{mL}\;(\mathrm{volume}\;\mathrm{of}\;1.0\;\mathrm
+                  M\;\mathrm{glucose}\;\mathrm{needed}\;\mathrm{to}\;\mathrm{prepare}\;\text{desired}\;\mathrm{solution})\end{array}$$
+               
+              </feedback>
+          </response>
+          <response input="ans" match="*">
+              <feedback>Incorrect. $$\begin{array}{l}C_1V_1\;=\;C_2V_2\\(1.00\;\mathrm
+                  M)\;V_1\;=\;(0.0750\;\mathrm
+                  M)\;(\;150.0\;\mathrm{mL})\\V_{1\;}=\;11.2\;\mathrm{mL}\;(\mathrm{volume}\;\mathrm{of}\;1.0\;\mathrm
+                  M\;\mathrm{glucose}\;\mathrm{needed}\;\mathrm{to}\;\mathrm{prepare}\;\text{desired}\;\mathrm{solution})\end{array}$$
+              </feedback>
+          </response>
+      </part>
+  </numeric>
+    <numeric id="q1">
+      <body>
+          <p>Calculate the volume of 11.6 M HCl needed and record below.</p>
+          <p>
+              <input_ref input="ans"/> mL 11.6 M HCl</p>
+      </body>
+      <part>
+          <response input="ans" match="[32.3,32.4]" score="10">
+              <feedback>Correct. <formula>$$\begin{array}{l}C_1V_1\;=\;C_2V_2\\(11.6\;\mathrm
+                      M)\;V_1\;=\;(1.50\;\mathrm
+                      M)\;(\;250.0\;\mathrm{mL})\\V_{1\;}=\;32.3\;\mathrm{mL}\;(\mathrm{volume}\;\mathrm{of}\;11.6\;\mathrm
+                      M\;\mathrm{HCl}\;\mathrm{needed}\;\mathrm{to}\;\mathrm{prepare}\;\mathrm{the}\;\mathrm{solution})\end{array}$$</formula>
+           
+              </feedback>
+          </response>
+          <response input="ans" match="*">
+              <feedback>Incorrect. <formula>$$\begin{array}{l}C_1V_1\;=\;C_2V_2\\(11.6\;\mathrm
+                  M)\;V_1\;=\;(1.50\;\mathrm
+                  M)\;(\;250.0\;\mathrm{mL})\\V_{1\;}=\;32.3\;\mathrm{mL}\;(\mathrm{volume}\;\mathrm{of}\;11.6\;\mathrm
+                  M\;\mathrm{HCl}\;\mathrm{needed}\;\mathrm{to}\;\mathrm{prepare}\;\mathrm{the}\;\mathrm{solution})\end{array}$$</formula>
+                  
+              </feedback>
+          </response>
+      </part>
+  </numeric>
+		<multiple_choice id="newc72f87db5a5543b5ae8582d2d4cd34a7_1a" grading="automatic" select="single">
+			<body>
+				<p id="f4ce7ca7312d41a4a8861473a4aa85bd">
+					<em>
+						THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.
+					</em>
+				</p>
+				<p id="b86fe531f3924139980084844fc8adaa">
+					Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is:
+				</p>
+			</body>
+			<input shuffle="false" id="ans" labels="false">
+				<choice value="yes">
+					Acceptable
+				</choice>
+				<choice value="no">
+					Unacceptable
+				</choice>
+			</input>
+			<part id="d8af2d70160147508b161f1beeba155a">
+				<response match="yes" score="0">
+					<feedback>
+						<p id="b58e46d68e0140659b55ef63299b3a1d">
+							Incorrect; using another student&apos;s password is not acceptable, even if it&apos;s left out in the open. Further, Albert has assumed his girlfriend&apos;s identity by using her account, which is also a violation of the Computing Policy.
+						</p>
+					</feedback>
+				</response>
+				<response match="no" score="1">
+					<feedback>
+						<p id="f277ed5de9c949138801d812b4a9cc3a">
+							Correct; this is a pretty clear violation of the policy, including using another person&apos;s account and impersonating another individual.
+						</p>
+					</feedback>
+				</response>
+			</part>
+		</multiple_choice>
+	</page>
+	<page id="e34a049fc4d54f118a914c39d58937e9">
+		<title>
+			New Page 2
+		</title>
+		<multiple_choice id="e652695935d04ce089f473330345ecf5" grading="automatic" select="single">
+			<body>
+				<p id="d3786bde78b943a9a4404313d0a8400d">
+					MCQ page 2
+				</p>
+			</body>
+			<input shuffle="true" id="d81ed1c4cb2b4f209b6cb564071e8942" labels="false">
+				<choice value="f3d408f2b88c4e15891a3da9d4848b91">
+					choice 1
+				</choice>
+				<choice value="dd1a0ca00db246d3adafbb4b025ba017">
+					choice 2
+				</choice>
+			</input>
+			<part id="cc45e5f6b7424cb2b031cb2924a1ee48">
+				<response match="f3d408f2b88c4e15891a3da9d4848b91" score="1">
+					<feedback>
+						<p id="c9d611862b9f4d7f9fa7d554373bf9aa" />
+					</feedback>
+				</response>
+				<response match="dd1a0ca00db246d3adafbb4b025ba017" score="0">
+					<feedback>
+						<p id="e047a90c8651468bb8c09e6b99f8d681" />
+					</feedback>
+				</response>
+			</part>
+		</multiple_choice>
+	</page>
+</assessment>

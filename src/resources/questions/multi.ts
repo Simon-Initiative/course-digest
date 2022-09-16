@@ -15,6 +15,10 @@ export function buildMulti(question: any, skipInputRefValidation = false) {
 
   if (items.length === parts.length && items.length > 0) {
     for (let i = 0; i < items.length; i++) {
+      if (parts[i] === undefined) {
+        console.log(question.id);
+      }
+
       const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
         parts[i],
@@ -105,6 +109,20 @@ export function buildChoices(
   }));
 }
 
+function ensureAtLeastOneCorrectResponse(part: any) {
+  const responses = part.responses;
+
+  if (!responses.some((r: any) => r.score > 0)) {
+    // Find the first that isn't the * and set it to be correct
+    const withoutStar = responses.filter((r: any) => r.legacyMatch !== '.*');
+    if (withoutStar.length > 0) {
+      withoutStar[0].score = 1;
+    } else {
+      responses[0].score = 1;
+    }
+  }
+}
+
 function produceTorusEquivalents(item: any, p: any, i: number) {
   const input: any = {};
   let part: any = {};
@@ -113,12 +131,15 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
 
   if (item.type === 'text') {
     part = buildTextPart(p, i);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
   } else if (item.type === 'numeric') {
     part = buildTextPart(p, i);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
   } else {
     part = buildDropdownPart(p, i);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'dropdown';
 
     choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
@@ -154,6 +175,12 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
   return { input, part, choices, targeted };
 }
 
+// It is terribly unfortunate that we have to write code like this, but the issue is that
+// the legacy system has a really odd way of allowing inputs and parts to be misaligned, that is
+// to say, allowing them to exist in different indices within their respective arrays. It
+// relies on the "input" element from the reponse to indicate which input that part pertains to, but
+// that attribute is not required.  When it is absent we have to assume that the items and parts
+// are aligned.  So we try first to align with 'input', if that fails we fall back in aligned.
 function collectItemsParts(question: any) {
   const items = question.children.filter((c: any) => {
     return (
@@ -168,13 +195,31 @@ function collectItemsParts(question: any) {
   });
 
   const partsByFirstReponseInput = originalParts.reduce((m: any, p: any) => {
-    const firstInput = p.children.filter((p: any) => p.type === 'response')[0]
-      .input;
-    m[firstInput] = p;
+    const responses = p.children.filter((p: any) => p.type === 'response');
+
+    if (responses.length > 0) {
+      m[responses[0].input] = p;
+      return m;
+    }
     return m;
   }, {});
 
-  const parts = items.map((item: any) => partsByFirstReponseInput[item.id]);
+  const partsByPartId = originalParts.reduce((m: any, p: any) => {
+    m[p.id] = p;
+    return m;
+  }, {});
+
+  const parts = items.map((item: any) => {
+    if (partsByFirstReponseInput[item.id] !== undefined) {
+      return partsByFirstReponseInput[item.id];
+    } else {
+      return partsByPartId[item.id];
+    }
+  });
+
+  if (parts.some((p: any) => p === undefined)) {
+    return { items, parts: originalParts };
+  }
 
   return { items, parts };
 }
@@ -237,6 +282,7 @@ export function buildTextPart(part: any, _i: number) {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${cleanedMatch}}`,
+        legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
           content: {

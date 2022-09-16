@@ -488,8 +488,7 @@ export function determineSubType(question: any): ItemTypes {
     question.originalType !== undefined &&
     Common.getChild(question.children, 'numeric') === undefined &&
     Common.getChild(question.children, 'text') === undefined &&
-    Common.getChild(question.children, 'fill_in_the_blank') === undefined &&
-    Common.getChildren(question.children, 'part').length > 1
+    Common.getChild(question.children, 'fill_in_the_blank') === undefined
   ) {
     const parts = Common.getChildren(question.children, 'part');
 

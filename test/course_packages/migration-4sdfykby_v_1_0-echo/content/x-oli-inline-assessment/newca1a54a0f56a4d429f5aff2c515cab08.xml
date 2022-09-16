@@ -4,12 +4,1001 @@
     <title>Learn by doing activity</title>
     <page id="ae87f8253f3040659447a74c3494c36a">
         <title>Page 1</title>
-        <content available="always">
-            <p id="d394c54a3ec442368399a20b23638d0b">
-                <em>THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.</em>
-            </p>
-            <p id="f82a7495c6fb4ee9bbc7235f6e5e7278">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p>
-        </content>
+        <question id="q1">
+
+          <body> Date <input_ref input="one"/>/<input_ref input="two"/>/<input_ref input="three"/>
+          </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="jan">01 </choice>
+              <choice value="feb">02</choice>
+              <choice value="mar">03</choice>
+              <choice value="apr">04</choice>
+              <choice value="may">05 </choice>
+              <choice value="jun">06</choice>
+              <choice value="jul">07</choice>
+              <choice value="aug">08</choice>
+              <choice value="sep">09 </choice>
+              <choice value="oct">10</choice>
+              <choice value="nov">11</choice>
+              <choice value="dec">12</choice>
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="two" shuffle="false">
+              <choice value="1">1</choice>
+              <choice value="2">2</choice>
+              <choice value="3">3</choice>
+              <choice value="4">4</choice>
+              <choice value="5">5</choice>
+              <choice value="6">6</choice>
+              <choice value="7">7</choice>
+              <choice value="8">8</choice>
+              <choice value="9">9</choice>
+              <choice value="10">10</choice>
+              <choice value="11">11</choice>
+              <choice value="12">12</choice>
+              <choice value="13">13</choice>
+              <choice value="14">14</choice>
+              <choice value="15">15</choice>
+              <choice value="16">16</choice>
+              <choice value="17">17</choice>
+              <choice value="18">18</choice>
+              <choice value="19">19</choice>
+              <choice value="20">20</choice>
+              <choice value="21">21</choice>
+              <choice value="22">22</choice>
+              <choice value="23">23</choice>
+              <choice value="24">24</choice>
+              <choice value="25">25</choice>
+              <choice value="26">26</choice>
+              <choice value="27">27</choice>
+              <choice value="28">28</choice>
+              <choice value="29">29</choice>
+              <choice value="30">30</choice>
+              <choice value="31">31</choice>
+
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="three" shuffle="false">
+              <choice value="2020">2021 </choice>
+              <choice value="2021">2022</choice>
+
+
+          </fill_in_the_blank>
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+              <!--  <response match="B" input="one" score="0">
+                  <feedback>Incorrect. </feedback>
+              </response>
+              <response match="C" input="one" score="0">
+                  <feedback>Incorrect.  </feedback>
+              </response>
+              <response match="D" input="one">
+                  <feedback>Incorrect. </feedback>
+              </response>
+              -->
+          </part>
+
+
+          <part id="two" score_out_of="1">
+              <response match="*" input="two" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+              <!-- <response match="B" input="two" score="0">
+                  <feedback>Incorrect. </feedback>
+              </response>
+              <response match="C" input="two" score="0">
+                  <feedback>Incorrect.</feedback>
+              </response>
+              <hint>hint</hint>-->
+          </part>
+
+          <part id="three" score_out_of="1">
+              <response match="*" input="three" score="1">
+                  <!--  <feedback>Correct.</feedback>-->
+              </response>
+              <!-- <response match="B" input="three" score="0">
+                  <feedback>Incorrect.</feedback>
+              </response>
+              <response match="C" input="three" score="0">
+                  <feedback>Incorrect.</feedback>
+              </response>
+              <response match="D" input="three">
+                  <feedback>Incorrect.</feedback>
+              </response>-->
+
+          </part>
+
+      </question>
+      <question id="q2">
+
+          <body>Unit: <input_ref input="one"/>
+          </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">Foundations of Chemistry</choice>
+              <choice value="B">Composition of Substances and Solutions</choice>
+              <choice value="C">Reactions and Stoichiometry</choice>
+              <choice value="D">Gases</choice>
+              <choice value="E">Thermochemistry</choice>
+              <choice value="F">Electronic Structure and Periodic Properties</choice>
+              <choice value="G">Chemical Bonding and Molecular Geomoetry</choice>
+              <choice value="H">Solids and Liquids</choice>
+              <choice value="I">Solutions</choice>
+          </fill_in_the_blank>
+
+
+
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!-- <feedback>Correct. </feedback>-->
+              </response>
+
+
+          </part>
+
+
+
+      </question>
+
+      <question id="q2a">
+          <!--LO:-->
+          <body>What are your mode(s) of instruction for the following: <p> Lecture (select all
+                  that apply)</p>
+          </body>
+          <multiple_choice shuffle="false" select="multiple">
+              <choice value="A">Online-synchronous</choice>
+              <choice value="B">Online-asynchronous</choice>
+              <choice value="C">In-person</choice>
+              <choice value="D">Other</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <feedback/>
+              </response>
+
+
+          </part>
+      </question>
+      <question id="q2b">
+          <!--LO:-->
+          <body>What are your mode(s) of instruction for the following: <p> Lab(Experiments)
+                  (select all that apply)</p>
+          </body>
+          <multiple_choice shuffle="false" select="multiple">
+              <choice value="A">Online-synchronous</choice>
+              <choice value="B">Online-asynchronous</choice>
+              <choice value="C">In-person</choice>
+              <choice value="D">At-home Lab Kit</choice>
+              <choice value="E">In-person</choice>
+              <choice value="F">Simulations</choice>
+              <choice value="G">Experiment Video</choice>
+              <choice value="H">Other</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <feedback/>
+              </response>
+
+
+          </part>
+      </question>
+      <question id="q2c">
+          <!--LO:-->
+          <body>What are your mode(s) of instruction for the following: <p>
+                  Discussion/Recitation/Problem-Solving Session (select all that apply)</p>
+          </body>
+          <multiple_choice shuffle="false" select="multiple">
+              <choice value="A">Online-synchronous</choice>
+              <choice value="B">Online-asynchronous</choice>
+              <choice value="C">In-person</choice>
+
+              <choice value="D">Other</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <feedback/>
+              </response>
+
+
+          </part>
+      </question>
+
+      <question id="q3">
+
+          <body>To what extent did you change what and how you taught based on use of the OLI
+              courseware? <input_ref input="one"/>
+          </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">1. Not at all </choice>
+              <choice value="B">2. </choice>
+              <choice value="C">3. </choice>
+              <choice value="D">4. </choice>
+              <choice value="E">5. Significantly</choice>
+          </fill_in_the_blank>
+
+
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+
+          </part>
+
+
+      </question>
+
+      <question id="q3a">
+          <!--LO:-->
+          <body>
+              <p><em>Asynchronous Activities</em></p>
+              <p> Check if you provided or assigned any of the following activities to be
+                  completed independently outside of class time. </p>
+          </body>
+          <multiple_choice shuffle="false" select="multiple">
+              <choice value="A">Lecture video</choice>
+              <choice value="B">Individual problem solving activity </choice>
+              <choice value="C">Guided problem solving activity</choice>
+
+              <choice value="D">Online test, quiz or poll question</choice>
+              <choice value="E">OLI virtual lab or simulation activity</choice>
+              <choice value="F">Showing or conducting a non-OLI demo, video, simulation, or
+                  experiment </choice>
+              <choice value="G">Team-based/collaborative activity or assignment </choice>
+              <choice value="H">Office hours with teaching staff </choice>
+              <choice value="I">Other active learning techniques: Please specify below</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <feedback/>
+              </response>
+
+
+          </part>
+      </question>
+      <question id="q3b">
+
+          <body>If you entered other to the previous question, please provide details here.
+              <p><em>After you have answered this question, please click "Submit and
+                  Compare" to record your answer.</em></p>
+          
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+
+              <explanation/>
+          </part>
+      </question>
+
+      <question id="q3c">
+
+          <body>If you have any way to measure student engagement, such as proportion of the class
+              viewing or using optional elements, please describe it here, and report the metrics
+              if possible.
+              <p><em>After you have answered this question, please click "Submit and
+                  Compare" to record your answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+
+              <explanation/>
+          </part>
+      </question>
+
+
+      <question id="q4">
+
+          <body>
+              <p><em>Synchronous Lecture Activities</em></p> If you personally taught a
+              synchronous lecture section this week, estimate the percent of lecture class time
+              you spent on each of the following activities. Note: percentages do not need to add
+              up to 100%, we are just looking for your best guestimate. <table
+                  rowstyle="alternating">
+                  <tr>
+                      <td> Lecture </td>
+                      <td><input_ref input="one"/></td>
+                  </tr>
+                  <tr>
+                      <td>Group or pair discussion or problem solving</td>
+                      <td>
+                          <input_ref input="two"/></td>
+                  </tr>
+                  <tr>
+                      <td> Individual Work</td>
+                      <td><input_ref input="three"/></td>
+                  </tr>
+                  <tr>
+                      <td>Clicker or poll questions</td>
+                      <td><input_ref input="four"/></td>
+                  </tr>
+                  <tr>
+                      <td>Guided Problem Solving</td>
+                      <td><input_ref input="five"/></td>
+                  </tr>
+                  <tr>
+
+                      <td>Test or quiz</td>
+                      <td><input_ref input="six"/></td>
+                  </tr>
+                  <tr>
+                      <td> Showing or conducting a demo, video, simulation, or experiment </td>
+                      <td><input_ref input="seven"/></td>
+                  </tr>
+                  <tr>
+                      <td> Administrative tasks</td>
+                      <td><input_ref input="eight"/></td>
+                  </tr>
+                  <tr>
+                      <td>Engaging in 1-on-1 discussion with a student</td>
+                      <td><input_ref input="nine"/></td>
+                  </tr>
+
+                  <tr>
+                      <td>Other active learning techniques: Please specify below</td>
+                      <td><input_ref input="ten"/></td>
+                  </tr>
+              </table>
+          </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="two" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="three" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="four" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="five" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="six" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="seven" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="eight" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="nine" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="ten" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--    <feedback>Correct. </feedback>-->
+              </response>
+
+
+          </part>
+
+
+          <part id="two" score_out_of="1">
+              <response match="*" input="two" score="1">
+                  <!--  <feedback>Correct.</feedback>-->
+              </response>
+
+          </part>
+
+          <part id="three" score_out_of="1">
+              <response match="*" input="three" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="four" score_out_of="1">
+              <response match="*" input="four" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="five" score_out_of="1">
+              <response match="*" input="five" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="six" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+         
+          <part id="seven" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="eight" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="nine" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="ten" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+
+      </question>
+      <question id="q4a">
+
+          <body>Please estimate the proportion of students actively paying attention in your most
+              recent non-exam class (clearly listening, even if they weren’t speaking).
+                      <p><em>After you have answered this question, please click "Submit and
+                      Compare" to record your answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+
+              <!--<explanation></explanation>-->
+          </part>
+      </question>
+      <question id="q5">
+
+          <body>
+              <p><em>Synchronous Instructor-Led Lab or Discussion Section Activities</em></p> If
+              you personally taught a synchronous lab or discussion section this week, estimate
+              the percent of class time you spent on each of the following activities in an
+              average session this week. Note: percentages do not need to add up to 100%, we are
+              just looking for your best guestimate. <table rowstyle="alternating">
+                  <tr>
+                      <td> Lecture </td>
+                      <td><input_ref input="one"/></td>
+                  </tr>
+                  <tr>
+                      <td>Group or pair discussion or problem solving</td>
+                      <td>
+                          <input_ref input="two"/></td>
+                  </tr>
+                  <tr>
+                      <td> Individual Work</td>
+                      <td><input_ref input="three"/></td>
+                  </tr>
+                  <tr>
+                      <td>Clicker or poll questions</td>
+                      <td><input_ref input="four"/></td>
+                  </tr>
+                  <tr>
+                      <td>Guided Problem Solving</td>
+                      <td><input_ref input="five"/></td>
+                  </tr>
+                  <tr>
+
+                      <td>Test or quiz</td>
+                      <td><input_ref input="six"/></td>
+                  </tr>
+                  <tr>
+                      <td> Showing or conducting a demo, video, simulation, or experiment </td>
+                      <td><input_ref input="seven"/></td>
+                  </tr>
+                  <tr>
+                      <td> Administrative tasks</td>
+                      <td><input_ref input="eight"/></td>
+                  </tr>
+                  <tr>
+                      <td>Engaging in 1-on-1 discussion with a student</td>
+                      <td><input_ref input="nine"/></td>
+                  </tr>
+
+                  <tr>
+                      <td>Other active learning techniques: Please specify below</td>
+                      <td><input_ref input="ten"/></td>
+                  </tr>
+              </table>
+          </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="two" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+          <fill_in_the_blank id="three" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="four" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="five" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="six" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="seven" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="eight" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="nine" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+          <fill_in_the_blank id="ten" shuffle="false">
+              <choice value="A">0% </choice>
+              <choice value="B">10%</choice>
+              <choice value="C">25%</choice>
+              <choice value="D">50%</choice>
+              <choice value="E">75%</choice>
+              <choice value="F">100%</choice>
+          </fill_in_the_blank>
+
+
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--    <feedback>Correct. </feedback>-->
+              </response>
+
+
+          </part>
+
+
+          <part id="two" score_out_of="1">
+              <response match="*" input="two" score="1">
+                  <!--  <feedback>Correct.</feedback>-->
+              </response>
+
+          </part>
+
+          <part id="three" score_out_of="1">
+              <response match="*" input="three" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="four" score_out_of="1">
+              <response match="*" input="four" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="five" score_out_of="1">
+              <response match="*" input="five" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          <part id="six" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+
+
+          </part>
+          
+          <part id="seven" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="eight" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="nine" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+          <part id="ten" score_out_of="1">
+              <response match="*" input="six" score="1">
+                  <!-- <feedback>Correct.</feedback>-->
+              </response>
+          </part>
+
+      </question>
+
+      <question id="q6">
+          <!--LO:-->
+          <body>Did you use any other active learning techniques in class during this
+              past week? Check if used in lectures, lab, or discussion sections, or otherwise,
+              then describe below. Check all that apply. </body>
+          <multiple_choice shuffle="false" select="multiple">
+              <choice value="A">Yes - Lecture </choice>
+              <choice value="B">Yes - Lab </choice>
+              <choice value="C">Yes - Discussion </choice>
+              <choice value="D">Yes - Other </choice>
+              <choice value="E">No</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <!--<feedback>Thank you for</feedback>-->
+              </response>
+
+          </part>
+      </question>
+      <question id="q7">
+
+          <body>If you answered yes to the previous question, please provide details here.
+                      <p><em>After you have answered this question, please click "Submit and
+                      Compare" to record your answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+
+      <question id="q8">
+          <!--LO:-->
+          <body>Did you use questions from OLI in your course this week? Check if used in
+              lectures, discussion sections, labs, homework, or otherwise, then describe below, or
+              explain why not. Check all that apply. </body>
+          <multiple_choice shuffle="false" select="single">
+              <choice value="A">Yes - Lecture </choice>
+              <choice value="B">Yes - Lab </choice>
+              <choice value="C">Yes - Discussion </choice>
+              <choice value="D">Yes - Other </choice>
+              <choice value="E">No</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <!--<feedback>Thank you for</feedback>-->
+              </response>
+
+          </part>
+      </question>
+      <question id="q9">
+
+          <body>Please provide details to the previous question here. <p><em>After you have
+                      answered this question, please click "Submit and Compare" to record your
+                      answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+
+      <question id="q10">
+          <!--LO:-->
+          <body>Did you use OLI data to choose/determine/inform what course material was covered
+              and/or select activities for use in class (whole-class adaptation) this week? Check
+              if used in lectures, discussion sections, or labs, then describe below, or explain
+              why not. Check all that apply. </body>
+          <multiple_choice shuffle="false" select="single">
+              <choice value="A">Yes - Lecture </choice>
+              <choice value="B">Yes - Lab </choice>
+              <choice value="C">Yes - Discussion </choice>
+              <choice value="D">Yes - Other </choice>
+              <choice value="E">No</choice>
+          </multiple_choice>
+          <part>
+              <response match="*" score="1">
+                  <!--<feedback>Thank you for</feedback>-->
+              </response>
+
+          </part>
+      </question>
+      <question id="q11">
+
+          <body>Please provide details to the previous question here. <p><em>After you have
+                      answered this question, please click "Submit and Compare" to record your
+                      answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+
+
+
+      <question id="q12">
+
+          <body>Did you use OLI data to help meet the needs of individual students (individual
+              adaptation) this week? If so, please describe. <input_ref input="one"/> </body>
+
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">yes</choice>
+              <choice value="B">no</choice>
+          
+          </fill_in_the_blank>
+
+          
+
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                <!--  <feedback>Correct. </feedback>-->
+              </response>
+             
+          
+          </part>
+
+
+       
+
+      </question>
+      <question id="q13">
+          
+          <body>Please provide details to the previous question here. <p><em>After you have
+              answered this question, please click "Submit and Compare" to record your
+              answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+      
+      <question id="q14">
+          
+          <body>Did you experience any new or striking challenges from using OLI in your course this week? If so, please describe.
+              <input_ref input="one"/> </body>
+          
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">yes</choice>
+              <choice value="B">no</choice>
+              
+          </fill_in_the_blank>
+          
+          
+          
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+              
+              
+          </part>
+          
+          
+          
+          
+      </question>
+      <question id="q15">
+          
+          <body>Please provide details to the previous question here. <p><em>After you have
+              answered this question, please click "Submit and Compare" to record your
+              answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+
+      <question id="q16">
+          
+          <body>
+              Were there any new or striking benefits of using OLI in your course this week? If so, please describe. 
+              
+              <input_ref input="one"/> </body>
+          
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">yes</choice>
+              <choice value="B">no</choice>
+              
+          </fill_in_the_blank>
+          
+          
+          
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+              
+              
+          </part>
+          
+          
+          
+          
+      </question>
+      <question id="q17">
+          
+          <body>Please provide details to the previous question here. <p><em>After you have
+              answered this question, please click "Submit and Compare" to record your
+              answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+      <question id="q18">
+          
+          <body>
+              Have your students provided any feedback about using OLI in your course this week?
+              
+              <input_ref input="one"/> </body>
+          
+          <fill_in_the_blank id="one" shuffle="false">
+              <choice value="A">yes</choice>
+              <choice value="B">no</choice>
+              
+          </fill_in_the_blank>
+          
+          
+          
+          <part id="one" score_out_of="1">
+              <response match="*" input="one" score="1">
+                  <!--  <feedback>Correct. </feedback>-->
+              </response>
+              
+              
+          </part>
+          
+          
+          
+          
+      </question>
+      <question id="q19">
+          
+          <body>Please provide details to the previous question here. <p><em>After you have
+              answered this question, please click "Submit and Compare" to record your
+              answer.</em></p>
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+              <!--
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+      
+      <question id="q20">
+          
+          <body>What new tips or techniques did you discover this week that you would recommend to other instructors using OLI?
+              <p><em>After you have
+                  answered this question, please click "Submit and Compare" to record your
+                  answer.</em></p>
+          
+          </body>
+          <short_answer id="qsub_0"/>
+          <part id="qpart_0">
+              <response input="qsub_0" match="*" score="10"/>
+            <!--  <hint>hint</hint>
+              <hint>hint</hint>
+              <explanation>Response</explanation>-->
+          </part>
+      </question>
+      
         <question id="weird-no-score">
 
           <body>
