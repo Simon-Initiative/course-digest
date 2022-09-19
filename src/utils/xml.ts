@@ -411,12 +411,12 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('th');
         ensureNotEmpty('td');
         ensureDefaultText('code_line', ' ');
-        ensureDefaultText('h1', 'Section Header');
-        ensureDefaultText('h2', 'Section Header');
-        ensureDefaultText('h3', 'Section Header');
-        ensureDefaultText('h4', 'Section Header');
-        ensureDefaultText('h5', 'Section Header');
-        ensureDefaultText('h6', 'Section Header');
+        ensureDefaultText('h1', ' ');
+        ensureDefaultText('h2', ' ');
+        ensureDefaultText('h3', ' ');
+        ensureDefaultText('h4', ' ');
+        ensureDefaultText('h5', ' ');
+        ensureDefaultText('h6', ' ');
         ensureNotEmpty('img');
         ensureNotEmpty('img_inline');
         ensureNotEmpty('iframe');
