@@ -387,7 +387,7 @@ describe('convert summative', () => {
     );
   });
 
-  it('should convert fill in the black with multiple feedbacks to explanation', async () => {
+  it('should convert fill_in_the_blank with multiple feedbacks to parts with explanation', async () => {
     const file =
       'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/newc72f87db5a5543b5ae8582d2d4cd34a7.xml';
     const mediaSummary: Media.MediaSummary = {
