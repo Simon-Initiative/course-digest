@@ -15,10 +15,6 @@ export function buildMulti(question: any, skipInputRefValidation = false) {
 
   if (items.length === parts.length && items.length > 0) {
     for (let i = 0; i < items.length; i++) {
-      if (parts[i] === undefined) {
-        console.log(question.id);
-      }
-
       const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
         parts[i],
