@@ -363,7 +363,7 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
     return [buildMulti(question), []];
   }
   if (subType === 'oli_custom_dnd') {
-    const multipart = buildMulti(question, true);
+    const multipart = buildMulti(question, true, true);
     return processCustomDnd(multipart, baseFileName);
   }
   if (subType === 'oli_likert') {

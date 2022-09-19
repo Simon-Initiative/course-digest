@@ -5,7 +5,11 @@ import { guid, replaceAll } from 'src/utils/common';
 import * as Common from './common';
 
 // a JSON representation of the Formative Legacy model of this question type
-export function buildMulti(question: any, skipInputRefValidation = false) {
+export function buildMulti(
+  question: any,
+  skipInputRefValidation = false,
+  ignorePartId = false
+) {
   // Pair up the inputs and the parts
   const { items, parts } = collectItemsParts(question);
   const allChoices: any[] = [];
@@ -18,7 +22,8 @@ export function buildMulti(question: any, skipInputRefValidation = false) {
       const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
         parts[i],
-        i
+        i,
+        ignorePartId
       );
       choices.forEach((c: any) => allChoices.push(c));
       targeted.forEach((c: any) => allTargeted.push(c));
@@ -119,7 +124,12 @@ function ensureAtLeastOneCorrectResponse(part: any) {
   }
 }
 
-function produceTorusEquivalents(item: any, p: any, i: number) {
+function produceTorusEquivalents(
+  item: any,
+  p: any,
+  i: number,
+  ignorePartId: boolean
+) {
   const input: any = {};
   let part: any = {};
   let choices: any[] = [];
@@ -134,7 +144,7 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
   } else {
-    part = buildDropdownPart(p, i);
+    part = buildDropdownPart(p, i, ignorePartId);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'dropdown';
 
@@ -215,7 +225,7 @@ function collectItemsParts(question: any) {
   return { items, parts };
 }
 
-function buildDropdownPart(part: any, _i: number) {
+function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
@@ -224,7 +234,7 @@ function buildDropdownPart(part: any, _i: number) {
     responses.length > 0 ? responses[0].input : guid();
 
   const id =
-    part.id !== undefined && part.id !== null
+    part.id !== undefined && part.id !== null && !ignorePartId
       ? part.id + ''
       : firstResponseInputValue;
 

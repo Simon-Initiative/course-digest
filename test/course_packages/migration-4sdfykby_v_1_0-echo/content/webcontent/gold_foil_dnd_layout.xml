@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">		
+#q1_target_container {  
+    margin: auto;
+    background-image: url("gold_foil_background.png");
+    background-repeat: no-repeat;  
+    width: 650px;  
+    height:525px;
+    position: relative;
+}	
+	.tbody .th {
+    text-align: center;
+}		
+			.target 
+			{  
+    border: 2px;
+    border-style: dashed;
+    border-color: #999999; 
+    display: inline-block; 
+	width: 60px;
+	height: 36px;
+	top: 60px;
+    position: absolute;  
+			  
+			}
+			
+			
+			.initiator
+			{
+				display: inline-block;
+				min-height: 45px;
+				min-width: 150px;
+				background: #ffc;
+				text-align: center;
+				padding: 4px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			.dragdropspacer
+			{
+				height: 50px;
+			}
+
+			
+				
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+		<div id="q1_target_container">
+		
+<div input_ref="deflected_slightly_target" class="target"  style="left:294px; top:0px; width:350px; height:50px;"> </div>
+<div input_ref="through_target" class="target"  style="left:-55px; top:26px; width:350px; height:50px;"> </div>
+<div input_ref="deflected_great_target" class="target" style="left:192px; top:325px; width:350px; height:50px;"> </div>
+
+
+
+
+		    </div>
+			
+		]]>
+    </targetArea>
+    
+    <initiators>
+        <![CDATA[	
+        <div input_val="through" class="initiator">Most of the alpha particles went straight through the gold foil.</div>
+			<div input_val="great" class="initiator">A very small amount of alpha particles were deflected at great angles.</div>
+			<div input_val="slightly_deflected" class="initiator">Some of the alpha particles were slightly deflected.</div>
+			
+			
+		]]>
+    </initiators>
+    
+</dragdrop>
