@@ -207,6 +207,7 @@ function buildDropdownPart(part: any, _i: number) {
     ),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 }
 

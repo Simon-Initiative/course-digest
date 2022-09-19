@@ -122,6 +122,34 @@ export function getFeedbackModel(response: any) {
   return ensureParagraphs(response.children[0].children);
 }
 
+const getResponseFeedbacks = (r: any) =>
+  r.children.filter((c: any) => c.type === 'feedback');
+
+export const maybeBuildPartExplanation = (responses: any[]) => {
+  // explanation will be built from the first response that contains multiple feedbacks
+  const responseWithMultipleFeedbacks = responses.find(
+    (r) => getResponseFeedbacks(r).length > 1
+  );
+
+  if (responseWithMultipleFeedbacks) {
+    // there are more than one feedback defined for this response which makes it
+    // a multi-feedback. Since the torus model only supports a single explanation,
+    // we use the next feedback after the main feedback for the explanation
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_mainFeedback, explanationFeedback, ..._rest] = getResponseFeedbacks(
+      responseWithMultipleFeedbacks
+    );
+
+    return {
+      id: guid(),
+      content: ensureParagraphs(explanationFeedback.children),
+    };
+  } else {
+    return null;
+  }
+};
+
 export function getPartIds(question: any): string[] {
   return getChildren(question.children, 'part').map((p: any) =>
     p.id === undefined ? guid() : p.id
