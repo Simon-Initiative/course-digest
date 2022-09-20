@@ -5,6 +5,6 @@
 		<title>Placeholder</title>
 	</head>
 	<body>
-		<wb:inline idref="submit-and-compare"/>
+		<wb:inline idref="submit_and_compare"/>
 	</body>
 </workbook_page>

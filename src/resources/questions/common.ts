@@ -97,15 +97,19 @@ const defaultModel = () => [{ type: 'p', children: [{ text: '' }] }];
 const hasShortAnswer = (question: any) =>
   question.children.some((t: any) => t.type === 'short_answer');
 
-const shortAnswerExplanationOrDefaultModel = (question: any) =>
-  hasShortAnswer(question)
-    ? maybe(
-        question.children.find((t: any) => t.type === 'explanation')
-      ).caseOf({
-        just: (explanation) => ensureParagraphs(explanation.children),
-        nothing: () => defaultModel(),
-      })
-    : defaultModel();
+const shortAnswerExplanationOrDefaultModel = (question: any) => {
+  if (hasShortAnswer(question)) {
+    const firstPart = getChild(question.children, 'part');
+    const explanation = getChild(firstPart.children, 'explanation');
+
+    if (explanation !== undefined) {
+      return ensureParagraphs(explanation.children);
+    } else {
+      return defaultModel();
+    }
+  }
+  return defaultModel();
+};
 
 const getParts = (question: any): any[] =>
   question.children.filter((c: any) => c.type === 'part');
