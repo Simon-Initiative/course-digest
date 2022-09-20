@@ -14,8 +14,8 @@ describe('convert summative', () => {
 
     const converted = await convert(mediaSummary, file, false);
 
-    expect(converted).toStrictEqual([
-      {
+    expect(converted).toContainEqual(
+      expect.objectContaining({
         type: 'Page',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
         legacyPath: expect.any(String),
@@ -32,21 +32,21 @@ describe('convert summative', () => {
               children: [
                 {
                   type: 'p',
-                  children: [
+                  children: expect.arrayContaining([
                     {
                       text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
                       strong: true,
                     },
-                  ],
+                  ]),
                   id: 'd052cd7721c249f3939fd19e4e0271cf',
                 },
                 {
                   type: 'p',
-                  children: [
+                  children: expect.arrayContaining([
                     {
                       text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
                     },
-                  ],
+                  ]),
                   id: 'ea8acc135ecc4b74a9f3b903f54388f1',
                 },
               ],
@@ -58,6 +58,13 @@ describe('convert summative', () => {
               activity_id:
                 'newc72f87db5a5543b5ae8582d2d4cd34a7-newc72f87db5a5543b5ae8582d2d4cd34a7_1a',
               page: 'b749f85cbddc4660a195fef26fb87422',
+            },
+            {
+              activity_id:
+                'newc72f87db5a5543b5ae8582d2d4cd34a7-add_subtratAndmult_div_pool_v1',
+              id: expect.any(String),
+              page: 'b749f85cbddc4660a195fef26fb87422',
+              type: 'activity-reference',
             },
             { type: 'break', id: expect.any(String) },
             {
@@ -71,9 +78,12 @@ describe('convert summative', () => {
         },
         isGraded: true,
         isSurvey: false,
-        objectives: [undefined],
-      },
-      {
+        objectives: expect.any(Array),
+      })
+    );
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
         type: 'TemporaryContent',
         id: expect.any(String),
         legacyPath: expect.any(String),
@@ -87,21 +97,21 @@ describe('convert summative', () => {
           children: [
             {
               type: 'p',
-              children: [
+              children: expect.arrayContaining([
                 {
                   text: 'THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.',
                   strong: true,
                 },
-              ],
+              ]),
               id: 'd052cd7721c249f3939fd19e4e0271cf',
             },
             {
               type: 'p',
-              children: [
+              children: expect.arrayContaining([
                 {
                   text: 'Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.',
                 },
-              ],
+              ]),
               id: 'ea8acc135ecc4b74a9f3b903f54388f1',
             },
           ],
@@ -109,8 +119,11 @@ describe('convert summative', () => {
         },
         objectives: [],
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
-      },
-      {
+      })
+    );
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
         type: 'Activity',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-newc72f87db5a5543b5ae8582d2d4cd34a7_1a',
         legacyPath: expect.any(String),
@@ -124,21 +137,21 @@ describe('convert summative', () => {
               model: [
                 {
                   type: 'p',
-                  children: [
+                  children: expect.arrayContaining([
                     {
                       text: 'THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.',
                       strong: true,
                     },
-                  ],
+                  ]),
                   id: 'f4ce7ca7312d41a4a8861473a4aa85bd',
                 },
                 {
                   type: 'p',
-                  children: [
+                  children: expect.arrayContaining([
                     {
                       text: 'Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: ',
                     },
-                  ],
+                  ]),
                   id: 'b86fe531f3924139980084844fc8adaa',
                 },
               ],
@@ -232,6 +245,7 @@ describe('convert summative', () => {
                 scoringStrategy: 'average',
                 targeted: [],
                 objectives: [],
+                explanation: null,
               },
             ],
             transformations: [
@@ -245,13 +259,19 @@ describe('convert summative', () => {
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
         subType: 'oli_multiple_choice',
         imageReferences: [],
-      },
-      {
+      })
+    );
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
         type: 'Break',
         id: expect.any(String),
         legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
-      },
-      {
+      })
+    );
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
         type: 'Activity',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-e652695935d04ce089f473330345ecf5',
         legacyPath: expect.any(String),
@@ -350,6 +370,7 @@ describe('convert summative', () => {
                 scoringStrategy: 'average',
                 targeted: [],
                 objectives: [],
+                explanation: null,
               },
             ],
             transformations: [
@@ -364,7 +385,89 @@ describe('convert summative', () => {
         subType: 'oli_multiple_choice',
         imageReferences: [],
         warnings: [],
-      },
-    ]);
+      })
+    );
+  });
+
+  it('should convert fill_in_the_blank with multiple feedbacks to parts with explanation', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/newc72f87db5a5543b5ae8582d2d4cd34a7.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      flattenedNames: {},
+    };
+
+    const converted = await convert(mediaSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-add_subtratAndmult_div_pool_v1',
+        content: expect.objectContaining({
+          authoring: expect.objectContaining({
+            parts: [
+              expect.objectContaining({
+                id: 'one',
+                explanation: {
+                  id: expect.any(String),
+                  content: [
+                    {
+                      type: 'p',
+                      children: [
+                        { text: 'Incorrect. The correct answer is 392 cm ' },
+                        { text: '3', sup: true },
+                        {
+                          text: '. For multiplication, round the product to the least number of significant figures in the three values (three sig. figs. in 6.27). ',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }),
+              expect.objectContaining({
+                id: 'two',
+                explanation: {
+                  id: expect.any(String),
+                  content: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'Incorrect. The correct answer is 15.52 g. For addition, round the product to the least precise of the three values (10.03 is to the hundredths place).',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }),
+              expect.objectContaining({
+                id: 'three',
+                explanation: {
+                  id: expect.any(String),
+                  content: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'Incorrect. The correct answer is 1.6. Based on the order of operations, first add the values in the parentheses and consider where the least precise place is for that value (but do not round yet). Then do the division and round off to the least number of significant figures.',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }),
+            ],
+          }),
+        }),
+        objectives: expect.any(Object),
+        legacyId: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
+        legacyPath:
+          'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/newc72f87db5a5543b5ae8582d2d4cd34a7.xml',
+        subType: 'oli_multi_input',
+        imageReferences: [],
+      })
+    );
   });
 });

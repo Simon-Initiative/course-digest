@@ -39,6 +39,9 @@
                     <item id="ebe32e4f2039442896f67b64a54acd0d" scoring_mode="default">
                         <resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93" />
                     </item>
+                    <item id="ebe32e4f2039442896f67b64a54acd0e" scoring_mode="default">
+                        <resourceref idref="newc72f87db5a5543b5ae8582d2d4cd34a7" />
+                    </item>
                 </module>
                 <module id="br">
                   <title>

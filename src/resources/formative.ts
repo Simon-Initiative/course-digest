@@ -72,6 +72,7 @@ function buildMCQPart(question: any) {
     scoringStrategy: 'average',
     targeted: [],
     objectives: skillrefs.map((s: any) => s.idref),
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 
   // Handle the specific case where there are exactly two choices
@@ -158,6 +159,7 @@ function buildOrderingPart(question: any) {
     ),
     scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 }
 
@@ -218,6 +220,7 @@ function buildLikertParts(question: any, items: any[]) {
     scoringStrategy: 'average',
     objectives: [],
     targeted: [],
+    explanation: null,
   }));
 }
 

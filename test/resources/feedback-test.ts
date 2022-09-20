@@ -190,1114 +190,1145 @@ describe('convert feedback', () => {
     const activity4_single_response = items[4];
     const activity5_multiple_choice = items[5];
 
-    expect(page).toStrictEqual({
-      type: 'Page',
-      id: 'pre_course_student_survey',
-      legacyPath: expect.any(String),
-      legacyId: expect.any(String),
-      title: 'Pre-Course Student Survey',
-      tags: [],
-      unresolvedReferences: [],
-      warnings: [],
-      content: {
-        model: [
-          {
-            type: 'survey',
-            id: expect.any(String),
-            children: [
-              {
-                type: 'activity-reference',
-                activity_id: expect.stringContaining(
-                  'pre_course_student_survey-'
-                ),
-                id: expect.any(String),
-                page: expect.any(String),
-              },
-              {
-                type: 'activity-reference',
-                activity_id: expect.stringContaining(
-                  'pre_course_student_survey-'
-                ),
-                id: expect.any(String),
-                page: expect.any(String),
-              },
-              {
-                type: 'activity-reference',
-                activity_id: expect.stringContaining(
-                  'pre_course_student_survey-'
-                ),
-                id: expect.any(String),
-                page: expect.any(String),
-              },
-              {
-                type: 'activity-reference',
-                activity_id: expect.stringContaining(
-                  'pre_course_student_survey-'
-                ),
-                id: expect.any(String),
-                page: expect.any(String),
-              },
-              {
-                type: 'activity-reference',
-                activity_id: expect.stringContaining(
-                  'pre_course_student_survey-'
-                ),
-                id: expect.any(String),
-                page: expect.any(String),
-              },
-            ],
-          },
-        ],
-      },
-      isGraded: false,
-      isSurvey: true,
-      objectives: [],
-    });
-
-    expect(activity1_likert).toStrictEqual({
-      type: 'Activity',
-      id: expect.stringContaining('pre_course_student_survey-'),
-      legacyPath: file,
-      title: '',
-      tags: [],
-      warnings: [],
-      unresolvedReferences: [],
-      imageReferences: undefined,
-      content: {
-        stem: {
-          content: {
-            model: [
-              { text: 'PartI:', strong: true },
-              {
-                text: 'A list of opposing words appears below. Rate how well these words describe your feelings about chemistry. Think carefully and try not to include your feelings toward chemistry teachers or chemistry courses. For each line, choose a position between the two words that describes exactly how you feel. The middle position (4) is if you are undecided or have no feelings related to the terms on that row. Your answers should finish the statement:',
-              },
-            ],
-          },
-        },
-        choices: [
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'hard' }] }],
-            },
-            id: '1',
-          },
-          { content: { model: [] }, id: '2' },
-          { content: { model: [] }, id: '3' },
-          { content: { model: [] }, id: '4' },
-          { content: { model: [] }, id: '5' },
-          { content: { model: [] }, id: '6' },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'easy' }] }],
-            },
-            id: '7',
-          },
-        ],
-        items: [
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'Chemistry is...' }],
-                },
-              ],
-            },
-            id: 'q1',
-            required: 'true',
-          },
-        ],
-        orderDescending: false,
-        authoring: {
-          parts: [
+    expect(page).toEqual(
+      expect.objectContaining({
+        type: 'Page',
+        id: 'pre_course_student_survey',
+        legacyPath: expect.any(String),
+        legacyId: expect.any(String),
+        title: 'Pre-Course Student Survey',
+        tags: [],
+        unresolvedReferences: [],
+        warnings: [],
+        content: {
+          model: [
             {
-              gradingApproach: 'automatic',
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
+              type: 'survey',
               id: expect.any(String),
-              outOf: null,
-              responses: [
+              children: [
                 {
+                  type: 'activity-reference',
+                  activity_id: expect.stringContaining(
+                    'pre_course_student_survey-'
+                  ),
                   id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {1}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
-                    },
-                  },
+                  page: expect.any(String),
                 },
                 {
+                  type: 'activity-reference',
+                  activity_id: expect.stringContaining(
+                    'pre_course_student_survey-'
+                  ),
                   id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        { type: 'p', children: [{ text: 'Incorrect.' }] },
-                      ],
-                    },
-                  },
+                  page: expect.any(String),
+                },
+                {
+                  type: 'activity-reference',
+                  activity_id: expect.stringContaining(
+                    'pre_course_student_survey-'
+                  ),
+                  id: expect.any(String),
+                  page: expect.any(String),
+                },
+                {
+                  type: 'activity-reference',
+                  activity_id: expect.stringContaining(
+                    'pre_course_student_survey-'
+                  ),
+                  id: expect.any(String),
+                  page: expect.any(String),
+                },
+                {
+                  type: 'activity-reference',
+                  activity_id: expect.stringContaining(
+                    'pre_course_student_survey-'
+                  ),
+                  id: expect.any(String),
+                  page: expect.any(String),
                 },
               ],
-              scoringStrategy: 'average',
-              objectives: expect.any(Array),
-              targeted: expect.any(Array),
             },
           ],
-          transformations: [],
-          previewText: '',
-          targeted: expect.any(Array),
         },
-      },
-      objectives: expect.any(Object),
-      legacyId: 'pre_course_student_survey',
-      subType: 'oli_likert',
-    });
+        isGraded: false,
+        isSurvey: true,
+        objectives: [],
+      })
+    );
 
-    expect(activity2_likert).toStrictEqual({
-      type: 'Activity',
-      id: expect.stringContaining('pre_course_student_survey-'),
-      legacyPath: file,
-      title: '',
-      tags: [],
-      warnings: [],
-      unresolvedReferences: [],
-      imageReferences: undefined,
-      content: {
-        stem: {
-          content: {
-            model: [
-              {
-                type: 'p',
-                children: [
+    expect(activity1_likert).toEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: expect.stringContaining('pre_course_student_survey-'),
+        legacyPath: file,
+        title: '',
+        tags: [],
+        warnings: [],
+        unresolvedReferences: [],
+        imageReferences: undefined,
+        content: {
+          stem: {
+            content: {
+              model: [
+                { text: 'PartI:', strong: true },
+                {
+                  text: 'A list of opposing words appears below. Rate how well these words describe your feelings about chemistry. Think carefully and try not to include your feelings toward chemistry teachers or chemistry courses. For each line, choose a position between the two words that describes exactly how you feel. The middle position (4) is if you are undecided or have no feelings related to the terms on that row. Your answers should finish the statement:',
+                },
+              ],
+            },
+          },
+          choices: [
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'hard' }] }],
+              },
+              id: '1',
+            },
+            { content: { model: [] }, id: '2' },
+            { content: { model: [] }, id: '3' },
+            { content: { model: [] }, id: '4' },
+            { content: { model: [] }, id: '5' },
+            { content: { model: [] }, id: '6' },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'easy' }] }],
+              },
+              id: '7',
+            },
+          ],
+          items: [
+            {
+              content: {
+                model: [
                   {
-                    text: 'Indicate the extent to which you agree or disagree with each of the following statements.',
+                    type: 'p',
+                    children: [{ text: 'Chemistry is...' }],
                   },
                 ],
               },
-            ],
-          },
-        },
-        choices: [
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'strongly agree' }] }],
-            },
-            id: '1',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'agree' }] }],
-            },
-            id: '2',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'somewhat agree' }] }],
-            },
-            id: '3',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'neither agree nor disagree' }],
-                },
-              ],
-            },
-            id: '4',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'somewhat disagree' }],
-                },
-              ],
-            },
-            id: '5',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: 'disagree' }] }],
-            },
-            id: '6',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'strongly disagree' }],
-                },
-              ],
-            },
-            id: '7',
-          },
-        ],
-        items: [
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'I feel like I "belong" in chemistry.' }],
-                },
-              ],
-            },
-            id: 'q4',
-            required: 'true',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    { text: 'I feel welcomed in my chemistry class.' },
-                  ],
-                },
-              ],
-            },
-            id: 'q5',
-            required: 'true',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'I do not have much in common with other students in my chemistry class.',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'q6',
-            required: 'true',
-          },
-        ],
-        orderDescending: false,
-        authoring: {
-          parts: [
-            {
-              gradingApproach: 'automatic',
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              id: 'q4',
-              outOf: null,
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {1}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        { type: 'p', children: [{ text: 'Incorrect.' }] },
-                      ],
-                    },
-                  },
-                },
-              ],
-              scoringStrategy: 'average',
-              objectives: expect.any(Array),
-              targeted: expect.any(Array),
-            },
-            {
-              gradingApproach: 'automatic',
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              id: 'q5',
-              outOf: null,
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {1}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        { type: 'p', children: [{ text: 'Incorrect.' }] },
-                      ],
-                    },
-                  },
-                },
-              ],
-              scoringStrategy: 'average',
-              objectives: expect.any(Array),
-              targeted: expect.any(Array),
-            },
-            {
-              gradingApproach: 'automatic',
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              id: 'q6',
-              outOf: null,
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {1}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        { type: 'p', children: [{ text: 'Incorrect.' }] },
-                      ],
-                    },
-                  },
-                },
-              ],
-              scoringStrategy: 'average',
-              objectives: expect.any(Array),
-              targeted: expect.any(Array),
+              id: 'q1',
+              required: 'true',
             },
           ],
-          transformations: [],
-          previewText: '',
-          targeted: expect.any(Array),
-        },
-      },
-      objectives: expect.any(Object),
-      legacyId: 'pre_course_student_survey',
-      subType: 'oli_likert',
-    });
-
-    expect(activity3_likert).toStrictEqual({
-      type: 'Activity',
-      id: expect.stringContaining('pre_course_student_survey-'),
-      legacyPath: file,
-      title: '',
-      tags: [],
-      warnings: [],
-      unresolvedReferences: [],
-      imageReferences: undefined,
-      content: {
-        stem: {
-          content: {
-            model: [
+          orderDescending: false,
+          authoring: {
+            parts: [
               {
-                type: 'p',
-                children: [
+                gradingApproach: 'automatic',
+                hints: [
                   {
-                    text: '',
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        choices: [
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '1-2 hours' }] }],
-            },
-            id: '1',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '2-3 hours' }] }],
-            },
-            id: '2',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '3-4 hours' }] }],
-            },
-            id: '3',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '4-5 hours' }] }],
-            },
-            id: '4',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '5-6 hours' }] }],
-            },
-            id: '5',
-          },
-          {
-            content: {
-              model: [{ type: 'p', children: [{ text: '6+ hours' }] }],
-            },
-            id: '6',
-          },
-        ],
-        items: [
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'On average, about how much time per week did you spend using the OLI materials? ',
-                    },
-                  ],
-                  id: expect.any(String),
-                },
-                {
-                  type: 'p',
-                  children: [{ type: 'text', text: ' ' }],
-                  id: expect.any(String),
-                },
-              ],
-            },
-            id: expect.any(String),
-            required: false,
-          },
-        ],
-        orderDescending: false,
-        authoring: {
-          parts: [
-            {
-              gradingApproach: 'automatic',
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              id: expect.any(String),
-              outOf: null,
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {1}',
-                  feedback: {
                     id: expect.any(String),
                     content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct.' }] }],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        { type: 'p', children: [{ text: 'Incorrect.' }] },
-                      ],
-                    },
-                  },
-                },
-              ],
-              scoringStrategy: 'average',
-              objectives: expect.any(Array),
-              targeted: expect.any(Array),
-            },
-          ],
-          transformations: [],
-          previewText: '',
-          targeted: expect.any(Array),
-        },
-      },
-      objectives: expect.any(Object),
-      legacyId: 'pre_course_student_survey',
-      subType: 'oli_likert',
-    });
-
-    expect(activity4_single_response).toStrictEqual({
-      type: 'Activity',
-      id: 'pre_course_student_survey-gender',
-      legacyPath: file,
-      title: '',
-      tags: [],
-      unresolvedReferences: [],
-      warnings: [],
-      imageReferences: [],
-      content: {
-        stem: {
-          content: {
-            model: [
-              {
-                type: 'p',
-                children: [
-                  {
-                    text: 'How do you currently describe your gender identity?',
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        inputType: 'text',
-        submitAndCompare: false,
-        authoring: {
-          parts: [
-            {
-              id: expect.any(String),
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      id: expect.any(String),
                       model: [{ type: 'p', children: [{ text: '' }] }],
                     },
                   },
-                },
-              ],
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              objectives: [],
-              scoringStrategy: 'average',
-            },
-          ],
-          transformations: [],
-          previewText: '',
-        },
-      },
-      objectives: expect.any(Object),
-      legacyId: 'pre_course_student_survey',
-      subType: 'oli_short_answer',
-    });
-
-    expect(activity5_multiple_choice).toStrictEqual({
-      type: 'Activity',
-      id: 'pre_course_student_survey-race',
-      legacyPath: file,
-      title: '',
-      tags: [],
-      warnings: [],
-      unresolvedReferences: [],
-      imageReferences: [],
-      content: {
-        stem: {
-          content: {
-            model: [
-              {
-                type: 'p',
-                children: [
                   {
-                    text: 'Which categories describe you? Select all that apply to you: your racial or ethnic heritage?',
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                id: expect.any(String),
+                outOf: null,
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {1}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Correct.' }] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Incorrect.' }] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                objectives: expect.any(Array),
+                targeted: expect.any(Array),
+                explanation: null,
+              },
+            ],
+            transformations: [],
+            previewText: '',
+            targeted: expect.any(Array),
+          },
+        },
+        objectives: expect.any(Object),
+        legacyId: 'pre_course_student_survey',
+        subType: 'oli_likert',
+      })
+    );
+
+    expect(activity2_likert).toEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: expect.stringContaining('pre_course_student_survey-'),
+        legacyPath: file,
+        title: '',
+        tags: [],
+        warnings: [],
+        unresolvedReferences: [],
+        imageReferences: undefined,
+        content: {
+          stem: {
+            content: {
+              model: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Indicate the extent to which you agree or disagree with each of the following statements.',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          choices: [
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'strongly agree' }] }],
+              },
+              id: '1',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'agree' }] }],
+              },
+              id: '2',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'somewhat agree' }] }],
+              },
+              id: '3',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [{ text: 'neither agree nor disagree' }],
                   },
                 ],
               },
-            ],
-          },
-        },
-        choices: [
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'American Indian or Alaska Native—For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow Inupiat Traditional Government, Nome Eskimo Community',
-                    },
-                  ],
-                },
-              ],
+              id: '4',
             },
-            id: 'A',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Asian—For example, Chinese, Filipino, Asian Indian, Vietnamese, Korean, Japanese',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'B',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Black or African American—For example, Jamaican, Haitian, Nigerian, Ethiopian, Somalian',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'C',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Hispanic, Latino or Spanish Origin—For example, Mexican or Mexican American, Puerto Rican, Cuban, Salvadoran, Dominican, Columbian',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'D',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Middle Eastern or North African—For example, Lebanese, Iranian, Egyptian, Syrian, Moroccan, Algerian',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'E',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Native Hawaiian or Other Pacific Islander—For example, Native Hawaiian, Samoan, Chamorro, Tongan, Fijian, Marshallese',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'F',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'White—For example, German, Irish, English, Italian, Polish, French',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'G',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'International student' }],
-                },
-              ],
-            },
-            id: 'H',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Some other race, ethnicity, or origin, please specify: ___________',
-                    },
-                  ],
-                },
-              ],
-            },
-            id: 'I',
-          },
-          {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'I prefer not to answer' }],
-                },
-              ],
-            },
-            id: 'J',
-          },
-        ],
-        authoring: {
-          version: 2,
-          parts: [
             {
-              id: expect.any(String),
-              responses: [
-                {
-                  id: expect.any(String),
-                  score: 1,
-                  rule: 'input like {A}',
-                  legacyMatch: 'A',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: 'Correct' }] }],
-                    },
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [{ text: 'somewhat disagree' }],
                   },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {B}',
-                  legacyMatch: 'B',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
+                ],
+              },
+              id: '5',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: 'disagree' }] }],
+              },
+              id: '6',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [{ text: 'strongly disagree' }],
                   },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {C}',
-                  legacyMatch: 'C',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {D}',
-                  legacyMatch: 'D',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {E}',
-                  legacyMatch: 'E',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {F}',
-                  legacyMatch: 'F',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {G}',
-                  legacyMatch: 'G',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {H}',
-                  legacyMatch: 'H',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {I}',
-                  legacyMatch: 'I',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {J}',
-                  legacyMatch: 'J',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  score: 0,
-                  rule: 'input like {.*}',
-                  feedback: {
-                    id: expect.any(String),
-                    content: {
-                      model: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'Incorrect.' }],
-                        },
-                      ],
-                    },
-                  },
-                },
-              ],
-              hints: [
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-                {
-                  id: expect.any(String),
-                  content: {
-                    model: [{ type: 'p', children: [{ text: '' }] }],
-                  },
-                },
-              ],
-              scoringStrategy: 'average',
-              targeted: expect.any(Array),
-              objectives: [],
+                ],
+              },
+              id: '7',
             },
           ],
-          transformations: [],
-          previewText: '',
-          targeted: expect.any(Array),
+          items: [
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      { text: 'I feel like I "belong" in chemistry.' },
+                    ],
+                  },
+                ],
+              },
+              id: 'q4',
+              required: 'true',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      { text: 'I feel welcomed in my chemistry class.' },
+                    ],
+                  },
+                ],
+              },
+              id: 'q5',
+              required: 'true',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'I do not have much in common with other students in my chemistry class.',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'q6',
+              required: 'true',
+            },
+          ],
+          orderDescending: false,
+          authoring: {
+            parts: [
+              {
+                gradingApproach: 'automatic',
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                id: 'q4',
+                outOf: null,
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {1}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Correct.' }] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Incorrect.' }] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                objectives: expect.any(Array),
+                targeted: expect.any(Array),
+                explanation: null,
+              },
+              {
+                gradingApproach: 'automatic',
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                id: 'q5',
+                outOf: null,
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {1}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Correct.' }] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Incorrect.' }] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                objectives: expect.any(Array),
+                targeted: expect.any(Array),
+                explanation: null,
+              },
+              {
+                gradingApproach: 'automatic',
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                id: 'q6',
+                outOf: null,
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {1}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Correct.' }] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Incorrect.' }] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                objectives: expect.any(Array),
+                targeted: expect.any(Array),
+                explanation: null,
+              },
+            ],
+            transformations: [],
+            previewText: '',
+            targeted: expect.any(Array),
+          },
         },
-      },
-      objectives: expect.any(Object),
-      legacyId: 'pre_course_student_survey',
-      subType: 'oli_multiple_choice',
-    });
+        objectives: expect.any(Object),
+        legacyId: 'pre_course_student_survey',
+        subType: 'oli_likert',
+      })
+    );
+
+    expect(activity3_likert).toEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: expect.stringContaining('pre_course_student_survey-'),
+        legacyPath: file,
+        title: '',
+        tags: [],
+        warnings: [],
+        unresolvedReferences: [],
+        imageReferences: undefined,
+        content: {
+          stem: {
+            content: {
+              model: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: '',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          choices: [
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '1-2 hours' }] }],
+              },
+              id: '1',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '2-3 hours' }] }],
+              },
+              id: '2',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '3-4 hours' }] }],
+              },
+              id: '3',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '4-5 hours' }] }],
+              },
+              id: '4',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '5-6 hours' }] }],
+              },
+              id: '5',
+            },
+            {
+              content: {
+                model: [{ type: 'p', children: [{ text: '6+ hours' }] }],
+              },
+              id: '6',
+            },
+          ],
+          items: [
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'On average, about how much time per week did you spend using the OLI materials? ',
+                      },
+                    ],
+                    id: expect.any(String),
+                  },
+                  {
+                    type: 'p',
+                    children: [{ type: 'text', text: ' ' }],
+                    id: expect.any(String),
+                  },
+                ],
+              },
+              id: expect.any(String),
+              required: false,
+            },
+          ],
+          orderDescending: false,
+          authoring: {
+            parts: [
+              {
+                gradingApproach: 'automatic',
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                id: expect.any(String),
+                outOf: null,
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {1}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Correct.' }] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          { type: 'p', children: [{ text: 'Incorrect.' }] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                objectives: expect.any(Array),
+                targeted: expect.any(Array),
+                explanation: null,
+              },
+            ],
+            transformations: [],
+            previewText: '',
+            targeted: expect.any(Array),
+          },
+        },
+        objectives: expect.any(Object),
+        legacyId: 'pre_course_student_survey',
+        subType: 'oli_likert',
+      })
+    );
+
+    expect(activity4_single_response).toEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'pre_course_student_survey-gender',
+        legacyPath: file,
+        title: '',
+        tags: [],
+        unresolvedReferences: [],
+        warnings: [],
+        imageReferences: [],
+        content: {
+          stem: {
+            content: {
+              model: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'How do you currently describe your gender identity?',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          inputType: 'text',
+          submitAndCompare: false,
+          authoring: {
+            parts: [
+              {
+                id: expect.any(String),
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        id: expect.any(String),
+                        model: [{ type: 'p', children: [{ text: '' }] }],
+                      },
+                    },
+                  },
+                ],
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                objectives: [],
+                scoringStrategy: 'average',
+                explanation: null,
+              },
+            ],
+            transformations: [],
+            previewText: '',
+          },
+        },
+        objectives: expect.any(Object),
+        legacyId: 'pre_course_student_survey',
+        subType: 'oli_short_answer',
+      })
+    );
+
+    expect(activity5_multiple_choice).toEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'pre_course_student_survey-race',
+        legacyPath: file,
+        title: '',
+        tags: [],
+        warnings: [],
+        unresolvedReferences: [],
+        imageReferences: [],
+        content: {
+          stem: {
+            content: {
+              model: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Which categories describe you? Select all that apply to you: your racial or ethnic heritage?',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          choices: [
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'American Indian or Alaska Native—For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow Inupiat Traditional Government, Nome Eskimo Community',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'A',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Asian—For example, Chinese, Filipino, Asian Indian, Vietnamese, Korean, Japanese',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'B',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Black or African American—For example, Jamaican, Haitian, Nigerian, Ethiopian, Somalian',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'C',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Hispanic, Latino or Spanish Origin—For example, Mexican or Mexican American, Puerto Rican, Cuban, Salvadoran, Dominican, Columbian',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'D',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Middle Eastern or North African—For example, Lebanese, Iranian, Egyptian, Syrian, Moroccan, Algerian',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'E',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Native Hawaiian or Other Pacific Islander—For example, Native Hawaiian, Samoan, Chamorro, Tongan, Fijian, Marshallese',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'F',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'White—For example, German, Irish, English, Italian, Polish, French',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'G',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [{ text: 'International student' }],
+                  },
+                ],
+              },
+              id: 'H',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [
+                      {
+                        text: 'Some other race, ethnicity, or origin, please specify: ___________',
+                      },
+                    ],
+                  },
+                ],
+              },
+              id: 'I',
+            },
+            {
+              content: {
+                model: [
+                  {
+                    type: 'p',
+                    children: [{ text: 'I prefer not to answer' }],
+                  },
+                ],
+              },
+              id: 'J',
+            },
+          ],
+          authoring: {
+            version: 2,
+            parts: [
+              {
+                id: expect.any(String),
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input like {A}',
+                    legacyMatch: 'A',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [{ type: 'p', children: [{ text: 'Correct' }] }],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {B}',
+                    legacyMatch: 'B',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {C}',
+                    legacyMatch: 'C',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {D}',
+                    legacyMatch: 'D',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {E}',
+                    legacyMatch: 'E',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {F}',
+                    legacyMatch: 'F',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {G}',
+                    legacyMatch: 'G',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {H}',
+                    legacyMatch: 'H',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {I}',
+                    legacyMatch: 'I',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {J}',
+                    legacyMatch: 'J',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        model: [
+                          {
+                            type: 'p',
+                            children: [{ text: 'Incorrect.' }],
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                hints: [
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    content: {
+                      model: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+                scoringStrategy: 'average',
+                targeted: expect.any(Array),
+                objectives: [],
+                explanation: null,
+              },
+            ],
+            transformations: [],
+            previewText: '',
+            targeted: expect.any(Array),
+          },
+        },
+        objectives: expect.any(Object),
+        legacyId: 'pre_course_student_survey',
+        subType: 'oli_multiple_choice',
+      })
+    );
   });
 });

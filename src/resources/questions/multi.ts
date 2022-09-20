@@ -266,6 +266,7 @@ function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
     ),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 }
 
@@ -309,5 +310,6 @@ export function buildTextPart(part: any, _i: number) {
     ),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 }

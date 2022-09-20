@@ -1,2 +1,182 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd"><assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="newc72f87db5a5543b5ae8582d2d4cd34a7" recommended_attempts="3" max_attempts="3"><title>Inline Summative Assessment</title><page id="b749f85cbddc4660a195fef26fb87422"><title>Page 1</title><content available="always"><p id="d052cd7721c249f3939fd19e4e0271cf"><em>THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.</em></p><p id="ea8acc135ecc4b74a9f3b903f54388f1">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p></content><multiple_choice id="newc72f87db5a5543b5ae8582d2d4cd34a7_1a" grading="automatic" select="single"><body><p id="f4ce7ca7312d41a4a8861473a4aa85bd"><em>THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.</em></p><p id="b86fe531f3924139980084844fc8adaa">Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: </p></body><input shuffle="false" id="ans" labels="false"><choice value="yes">Acceptable</choice><choice value="no">Unacceptable</choice></input><part id="d8af2d70160147508b161f1beeba155a"><response match="yes" score="0"><feedback><p id="b58e46d68e0140659b55ef63299b3a1d">Incorrect; using another student&apos;s password is not acceptable, even if it&apos;s left out in the open. Further, Albert has assumed his girlfriend&apos;s identity by using her account, which is also a violation of the Computing Policy.</p></feedback></response><response match="no" score="1"><feedback><p id="f277ed5de9c949138801d812b4a9cc3a">Correct; this is a pretty clear violation of the policy, including using another person&apos;s account and impersonating another individual.</p></feedback></response></part></multiple_choice></page><page id="e34a049fc4d54f118a914c39d58937e9"><title>New Page 2</title><multiple_choice id="e652695935d04ce089f473330345ecf5" grading="automatic" select="single"><body><p id="d3786bde78b943a9a4404313d0a8400d">MCQ page 2</p></body><input shuffle="true" id="d81ed1c4cb2b4f209b6cb564071e8942" labels="false"><choice value="f3d408f2b88c4e15891a3da9d4848b91">choice 1</choice><choice value="dd1a0ca00db246d3adafbb4b025ba017">choice 2</choice></input><part id="cc45e5f6b7424cb2b031cb2924a1ee48"><response match="f3d408f2b88c4e15891a3da9d4848b91" score="1"><feedback><p id="c9d611862b9f4d7f9fa7d554373bf9aa" /></feedback></response><response match="dd1a0ca00db246d3adafbb4b025ba017" score="0"><feedback><p id="e047a90c8651468bb8c09e6b99f8d681" /></feedback></response></part></multiple_choice></page></assessment>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="newc72f87db5a5543b5ae8582d2d4cd34a7" recommended_attempts="3" max_attempts="3">
+    <title>Inline Summative Assessment</title>
+    <page id="b749f85cbddc4660a195fef26fb87422">
+        <title>Page 1</title>
+        <content available="always">
+            <p id="d052cd7721c249f3939fd19e4e0271cf">
+                <em>THIS IS EXAMPLE SUPPORTING CONTENT. PLEASE EDIT OR DELETE IT.</em>
+            </p>
+            <p id="ea8acc135ecc4b74a9f3b903f54388f1">Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.</p>
+        </content>
+        <multiple_choice id="newc72f87db5a5543b5ae8582d2d4cd34a7_1a" grading="automatic" select="single">
+            <body>
+                <p id="f4ce7ca7312d41a4a8861473a4aa85bd">
+                    <em>THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.</em>
+                </p>
+                <p id="b86fe531f3924139980084844fc8adaa">Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: </p>
+            </body>
+            <input shuffle="false" id="ans" labels="false">
+                <choice value="yes">Acceptable</choice>
+                <choice value="no">Unacceptable</choice>
+            </input>
+            <part id="d8af2d70160147508b161f1beeba155a">
+                <response match="yes" score="0">
+                    <feedback>
+                        <p id="b58e46d68e0140659b55ef63299b3a1d">Incorrect; using another student&apos;s password is not acceptable, even if it&apos;s left out in the open. Further, Albert has assumed his girlfriend&apos;s identity by using her account, which is also a violation of the Computing Policy.</p>
+                    </feedback>
+                </response>
+                <response match="no" score="1">
+                    <feedback>
+                        <p id="f277ed5de9c949138801d812b4a9cc3a">Correct; this is a pretty clear violation of the policy, including using another person&apos;s account and impersonating another individual.</p>
+                    </feedback>
+                </response>
+            </part>
+        </multiple_choice>
+        <fill_in_the_blank id="add_subtratAndmult_div_pool_v1" grading="automatic">
+            <body>
+                <p id="c610b98c76a74a8c8fe70bfcd86c5432">
+                    <em>Question with multiple feedback will be converted to feedback and explanation</em>
+                </p>
+                <p id="c610b98c76a74a8c8fe70bfcd86c5451">
+                    Perform each calculation below and select the answer with the correct significant figures.
+                </p>
+                <p id="d5e3f15a29824fe79f42b6d2db089a84">
+                6.27 cm &times; 4.108 cm &times; 15.22 cm =
+                    <input_ref
+                input="one"/> cm
+                    <sup>3</sup>
+                </p>
+                <p id="b270a1a126f047938f04c7a9dd0ab1d7"> 10.03 g + 0.00043 g + 5.387 g =
+                    <input_ref
+                input="two"/> g
+                </p>
+                <p id="a5705029c5e346b6996f600c4b314a40">
+                \(\frac{(17.0 + 31 + 12.09)}{36.3}\) =
+                    <input_ref input="three"/>
+                </p>
+                <p id="c799e2dfe5644af2821ce60995a40b35"/>
+            </body>
+            <input shuffle="false" id="one">
+                <choice value="e39cb25073e145268b4a49a85e2f3af0">390</choice>
+                <choice value="b97837b1551e442b9cde410565de984c">392</choice>
+                <choice value="ba5e232b349d4a039dfe9447a23d0d06">392.0</choice>
+                <choice value="e5b37212c97c4a88ab6dc078f7cf3610">392.02</choice>
+                <choice value="d5e14766da994afdb5f36ad81f5a78f0">392.024</choice>
+            </input>
+            <input shuffle="false" id="two">
+                <choice value="e66f5ef1c8444999b3f166ebbf09082f">15</choice>
+                <choice value="f0622450d53148ee93f5ad486a551ae1">15.4</choice>
+                <choice value="c114688297da4aeaafdcfacac8538a0a">15.42</choice>
+                <choice value="dcef29b4584d4a1f802205d56e9d31b8">15.417</choice>
+                <choice value="a2846e30cb354ac48879394d88726484">15.4174</choice>
+            </input>
+            <input shuffle="false" id="three">
+                <choice value="d867855ceab749ce867d1597cbdf1a7d">1.6</choice>
+                <choice value="ae660d24cbd44801988eb0ba83c28bc4">1.66</choice>
+                <choice value="e7d0fea3a85945b8a60ea9c25e9cc214">1.660</choice>
+                <choice value="fb7c92acbb054dd28890fc956b1b7c15">1.6599</choice>
+                <choice value="f9006f4a8bc4468394ef16e06a6b4b70">1.65994</choice>
+            </input>
+            <part id="one">
+                <response match="b97837b1551e442b9cde410565de984c" score="3"
+                input="one">
+                    <feedback>
+                        <p id="d7deb82cc63e45189081d45629ce9fa2">Correct. For multiplication, round the
+                product to the least number of significant figures in the three values (three sig. figs.
+                in 6.27).</p>
+                    </feedback>
+                </response>
+                <response match="*" score="0"
+                input="one">
+                    <feedback>
+                        <p id="b5040135db274898bc5557ce967f7c35">Incorrect. With
+                    multiplication or division, the answer should be rounded off to the least number of
+                    significant figures in the values.</p>
+                    </feedback>
+                    <feedback>
+                        <p>Incorrect. The correct answer is 392 cm
+                            <sup>3</sup>. For multiplication, round the
+                product to the least number of significant figures in the three values (three sig. figs.
+                in 6.27).
+                        </p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="two">
+                <response match="c114688297da4aeaafdcfacac8538a0a" score="3"
+                input="two">
+                    <feedback>
+                        <p id="b9c80e5267c044aaac6dd4ed360a08a9">Correct. For addition, round the product
+                to the least precise of the three values (10.03 is to the hundredths
+                place).</p>
+                    </feedback>
+                </response>
+                <response match="*" score="0"
+                input="two">
+                    <feedback>
+                        <p id="fce9af862a624860a656c41151cb3965">Incorrect. With addition or
+                    subtraction, the answer should be rounded off to the least precise decimal in the
+                    values. </p>
+                    </feedback>
+                    <feedback>
+                        <p>Incorrect. The correct answer is 15.52 g.  For addition, round the product
+                to the least precise of the three values (10.03 is to the hundredths
+                place).</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="three">
+                <response match="d867855ceab749ce867d1597cbdf1a7d" score="4"
+                input="three">
+                    <feedback>
+                        <p id="ee9c7fc479474b66970fe266101a1439">Correct. Based on the order of operations, first add the values in the
+                    parentheses and consider where the least precise place is for that value (but do not
+                    round yet). Then do the division and round off to the least number of significant
+                    figures.</p>
+                    </feedback>
+                </response>
+                <response match="*" score="0"
+                input="three">
+                    <feedback>
+                        <p id="dbc31c3c897b4e6d9c52128e2b01913a">Incorrect.  Based on the order of operations, first add the values in the
+                    parentheses and consider where the least precise place is for that value (but do not
+                    round yet). Then do the division and round off to the least number of significant
+                    figures.</p>
+                    </feedback>
+                    <feedback>
+                        <p>Incorrect. The correct answer is 1.6. Based on the order of operations, first add the values in the
+                parentheses and consider where the least precise place is for that value (but do not
+                round yet). Then do the division and round off to the least number of significant
+                figures.</p>
+                    </feedback>
+                </response>
+            </part>
+        </fill_in_the_blank>
+    </page>
+    <page id="e34a049fc4d54f118a914c39d58937e9">
+        <title>New Page 2</title>
+        <multiple_choice id="e652695935d04ce089f473330345ecf5" grading="automatic" select="single">
+            <body>
+                <p id="d3786bde78b943a9a4404313d0a8400d">MCQ page 2</p>
+            </body>
+            <input shuffle="true" id="d81ed1c4cb2b4f209b6cb564071e8942" labels="false">
+                <choice value="f3d408f2b88c4e15891a3da9d4848b91">choice 1</choice>
+                <choice value="dd1a0ca00db246d3adafbb4b025ba017">choice 2</choice>
+            </input>
+            <part id="cc45e5f6b7424cb2b031cb2924a1ee48">
+                <response match="f3d408f2b88c4e15891a3da9d4848b91" score="1">
+                    <feedback>
+                        <p id="c9d611862b9f4d7f9fa7d554373bf9aa" />
+                    </feedback>
+                </response>
+                <response match="dd1a0ca00db246d3adafbb4b025ba017" score="0">
+                    <feedback>
+                        <p id="e047a90c8651468bb8c09e6b99f8d681" />
+                    </feedback>
+                </response>
+            </part>
+        </multiple_choice>
+    </page>
+</assessment>
