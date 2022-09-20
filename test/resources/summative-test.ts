@@ -245,6 +245,7 @@ describe('convert summative', () => {
                 scoringStrategy: 'average',
                 targeted: [],
                 objectives: [],
+                explanation: null,
               },
             ],
             transformations: [
@@ -369,6 +370,7 @@ describe('convert summative', () => {
                 scoringStrategy: 'average',
                 targeted: [],
                 objectives: [],
+                explanation: null,
               },
             ],
             transformations: [
