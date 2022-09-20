@@ -53,6 +53,9 @@
                     <title>
 						Core Page Components
 					</title>
+                    <item id="bca2e8dcsssca5889891c18a62d699" scoring_mode="default">
+                        <resourceref idref="submit_and_compare_page" />
+                    </item>
                     <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
                         <resourceref idref="extra" />
                     </item>

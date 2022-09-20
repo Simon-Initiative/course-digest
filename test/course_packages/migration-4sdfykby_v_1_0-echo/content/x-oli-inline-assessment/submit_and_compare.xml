@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="submit_and_compare">
+    <title>tutor</title>
+    <short_title>reveal</short_title>
+    <page id="p1">
+      <question id="q2">
+
+        <body><p>Part II</p>
+            <p>Applicable Rule</p>
+        </body>
+        <short_answer id="qsub_0"/>
+        <part id="qpart_0">
+            <response input="qsub_0" match="*" score="10"/>
+      
+            <explanation>Alkali metal compounds are always soluble.</explanation>
+        </part>
+      </question>
+
+    </page>
+</assessment>
