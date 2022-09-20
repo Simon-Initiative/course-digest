@@ -117,7 +117,19 @@ export function standardContentManipulations($: any) {
   $('panopto').remove();
   $('unity').remove();
   $('vimeo').remove();
-  // $('cite').remove();
+  $('table cite').remove();
+  $('image cite').remove();
+  $('audio cite').remove();
+  $('video cite').remove();
+  $('iframe cite').remove();
+  $('youtube cite').remove();
+
+  handleAlternate($, 'img');
+  handleAlternate($, 'img_inline');
+  handleAlternate($, 'video');
+  handleAlternate($, 'audio');
+  handleAlternate($, 'iframe');
+  handleAlternate($, 'youtube');
 
   DOM.stripElement($, 'p ol');
   DOM.stripElement($, 'p ul');
@@ -213,6 +225,18 @@ function handleDialogs($: any) {
 
     if (title) {
       $(elem).attr('title', title);
+    }
+  });
+}
+
+function handleAlternate($: any, item: string) {
+  const items = $(item);
+  items.each((i: any, elem: any) => {
+    const alt = $(elem).children('alternate').text();
+    $(elem).children().remove('alternate');
+
+    if (alt) {
+      $(elem).attr('alt', alt);
     }
   });
 }

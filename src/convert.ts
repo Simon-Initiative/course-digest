@@ -130,12 +130,25 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     return m;
   }, {});
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-    const activity = byActivityId[a.resourceId + '-' + a.questionId];
+    let activity = byActivityId[a.resourceId + '-' + a.questionId];
+    if (activity === undefined) {
+      // Could not find directly, see if we can find it by strictly the question id
+      activity = Object.values(byActivityId).find((ac: TorusResource) =>
+        ac.id.endsWith('-' + a.questionId)
+      );
+    }
     if (activity !== undefined) {
       const objectives = activity.objectives;
 
       const mappedSkillIds = a.skillIds.map((id) => {
-        return bySkillId[id].id;
+        if (bySkillId[id] !== undefined) {
+          return bySkillId[id].id;
+        }
+        console.log(
+          'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+            id
+        );
+        return null;
       });
 
       // If no partId specified, apply the skills to all parts present in the activity

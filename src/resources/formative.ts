@@ -366,7 +366,7 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
     return [buildMulti(question), []];
   }
   if (subType === 'oli_custom_dnd') {
-    const multipart = buildMulti(question, true);
+    const multipart = buildMulti(question, true, true);
     return processCustomDnd(multipart, baseFileName);
   }
   if (subType === 'oli_likert') {
@@ -409,7 +409,7 @@ export function toActivity(
     p.responses = p.responses.map((r: any) => {
       if (r.showPage !== undefined) {
         const replacement = pageIdIndex.findIndex(
-          (id) => id.length > 1 && id.at(1) === r.showPage
+          (id) => id !== null && id.length > 1 && id.at(1) === r.showPage
         );
         if (replacement !== -1) {
           return Object.assign({}, r, { showPage: replacement });
@@ -482,6 +482,29 @@ export function determineSubType(question: any): ItemTypes {
   const likert_scale = Common.getChild(question.children, 'likert_scale');
   if (likert_scale !== undefined) {
     return 'oli_likert';
+  }
+
+  // Handle the case where the original question was a multi-input type but it did not
+  // specify any '<input>' elements.  In thise case we restore its orginal type and we
+  // create enough input elements (of the correct type) to allow it to convert correctly.
+  if (
+    question.originalType !== undefined &&
+    Common.getChild(question.children, 'numeric') === undefined &&
+    Common.getChild(question.children, 'text') === undefined &&
+    Common.getChild(question.children, 'fill_in_the_blank') === undefined
+  ) {
+    const parts = Common.getChildren(question.children, 'part');
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const firstResponse = Common.getChild(part.children, 'response');
+      question.children.push({
+        type: question.originalType,
+        id: firstResponse.input,
+      });
+    }
+
+    return 'oli_multi_input';
   }
 
   return 'oli_short_answer';
