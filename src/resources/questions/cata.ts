@@ -129,6 +129,7 @@ function buildCATAPart(question: any) {
     ),
     scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
+    explanation: Common.maybeBuildPartExplanation(responses),
   };
 
   return part;

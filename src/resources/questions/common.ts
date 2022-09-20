@@ -210,6 +210,7 @@ export function buildTextPart(id: string, question: any) {
     ),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
+    explanation: maybeBuildPartExplanation(responses),
   };
 }
 
