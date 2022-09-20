@@ -5,7 +5,11 @@ import { guid, replaceAll } from 'src/utils/common';
 import * as Common from './common';
 
 // a JSON representation of the Formative Legacy model of this question type
-export function buildMulti(question: any, skipInputRefValidation = false) {
+export function buildMulti(
+  question: any,
+  skipInputRefValidation = false,
+  ignorePartId = false
+) {
   // Pair up the inputs and the parts
   const { items, parts } = collectItemsParts(question);
   const allChoices: any[] = [];
@@ -18,7 +22,8 @@ export function buildMulti(question: any, skipInputRefValidation = false) {
       const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
         parts[i],
-        i
+        i,
+        ignorePartId
       );
       choices.forEach((c: any) => allChoices.push(c));
       targeted.forEach((c: any) => allTargeted.push(c));
@@ -92,16 +97,39 @@ export function buildStem(
   };
 }
 
-export function buildChoices(question: any, from = 'fill_in_the_blank') {
+export function buildChoices(
+  question: any,
+  partId: string,
+  from = 'fill_in_the_blank'
+) {
   const choices = Common.getChild(question.children, from).children;
 
   return choices.map((c: any) => ({
     content: c.children,
-    id: c.value,
+    id: partId + '_' + c.value,
   }));
 }
 
-function produceTorusEquivalents(item: any, p: any, i: number) {
+function ensureAtLeastOneCorrectResponse(part: any) {
+  const responses = part.responses;
+
+  if (!responses.some((r: any) => r.score > 0)) {
+    // Find the first that isn't the * and set it to be correct
+    const withoutStar = responses.filter((r: any) => r.legacyMatch !== '.*');
+    if (withoutStar.length > 0) {
+      withoutStar[0].score = 1;
+    } else {
+      responses[0].score = 1;
+    }
+  }
+}
+
+function produceTorusEquivalents(
+  item: any,
+  p: any,
+  i: number,
+  ignorePartId: boolean
+) {
   const input: any = {};
   let part: any = {};
   let choices: any[] = [];
@@ -109,37 +137,23 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
 
   if (item.type === 'text') {
     part = buildTextPart(p, i);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
   } else if (item.type === 'numeric') {
     part = buildTextPart(p, i);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
   } else {
-    part = buildDropdownPart(p, i);
+    part = buildDropdownPart(p, i, ignorePartId);
+    ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'dropdown';
 
-    choices = buildChoices({ children: [item] }, 'fill_in_the_blank');
+    choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);
 
     if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
       part.responses.forEach((r: any) => {
         targeted.push([[r.legacyMatch], r.id]);
-      });
-      part.responses.push({
-        id: guid(),
-        score: 0,
-        rule: `input like {.*}`,
-        feedback: {
-          id: guid(),
-          content: {
-            id: guid(),
-            model: [
-              {
-                type: 'p',
-                children: [{ text: 'Incorrect' }],
-              },
-            ],
-          },
-        },
       });
     }
   }
@@ -147,9 +161,27 @@ function produceTorusEquivalents(item: any, p: any, i: number) {
   input.id = item.id;
   input.partId = part.id;
 
+  if (!Common.hasCatchAllRule(part.responses)) {
+    part.responses.push({
+      id: guid(),
+      score: 0,
+      rule: 'input like {.*}',
+      feedback: {
+        id: guid(),
+        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+      },
+    });
+  }
+
   return { input, part, choices, targeted };
 }
 
+// It is terribly unfortunate that we have to write code like this, but the issue is that
+// the legacy system has a really odd way of allowing inputs and parts to be misaligned, that is
+// to say, allowing them to exist in different indices within their respective arrays. It
+// relies on the "input" element from the reponse to indicate which input that part pertains to, but
+// that attribute is not required.  When it is absent we have to assume that the items and parts
+// are aligned.  So we try first to align with 'input', if that fails we fall back in aligned.
 function collectItemsParts(question: any) {
   const items = question.children.filter((c: any) => {
     return (
@@ -159,14 +191,41 @@ function collectItemsParts(question: any) {
     );
   });
 
-  const parts = question.children.filter((c: any) => {
+  const originalParts = question.children.filter((c: any) => {
     return c.type === 'part';
   });
+
+  const partsByFirstReponseInput = originalParts.reduce((m: any, p: any) => {
+    const responses = p.children.filter((p: any) => p.type === 'response');
+
+    if (responses.length > 0) {
+      m[responses[0].input] = p;
+      return m;
+    }
+    return m;
+  }, {});
+
+  const partsByPartId = originalParts.reduce((m: any, p: any) => {
+    m[p.id] = p;
+    return m;
+  }, {});
+
+  const parts = items.map((item: any) => {
+    if (partsByFirstReponseInput[item.id] !== undefined) {
+      return partsByFirstReponseInput[item.id];
+    } else {
+      return partsByPartId[item.id];
+    }
+  });
+
+  if (parts.some((p: any) => p === undefined)) {
+    return { items, parts: originalParts };
+  }
 
   return { items, parts };
 }
 
-function buildDropdownPart(part: any, _i: number) {
+function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
@@ -175,7 +234,7 @@ function buildDropdownPart(part: any, _i: number) {
     responses.length > 0 ? responses[0].input : guid();
 
   const id =
-    part.id !== undefined && part.id !== null
+    part.id !== undefined && part.id !== null && !ignorePartId
       ? part.id + ''
       : firstResponseInputValue;
 
@@ -186,7 +245,7 @@ function buildDropdownPart(part: any, _i: number) {
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: `input like {${m}}`,
+        rule: m === '.*' ? `input like {${m}}` : `input like {${id + '_' + m}}`,
         legacyMatch: m,
         feedback: {
           id: guid(),
@@ -224,6 +283,7 @@ export function buildTextPart(part: any, _i: number) {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
         rule: `input like {${cleanedMatch}}`,
+        legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
           content: {
