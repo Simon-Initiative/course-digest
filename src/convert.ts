@@ -554,17 +554,13 @@ export function setGroupPaginationModes(
       return m;
     }, {});
 
-  let activitiesRemaining = Object.keys(items).length;
   // Written in an imperative style, as it is far easier to optimze the performance. If
   // there are no branching activites, we do nothing, otherwise we only traverse the
   // content of pages until we find all the activities.
-  for (let i = 0; i < resources.length && activitiesRemaining > 0; i++) {
+  for (let i = 0; i < resources.length; i++) {
     const resource = resources[i];
     if (resource.type === 'Page' && resource.unresolvedReferences.length > 0) {
-      activitiesRemaining -= setGroupPaginationModesForPage(
-        resource as Page,
-        items
-      );
+      setGroupPaginationModesForPage(resource as Page, items);
     }
   }
 

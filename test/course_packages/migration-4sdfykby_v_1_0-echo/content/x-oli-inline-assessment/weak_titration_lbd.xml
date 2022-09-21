@@ -6,6 +6,95 @@
 		tutor
 	</title>
 	<page>
+    <question id="q1-inline-bold">
+      <!--LO:-->
+      <body>Choose the examples in which the bolded value used in the described calculation is
+          an exact value. (Select all that apply)</body>
+      <multiple_choice shuffle="true" select="multiple">
+          <choice value="A">You are converting a measurement from m to km. You use the
+              relationship that you know between these two units <em>1 m = 0.001 km</em>.</choice>
+          <choice value="B">You are trying to determine the average height of all of the
+              students in your class. You measure the height of each student and find the sum.
+              You then divide that number by the <em>number of students in your class</em>.</choice>
+          <choice value="C">You are trying to find the density of rock that you found. You use
+              water displacement to determine the volume of the rock and you <em>use an electronic
+              balance to determine its mass</em>.</choice>
+          <choice value="D">You are trying to find the density of rock that you found. You use
+              water displacement to <em>determine the volume of the rock</em> and you use an electronic
+                  balance to determine its mass.</choice>
+      </multiple_choice>
+      <part>
+          <response match="A" score="0">
+              <feedback>Partially correct. While this does represent an exact value there is
+                  another correct choice.</feedback>
+          </response>
+          <response match="B" score="0">
+              <feedback>Partially correct. While this does represent an exact value there is
+                  another correct choice.</feedback>
+          </response>
+          <response match="C" score="0">
+              <feedback>Incorrect. This is a measured value and therefore not
+                  exact.</feedback>
+          </response>
+          <response match="D" score="0">
+              <feedback>Incorrect. This is a measured value and therefore not exact.
+              </feedback>
+          </response>
+          <response match="A,B" score="1">
+              <feedback>Correct. Counting numbers and values that are defined are exact
+                  values. </feedback>
+          </response>
+          <response match="A,C" score="0">
+              <feedback>Partially correct. A defined value such as 1 m = 0.001 km is an exact
+                  value, however finding volume is a measurement. </feedback>
+          </response>
+          <response match="A,D" score="0">
+              <feedback>Partially correct. A defined value such as 1 m = 0.001 km is an exact
+                  value, however finding mass is a measurement. </feedback>
+          </response>
+          <response match="B,C" score="0">
+              <feedback>Partially correct. A counting number, such as counting the number of
+                  students is an exact value. However finding volume is a measurement.
+              </feedback>
+          </response>
+          <response match="B,D" score="0">
+              <feedback>Partially correct. A counting number, such as counting the number of
+                  students is an exact value. However finding mass is a measurement.
+              </feedback>
+          </response>
+          <response match="C,D" score="0">
+              <feedback>Incorrect </feedback>
+          </response>
+          <response match="A,B,C" score="0">
+              <feedback>Partially correct. A defined value such as 1 m = 0.001 km is an exact
+                  value, however finding mass is a measurement. A counting number, such as
+                  counting the number of students is an exact value. However finding volume is
+                  a measurement. </feedback>
+          </response>
+          <response match="A,B,D" score="0">
+              <feedback>Partially correct. Counting numbers and values that are defined are
+                  exact values, however, the mass determined by an electronic balance is a
+                  measured value and therefore not exact. </feedback>
+          </response>
+          <response match="A,C,D" score="0">
+              <feedback>Partially correct. A defined value such as 1 m = 0.001 km is an exact
+                  value, however finding mass is a measurement. A counting number, such as
+                  counting the number of students is an exact value. However finding mass is a
+                  measurement. </feedback>
+          </response>
+          <response match="B,C,D" score="0">
+              <feedback>Incorrect </feedback>
+          </response>
+          <response match="A,B,C,D" score="0">
+              <feedback>Partially correct. A defined value such as 1 m = 0.001 km is an exact
+                  value, however finding mass is a measurement. A counting number, such as
+                  counting the number of students is an exact value. However finding mass and
+                  volume is a measurement. </feedback>
+          </response>
+          <hint>Counting numbers and values that are defined are exact values.</hint>
+          <hint>Measured values are not exact.</hint>
+      </part>
+  </question>
 		<question id="q1">
 			<body>
 				Calculate pH of the initial 0.250 M HClO solution.

@@ -543,18 +543,26 @@ export class Formative extends Resource {
     performRestructure($);
     const xml = $.html();
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
-        (r: any) => {
-          const legacyId = r.children[0].id;
-          const { items } = processAssessmentModel(
-            legacyId,
-            r.children[0].children,
-            this.file
-          );
+      XML.toJSON(xml, {
+        p: true,
+        em: true,
+        li: true,
+        td: true,
+        choice: true,
+        stem: true,
+        hint: true,
+        feedback: true,
+        explanation: true,
+      }).then((r: any) => {
+        const legacyId = r.children[0].id;
+        const { items } = processAssessmentModel(
+          legacyId,
+          r.children[0].children,
+          this.file
+        );
 
-          resolve(items);
-        }
-      );
+        resolve(items);
+      });
     });
   }
 

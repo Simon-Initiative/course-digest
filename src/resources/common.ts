@@ -158,6 +158,14 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'quote', 'blockquote');
   DOM.rename($, 'composite_activity title', 'p');
+
+  DOM.renameAttribute(
+    $,
+    'composite_activity wb\\:inline',
+    'purpose',
+    'innerpurpose'
+  );
+
   DOM.rename($, 'composite_activity', 'group');
   DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'group');

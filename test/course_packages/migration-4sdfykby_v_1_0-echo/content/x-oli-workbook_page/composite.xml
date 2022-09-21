@@ -29,7 +29,7 @@
 					−8
 				</sup>
 			</p>
-			<inline idref="weak_titration_lbd" />
+			<wb:inline idref="weak_titration_lbd" purpose="learnbydoing"/>
 		</composite_activity>
 		<composite_activity purpose="learnbydoing">
 			<p>
