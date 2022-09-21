@@ -184,7 +184,6 @@ describe('convert feedback', () => {
     const items = await convert(mediaSummary, file, false);
 
     const page = items[0];
-    const activity1_likert = items[1];
     const activity2_likert = items[2];
     const activity3_likert = items[3];
     const activity4_single_response = items[4];
