@@ -111,7 +111,7 @@ export class WorkbookPage extends Resource {
           page.id = r.children[0].id;
           page.legacyId = page.id;
 
-          if (page.objectives === []) {
+          if (page.objectives.length === 0) {
             page.objectives = r.children[0].children[0].children.map(
               (o: any) => o.idref
             );

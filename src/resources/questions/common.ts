@@ -38,9 +38,10 @@ export function hasCatchAllRule(responses: any[]) {
   return responses.some((r) => r.rule === 'input like {.*}');
 }
 
-export function ensureParagraphs(children: any) {
-  if (children.length === 1 && children[0].text !== undefined) {
-    return [{ type: 'p', children }];
+export function ensureParagraphs(children: any[]) {
+  if (children.every((c: any) => c.text !== undefined)) {
+    const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
+    return [{ type: 'p', children: withEmptyText }];
   }
   return children;
 }

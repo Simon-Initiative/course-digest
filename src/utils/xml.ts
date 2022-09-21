@@ -463,7 +463,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
     parser.on('text', (raw: string) => {
       // Cheerio will encode ampersands in non supported XML entities like &times; to be &amp;times;
       // So to handle these we first decode only ampersands, then feed that result through the
-      // html-entities library's decode to handle all other HTML5 entities.
+      // html-entities library's decode to handle all other HTML5 entities.'
+
       let text = replaceAll(raw, '&amp;', '&');
       text = decode(text, { level: 'html5' });
 
