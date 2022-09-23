@@ -63,6 +63,11 @@ export function addWarning(
 }
 
 export function standardContentManipulations($: any) {
+  DOM.unwrapInlinedMedia($, 'video');
+  DOM.unwrapInlinedMedia($, 'audio');
+  DOM.unwrapInlinedMedia($, 'youtube');
+  DOM.unwrapInlinedMedia($, 'iframe');
+
   DOM.rename($, 'definition term', 'definition-term');
 
   // Convert all inline markup elements to <em> tags, this

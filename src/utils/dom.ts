@@ -37,6 +37,14 @@ export function eliminateLevel($: any, selector: string) {
   });
 }
 
+export function unwrapInlinedMedia($: any, type: string) {
+  $(`p ${type}`).each((i: any, elem: any) => {
+    const parent = $(elem).parent();
+    $(parent[0]).children().remove(elem);
+    $(elem).insertBefore($(parent[0]));
+  });
+}
+
 export function flattenResourceRefs($: any) {
   const refs = $('item resourceref');
 
