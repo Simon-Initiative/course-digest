@@ -1,7 +1,9 @@
 import * as glob from 'glob';
+
 import { executeSerially } from 'src/utils/common';
 import * as Resources from 'src/resources/resource';
 import * as Orgs from 'src/resources/organization';
+import * as DOM from 'src/utils/dom';
 
 // Build a map of resource ids to the full path of the resource for all resources
 // found in the OLI legacy course project directory
@@ -40,7 +42,24 @@ export function mapResourcesInNamedDirectory(
   });
 }
 
-export function collectOrgItemReferences(packageDirectory: string, id = '') {
+function determineDefaultOrgId(packageDirectory: string) {
+  const $ = DOM.read(
+    `${packageDirectory}/organizations/default/organization.xml`
+  );
+  return $('organization').first().attr('id');
+}
+
+export function collectOrgItemReferences(packageDirectory: string) {
+  const files = glob.sync(`${packageDirectory}/**/*.xml`, {});
+  const id = determineDefaultOrgId(packageDirectory);
+
+  const filesById = files.reduce((m: any, f) => {
+    const lastPart = f.substring(f.lastIndexOf('/') + 1);
+    const parts = lastPart.split('.');
+    m[parts[0]] = f;
+    return m;
+  }, {});
+
   return Orgs.locate(packageDirectory).then((orgs) =>
     executeSerially(
       orgs.map((file) => () => {
@@ -63,11 +82,8 @@ export function collectOrgItemReferences(packageDirectory: string, id = '') {
                 // Add references from all other organization files that are
                 // not part of the main org
                 // Ensure referenced file exists
-                const files = glob.sync(
-                  `${packageDirectory}/**/${i.id}.xml`,
-                  {}
-                );
-                if (files && files.length > 0) {
+
+                if (filesById[i.id] !== undefined) {
                   seenReferences[i.id] = true;
                   references.push(i.id);
                   referencesOthers.push(i.id);

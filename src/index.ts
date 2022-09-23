@@ -59,14 +59,20 @@ interface ConvertedResults {
 
 function validateArgs(options: CmdOptions) {
   if (options.operation === 'convert') {
-    if (
-      options.mediaUrlPrefix &&
-      options.inputDir &&
-      options.outputDir &&
-      options.specificOrg &&
-      options.specificOrgId
-    ) {
-      return [options.inputDir, options.specificOrg].every(fs.existsSync);
+    if (options.mediaUrlPrefix === undefined) {
+      options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
+    }
+    if (options.outputDir === undefined) {
+      options.outputDir = './out';
+    }
+    if (options.specificOrg === undefined) {
+      options.specificOrg = `${options.inputDir}/organizations/default/organization.xml`;
+    }
+    if (options.svnRoot === undefined) {
+      options.svnRoot = '';
+    }
+    if (options.inputDir) {
+      return [options.inputDir].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
@@ -90,11 +96,10 @@ function alongWith(promiseFunc: any, ...along: any) {
 function summaryAction(options: CmdOptions) {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
-  const specificOrgId = options.specificOrgId;
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrgId),
+    () => collectOrgItemReferences(packageDirectory),
   ])
     .then((results: any) =>
       processResources(
@@ -144,13 +149,12 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const packageDirectory = options.inputDir;
   const outputDirectory = options.outputDir;
   const svnRoot = options.svnRoot;
-  const specificOrgId = options.specificOrgId;
   const specificOrg = options.specificOrg;
   const spreadsheetPath = options.spreadsheetPath;
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory, specificOrgId),
+    () => collectOrgItemReferences(packageDirectory),
     () => getLearningObjectiveIds(packageDirectory),
     () => getSkillIds(packageDirectory),
   ]).then((results: any) => {
