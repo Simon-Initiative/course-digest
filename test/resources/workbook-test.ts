@@ -26,7 +26,6 @@ describe('convert workbook', () => {
         unresolvedReferences: [
           'newca1a54a0f56a4d429f5aff2c515cab08',
           'newc72f87db5a5543b5ae8582d2d4cd34a7',
-          'newc72f87db5a5543b5ae8582d2d4cd34a7',
         ],
         content: {
           model: [
@@ -95,14 +94,10 @@ describe('convert workbook', () => {
               },
               children: [
                 {
-                  type: 'p',
-                  children: [
-                    {
-                      type: 'a',
-                      children: [{ text: 'Click to begin' }],
-                      idref: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
-                    },
-                  ],
+                  type: 'page_link',
+                  ref: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
+                  children: [],
+                  purpose: 'quiz',
                 },
               ],
             },
