@@ -26,7 +26,6 @@ export class WorkbookPage extends Resource {
   restructure($: any): any {
     standardContentManipulations($);
 
-    DOM.flattenNestedSections($);
     liftTitle($);
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'inline', 'activity_placeholder');

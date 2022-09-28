@@ -3,15 +3,22 @@
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 
-function flattenSection($: any, selector: string, tag: string) {
+function flattenSection($: cheerio.CheerioAPI, selector: string, tag: string) {
   const triple = $(selector);
 
-  triple.each((i: any, elem: any) => {
+  triple.each((i: any, elem: cheerio.TagElement) => {
     const text = $(elem).children('title').html();
 
     $(elem).children('title').replaceWith(`<${tag}>${text}</${tag}>`);
     $(elem).children('body').replaceWith($(elem).children('body').children());
-    $(elem).replaceWith($(elem).children());
+
+    const purpose = $(elem).attr('purpose');
+    if (purpose) {
+      // replace the section element with a group placeholder
+      elem.tagName = 'group';
+    } else {
+      $(elem).replaceWith($(elem).children());
+    }
   });
 }
 
