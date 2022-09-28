@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC " -//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page id="conjugation"
+    xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" xmlns:bib="http://bibtexml.sf.net/"
+    xmlns:pref="http://oli.web.cmu.edu/preferences/" xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/">
+    <head>
+        <title>Conjugation tables</title>
+    </head>
+    <body>
+     
+      <p>Voici les conjugaisons au présent de l’indicatif. Apprenez-les par cœur:</p>
+      <conjugation verb="vouloir" id="v1">
+         <title>vouloir</title>
+         <cr>
+            <th/>
+            <th>
+              singulier
+            </th>
+            <th>
+              pluriel
+            </th>
+         </cr>
+         <cr>
+            <th>1ère personne</th>
+            <conjugate pronouns="Je">veux</conjugate>
+            <conjugate pronouns="Nous">voulons</conjugate>
+         </cr>
+         <cr>
+            <th>2ème personne</th>
+            <conjugate pronouns="tu">veux</conjugate>
+            <conjugate pronouns="vous">voulez</conjugate>
+         </cr>
+         <cr>
+            <th>3ème personne</th>
+            <conjugate pronouns="il/elle/on">veut</conjugate>
+            <conjugate pronouns="ils/elles">veulent</conjugate>
+         </cr>
+      </conjugation>
+
+      <p>And one with audio:</p>
+
+      <conjugation verb="Finir">
+        <title>Finir</title>
+        <cr>
+           <th/>
+           <th>
+              singulier
+           </th>
+           <th>
+              pluriel
+           </th>
+        </cr>
+        <cr>
+           <th>1ère personne</th>
+           <conjugate src="../webcontent/F1L10s224.mp3" type="audio/mp3" pronouns="Je fini"
+                 ><em style="deemphasis">s</em></conjugate>
+
+           <conjugate src="../webcontent/F1L10s227.mp3" type="audio/mp3"
+              pronouns="Nous finisson"><em style="deemphasis">s</em></conjugate>
+        </cr>
+        <cr>
+           <th>2ème personne</th>
+           <conjugate src="../webcontent/F1L10s225.mp3" type="audio/mp3" pronouns="Tu fini"
+                 ><em style="deemphasis">s</em></conjugate>
+
+           <conjugate src="../webcontent/F1L10s228.mp3" type="audio/mp3"
+              pronouns="Vous finisse"><em style="deemphasis">z</em></conjugate>
+        </cr>
+        <cr>
+           <th>3ème personne</th>
+           <conjugate src="../webcontent/F1L10s226.mp3" type="audio/mp3" pronouns="Il fini"
+                 ><em style="deemphasis">t</em></conjugate>
+
+           <conjugate src="../webcontent/F1L10s229.mp3" type="audio/mp3"
+              pronouns="Ils finisse"><em style="deemphasis">nt</em></conjugate>
+        </cr>
+     </conjugation>
+        
+    </body>
+</workbook_page>
