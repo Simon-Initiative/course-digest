@@ -37,6 +37,14 @@ export function eliminateLevel($: any, selector: string) {
   });
 }
 
+export function unwrapInlinedMedia($: any, type: string) {
+  $(`p ${type}`).each((i: any, elem: any) => {
+    const parent = $(elem).parent();
+    $(parent[0]).children().remove(elem);
+    $(elem).insertBefore($(parent[0]));
+  });
+}
+
 export function flattenResourceRefs($: any) {
   const refs = $('item resourceref');
 
@@ -195,6 +203,8 @@ function handleLabelledContent($: any, selector: string) {
 export function removeSelfClosing($: any) {
   $('caption').removeAttr('___selfClosing___');
   $('image').removeAttr('___selfClosing___');
+  $('th').removeAttr('___selfClosing___');
+  $('td').removeAttr('___selfClosing___');
 }
 
 export function remove($: any, element: string) {

@@ -164,9 +164,14 @@ export function cata(question: any) {
 
   Common.convertAutoGenResponses(model);
 
-  const correctResponse = model.authoring.parts[0].responses.filter(
+  let correctResponse = model.authoring.parts[0].responses.filter(
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
+
+  if (correctResponse === undefined) {
+    correctResponse = model.authoring.parts[0].responses[0];
+  }
+
   const correctIds = correctResponse.rule.split(',');
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);

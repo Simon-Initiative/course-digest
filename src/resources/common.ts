@@ -63,6 +63,11 @@ export function addWarning(
 }
 
 export function standardContentManipulations($: any) {
+  DOM.unwrapInlinedMedia($, 'video');
+  DOM.unwrapInlinedMedia($, 'audio');
+  DOM.unwrapInlinedMedia($, 'youtube');
+  DOM.unwrapInlinedMedia($, 'iframe');
+
   DOM.rename($, 'definition term', 'definition-term');
 
   // Convert all inline markup elements to <em> tags, this
@@ -207,9 +212,29 @@ export function standardContentManipulations($: any) {
   handleInquiry($);
   handleDefinitions($);
   handleDialogs($);
+  handleConjugations($);
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleConjugations($: any) {
+  // The rest of conjugation support is in xml.ts
+
+  DOM.rename($, 'conjugate', 'tc');
+  DOM.rename($, 'cr', 'tr');
+  DOM.renameAttribute($, 'tc', 'src', 'audioSrc');
+  DOM.renameAttribute($, 'tc', 'type', 'audioType');
+
+  const items = $('conjugation');
+  items.each((i: any, elem: any) => {
+    const title = $(elem).children('title').text();
+    $(elem).children().remove('title');
+
+    if (title) {
+      $(elem).attr('title', title);
+    }
+  });
 }
 
 function handleDialogs($: any) {
