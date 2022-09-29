@@ -203,6 +203,18 @@ export function stage(
 function findFromDOM($: any): Record<string, Array<string>> {
   const paths: any = {};
 
+  $('pronunciation').each((i: any, elem: any) => {
+    if ($(elem).attr('src') !== undefined) {
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    }
+  });
+
+  $('conjugate').each((i: any, elem: any) => {
+    if ($(elem).attr('src') !== undefined) {
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    }
+  });
+
   $('image').each((i: any, elem: any) => {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });

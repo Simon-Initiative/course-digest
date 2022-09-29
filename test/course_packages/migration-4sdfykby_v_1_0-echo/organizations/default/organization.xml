@@ -98,6 +98,12 @@
                     <item id="bca2a2dad6ddd99" scoring_mode="default">
                       <resourceref idref="dialog" />
                     </item>
+                    <item id="bca2a2dad6aasdfasdddd99" scoring_mode="default">
+                      <resourceref idref="conjugation" />
+                    </item>
+                    <item id="bca2a2dad6aasdfasddde00" scoring_mode="default">
+                      <resourceref idref="sections" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>

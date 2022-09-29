@@ -26,7 +26,6 @@ export class WorkbookPage extends Resource {
   restructure($: any): any {
     standardContentManipulations($);
 
-    DOM.flattenNestedSections($);
     liftTitle($);
     DOM.rename($, 'wb\\:inline', 'activity_placeholder');
     DOM.rename($, 'inline', 'activity_placeholder');
@@ -63,8 +62,10 @@ export class WorkbookPage extends Resource {
     $('activity').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
       page.unresolvedReferences.push(idref);
-      $(elem).replaceWith(`<p><a idref="${idref}">Click to begin</a></p>`);
     });
+
+    DOM.rename($, 'activity', 'page_link');
+    DOM.renameAttribute($, 'page_link', 'idref', 'ref');
 
     $('objref').each((i: any, elem: any) => {
       page.objectives.push($(elem).attr('idref'));

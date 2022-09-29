@@ -397,6 +397,31 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const defaultPronunciation = () => ({
+        type: 'pronunciation',
+        children: [{ type: 'p', children: [{ text: '' }] }],
+      });
+
+      const handleConjugation = () => {
+        if (tag === 'conjugation') {
+          // We have to set 'pronunciation' as a property
+          // as well introduce 'table' as a property to hold all of the
+          // 'tr' children
+
+          const rows = getAllOfType(top().children, 'tr');
+          const pronunciation = getOneOfType(top().children, 'pronunciation');
+
+          top().pronunciation =
+            pronunciation === null ? defaultPronunciation() : pronunciation;
+          top().table = {
+            type: 'table',
+            caption: [{ type: 'p', children: [{ text: '' }] }],
+            children: rows,
+          };
+          top().children = [];
+        }
+      };
+
       const renameCaptionForFigure = () => {
         if (tag === 'figure') {
           if (top().caption !== null && top().caption !== undefined) {
@@ -451,6 +476,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('pronunciation');
         ensureParagraph('translation');
         ensureParagraph('pronunciation');
+        handleConjugation();
 
         if (top() && top().children === undefined) {
           top().children = [];

@@ -78,7 +78,23 @@ function buildMCQPart(question: any) {
   // Handle the specific case where there are exactly two choices
   // and no catch-all response
   if (shouldUseSimpleModel(r)) {
-    const incorrect = r.filter((r: any) => r.score === 0)[0];
+    let incorrect = r.filter((r: any) => r.score === 0)[0];
+
+    if (incorrect === undefined) {
+      incorrect = {
+        id: guid(),
+        score: 0,
+        rule: `input like {.*}`,
+        feedback: {
+          id: guid(),
+          content: {
+            model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
+          },
+        },
+      };
+      r.push(incorrect);
+    }
+
     let other = r.filter((r: any) => r.score !== 0)[0];
     incorrect.rule = 'input like {.*}';
 
