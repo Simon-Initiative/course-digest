@@ -1,12 +1,15 @@
 import * as Common from './common';
+import * as cheerio from 'cheerio';
 import * as DOM from '../../utils/dom';
 import { replaceAll } from '../../utils/common';
 
 export type CustomTagDetails = {
+  question: any;
   height: string;
   width: string;
   layoutFile: string;
-  type: 'custom' | 'table' | 'other';
+  type: 'custom' | 'other';
+  dynaRefMap: Map<string, string> | null;
 };
 
 export type LayoutFile = {
@@ -26,15 +29,38 @@ export function findCustomTag(
     (c) => c.type === 'javascript'
   );
   if (custom !== undefined) {
+    let inputRefsMap: Map<string, string> | null = null;
+    if (containsDynaDropTable(custom) && stem !== null) {
+      console.log(
+        'the question --------------------- ' + JSON.stringify(question)
+      );
+      const inputRefs = question.authoring.parts
+        .map((i: any) => {
+          return i.responses
+            .filter((c: any) => c.score === 1)
+            .map((e: any) => {
+              return e.rule.replace('input like {', '').replace('}', '');
+            });
+        })
+        .flat();
+      inputRefsMap = inputRefs.reduce(
+        (acc: Map<string, string>, val: string) => {
+          const v: string[] = val.split('_');
+          acc.set(v[1], v[0]);
+          console.log(acc);
+          return acc;
+        },
+        new Map()
+      );
+      // console.log('the respos ' + JSON.stringify(inputRefsMap.get('cfe182776c6340dab48af78af4bbddfa')));
+    }
     return {
+      question: question,
       height: custom.height,
       width: custom.width,
       layoutFile: custom.layout,
-      type: containsDynaDropTable(custom)
-        ? 'table'
-        : custom.id === 'dragDrop'
-        ? 'custom'
-        : 'other',
+      type: isCustomDnD(custom) ? 'custom' : 'other',
+      dynaRefMap: inputRefsMap,
     };
   }
   return undefined;
@@ -83,6 +109,10 @@ function processLayout(
     initiators: cutCDATA($('initiators').first().html() as string),
   });
 
+  if (customTag.dynaRefMap) {
+    switchInitiatorsWithTargets(customTag, updated);
+  }
+
   return [updated, imageReferences];
 }
 
@@ -98,6 +128,89 @@ function cutCDATA(content: string) {
   let s = replaceAll(content, '<!\\[CDATA\\[', '');
   s = replaceAll(s, '\\]\\]>', '');
   return s;
+}
+
+function switchInitiatorsWithTargets(
+  customTag: CustomTagDetails,
+  updated: any
+) {
+  const $targets = cheerio.load(
+    updated.targetArea,
+    Object.assign(
+      {},
+      {
+        normalizeWhitespace: true,
+        xmlMode: true,
+      },
+      {}
+    )
+  );
+  // console.log('ss dd ' + $targets.html());
+  console.log(
+    '\nadsd ------------------------------------------------------------------------------------ ' +
+      customTag.layoutFile
+  );
+  const refsFound: string[] = [];
+  $targets('.target').map((i: any, x: any) => {
+    const oldRef: string | undefined = $targets(x).attr('input_ref');
+    const newRef: string | undefined = customTag.dynaRefMap?.get(
+      oldRef as string
+    );
+    if (newRef) {
+      refsFound.push(newRef);
+      $targets(x).attr('input_ref', newRef);
+      console.log(
+        'target ref old ' + oldRef + ' new ref ' + $targets(x).attr('input_ref')
+      );
+    }
+  });
+
+  // customTag.dynaRefMap?.forEach((value: string, key: string) => {
+  //   if (!refsFound.includes(key)) {
+  //     $targets('div').first().append(`<div class="dnd-row">
+  //     <div input_ref="${value}" class="dnd-cell target test"/>
+  //   </div>`);
+  //   }
+  // });
+
+  // customTag.dynaRefMap?.
+
+  console.log('ss dd 222 ' + $targets.html());
+
+  const $initiators = cheerio.load(
+    updated.initiators,
+    Object.assign(
+      {},
+      {
+        normalizeWhitespace: true,
+        xmlMode: true,
+      },
+      {}
+    )
+  );
+  $initiators('.initiator').map((i: any, x: any) => {
+    const oldVal: string | undefined = $initiators(x).attr('input_val');
+    let newVal: string | undefined;
+    customTag.dynaRefMap?.forEach((value: string, key: string) => {
+      if (value === oldVal) {
+        newVal = key;
+      }
+    });
+    if (newVal) {
+      $initiators(x).attr('input_val', newVal);
+    } else {
+      // console.log('removal of some initiators');
+      // $initiators(x).parent().remove(x);
+      $initiators(x).addClass('fake');
+    }
+    console.log(
+      'initiator old value ' +
+        oldVal +
+        ' new value ' +
+        $initiators(x).attr('input_val')
+    );
+  });
+  console.log('ss targets 222 ' + $initiators.html());
 }
 
 export function replaceImageReferences(
@@ -143,6 +256,10 @@ function stripCustomTag(question: any) {
   const stem = Object.assign({}, question.stem, { content });
   return Object.assign({}, question, { stem });
 }
+
+export const isCustomDnD = (custom: any) =>
+  custom.id.toLowerCase() === 'dragdrop' ||
+  (custom.src !== undefined && custom.src.toLowerCase().includes('dynadrop'));
 
 export const OLD_DYNA_DROP_SRC_FILENAME = 'DynaDropHTML-1.0.js';
 export const DYNA_DROP_SRC_FILENAME = 'DynaDropHTML.js';
