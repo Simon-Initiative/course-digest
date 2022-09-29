@@ -152,4 +152,68 @@ describe('convert workbook', () => {
       },
     ]);
   });
+
+  it('should translate a section with purpose to a group with purpose', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-workbook_page/sections.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      flattenedNames: {},
+    };
+
+    const converted = await convert(mediaSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Page',
+        id: 'sections',
+        content: expect.objectContaining({
+          model: expect.arrayContaining([
+            expect.objectContaining({
+              type: 'content',
+              id: expect.any(String),
+              children: [
+                {
+                  type: 'p',
+                  children: [
+                    { text: ' ' },
+                    {
+                      text: 'The following series of activities incorporates the concepts from this module into a real-world scenario.',
+                      em: true,
+                    },
+                    { text: ' ' },
+                  ],
+                },
+              ],
+            }),
+            expect.objectContaining({
+              type: 'group',
+              children: [
+                expect.objectContaining({
+                  type: 'content',
+                  id: expect.any(String),
+                  children: [
+                    {
+                      type: 'h1',
+                      children: [{ text: 'Question 1' }],
+                    },
+                  ],
+                }),
+                {
+                  type: 'activity_placeholder',
+                  children: [],
+                  idref: 'weak_titration_lbd',
+                },
+              ],
+              purpose: 'checkpoint',
+              layout: 'vertical',
+              id: expect.any(String),
+            }),
+          ]),
+        }),
+      })
+    );
+  });
 });
