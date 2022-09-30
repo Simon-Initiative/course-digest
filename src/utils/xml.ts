@@ -447,6 +447,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('iframe');
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
+        ensureNotEmpty('page_link');
         ensureNotEmpty('li');
         ensureNotEmpty('formula');
         ensureNotEmpty('callout');
