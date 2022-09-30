@@ -6,6 +6,7 @@ import {
   processCodeblock,
   wrapContentInGroup,
   flagStandardContentWarnigns,
+  failIfPresent,
 } from './common';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -24,6 +25,13 @@ export class WorkbookPage extends Resource {
   }
 
   restructure($: any): any {
+    failIfPresent($, [
+      'multipanel',
+      'wb\\:xref',
+      'xref',
+      'objective',
+      'dependency',
+    ]);
     standardContentManipulations($);
 
     liftTitle($);
