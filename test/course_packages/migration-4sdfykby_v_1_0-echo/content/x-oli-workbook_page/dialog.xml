@@ -7,6 +7,9 @@
 		</title>
 	</head>
 	<body>
+
+    <p>This paragraph contains <foreign>quelque mots</foreign> in a different language.</p>
+
 	 <dialog>
       <title>Dialog title</title>
       <audio src="../webcontent/sample-3s.mp3"/>

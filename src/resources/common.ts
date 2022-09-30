@@ -62,7 +62,34 @@ export function addWarning(
   resource.warnings.push({ idref, description });
 }
 
+export function failIfPresent($: any, items: string[]) {
+  items.forEach((e: string) => {
+    $(e).each((_i: any, _item: any) => {
+      console.log(`unsupported element [${e}] detected, exiting`);
+      process.exit(1);
+    });
+  });
+}
+
+export function failIfHasValue(
+  $: any,
+  selector: string,
+  attr: string,
+  value: string
+) {
+  $(selector).each((_i: any, item: any) => {
+    if ($(item).attr(attr) === value) {
+      console.log(
+        `unsupported element attribute value [${selector} ${attr} ${value}] detected, exiting`
+      );
+      process.exit(1);
+    }
+  });
+}
+
 export function standardContentManipulations($: any) {
+  failIfPresent($, ['ipa', 'bdo']);
+
   DOM.unwrapInlinedMedia($, 'video');
   DOM.unwrapInlinedMedia($, 'audio');
   DOM.unwrapInlinedMedia($, 'youtube');
@@ -113,6 +140,11 @@ export function standardContentManipulations($: any) {
   // Certain elements are not currently (and some may never be) supported
   // in Torus, so we remove them.  In this respect, OLI course conversion
   // is lossy wrt specific element constructs.
+  $('question_bank_ref').remove();
+  $('wb\\:manual').remove();
+  $('wb\\:path').remove();
+  $('testandconfigure').remove();
+  $('theme').remove();
   $('popout').remove();
   $('sym').remove();
   $('applet').remove();
