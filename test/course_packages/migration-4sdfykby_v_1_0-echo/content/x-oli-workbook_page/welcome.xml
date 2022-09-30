@@ -7,7 +7,46 @@
     </head>
     <body>
         <p id="c970f9059f4f4ac3a0b5f417f1f82acf">(This space intentionally left blank.)</p>
+        <example id="a088625f4d624799b370bc3d6e6a9677">
+            <title>Example Title</title>
+            <p id="e1f96ce25cc14278ae759e14b08c44ff">This is an <cite id="i454df600d6a842a9b66031106089e94e" entry="Kluver_1939"/> example</p>
+        </example>
+        <wb:inline idref="newca1a54a0f56a4d429f5aff2c515cab08" purpose="learnbydoing" />
         <activity idref="newc72f87db5a5543b5ae8582d2d4cd34a7" purpose="quiz" />
     </body>
-    
+    <bib:file>
+        <bib:entry id="Best_2009">
+            <bib:misc>
+                <bib:author>Best, B.</bib:author>
+                <bib:title>&quot;The amygdala and the emotions.&quot; In Anatomy of the Mind (chap.
+                    9)</bib:title>
+                <bib:year>2008</bib:year>
+                <bib:note>Retrieved from Welcome to the World of Ben Best:
+                    http://www.newscientist.com/article/dn13599-bolero-beautiful-symptom-of-a-terrible-disease.html</bib:note>
+            </bib:misc>
+        </bib:entry>
+        <bib:entry id="Kluver_1939">
+            <bib:article>
+                <bib:author>Klüver, H., and Bucy, P. C.</bib:author>
+                <bib:title>Preliminary analysis of functions of the temporal lobes in
+                    monkeys</bib:title>
+                <bib:journal>Archives of Neurology &amp; Psychiatry (Chicago)</bib:journal>
+                <bib:year>1939</bib:year>
+                <bib:volume>42</bib:volume>
+                <bib:pages>979–1000</bib:pages>
+            </bib:article>
+        </bib:entry>
+        <bib:entry id="Sigurdsson_2007">
+            <bib:article>
+                <bib:author>Sigurdsson, T., Doyère, V., Cain, C. K., and LeDoux, J. E.</bib:author>
+                <bib:title>Long-term potentiation in the amygdala: A cellular mechanism of fear
+                    learning and memory</bib:title>
+                <bib:journal>Neuropharmacology</bib:journal>
+                <bib:year>2007</bib:year>
+                <bib:volume>52</bib:volume>
+                <bib:number>1</bib:number>
+                <bib:pages>215–227</bib:pages>
+            </bib:article>
+        </bib:entry>
+    </bib:file>
 </workbook_page>
