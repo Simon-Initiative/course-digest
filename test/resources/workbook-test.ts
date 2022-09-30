@@ -95,8 +95,8 @@ describe('convert workbook', () => {
               children: [
                 {
                   type: 'page_link',
-                  ref: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
-                  children: [],
+                  idref: 'newc72f87db5a5543b5ae8582d2d4cd34a7',
+                  children: [{ type: 'text', text: ' ' }],
                   purpose: 'quiz',
                 },
               ],
