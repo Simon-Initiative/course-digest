@@ -73,7 +73,6 @@ export class WorkbookPage extends Resource {
     });
 
     DOM.rename($, 'activity', 'page_link');
-    DOM.renameAttribute($, 'page_link', 'idref', 'ref');
 
     $('objref').each((i: any, elem: any) => {
       page.objectives.push($(elem).attr('idref'));
