@@ -32,6 +32,19 @@ export function buildMulti(
     }
   }
   const transformation = Common.getChild(question.children, 'transformation');
+
+  torusParts.reduce((seen, part) => {
+    if (seen[part.id] === undefined) {
+      seen[part.id] = part.id;
+    } else {
+      console.log(
+        'detected duplicate part id within question: [' + part.id + ']'
+      );
+      part.id = guid();
+    }
+    return seen;
+  }, {});
+
   return {
     stem: buildStem(question, inputs, skipInputRefValidation),
     choices: allChoices,
