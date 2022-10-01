@@ -29,8 +29,7 @@ export class Organization extends Resource {
   restructure($: any): any {
     failIfHasValue($, 'sequence', 'audience', 'instructor');
     failIfPresent($, ['include', 'unordered', 'supplement']);
-    const labels = $('labels').first();
-    if (labels !== undefined && labels !== null) {
+    $('labels').each((i: any, labels: any) => {
       if (
         $(labels).attr('sequence') !== 'Sequence' ||
         $(labels).attr('unit') !== 'Unit' ||
@@ -40,7 +39,7 @@ export class Organization extends Resource {
         console.log('organization contains custom labels: [' + this.file + ']');
         process.exit(1);
       }
-    }
+    });
 
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
