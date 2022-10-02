@@ -31,9 +31,6 @@ export function findCustomTag(
   if (custom !== undefined) {
     let inputRefsMap: Map<string, string> | null = null;
     if (containsDynaDropTable(custom) && stem !== null) {
-      console.log(
-        'the question --------------------- ' + JSON.stringify(question)
-      );
       const inputRefs = question.authoring.parts
         .map((i: any) => {
           return i.responses
@@ -47,12 +44,10 @@ export function findCustomTag(
         (acc: Map<string, string>, val: string) => {
           const v: string[] = val.split('_');
           acc.set(v[1], v[0]);
-          console.log(acc);
           return acc;
         },
         new Map()
       );
-      // console.log('the respos ' + JSON.stringify(inputRefsMap.get('cfe182776c6340dab48af78af4bbddfa')));
     }
     return {
       question: question,
@@ -141,14 +136,10 @@ function switchInitiatorsWithTargets(
       {
         normalizeWhitespace: true,
         xmlMode: true,
+        selfClosingTags: false,
       },
       {}
     )
-  );
-  // console.log('ss dd ' + $targets.html());
-  console.log(
-    '\nadsd ------------------------------------------------------------------------------------ ' +
-      customTag.layoutFile
   );
   const refsFound: string[] = [];
   $targets('.target').map((i: any, x: any) => {
@@ -159,23 +150,8 @@ function switchInitiatorsWithTargets(
     if (newRef) {
       refsFound.push(newRef);
       $targets(x).attr('input_ref', newRef);
-      console.log(
-        'target ref old ' + oldRef + ' new ref ' + $targets(x).attr('input_ref')
-      );
     }
   });
-
-  // customTag.dynaRefMap?.forEach((value: string, key: string) => {
-  //   if (!refsFound.includes(key)) {
-  //     $targets('div').first().append(`<div class="dnd-row">
-  //     <div input_ref="${value}" class="dnd-cell target test"/>
-  //   </div>`);
-  //   }
-  // });
-
-  // customTag.dynaRefMap?.
-
-  console.log('ss dd 222 ' + $targets.html());
 
   const $initiators = cheerio.load(
     updated.initiators,
@@ -184,6 +160,7 @@ function switchInitiatorsWithTargets(
       {
         normalizeWhitespace: true,
         xmlMode: true,
+        selfClosingTags: false,
       },
       {}
     )
@@ -199,18 +176,15 @@ function switchInitiatorsWithTargets(
     if (newVal) {
       $initiators(x).attr('input_val', newVal);
     } else {
-      // console.log('removal of some initiators');
-      // $initiators(x).parent().remove(x);
-      $initiators(x).addClass('fake');
+      updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
+      updated.authoring.parts = updated.authoring.parts.filter(
+        (i: any) => i.id !== oldVal
+      );
     }
-    console.log(
-      'initiator old value ' +
-        oldVal +
-        ' new value ' +
-        $initiators(x).attr('input_val')
-    );
   });
-  console.log('ss targets 222 ' + $initiators.html());
+  updated.targetArea = $targets.html();
+  updated.initiators = $initiators.html();
+  updated.layoutStyles = TABLE_DND_CSS;
 }
 
 export function replaceImageReferences(
@@ -261,14 +235,70 @@ export const isCustomDnD = (custom: any) =>
   custom.id.toLowerCase() === 'dragdrop' ||
   (custom.src !== undefined && custom.src.toLowerCase().includes('dynadrop'));
 
-export const OLD_DYNA_DROP_SRC_FILENAME = 'DynaDropHTML-1.0.js';
-export const DYNA_DROP_SRC_FILENAME = 'DynaDropHTML.js';
-
 export const isSupportedDynaDropSrcFile = (filepath: string) =>
-  filepath.substr(filepath.length - DYNA_DROP_SRC_FILENAME.length) ===
-    DYNA_DROP_SRC_FILENAME ||
-  filepath.substr(filepath.length - OLD_DYNA_DROP_SRC_FILENAME.length) ===
-    OLD_DYNA_DROP_SRC_FILENAME;
+  filepath.toLocaleLowerCase().includes('dynadrophtml');
 
 export const containsDynaDropTable = (custom: any) =>
   custom.src !== undefined && isSupportedDynaDropSrcFile(custom.src);
+
+export const TABLE_DND_CSS = `.component table tbody tr td {
+  vertical-align: top;
+}
+
+.component .oli-dnd-table {
+  display: table;
+}
+
+.component .dnd-row {
+  display: table-row
+}
+
+.component .dnd-row-header {
+  font-weight: 600;
+  background-color: #cacaca;
+  text-align: center
+}
+
+.component .dnd-cell {
+  display: table-cell;
+  padding: 4px
+}
+
+.component .oli-dnd-table .dnd-cell.target {
+  height: 30px;
+  min-width: 100px;
+  padding: 4px;
+  border: 1px dashed #999;
+}
+
+.initiator {
+  color: #58646c;
+  border: 2px solid transparent;
+  padding: 6px;
+  display: inline-block;
+  font-size: 14px;
+  box-shadow: 2px 2px 10px 0 rgba(155, 165, 173, 1);
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #E7F4FE;
+  cursor: grab;
+  cursor: -webkit-grab;
+  user-select: none
+}
+
+.initiator::before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  width: 12px;
+  height: 24px;
+  background-image: -webkit-repeating-radial-gradient(center center, rgba(0, 0, 0, .2), rgba(0, 0, 0, .3) 1px, transparent 1px, transparent 100%);
+  background-repeat: repeat;
+  background-size: 4px 4px
+}
+
+.initiator:active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing
+}`;
