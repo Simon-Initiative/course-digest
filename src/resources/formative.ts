@@ -12,6 +12,8 @@ import {
   standardContentManipulations,
   processCodeblock,
   processVariables,
+  failIfPresent,
+  failIfHasValue,
 } from './common';
 import {
   findCustomTag,
@@ -556,6 +558,11 @@ export class Formative extends Resource {
   }
 
   translate($: any): Promise<(TorusResource | string)[]> {
+    failIfPresent($, ['response_mult', 'no_response', 'grading_criteria']);
+    failIfHasValue($, 'content', 'available', 'instructor_only');
+    failIfHasValue($, 'content', 'available', 'feedback_only');
+    failIfHasValue($, 'content', 'available', 'never');
+
     performRestructure($);
     const xml = $.html();
     return new Promise((resolve, _reject) => {

@@ -3,6 +3,7 @@ import { ItemReference } from 'src/utils/common';
 import * as Histogram from 'src/utils/histogram';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
+import { failIfHasValue, failIfPresent } from './common';
 
 import { Resource, TorusResource, Hierarchy, Summary } from './resource';
 
@@ -26,6 +27,21 @@ function flattenOrganization($: any) {
 
 export class Organization extends Resource {
   restructure($: any): any {
+    failIfHasValue($, 'sequence', 'audience', 'instructor');
+    failIfPresent($, ['include', 'unordered', 'supplement']);
+    const labels = $('labels').first();
+    if (labels !== undefined && labels !== null) {
+      if (
+        $(labels).attr('sequence') !== 'Sequence' ||
+        $(labels).attr('unit') !== 'Unit' ||
+        $(labels).attr('module') !== 'Module' ||
+        $(labels).attr('section') !== 'Section'
+      ) {
+        console.log('organization contains custom labels: [' + this.file + ']');
+        process.exit(1);
+      }
+    }
+
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
     removeSequences($);

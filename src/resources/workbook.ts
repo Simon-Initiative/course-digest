@@ -6,6 +6,7 @@ import {
   processCodeblock,
   wrapContentInGroup,
   flagStandardContentWarnigns,
+  failIfPresent,
 } from './common';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -24,6 +25,13 @@ export class WorkbookPage extends Resource {
   }
 
   restructure($: any): any {
+    failIfPresent($, [
+      'multipanel',
+      'wb\\:xref',
+      'xref',
+      'objective',
+      'dependency',
+    ]);
     standardContentManipulations($);
 
     liftTitle($);
@@ -65,7 +73,6 @@ export class WorkbookPage extends Resource {
     });
 
     DOM.rename($, 'activity', 'page_link');
-    DOM.renameAttribute($, 'page_link', 'idref', 'ref');
 
     $('objref').each((i: any, elem: any) => {
       page.objectives.push($(elem).attr('idref'));
