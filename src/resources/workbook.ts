@@ -14,6 +14,21 @@ import { convertImageCodingActivities } from './image';
 import { maybe } from 'tsmonad';
 import { convertBibliographyEntries } from './bibentry';
 
+const validPurposes = {
+  none: true,
+  checkpoint: true,
+  didigetthis: true,
+  labactivity: true,
+  learnbydoing: true,
+  learnmore: true,
+  manystudentswonder: true,
+  myresponse: true,
+  quiz: true,
+  simulation: true,
+  walkthrough: true,
+  example: true,
+};
+
 function liftTitle($: any) {
   $('workbook_page').attr('title', $('head title').text());
   $('head').children().remove('title');
@@ -69,6 +84,14 @@ export class WorkbookPage extends Resource {
 
     $('activity').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
+      const purpose = $(elem).attr('purpose');
+      if (
+        purpose !== null &&
+        purpose !== undefined &&
+        (validPurposes as any)[purpose] === undefined
+      ) {
+        $(elem).attr('purpose', 'none');
+      }
       page.unresolvedReferences.push(idref);
     });
 
