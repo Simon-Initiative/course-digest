@@ -236,16 +236,29 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
       };
 
       const elevatePopoverContent = () => {
-        if (tag === 'popup' && top().children.length === 2) {
+        if (tag === 'popup') {
           const anchor = getOneOfType(top().children, 'anchor');
           const meaning = getOneOfType(top().children, 'meaning');
+          const pronunciation = getOneOfType(top().children, 'pronunciation');
+          const translation = getOneOfType(top().children, 'translation');
 
-          if (anchor !== null && meaning !== null) {
-            const material = getOneOfType(meaning.children, 'material');
-
+          if (anchor !== null) {
             top().children = anchor.children;
-            top().content = material.children;
             top().trigger = 'hover';
+
+            if (pronunciation !== null) {
+              top().audioSrc = pronunciation.src;
+              top().audioType = pronunciation.contenttype;
+            }
+
+            if (meaning !== null) {
+              const material = getOneOfType(meaning.children, 'material');
+              top().content = material.children;
+            } else if (translation !== null) {
+              top().content = translation.children;
+            } else {
+              top().content = [{ type: 'text', text: ' ' }];
+            }
           }
         }
       };

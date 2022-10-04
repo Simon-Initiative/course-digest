@@ -8,6 +8,22 @@
 		<objref idref="c47ac29051ed427984e2b6f76d09fa8e" />
 	</head>
 	<body>
+    <p>There should be one on the following paragrap:</p>
+    <p>Tu vas faire ta <extra>
+      <anchor>propre</anchor>
+      <translation>own</translation>
+   </extra> lessive, je présume.</p>
+   <p>And another one, with an audio clip:</p>
+    <p>Tu vas faire ta <extra>
+      <anchor>Il téléphone à moi.</anchor>
+      <pronunciation src="..//webcontent/F1L10s228.mp3" type="audio/mp3"/>
+   </extra> lessive, je présume.</p>
+   <p>And another one, with an audio and translation:</p>
+    <p>Tu vas faire ta <extra>
+      <anchor>Il téléphone à moi.</anchor>
+      <pronunciation src="..//webcontent/F1L10s228.mp3" type="audio/mp3"/>
+      <translation>He telephones me</translation>
+   </extra> lessive, je présume.</p>
 		<p>
 			There should be two popups in the following paragraphs, enabled via hover over the words
 			<em>
