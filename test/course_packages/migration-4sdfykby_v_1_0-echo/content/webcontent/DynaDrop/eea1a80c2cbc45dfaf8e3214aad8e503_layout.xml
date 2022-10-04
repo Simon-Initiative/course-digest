@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dragdrop PUBLIC "-//Carnegie Mellon University//DTD Dynadrop Layout 3.8//EN" "http://oli.cmu.edu/dtd/oli_dynadrop_layout_1_0.dtd">
+<dragdrop>
+  <layoutStyles>
+    <![CDATA[<style type="text/css"></style>]]>
+  </layoutStyles>
+  <targetArea>
+    <![CDATA[<div class="oli-dnd-table"> <div class="dnd-row dnd-row-header"> <div class="dnd-cell">
+</div> <div class="dnd-cell"></div></div> <div class="dnd-row"> <div input_ref="c8595bac18064741af45dcd6bb166f50" class="dnd-cell target"></div> <div class="dnd-cell">One should ensure that data across any given column contains consistent information such that it makes sense relative to itself</div></div> <div class="dnd-row"> <div input_ref="f08c387ded794be4b6e8106756f1a66d" class="dnd-cell target"></div> <div class="dnd-cell">One should ensure that data are adequately protected and that information about the origin and history of the data is available as needed.</div></div> <div class="dnd-row"> <div input_ref="cfe182776c6340dab48af78af4bbddfa" class="dnd-cell target"></div> <div class="dnd-cell">One should collect all necessary information to ensure the dataset can be used to answer your question(s).</div></div> <div class="dnd-row"> <div input_ref="f9410bd4f7aa473b8c68633eabdbc6ba" class="dnd-cell target"></div> <div class="dnd-cell">One should make sure the data accurately represent intended measures derived from the population of interest (e.g. limiting sample bias and other validity issues)</div></div></div>]]>
+  </targetArea>
+  <initiators>
+    <![CDATA[<div input_val="cd86e8111ef54ab1aa415bd64c985535" class="initiator">Completeness</div> <div input_val="c7f8d5ce58ed4cdcbba50b0de1c12319" class="initiator">Coherence</div> <div input_val="bda1ba296db84a2f80b4dc030506f306" class="initiator">Correctness</div> <div input_val="d283d4e67ef24bea9fc21a63dcb209a9" class="initiator">Accountability</div>]]>
+  </initiators>
+</dragdrop>

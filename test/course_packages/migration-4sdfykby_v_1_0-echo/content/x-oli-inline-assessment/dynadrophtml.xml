@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="dynadrophtml">
+    <title>Intro to Data Quailty</title>
+    <page id="d392e774d5254e4caf3ec9ffb7d2c8f5">
+        <title>Page 1</title>
+        <question id="f027ce9f31e245c4b12281c340dcd92e">
+            <body>
+                <p id="ef439f5b7fc24451b702e5318c4d5447">Based on what you’ve seen so far, try to match the following components of data quality to their descriptions. We’ll explore each of these more individually, so don’t worry if the distinctions are still unclear at the moment.</p>
+                <custom id="eea1a80c2cbc45dfaf8e3214aad8e503" type="javascript" logging="false" src="../webcontent/DynaDrop/DynaDropHTML.js" width="100" height="100" layout="../webcontent/DynaDrop/eea1a80c2cbc45dfaf8e3214aad8e503_layout.xml">
+                    <param name="showInputs">false</param>
+                </custom>
+            </body>
+            <fill_in_the_blank shuffle="true" id="cd86e8111ef54ab1aa415bd64c985535">
+                <choice value="c8595bac18064741af45dcd6bb166f50" />
+                <choice value="cfe182776c6340dab48af78af4bbddfa" />
+                <choice value="f08c387ded794be4b6e8106756f1a66d" />
+                <choice value="f9410bd4f7aa473b8c68633eabdbc6ba" />
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="c7f8d5ce58ed4cdcbba50b0de1c12319">
+                <choice value="c8595bac18064741af45dcd6bb166f50" />
+                <choice value="cfe182776c6340dab48af78af4bbddfa" />
+                <choice value="f08c387ded794be4b6e8106756f1a66d" />
+                <choice value="f9410bd4f7aa473b8c68633eabdbc6ba" />
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="bda1ba296db84a2f80b4dc030506f306">
+                <choice value="c8595bac18064741af45dcd6bb166f50" />
+                <choice value="cfe182776c6340dab48af78af4bbddfa" />
+                <choice value="f08c387ded794be4b6e8106756f1a66d" />
+                <choice value="f9410bd4f7aa473b8c68633eabdbc6ba" />
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="d283d4e67ef24bea9fc21a63dcb209a9">
+                <choice value="c8595bac18064741af45dcd6bb166f50" />
+                <choice value="cfe182776c6340dab48af78af4bbddfa" />
+                <choice value="f08c387ded794be4b6e8106756f1a66d" />
+                <choice value="f9410bd4f7aa473b8c68633eabdbc6ba" />
+            </fill_in_the_blank>
+            <part id="a16e02bfefe64c908fe01e2dee482d54">
+                <response match="c8595bac18064741af45dcd6bb166f50" score="0" input="cd86e8111ef54ab1aa415bd64c985535">
+                    <feedback>
+                        <p id="c50d0ad163e14d83a8178d286490976c">Incorrect: Completeness means that you have all necessary data to answer your question(s), including data you may need to appropriately handle missing data, reporting error, and other factors that may limit the usability of the data set.</p>
+                    </feedback>
+                </response>
+                <response match="cfe182776c6340dab48af78af4bbddfa" score="1" input="cd86e8111ef54ab1aa415bd64c985535">
+                    <feedback>
+                        <p id="ea04f583caf84775973e915dad4ae98c">Correct: Completeness means that you have all necessary data to answer your question(s), including data you may need to appropriately handle missing data, reporting error, and other factors that may limit the usability of the data set.</p>
+                    </feedback>
+                </response>
+                <response match="f08c387ded794be4b6e8106756f1a66d" score="0" input="cd86e8111ef54ab1aa415bd64c985535">
+                    <feedback>
+                        <p id="caf356ecd68e454abd6705e13cf71dee">Incorrect: Completeness means that you have all necessary data to answer your question(s), including data you may need to appropriately handle missing data, reporting error, and other factors that may limit the usability of the data set.</p>
+                    </feedback>
+                </response>
+                <response match="f9410bd4f7aa473b8c68633eabdbc6ba" score="0" input="cd86e8111ef54ab1aa415bd64c985535">
+                    <feedback>
+                        <p id="a9a85eab22c34baab0ed4628f1796326">Incorrect: Completeness means that you have all necessary data to answer your question(s), including data you may need to appropriately handle missing data, reporting error, and other factors that may limit the usability of the data set.</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="f58a4f8883c841028df348f5529b9bc5">
+                <response match="c8595bac18064741af45dcd6bb166f50" score="1" input="c7f8d5ce58ed4cdcbba50b0de1c12319">
+                    <feedback>
+                        <p id="c49a24e8bb774cb4920d2a28808d671f">Correct: Coherence means that data within any given column are internally consistent.</p>
+                    </feedback>
+                </response>
+                <response match="cfe182776c6340dab48af78af4bbddfa" score="0" input="c7f8d5ce58ed4cdcbba50b0de1c12319">
+                    <feedback>
+                        <p id="cd1ee1281c764501b021e5412505dac3">Incorrect: Coherence means that data within any given column are internally consistent.</p>
+                    </feedback>
+                </response>
+                <response match="f08c387ded794be4b6e8106756f1a66d" score="0" input="c7f8d5ce58ed4cdcbba50b0de1c12319">
+                    <feedback>
+                        <p id="e0074b06346847a8ace48a65c66df750">Incorrect: Coherence means that data within any given column are internally consistent.</p>
+                    </feedback>
+                </response>
+                <response match="f9410bd4f7aa473b8c68633eabdbc6ba" score="0" input="c7f8d5ce58ed4cdcbba50b0de1c12319">
+                    <feedback>
+                        <p id="d7ec8baf17b349b5bb40b61bc8f716d2">Incorrect: Coherence means that data within any given column are internally consistent.</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="e2e2f9dd0f5f4454a26cda32d6c0ddc3">
+                <response match="c8595bac18064741af45dcd6bb166f50" score="0" input="bda1ba296db84a2f80b4dc030506f306">
+                    <feedback>
+                        <p id="a5d43479b6f04915908ebbc51a4afcbd">Incorrect: Correctness refers to the degree to which the data set accurately represents the population with respect to variables of interest </p>
+                    </feedback>
+                </response>
+                <response match="cfe182776c6340dab48af78af4bbddfa" score="0" input="bda1ba296db84a2f80b4dc030506f306">
+                    <feedback>
+                        <p id="dca07ed13fa54a0e86a7928a4c7e42a9">Incorrect: Correctness refers to the degree to which the data set accurately represents the population with respect to variables of interest </p>
+                    </feedback>
+                </response>
+                <response match="f08c387ded794be4b6e8106756f1a66d" score="0" input="bda1ba296db84a2f80b4dc030506f306">
+                    <feedback>
+                        <p id="cac29c026cf24ed48ec7535d618bfcb7">Incorrect: Correctness refers to the degree to which the data set accurately represents the population with respect to variables of interest </p>
+                    </feedback>
+                </response>
+                <response match="f9410bd4f7aa473b8c68633eabdbc6ba" score="1" input="bda1ba296db84a2f80b4dc030506f306">
+                    <feedback>
+                        <p id="bab4ec2c99bd4b1fad30d788d52c5726">Correct: Correctness refers to the degree to which the data set accurately represents the population with respect to variables of interest </p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="c1c58f1f46a844c8a12260f5ee76ef43">
+                <response match="c8595bac18064741af45dcd6bb166f50" score="0" input="d283d4e67ef24bea9fc21a63dcb209a9">
+                    <feedback>
+                        <p id="b6e4699b541d4a379e344ea775de0c0f">Incorrect: Accountability concerns responsible data management practices.</p>
+                    </feedback>
+                </response>
+                <response match="cfe182776c6340dab48af78af4bbddfa" score="0" input="d283d4e67ef24bea9fc21a63dcb209a9">
+                    <feedback>
+                        <p id="b0c16430bffe445a9e8f3949a21b300c">Incorrect: Accountability concerns responsible data management practices.</p>
+                    </feedback>
+                </response>
+                <response match="f08c387ded794be4b6e8106756f1a66d" score="1" input="d283d4e67ef24bea9fc21a63dcb209a9">
+                    <feedback>
+                        <p id="f338bb95c63f44929dabbbc2f1e15ccc">Correct: Accountability concerns responsible data management practices.</p>
+                    </feedback>
+                </response>
+                <response match="f9410bd4f7aa473b8c68633eabdbc6ba" score="0" input="d283d4e67ef24bea9fc21a63dcb209a9">
+                    <feedback>
+                        <p id="c868d0d2cfe0476aabdd45e2f4aeb22c">Incorrect: Accountability concerns responsible data management practices.</p>
+                    </feedback>
+                </response>
+            </part>
+        </question>
+    </page>
+</assessment>

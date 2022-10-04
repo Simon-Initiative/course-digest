@@ -11,5 +11,7 @@
 			The following was an inline reference that should render two separate custom drag and drops:
 		</p>
 		<inline idref="customdnd_inline" />
+		<p>The following is a table based drag and drop "dynadrophtml"</p>
+		<inline idref="dynadrophtml" />
 	</body>
 </workbook_page>
