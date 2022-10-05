@@ -168,6 +168,11 @@ export function standardContentManipulations($: any) {
   handleAlternate($, 'iframe');
   handleAlternate($, 'youtube');
 
+  // iframe and youtube are both designed to scale responsively within Torus, so
+  // we need to strip out height and width attrs if they exist
+  stripMediaSizing($, 'iframe');
+  stripMediaSizing($, 'youtube');
+
   DOM.stripElement($, 'p ol');
   DOM.stripElement($, 'p ul');
   DOM.stripElement($, 'p li');
@@ -248,6 +253,13 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function stripMediaSizing($: any, selector: string) {
+  $(selector).each((i: any, item: any) => {
+    $(item).removeAttr('height');
+    $(item).removeAttr('width');
+  });
 }
 
 function handleConjugations($: any) {
