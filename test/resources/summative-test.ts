@@ -470,4 +470,92 @@ describe('convert summative', () => {
       })
     );
   });
+
+  it('converts multi input ranges with correct operator', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/newe6ddd6fec8f54749a037ef13abd8df93.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      flattenedNames: {},
+    };
+
+    const converted = await convert(mediaSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'newe6ddd6fec8f54749a037ef13abd8df93-f183bbb3a6134611840042c6bf3c168e',
+        subType: 'oli_multi_input',
+        content: expect.objectContaining({
+          inputs: [
+            {
+              inputType: 'numeric',
+              id: 'f88e94a8ec9145beb832e773ac6bfc79',
+              partId: 'cc5855a41c294080ac063e54b654cf72',
+            },
+          ],
+          authoring: expect.objectContaining({
+            targeted: [],
+            parts: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'cc5855a41c294080ac063e54b654cf72',
+                responses: [
+                  {
+                    id: expect.any(String),
+                    score: 1,
+                    rule: 'input = {[2,5]}',
+                    legacyMatch: '[2,5]',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        id: expect.any(String),
+                        model: [
+                          {
+                            type: 'p',
+                            children: [
+                              {
+                                text: 'Correct!',
+                              },
+                            ],
+                            id: 'cd83c39e3c21465399aba99e6889ce64',
+                          },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    id: expect.any(String),
+                    score: 0,
+                    rule: 'input like {.*}',
+                    legacyMatch: '.*',
+                    feedback: {
+                      id: expect.any(String),
+                      content: {
+                        id: expect.any(String),
+                        model: [
+                          {
+                            type: 'p',
+                            children: [
+                              {
+                                text: 'Incorrect.',
+                              },
+                            ],
+                            id: 'b9e0de8754f74e3c96cc3ecb1645d695',
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+              }),
+            ]),
+            transformations: [],
+            previewText: '',
+          }),
+        }),
+      })
+    );
+  });
 });

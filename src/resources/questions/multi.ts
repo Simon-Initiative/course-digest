@@ -149,11 +149,11 @@ function produceTorusEquivalents(
   const targeted: any[] = [];
 
   if (item.type === 'text') {
-    part = buildTextPart(p, i);
+    part = buildInputPart('text', p, i);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
   } else if (item.type === 'numeric') {
-    part = buildTextPart(p, i);
+    part = buildInputPart('numeric', p, i);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
   } else {
@@ -283,7 +283,11 @@ function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
   };
 }
 
-export function buildTextPart(part: any, _i: number) {
+export function buildInputPart(
+  type: 'text' | 'numeric',
+  part: any,
+  _i: number
+) {
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
@@ -293,10 +297,12 @@ export function buildTextPart(part: any, _i: number) {
     id,
     responses: responses.map((r: any) => {
       const cleanedMatch = replaceAll(r.match, '\\*', '.*');
+      const operator =
+        type === 'numeric' && cleanedMatch !== '.*' ? '=' : 'like';
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: `input like {${cleanedMatch}}`,
+        rule: `input ${operator} {${cleanedMatch}}`,
         legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),

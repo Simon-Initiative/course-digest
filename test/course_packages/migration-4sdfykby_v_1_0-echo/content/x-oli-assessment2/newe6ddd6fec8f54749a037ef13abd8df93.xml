@@ -18,29 +18,33 @@
 				Review the Policy Statement, Privileges and Responsibilities and Misuse and Inappropriate Behavior sections of the Computing Policy, then answer the following questions.
 			</p>
 		</content>
-    <numeric id="q2">
-      <body>
-          <p>Record the density of each solution.</p>
-          <p>Density of Alcohol Solution A: <input_ref input="ans1"/> g/mL </p>
-          <p>Density of Alcohol Solution B: <input_ref input="ans2"/> g/mL </p>
-      </body>
-      <part>
-          <response input="ans1" match="[0.97,0.98]" score="10">
-              <feedback>Correct. </feedback>
-          </response>
-          <response input="ans1" match="*">
-              <feedback>Incorrect. </feedback>
-          </response>
-      </part>
-      <part>
-          <response input="ans2" match="[0.91,0.92]" score="10">
-              <feedback>Correct. </feedback>
-          </response>
-          <response input="ans2" match="*">
-              <feedback>Incorrect. </feedback>
-          </response>
-      </part>
-  </numeric>
+		<numeric id="q2">
+			<body>
+				<p>Record the density of each solution.</p>
+				<p>Density of Alcohol Solution A:
+					<input_ref input="ans1"/> g/mL
+				</p>
+				<p>Density of Alcohol Solution B:
+					<input_ref input="ans2"/> g/mL
+				</p>
+			</body>
+			<part>
+				<response input="ans1" match="[0.97,0.98]" score="10">
+					<feedback>Correct. </feedback>
+				</response>
+				<response input="ans1" match="*">
+					<feedback>Incorrect. </feedback>
+				</response>
+			</part>
+			<part>
+				<response input="ans2" match="[0.91,0.92]" score="10">
+					<feedback>Correct. </feedback>
+				</response>
+				<response input="ans2" match="*">
+					<feedback>Incorrect. </feedback>
+				</response>
+			</part>
+		</numeric>
 		<multiple_choice id="newe6ddd6fec8f54749a037ef13abd8df93_1a" grading="automatic" select="single">
 			<body>
 				<p id="cf1293ee77c049cd8ef9458213523f74">
@@ -77,6 +81,27 @@
 				</response>
 			</part>
 		</multiple_choice>
+		<numeric id="f183bbb3a6134611840042c6bf3c168e" grading="automatic">
+			<body>
+				<p id="b2eb878a5a354b1591edd581735eb5fd">
+Has numeric with range
+					<input_ref input="f88e94a8ec9145beb832e773ac6bfc79"/>
+				</p>
+			</body>
+			<input id="f88e94a8ec9145beb832e773ac6bfc79" size="small"/>
+			<part id="cc5855a41c294080ac063e54b654cf72">
+				<response match="[2,5]" score="1" input="f88e94a8ec9145beb832e773ac6bfc79">
+					<feedback>
+						<p id="cd83c39e3c21465399aba99e6889ce64">Correct!</p>
+					</feedback>
+				</response>
+				<response match="*" score="0" input="f88e94a8ec9145beb832e773ac6bfc79">
+					<feedback>
+						<p id="b9e0de8754f74e3c96cc3ecb1645d695">Incorrect.</p>
+					</feedback>
+				</response>
+			</part>
+		</numeric>
 	</page>
 	<page id="e497866ff13a4946a45f556ad7a75b16">
 		<title>
