@@ -11,5 +11,13 @@ To generate a full course package digest using this tool from source:
 ```
 git clone <this repository>
 yarn install
-npm run start -- --operation convert --inputDir <course input dir> --outputDir ./out --specificOrg <optional path to specific org> --specificOrgId <optional specific org id> --mediaUrlPrefix https://torus-media-dev.s3.amazonaws.com/media
+npm run start -- --operation convert --inputDir <course input dir>
 ```
+
+Optionally, you can specify a specific output directory. Defaults to `./out`
+```
+npm run start -- --operation convert --inputDir <course input dir> --outputDir ./out
+```
+
+Before uploading media assets, you will need to configure AWS credentials and a bucket name.
+See detailed instructions in the [Wiki](https://github.com/Simon-Initiative/course-digest/wiki).
