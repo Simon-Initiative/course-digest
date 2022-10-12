@@ -90,6 +90,8 @@ export function failIfHasValue(
 export function standardContentManipulations($: any) {
   failIfPresent($, ['ipa', 'bdo']);
 
+  handleCommandButtons($);
+
   DOM.unwrapInlinedMedia($, 'video');
   DOM.unwrapInlinedMedia($, 'audio');
   DOM.unwrapInlinedMedia($, 'youtube');
@@ -183,6 +185,7 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p ul');
   DOM.stripElement($, 'p li');
   DOM.stripElement($, 'p p');
+  DOM.stripElement($, 'p p');
 
   $('dl title').remove();
   DOM.rename($, 'dd', 'li');
@@ -231,16 +234,9 @@ export function standardContentManipulations($: any) {
     );
   });
 
-  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'pronunciation', 'type', 'contenttype');
+  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
-  $('video').each((i: any, item: any) => {
-    const src = $(item).attr('src');
-
-    if (src !== undefined && src !== null && src.trim() !== null) {
-      $(item).html(`<source contenttype="video/mp4" url="${src}"></source>`);
-    }
-  });
 
   DOM.rename($, 'extra', 'popup');
 
@@ -253,6 +249,34 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleCommandButtons($: any) {
+  DOM.renameAttribute($, 'command', 'type', 'commandtype');
+  DOM.rename($, 'command', 'command_button');
+
+  $('command_button').each((i: any, elem: any) => {
+    const title = $(elem).children('title').text();
+    $(elem).children().remove('title');
+
+    if (title) {
+      $(elem).attr('title', title);
+    }
+
+    const style = $(elem).attr('style');
+
+    if (style === null || style === undefined) {
+      $(elem).attr('style', 'button');
+    } else if (style === 'checkbox') {
+      $(elem).attr('style', 'button');
+    }
+  });
+
+  // Now wrap all command_button instances in a paragraph.  This can
+  // lead to situations where we have paragraphs inside of paragaphs, or
+  // paragraphs inside of list-items, but downstream code eliminates those
+  // conditions.
+  $('command_button').wrap('<p></p>');
 }
 
 function stripMediaSizing($: any, selector: string) {

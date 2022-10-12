@@ -1,5 +1,6 @@
 import { maybe } from 'tsmonad';
 import { guid, replaceAll } from 'src/utils/common';
+import * as XML from '../../utils/xml';
 
 export function getChild(collection: any, named: string) {
   const items = collection.filter((e: any) => named == e.type);
@@ -50,10 +51,19 @@ export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
     content: {
-      model: ensureParagraphs(stem.children),
+      model: stripSpuriousText(ensureParagraphs(stem.children)),
     },
   };
 }
+
+const stripSpuriousText = (children: any[]) => {
+  if (children.length > 1) {
+    if (children.some((b: any) => XML.isBlockElement(b.type))) {
+      return children.filter((b: any) => b.text === undefined);
+    }
+  }
+  return children;
+};
 
 export function buildStemFromText(text: string) {
   return {

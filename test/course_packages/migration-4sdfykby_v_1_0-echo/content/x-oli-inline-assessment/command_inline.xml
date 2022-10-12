@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="command_inline">
+    <title>tutor</title>
+    <short_title>reveal</short_title>
+    <question id="q39">
+      <title>Identify correct grammatical forms: Present tense conjugations of pouvoir, vouloir, and devoir</title>
+      <body>
+         <p>Choisissez la conjugaison correcte du verbe entre parenth&#x00E8;ses.</p>
+         <p>Ils ______ vous aider. (pouvoir)</p>
+         <video id="F1L11v001" width="580" height="360" controls="false">
+            <source src="../webcontent/sodium_gen.mp4" type="video/mp4"/>
+         </video>
+      </body>
+      <multiple_choice shuffle="true" select="single">
+         <choice value="Res1"><command target="F1L11v001" style="button" type="message">
+          <title>Vidéo</title>
+          <message>startcuepoint=1.25;endcuepoint=3.08</message>
+       </command></choice>
+         <choice value="Res2"> peuvent </choice>
+      </multiple_choice>
+      <part>
+         <response match="Res1" score="0">
+            <feedback>Non. C'est la premi&#x00E8;re personne; vous voulez la troisi&#x00E8;me
+               personne.</feedback>
+         </response>
+         <response match="Res2" score="10">
+            <feedback>Oui! Ils peuvent vous aider.</feedback>
+         </response>
+      </part>
+   </question>
+</assessment>

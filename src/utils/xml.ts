@@ -17,7 +17,7 @@ function getPastDocType(content: string): string {
   return content;
 }
 
-function isBlockElement(name: string) {
+export function isBlockElement(name: string) {
   const blocks = {
     p: true,
     img: true,
@@ -307,8 +307,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
 
       const setVideoAttributes = () => {
         if (tag === 'video') {
-          top().src = top().children;
-          top().children = [];
+          if (typeof top().src === 'string') {
+            top().src = [
+              { type: 'source', url: top().src, contenttype: 'video/mp4' },
+            ];
+          } else {
+            top().src = getAllOfType(top().children, 'source');
+          }
+
+          top().children = [{ text: ' ' }];
           if (top().width !== undefined) {
             top().width = parseInt(top().width);
           }
@@ -435,6 +442,19 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const handleCommandButton = () => {
+        if (tag === 'command_button') {
+          // We have to set 'pronunciation' as a property
+          // as well introduce 'table' as a property to hold all of the
+          // 'tr' children
+
+          const messages = getAllOfType(top().children, 'message');
+
+          top().message = messages[0].children[0].text;
+          top().children = [{ text: top().title }];
+        }
+      };
+
       const renameCaptionForFigure = () => {
         if (tag === 'figure') {
           if (top().caption !== null && top().caption !== undefined) {
@@ -491,6 +511,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureParagraph('translation');
         ensureParagraph('pronunciation');
         handleConjugation();
+        handleCommandButton();
 
         if (top() && top().children === undefined) {
           top().children = [];
