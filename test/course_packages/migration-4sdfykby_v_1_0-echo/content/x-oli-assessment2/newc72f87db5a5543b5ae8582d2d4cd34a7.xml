@@ -32,6 +32,9 @@
                         <p id="f277ed5de9c949138801d812b4a9cc3a">Correct; this is a pretty clear violation of the policy, including using another person&apos;s account and impersonating another individual.</p>
                     </feedback>
                 </response>
+                <no_response score="0">
+                  <feedback>You did not answer this question.</feedback>
+               </no_response>
             </part>
         </multiple_choice>
         <fill_in_the_blank id="add_subtratAndmult_div_pool_v1" grading="automatic">

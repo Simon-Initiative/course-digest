@@ -532,6 +532,7 @@ export function performRestructure($: any) {
   standardContentManipulations($);
 
   DOM.rename($, 'question body', 'stem');
+  DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
 
   migrateVariables($);
@@ -558,7 +559,7 @@ export class Formative extends Resource {
   }
 
   translate($: any): Promise<(TorusResource | string)[]> {
-    failIfPresent($, ['response_mult', 'no_response', 'grading_criteria']);
+    failIfPresent($, ['response_mult', 'grading_criteria']);
     failIfHasValue($, 'content', 'available', 'instructor_only');
     failIfHasValue($, 'content', 'available', 'feedback_only');
     failIfHasValue($, 'content', 'available', 'never');
