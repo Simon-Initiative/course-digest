@@ -104,6 +104,9 @@
                     <item id="bca2a2dad6aasdfasddde00" scoring_mode="default">
                       <resourceref idref="sections" />
                     </item>
+                    <item id="bca2a2dad6asasdfasddaade00" scoring_mode="default">
+                      <resourceref idref="media" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>
