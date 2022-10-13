@@ -188,9 +188,10 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p p');
 
   $('dl title').remove();
-  DOM.rename($, 'dd', 'li');
-  DOM.rename($, 'dt', 'li');
-  DOM.rename($, 'dl', 'ul');
+  $('dl dt').each((i: any, elem: any) => {
+    const term = $(elem).text();
+    $(elem).attr('term', term);
+  });
 
   DOM.stripElement($, 'li p');
   DOM.rename($, 'li img', 'img_inline');
