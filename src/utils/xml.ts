@@ -499,6 +499,12 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const stringToBoolean = (element: string, attr: string) => {
+        if (tag === element && top()[attr] !== undefined) {
+          top()[attr] = top()[attr] === 'true' ? true : false;
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -548,6 +554,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         handleConjugation();
         handleCommandButton();
         convertDefinitionLists();
+        stringToBoolean('formula_inline', 'legacyBlockRendered');
 
         if (top() && top().children === undefined) {
           top().children = [];
