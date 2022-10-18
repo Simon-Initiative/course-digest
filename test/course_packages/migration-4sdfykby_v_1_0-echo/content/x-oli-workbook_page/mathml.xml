@@ -51,6 +51,9 @@
 			<li>
 				MathML appearing as the only entry within a table cell
 			</li>
+      <li>
+				Latex inside an inline formula, but rendered as block
+			</li>
 		</ol>
 		<p>
 			1. Block level formula with plain text
@@ -278,5 +281,8 @@
 				</td>
 			</tr>
 		</table>
+    <p>
+			14. Inline formula with block rendered Latex with <formula>$$=\;\frac{(3.6\times10^{-4})^2}{(0.036)(0.0089)}$$</formula>
+		</p>
 	</body>
 </workbook_page>

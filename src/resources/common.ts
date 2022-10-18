@@ -188,9 +188,10 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p p');
 
   $('dl title').remove();
-  DOM.rename($, 'dd', 'li');
-  DOM.rename($, 'dt', 'li');
-  DOM.rename($, 'dl', 'ul');
+  $('dl dt').each((i: any, elem: any) => {
+    const term = $(elem).text();
+    $(elem).attr('term', term);
+  });
 
   DOM.stripElement($, 'li p');
   DOM.rename($, 'li img', 'img_inline');
@@ -437,6 +438,8 @@ export function handleFormulaMathML($: any) {
       $(item).attr('subtype', subtype);
     } else if (subtype === 'latex') {
       $(item).attr('src', stripLatexDelimiters(item.children[0].data));
+      const blockRendered = wasBlockRendered(item.children[0].data);
+      $(item).attr('legacyBlockRendered', blockRendered);
       item.children = [];
       $(item).attr('subtype', subtype);
     } else {
@@ -533,6 +536,12 @@ function isMathTag(e: any) {
 function stripLatexDelimiters(s: string): string {
   const trimmed = s.trim();
   return trimmed.substring(2, trimmed.length - 2);
+}
+
+function wasBlockRendered(s: string): boolean {
+  const trimmed = s.trim();
+  const delimiter = trimmed.substring(0, 2);
+  return delimiter === '$$' || delimiter === '\\[';
 }
 
 function isLatexString(s: string): boolean {

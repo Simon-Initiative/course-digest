@@ -464,6 +464,47 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const convertDefinitionLists = () => {
+        if (tag === 'dl') {
+          // Convert to definitions
+          const definitions: any[] = [];
+          let def: any = null;
+          top().children.forEach((c: any) => {
+            if (c.type === 'dt') {
+              def = {
+                type: 'definition',
+                term: c.term,
+                meanings: [],
+                pronunciation: {
+                  type: 'pronunciation',
+                  children: [{ type: 'p', children: [{ text: '' }] }],
+                },
+                children: [],
+                translations: [],
+              };
+              definitions.push(def);
+            } else if (c.type === 'dd') {
+              c.type = 'meaning';
+              def.meanings.push(c);
+            }
+          });
+
+          const parent = stack[stack.length - 2];
+          const indexAt = parent.children.findIndex((c: any) => c === top());
+          parent.children = [
+            ...parent.children.splice(0, indexAt),
+            ...definitions,
+            ...parent.children.slice(indexAt + 1),
+          ];
+        }
+      };
+
+      const stringToBoolean = (element: string, attr: string) => {
+        if (tag === element && top()[attr] !== undefined) {
+          top()[attr] = top()[attr] === 'true' ? true : false;
+        }
+      };
+
       if (tag !== null) {
         ensureNotEmpty('p');
         ensureNotEmpty('th');
@@ -512,6 +553,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureParagraph('pronunciation');
         handleConjugation();
         handleCommandButton();
+        convertDefinitionLists();
+        stringToBoolean('formula_inline', 'legacyBlockRendered');
 
         if (top() && top().children === undefined) {
           top().children = [];

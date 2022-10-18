@@ -110,6 +110,9 @@
                     <item id="bca2a2daad6aasasdfasddaade00" scoring_mode="default">
                       <resourceref idref="command" />
                     </item>
+                    <item id="bca2aa2daad6aasasdfasddaade00" scoring_mode="default">
+                      <resourceref idref="definition_list" />
+                    </item>
                 </module>
                 <module id="variables">
                     <title>
