@@ -90,6 +90,8 @@ export function failIfHasValue(
 export function standardContentManipulations($: any) {
   failIfPresent($, ['ipa', 'bdo']);
 
+  handleCommandButtons($);
+
   DOM.unwrapInlinedMedia($, 'video');
   DOM.unwrapInlinedMedia($, 'audio');
   DOM.unwrapInlinedMedia($, 'youtube');
@@ -183,11 +185,13 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p ul');
   DOM.stripElement($, 'p li');
   DOM.stripElement($, 'p p');
+  DOM.stripElement($, 'p p');
 
   $('dl title').remove();
-  DOM.rename($, 'dd', 'li');
-  DOM.rename($, 'dt', 'li');
-  DOM.rename($, 'dl', 'ul');
+  $('dl dt').each((i: any, elem: any) => {
+    const term = $(elem).text();
+    $(elem).attr('term', term);
+  });
 
   DOM.stripElement($, 'li p');
   DOM.rename($, 'li img', 'img_inline');
@@ -231,16 +235,9 @@ export function standardContentManipulations($: any) {
     );
   });
 
-  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'pronunciation', 'type', 'contenttype');
+  DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
-  $('video').each((i: any, item: any) => {
-    const src = $(item).attr('src');
-
-    if (src !== undefined && src !== null && src.trim() !== null) {
-      $(item).html(`<source contenttype="video/mp4" url="${src}"></source>`);
-    }
-  });
 
   DOM.rename($, 'extra', 'popup');
 
@@ -253,6 +250,34 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+}
+
+function handleCommandButtons($: any) {
+  DOM.renameAttribute($, 'command', 'type', 'commandtype');
+  DOM.rename($, 'command', 'command_button');
+
+  $('command_button').each((i: any, elem: any) => {
+    const title = $(elem).children('title').text();
+    $(elem).children().remove('title');
+
+    if (title) {
+      $(elem).attr('title', title);
+    }
+
+    const style = $(elem).attr('style');
+
+    if (style === null || style === undefined) {
+      $(elem).attr('style', 'button');
+    } else if (style === 'checkbox') {
+      $(elem).attr('style', 'button');
+    }
+  });
+
+  // Now wrap all command_button instances in a paragraph.  This can
+  // lead to situations where we have paragraphs inside of paragaphs, or
+  // paragraphs inside of list-items, but downstream code eliminates those
+  // conditions.
+  $('command_button').wrap('<p></p>');
 }
 
 function stripMediaSizing($: any, selector: string) {
@@ -413,6 +438,8 @@ export function handleFormulaMathML($: any) {
       $(item).attr('subtype', subtype);
     } else if (subtype === 'latex') {
       $(item).attr('src', stripLatexDelimiters(item.children[0].data));
+      const blockRendered = wasBlockRendered(item.children[0].data);
+      $(item).attr('legacyBlockRendered', blockRendered);
       item.children = [];
       $(item).attr('subtype', subtype);
     } else {
@@ -509,6 +536,12 @@ function isMathTag(e: any) {
 function stripLatexDelimiters(s: string): string {
   const trimmed = s.trim();
   return trimmed.substring(2, trimmed.length - 2);
+}
+
+function wasBlockRendered(s: string): boolean {
+  const trimmed = s.trim();
+  const delimiter = trimmed.substring(0, 2);
+  return delimiter === '$$' || delimiter === '\\[';
 }
 
 function isLatexString(s: string): boolean {

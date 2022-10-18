@@ -62,7 +62,10 @@ export function transformToFlatDirectory(
     // Update the URL in the XML DOM
     if (url !== null) {
       paths[assetReference].forEach((elem) => {
-        if ($(elem)[0].name === 'source') {
+        if (
+          $(elem)[0].name === 'source' &&
+          $(elem).parent()[0].name !== 'video'
+        ) {
           $(elem).replaceWith(
             `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
           );
@@ -239,7 +242,7 @@ function findFromDOM($: any): Record<string, Array<string>> {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
-  $('source').each((i: any, elem: any) => {
+  $('embed_activity source').each((i: any, elem: any) => {
     paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
   });
 

@@ -17,7 +17,7 @@ function getPastDocType(content: string): string {
   return content;
 }
 
-function isBlockElement(name: string) {
+export function isBlockElement(name: string) {
   const blocks = {
     p: true,
     img: true,
@@ -307,8 +307,15 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
 
       const setVideoAttributes = () => {
         if (tag === 'video') {
-          top().src = top().children;
-          top().children = [];
+          if (typeof top().src === 'string') {
+            top().src = [
+              { type: 'source', url: top().src, contenttype: 'video/mp4' },
+            ];
+          } else {
+            top().src = getAllOfType(top().children, 'source');
+          }
+
+          top().children = [{ text: ' ' }];
           if (top().width !== undefined) {
             top().width = parseInt(top().width);
           }
@@ -435,12 +442,66 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const handleCommandButton = () => {
+        if (tag === 'command_button') {
+          // We have to set 'pronunciation' as a property
+          // as well introduce 'table' as a property to hold all of the
+          // 'tr' children
+
+          const messages = getAllOfType(top().children, 'message');
+
+          top().message = messages[0].children[0].text;
+          top().children = [{ text: top().title }];
+        }
+      };
+
       const renameCaptionForFigure = () => {
         if (tag === 'figure') {
           if (top().caption !== null && top().caption !== undefined) {
             top().title = top().caption;
             delete top().caption;
           }
+        }
+      };
+
+      const convertDefinitionLists = () => {
+        if (tag === 'dl') {
+          // Convert to definitions
+          const definitions: any[] = [];
+          let def: any = null;
+          top().children.forEach((c: any) => {
+            if (c.type === 'dt') {
+              def = {
+                type: 'definition',
+                term: c.term,
+                meanings: [],
+                pronunciation: {
+                  type: 'pronunciation',
+                  children: [{ type: 'p', children: [{ text: '' }] }],
+                },
+                children: [],
+                translations: [],
+              };
+              definitions.push(def);
+            } else if (c.type === 'dd') {
+              c.type = 'meaning';
+              def.meanings.push(c);
+            }
+          });
+
+          const parent = stack[stack.length - 2];
+          const indexAt = parent.children.findIndex((c: any) => c === top());
+          parent.children = [
+            ...parent.children.splice(0, indexAt),
+            ...definitions,
+            ...parent.children.slice(indexAt + 1),
+          ];
+        }
+      };
+
+      const stringToBoolean = (element: string, attr: string) => {
+        if (tag === element && top()[attr] !== undefined) {
+          top()[attr] = top()[attr] === 'true' ? true : false;
         }
       };
 
@@ -491,6 +552,9 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureParagraph('translation');
         ensureParagraph('pronunciation');
         handleConjugation();
+        handleCommandButton();
+        convertDefinitionLists();
+        stringToBoolean('formula_inline', 'legacyBlockRendered');
 
         if (top() && top().children === undefined) {
           top().children = [];
