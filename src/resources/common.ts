@@ -187,12 +187,6 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p p');
   DOM.stripElement($, 'p p');
 
-  $('dl title').remove();
-  $('dl dt').each((i: any, elem: any) => {
-    const term = $(elem).text();
-    $(elem).attr('term', term);
-  });
-
   DOM.stripElement($, 'li p');
   DOM.rename($, 'li img', 'img_inline');
   DOM.stripElement($, 'p quote');

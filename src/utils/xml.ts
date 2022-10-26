@@ -464,38 +464,14 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
-      const convertDefinitionLists = () => {
+      const handleDescriptionList = () => {
         if (tag === 'dl') {
-          // Convert to definitions
-          const definitions: any[] = [];
-          let def: any = null;
-          top().children.forEach((c: any) => {
-            if (c.type === 'dt') {
-              def = {
-                type: 'definition',
-                term: c.term,
-                meanings: [],
-                pronunciation: {
-                  type: 'pronunciation',
-                  children: [{ type: 'p', children: [{ text: '' }] }],
-                },
-                children: [],
-                translations: [],
-              };
-              definitions.push(def);
-            } else if (c.type === 'dd') {
-              c.type = 'meaning';
-              def.meanings.push(c);
-            }
-          });
-
-          const parent = stack[stack.length - 2];
-          const indexAt = parent.children.findIndex((c: any) => c === top());
-          parent.children = [
-            ...parent.children.splice(0, indexAt),
-            ...definitions,
-            ...parent.children.slice(indexAt + 1),
-          ];
+          const title = getOneOfType(top().children, 'title');
+          if (title !== null && title !== undefined) {
+            top().title = title.children;
+            top().items = top().children.filter((c: any) => c.type !== 'title');
+            top().children = [];
+          }
         }
       };
 
@@ -528,6 +504,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureNotEmpty('formula_inline');
         ensureNotEmpty('callout_inline');
         ensureTextDoesNotSurroundBlockElement('td');
+        ensureTextDoesNotSurroundBlockElement('dd');
+        ensureTextDoesNotSurroundBlockElement('dt');
         ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');
         elevateCaption('figure');
@@ -553,7 +531,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         ensureParagraph('pronunciation');
         handleConjugation();
         handleCommandButton();
-        convertDefinitionLists();
+        handleDescriptionList();
         stringToBoolean('formula_inline', 'legacyBlockRendered');
 
         if (top() && top().children === undefined) {
