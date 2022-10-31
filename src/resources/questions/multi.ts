@@ -49,6 +49,7 @@ export function buildMulti(
     stem: buildStem(question, inputs, skipInputRefValidation),
     choices: allChoices,
     inputs,
+    submitPerPart: true,
     authoring: {
       targeted: allTargeted,
       parts: torusParts,
