@@ -29,17 +29,6 @@ export class Organization extends Resource {
   restructure($: any): any {
     failIfHasValue($, 'sequence', 'audience', 'instructor');
     failIfPresent($, ['include', 'unordered', 'supplement']);
-    $('labels').each((i: any, labels: any) => {
-      if (
-        $(labels).attr('sequence') !== 'Sequence' ||
-        $(labels).attr('unit') !== 'Unit' ||
-        $(labels).attr('module') !== 'Module' ||
-        $(labels).attr('section') !== 'Section'
-      ) {
-        console.log('organization contains custom labels: [' + this.file + ']');
-        process.exit(1);
-      }
-    });
 
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
