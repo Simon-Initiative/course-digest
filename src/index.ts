@@ -35,6 +35,7 @@ const optionDefinitions = [
   { name: 'mediaUrlPrefix', type: String },
   { name: 'spreadsheetPath', type: String },
   { name: 'svnRoot', type: String },
+  { name: 'downloadRemote', type: Boolean },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
@@ -43,6 +44,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   outputDir: string;
   inputDir: string;
   svnRoot: string;
+  downloadRemote: boolean;
   specificOrg: string;
   specificOrgId: string;
   mediaUrlPrefix: string;
@@ -151,6 +153,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const svnRoot = options.svnRoot;
   const specificOrg = options.specificOrg;
   const spreadsheetPath = options.spreadsheetPath;
+  const downloadRemote = options.downloadRemote;
 
   return executeSerially([
     () => mapResources(packageDirectory),
@@ -174,6 +177,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       mediaItems: {},
       missing: [],
       urlPrefix: options.mediaUrlPrefix,
+      downloadRemote,
       flattenedNames: {},
     };
 

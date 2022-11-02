@@ -9,6 +9,7 @@ describe('convert summative', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 
@@ -396,6 +397,7 @@ describe('convert summative', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 
@@ -478,6 +480,7 @@ describe('convert summative', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 

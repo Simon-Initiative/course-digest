@@ -2,6 +2,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as md5File from 'md5-file';
+import * as tmp from 'tmp';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import { replaceImageReferences } from './resources/questions/custom-dnd';
 
@@ -9,6 +13,7 @@ export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
   missing: MediaItemReference[];
   urlPrefix: string;
+  downloadRemote: boolean;
   flattenedNames: { [k: string]: string };
 }
 
@@ -58,6 +63,81 @@ export function transformToFlatDirectory(
     // Flatten this file reference into our single, virtual directory
     const ref = { filePath, assetReference };
     const url = flatten(ref, summary);
+
+    // Update the URL in the XML DOM
+    if (url !== null) {
+      paths[assetReference].forEach((elem) => {
+        if (
+          $(elem)[0].name === 'source' &&
+          $(elem).parent()[0].name !== 'video'
+        ) {
+          $(elem).replaceWith(
+            `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
+          );
+        } else if ($(elem)[0].name === 'asset') {
+          const name = $(elem).attr('name');
+          $(elem).replaceWith(
+            `<asset name="${name}">${url.slice(
+              url.lastIndexOf('media/') + 6
+            )}</asset>`
+          );
+        } else {
+          $(elem).attr('src', url);
+        }
+      });
+    }
+  });
+}
+
+export function downloadRemote(
+  filePath: string,
+  $: any,
+  summary: MediaSummary
+) {
+  const paths = findFromDOM($, true);
+  Object.keys(paths).forEach((assetReference: any) => {
+    // Download the file into a temporary file
+    const buffer = fetch(assetReference, {}).buffer();
+    const tmpobj = tmp.fileSync();
+    fs.writeFileSync(tmpobj.name, buffer);
+
+    // Create a directory for this file based on md5
+
+    const md5 = md5File.sync(tmpobj.name);
+    const root = filePath.substring(0, filePath.lastIndexOf('/'));
+    if (!fs.existsSync(root + '/' + md5)) {
+      fs.mkdirSync(root + '/' + md5);
+    }
+
+    // Copy the file into that directory
+    let name = assetReference.substring(assetReference.lastIndexOf('/') + 1);
+    if (name.endsWith('#fixme')) {
+      name = name.substring(0, name.length - 6);
+    }
+    const newLocalPath = root + '/' + md5 + '/' + name;
+    if (!fs.existsSync(newLocalPath)) {
+      fs.copyFileSync(tmpobj.name, newLocalPath);
+    }
+
+    // Store the new media item
+    const url = summary.urlPrefix + '/' + md5 + '/' + encodeURIComponent(name);
+
+    if (summary.mediaItems[newLocalPath] === undefined) {
+      // See if we need to rename this file to avoid conflicts with an already
+      // flattened file
+      const flattenedName = name;
+
+      summary.mediaItems[newLocalPath] = {
+        file: newLocalPath,
+        fileSize: getFilesizeInBytes(newLocalPath),
+        name,
+        flattenedName,
+        md5,
+        mimeType: mime.lookup(newLocalPath) || 'application/octet-stream',
+        references: [],
+        url,
+      };
+    }
 
     // Update the URL in the XML DOM
     if (url !== null) {
@@ -203,7 +283,7 @@ export function stage(
   );
 }
 
-function findFromDOM($: any): Record<string, Array<string>> {
+function findFromDOM($: any, remote = false): Record<string, Array<string>> {
   const paths: any = {};
 
   $('pronunciation').each((i: any, elem: any) => {
@@ -235,7 +315,9 @@ function findFromDOM($: any): Record<string, Array<string>> {
   });
 
   $('video').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    if ($(elem).attr('src') !== undefined) {
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    }
   });
 
   $('video source').each((i: any, elem: any) => {
@@ -253,7 +335,9 @@ function findFromDOM($: any): Record<string, Array<string>> {
   });
 
   Object.keys(paths)
-    .filter((src: string) => !isLocalReference(src))
+    .filter((src: string) =>
+      remote ? isLocalReference(src) : !isLocalReference(src)
+    )
     .forEach((src: string) => delete paths[src]);
 
   return paths;
