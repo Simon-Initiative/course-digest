@@ -35,6 +35,7 @@ it('should convert example course to valid course digest', async () => {
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
+    downloadRemote: false,
     mediaUrlPrefix: 'https://example-url-prefix',
   });
 
