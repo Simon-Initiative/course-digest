@@ -133,26 +133,32 @@ export class WorkbookPage extends Resource {
     xml = $.html();
 
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
-        (r: any) => {
-          const model = introduceStructuredContent(
-            r.children[0].children[1].children
+      XML.toJSON(xml, {
+        p: true,
+        em: true,
+        li: true,
+        td: true,
+        material: true,
+        dt: true,
+        dd: true,
+      }).then((r: any) => {
+        const model = introduceStructuredContent(
+          r.children[0].children[1].children
+        );
+
+        page.id = r.children[0].id;
+        page.legacyId = page.id;
+
+        if (page.objectives.length === 0) {
+          page.objectives = r.children[0].children[0].children.map(
+            (o: any) => o.idref
           );
-
-          page.id = r.children[0].id;
-          page.legacyId = page.id;
-
-          if (page.objectives.length === 0) {
-            page.objectives = r.children[0].children[0].children.map(
-              (o: any) => o.idref
-            );
-          }
-          page.content = { model, bibrefs };
-          page.title = r.children[0].title;
-
-          resolve([page, ...imageCodingActivities, ...bibEntries.values()]);
         }
-      );
+        page.content = { model, bibrefs };
+        page.title = r.children[0].title;
+
+        resolve([page, ...imageCodingActivities, ...bibEntries.values()]);
+      });
     });
   }
 

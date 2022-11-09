@@ -577,6 +577,9 @@ export class Formative extends Resource {
         hint: true,
         feedback: true,
         explanation: true,
+        material: true,
+        dt: true,
+        dd: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
         const { items } = processAssessmentModel(
