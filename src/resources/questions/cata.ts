@@ -81,6 +81,13 @@ const updateResponseRules = (model: any) => {
     getCorrectChoiceIds(model)
   );
 
+  const catchAll = model.authoring.parts[0].responses.filter(
+    (r: any) => r.rule === '*'
+  );
+  if (catchAll.length !== 0) {
+    catchAll[0].rule = 'input like {.*}';
+  }
+
   model.authoring.targeted.forEach((assoc: any) => {
     getResponseBy(model, (r: any) => r.id === getResponseId(assoc)).rule =
       matchListRule(
@@ -180,6 +187,7 @@ export function cata(question: any) {
   const incorrectResponses = model.authoring.parts[0].responses.filter(
     (r: any) => r.rule === '*' || r.rule === 'input like {.*}'
   );
+
   let incorrectResponse: any;
   if (incorrectResponses.length === 0) {
     const r: any = {
