@@ -469,9 +469,9 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
           const title = getOneOfType(top().children, 'title');
           if (title !== null && title !== undefined) {
             top().title = title.children;
-            top().items = top().children.filter((c: any) => c.type !== 'title');
-            top().children = [];
           }
+          top().items = top().children.filter((c: any) => c.type !== 'title');
+          top().children = [];
         }
       };
 
