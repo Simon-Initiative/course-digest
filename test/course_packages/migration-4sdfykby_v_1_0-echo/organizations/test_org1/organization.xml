@@ -10,7 +10,7 @@
 	<audience>
 		This organization is intended as an example for OLI content authors.
 	</audience>
-	<labels sequence="Sequence" unit="Unit" module="Module" section="Section" />
+	<labels sequence="Sequence" unit="Volume" module="Chapter" section="Lesson" />
 	<sequences>
 		<sequence id="part1" category="content" audience="all">
 			<title>

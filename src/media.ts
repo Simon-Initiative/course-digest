@@ -75,11 +75,12 @@ export function transformToFlatDirectory(
             `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
           );
         } else if ($(elem)[0].name === 'asset') {
+          let dname = decodeURIComponent(ref.assetReference);
+          dname = dname.substring(dname.indexOf('/'));
+          const url2 = url.slice(url.lastIndexOf('media/') + 6);
           const name = $(elem).attr('name');
           $(elem).replaceWith(
-            `<asset name="${name}">${url.slice(
-              url.lastIndexOf('media/') + 6
-            )}</asset>`
+            `<asset name="${name}">${url2.split('/')[0] + dname}</asset>`
           );
         } else {
           $(elem).attr('src', url);
@@ -263,7 +264,7 @@ function generateNewName(
 // of the project
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
-  if (reference.assetReference.startsWith('webcontent')) {
+  if (reference.assetReference.includes('webcontent')) {
     dir =
       reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
       'content/';
@@ -344,5 +345,5 @@ function findFromDOM($: any, remote = false): Record<string, Array<string>> {
 }
 
 function isLocalReference(src: string): boolean {
-  return src.startsWith('.') || src.startsWith('webcontent');
+  return src.startsWith('.') || src.includes('webcontent');
 }
