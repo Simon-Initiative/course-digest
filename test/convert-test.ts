@@ -94,6 +94,7 @@ it('should convert content with purpose to groups', async () => {
     inputDir: packageDirectory,
     specificOrg,
     specificOrgId,
+    downloadRemote: false,
     mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
   });
   expect(finalResources).toContainEqual(
