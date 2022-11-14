@@ -11,5 +11,6 @@
     <body>
         <p>This was an inline branching assessment</p>
         <wb:inline idref="branching"/>
+        <wb:inline idref="props_matter1"/>
     </body>
 </workbook_page>

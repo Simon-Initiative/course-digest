@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="props_matter1">
+    <title>tutor</title>
+    <short_title>reveal</short_title>
+    <page>
+
+        <question id="q1">
+            <!--LO:-->
+            <body><p><em>Below are 4 properties of gold. Which are physical properties? Check all that
+                    apply.</em></p>
+            </body>
+            <multiple_choice shuffle="true" select="multiple">
+                <choice value="A">Pure gold is a vibrant yellow color, while fool's gold is darker
+                    yellow.</choice>
+                <choice value="B">The density of gold is 19.3 g/mL, whereas the density of fool's
+                    gold is 5.02 g/mL</choice>
+                <choice value="D">Gold will not react with nitric acid, but most other metals
+                    will.</choice>
+                <choice value="C">Gold is relatively soft and malleable, but fool's gold is
+                    brittle.</choice>
+            </multiple_choice>
+            <part>
+                <response match="A,B,C" score="1">
+                    <feedback xml:lang="3">Correct. Physical properties can be observed without
+                        chemically changing the substance.</feedback>
+                </response>
+                <response match="*" score="0">
+                    <feedback xml:lang="2">Incorrect. Fill in the blanks in the activity below and
+                        try again.</feedback>
+                </response>
+
+            </part>
+        </question>
+
+    </page>
+
+    <page id="p2">
+        <question id="q2">
+
+            <body><p><em>A physical property</em>
+                    <input_ref input="first"/>. </p>
+                <p>
+                    <em>A chemical property </em><input_ref input="second"/>.</p>
+            </body>
+
+            <fill_in_the_blank id="first" shuffle="true">
+                <choice value="A">can be observed without chemically altering the substance. </choice>
+                <choice value="B">can NOT be observed without chemically altering the
+                    substance.</choice>
+
+            </fill_in_the_blank>
+
+            <fill_in_the_blank id="second" shuffle="true">
+                <choice value="A">can be observed without chemically altering the substance. </choice>
+                <choice value="B">can NOT be observed without chemically altering the
+                    substance.</choice>
+
+
+            </fill_in_the_blank>
+
+
+
+            <part id="first" score_out_of="1">
+                <response match="A" input="first" score="1">
+                    <feedback>Correct. </feedback>
+                </response>
+                <response match="B" input="first" score="0">
+                    <feedback>Incorrect. </feedback>
+                </response>
+
+            </part>
+
+
+            <part id="second" score_out_of="1">
+                <response match="A" input="second" score="0">
+                    <feedback>Incorrect. The color, density, and malleability of a substance can all
+                        be observed without chemically altering the substance. These are all
+                        physical properites. To observed the reactivity of a substance with acid
+                        requires that the substance be chemically altered. Reactivity with nitric
+                        acid is a chemical property. </feedback>
+                </response>
+                <response match="B" input="second" score="1">
+                    <feedback>Correct. The color, density, and malleability of a substance can all
+                        be observed without chemically altering the substance. These are all
+                        physical properites. To observed the reactivity of a substance with acid
+                        requires that the substance be chemically altered. Reactivity with nitric
+                        acid is a chemical property.</feedback>
+                </response>
+
+            </part>
+
+        </question>
+
+
+    </page>
+
+
+
+
+</assessment>
