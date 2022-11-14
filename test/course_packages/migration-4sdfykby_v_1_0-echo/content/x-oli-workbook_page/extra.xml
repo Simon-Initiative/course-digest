@@ -68,5 +68,30 @@
 			</extra>
 			because it conducts electricity very well.
 		</p>
+
+    <p>Like matter, energy comes in different types. One scheme classifies energy into two
+      types: (i)<extra>
+          <anchor>potential energy</anchor>
+          <meaning>
+              <material>
+                  <p>energy of a particle or system of particles derived from relative
+                      position, composition, or condition</p>
+              </material>
+          </meaning>
+      </extra>, the energy an object has because of its relative position, composition, or
+      condition, and (ii)<extra>
+          <anchor>kinetic energy</anchor>
+          <meaning>
+              <material>
+                  <p>energy of a moving body, in joules, equal to 1/2 mv<sup>2</sup> (where
+                          <em style="italic">m</em> = mass and <em style="italic">v</em> =
+                      velocity)</p>
+              </material>
+          </meaning>
+      </extra>, the energy that an object possesses because of its motion. Water at the top of
+      a waterfall or dam has potential energy because of its position; when it flows downward
+      through generators, it has kinetic energy that can be used to do work and produce
+      electricity in a hydroelectric plant. A battery has potential energy because the
+      chemicals within it can produce electricity that can do work.</p>
 	</body>
 </workbook_page>

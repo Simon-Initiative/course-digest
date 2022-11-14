@@ -9,6 +9,7 @@ describe('convert workbook', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 
@@ -160,6 +161,7 @@ describe('convert workbook', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 

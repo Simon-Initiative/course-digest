@@ -14,5 +14,10 @@
 		<image src="../webcontent/polar%20%26%20bear.jpg" width="600" height="400">
       <alternate>This is <em>bold</em></alternate>
       </image>
+      <p>
+        Here is a remote image.
+      </p>
+      <image src="https://www.cmu.edu/assets/images/homepage/2019/pipers-2000x1000.jpg"/>
+
 	</body>
 </workbook_page>

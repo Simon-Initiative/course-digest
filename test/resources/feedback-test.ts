@@ -178,6 +178,7 @@ describe('convert feedback', () => {
       mediaItems: {},
       missing: [],
       urlPrefix: '',
+      downloadRemote: false,
       flattenedNames: {},
     };
 
