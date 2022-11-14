@@ -236,6 +236,7 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
+  handleInlineMathJax($);
   sideBySideMaterials($);
   handleInquiry($);
   handleDefinitions($);
@@ -480,6 +481,144 @@ export function handleFormulaMathML($: any) {
     item.tagName = 'formula_inline';
     $(item).attr('src', getFirstMathML($, item));
     item.children = [];
+  });
+}
+
+const INLINE_MATH_DELIMITERS: [string, string][] = [
+  // ['$', '$'],
+  ['$$', '$$'],
+  ['\\(', '\\)'],
+];
+
+const checkForStartingDelimiter = (s: string) =>
+  INLINE_MATH_DELIMITERS.find(([start, _end]) => s.endsWith(start));
+
+type ParserAccumulator = {
+  texts: string[];
+  formulas: string[];
+  curr: string;
+  lookingForEndDelimiter: undefined | string;
+};
+
+// Parses text and MathJAX formulas from a given string.
+// Returns a list of strings where text strings are left as-is and
+// formula strings are wrapped returned as <formula_inline src="..." />
+const parseMathJaxFormulas = (text: string) => {
+  // Parse each character one at a time until a starting delimiter is reached.
+  // Once a starting delimiter is found, the corresponding ending delimiter is set
+  // and all text is stored into the curr state until the ending delimiter is reached.
+  // Collect results in a texts array and formulas array
+  const parsed = text.split('').reduce<ParserAccumulator>(
+    (acc, c) => {
+      const { texts, formulas, curr, lookingForEndDelimiter } = acc;
+      const next: string = curr + c;
+
+      if (lookingForEndDelimiter) {
+        if (next.endsWith(lookingForEndDelimiter)) {
+          // end formula
+          return {
+            texts,
+            // add current formula to formulas, leaving out the end delimiter
+            formulas: [
+              next.slice(0, next.length - lookingForEndDelimiter.length),
+              ...formulas,
+            ],
+            curr: '',
+            lookingForEndDelimiter: undefined,
+          };
+        } else {
+          // continue collecting formula chars
+          return {
+            ...acc,
+            curr: next,
+          };
+        }
+      } else {
+        const foundDelimiter = checkForStartingDelimiter(next);
+
+        if (foundDelimiter) {
+          const [startDelimiter, endDelimiter] = foundDelimiter;
+
+          // begin formula
+          return {
+            // add current text to texts, leaving out the start delimiter
+            texts: [
+              next.slice(0, next.length - startDelimiter.length),
+              ...texts,
+            ],
+            formulas,
+            curr: '',
+            lookingForEndDelimiter: endDelimiter,
+          };
+        } else {
+          // continue collecting text chars
+          return {
+            ...acc,
+            curr: next,
+          };
+        }
+      }
+    },
+    { texts: [], formulas: [], curr: '', lookingForEndDelimiter: undefined }
+  );
+
+  if (parsed.texts.length === 0) {
+    // nothing was parsed
+    return false;
+  }
+
+  if (parsed.lookingForEndDelimiter) {
+    // parsing ended in the middle of a formula, therefore this cannot be processed
+    // as a valid mathjax expression
+    console.warn(
+      `MathJax parsing failed: Formula expression does not have a closing delimiter '${
+        parsed.lookingForEndDelimiter
+      }', at position ${text.length - parsed.curr.length}`
+    );
+
+    return false;
+  }
+
+  // zip together separate texts and formulas arrays into a single list. we can expect there
+  // to be a corresponding formula at every index of texts, except for the last one
+  const elementList = parsed.texts.flatMap((t, i) => [
+    t,
+    `<formula_inline src="${parsed.formulas[i]}" subtype="latex"></formula_inline>`,
+  ]);
+
+  // add any remaining text in curr
+  if (parsed.curr) {
+    elementList.push(parsed.curr);
+  }
+
+  return elementList;
+};
+
+// Traverses all text nodes in the given element using DFS.
+// Executes the given fn for each text node found.
+function traverseTextNodes(
+  el: cheerio.Element,
+  fn: (el: cheerio.Element) => void
+): void {
+  if (el.type === 'text') fn(el);
+
+  if (el.type === 'tag') {
+    return el.children.forEach((c: cheerio.Element) =>
+      traverseTextNodes(c, fn)
+    );
+  }
+}
+
+function handleInlineMathJax($: cheerio.Root) {
+  $('p, feedback').each((i, item) => {
+    traverseTextNodes(item, (el) => {
+      const parsed = parseMathJaxFormulas($(el).text());
+
+      if (parsed) {
+        const textWithFormulas = parsed.join('');
+        $(el).replaceWith($(textWithFormulas));
+      }
+    });
   });
 }
 

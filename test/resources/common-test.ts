@@ -62,4 +62,100 @@ describe('cdata and codeblocks', () => {
     const img2 = p2.children[0].children[0];
     expect(img2.type).toBe('img_inline');
   });
+
+  // test('should convert MathJAX LaTeX embedded in feedback with $ to formula_inline', async () => {
+  //   const content = `
+  //       <response match="19" score="10" input="q3numeric">
+  //           <feedback>Correct. $\mathrm{Density}\;=\;\frac{44.65\;\mathrm
+  //               g}{2.3\;\mathrm{mL}}\;=\;19\;\mathrm g/\mathrm{mL}$</feedback>
+  //       </response>
+  //   `;
+
+  //   const $ = cheerio.load(content, {
+  //     normalizeWhitespace: true,
+  //     xmlMode: true,
+  //   });
+
+  //   standardContentManipulations($);
+
+  //   const result: any = await toJSON($.xml());
+
+  //   const response = result.children.find((c: any) => c.input === 'q3numeric');
+  //   const feedback = response.children[0];
+
+  //   expect(feedback.type).toBe('feedback');
+  //   expect(feedback.children).toEqual([
+  //     { text: 'Correct.' },
+  //     {
+  //       type: 'formula_inline',
+  //       children: expect.any(Array),
+  //       src: 'mathrm{Density};=; rac{44.65;mathrm g}{2.3;mathrm{mL}};=;19;mathrm g/mathrm{mL}',
+  //       subtype: 'latex',
+  //     },
+  //   ]);
+  // });
+
+  test('should convert MathJAX LaTeX embedded in feedback with $$ to formula_inline', async () => {
+    const content = `
+        <response match="19" score="10" input="q3numeric">
+            <feedback>Correct. $$\mathrm{Density}\;=\;\frac{44.65\;\mathrm
+                g}{2.3\;\mathrm{mL}}\;=\;19\;\mathrm g/\mathrm{mL}$$</feedback>
+        </response>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml());
+
+    const response = result.children.find((c: any) => c.input === 'q3numeric');
+    const feedback = response.children[0];
+
+    expect(feedback.type).toBe('feedback');
+    expect(feedback.children).toEqual([
+      { text: 'Correct.' },
+      {
+        type: 'formula_inline',
+        children: expect.any(Array),
+        src: 'mathrm{Density};=; rac{44.65;mathrm g}{2.3;mathrm{mL}};=;19;mathrm g/mathrm{mL}',
+        subtype: 'latex',
+      },
+    ]);
+  });
+
+  test('should convert MathJAX LaTeX embedded in feedback with \\( and \\) to formula_inline', async () => {
+    const content = `
+        <response match="19" score="10" input="q3numeric">
+            <feedback>Correct. \\(\mathrm{Density}\;=\;\frac{44.65\;\mathrm
+                g}{2.3\;\mathrm{mL}}\;=\;19\;\mathrm g/\mathrm{mL}\\)</feedback>
+        </response>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml());
+
+    const response = result.children.find((c: any) => c.input === 'q3numeric');
+    const feedback = response.children[0];
+
+    expect(feedback.type).toBe('feedback');
+    expect(feedback.children).toEqual([
+      { text: 'Correct.' },
+      {
+        type: 'formula_inline',
+        children: expect.any(Array),
+        src: 'mathrm{Density};=; rac{44.65;mathrm g}{2.3;mathrm{mL}};=;19;mathrm g/mathrm{mL}',
+        subtype: 'latex',
+      },
+    ]);
+  });
 });
