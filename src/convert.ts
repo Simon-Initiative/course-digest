@@ -38,6 +38,9 @@ export function convert(
 
     $ = DOM.read(tmpobj.name);
 
+    if (mediaSummary.downloadRemote) {
+      Media.downloadRemote(file, $, mediaSummary);
+    }
     Media.transformToFlatDirectory(file, $, mediaSummary);
 
     return item.translate($);
