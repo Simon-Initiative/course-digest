@@ -485,7 +485,7 @@ export function handleFormulaMathML($: any) {
 }
 
 const INLINE_MATH_DELIMITERS: [string, string][] = [
-  // ['$', '$'],
+  ['$', '$'],
   ['$$', '$$'],
   ['\\(', '\\)'],
 ];
@@ -514,6 +514,20 @@ const parseMathJaxFormulas = (text: string) => {
       const next: string = curr + c;
 
       if (lookingForEndDelimiter) {
+        // SPECIAL CASE: since a single $ is part of the $$ delimiter, we need to
+        // specifically check that previous character is not $ when the current character is $.
+        // If we find that we have reached another $ directly after a previous $, it does not mean
+        // we just parsed an empty formula but in-fact it means that the delimiter to use actually
+        // is $$. This effectively makes single $ with empty content impossible, but that is okay.
+        if (lookingForEndDelimiter === '$' && next === '$') {
+          // change the delimiter we are searching for from $ to $$
+          return {
+            ...acc,
+            curr: '',
+            lookingForEndDelimiter: '$$',
+          };
+        }
+
         if (next.endsWith(lookingForEndDelimiter)) {
           // end formula
           return {
