@@ -134,41 +134,35 @@ describe('convert summative', () => {
         warnings: [],
         content: {
           stem: {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: expect.arrayContaining([
-                    {
-                      text: 'THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.',
-                      strong: true,
-                    },
-                  ]),
-                  id: 'f4ce7ca7312d41a4a8861473a4aa85bd',
-                },
-                {
-                  type: 'p',
-                  children: expect.arrayContaining([
-                    {
-                      text: 'Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: ',
-                    },
-                  ]),
-                  id: 'b86fe531f3924139980084844fc8adaa',
-                },
-              ],
-            },
+            content: [
+              {
+                type: 'p',
+                children: expect.arrayContaining([
+                  {
+                    text: 'THIS IS AN EXAMPLE MULTIPLE CHOICE QUESTION. PLEASE EDIT OR DELETE IT.',
+                    strong: true,
+                  },
+                ]),
+                id: 'f4ce7ca7312d41a4a8861473a4aa85bd',
+              },
+              {
+                type: 'p',
+                children: expect.arrayContaining([
+                  {
+                    text: 'Albert sees that his girlfriend has written her password on a note beside her computer; he logs in and sends a joke email to one of her friends. This action is: ',
+                  },
+                ]),
+                id: 'b86fe531f3924139980084844fc8adaa',
+              },
+            ],
           },
           choices: [
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'Acceptable' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'Acceptable' }] }],
               id: 'yes',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'Unacceptable' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'Unacceptable' }] }],
               id: 'no',
             },
           ],
@@ -185,19 +179,17 @@ describe('convert summative', () => {
                     legacyMatch: 'no',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [
-                              {
-                                text: "Correct; this is a pretty clear violation of the policy, including using another person's account and impersonating another individual.",
-                              },
-                            ],
-                            id: 'f277ed5de9c949138801d812b4a9cc3a',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [
+                            {
+                              text: "Correct; this is a pretty clear violation of the policy, including using another person's account and impersonating another individual.",
+                            },
+                          ],
+                          id: 'f277ed5de9c949138801d812b4a9cc3a',
+                        },
+                      ],
                     },
                   },
                   {
@@ -207,40 +199,32 @@ describe('convert summative', () => {
                     legacyMatch: 'yes',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [
-                              {
-                                text: "Incorrect; using another student's password is not acceptable, even if it's left out in the open. Further, Albert has assumed his girlfriend's identity by using her account, which is also a violation of the Computing Policy.",
-                              },
-                            ],
-                            id: 'b58e46d68e0140659b55ef63299b3a1d',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [
+                            {
+                              text: "Incorrect; using another student's password is not acceptable, even if it's left out in the open. Further, Albert has assumed his girlfriend's identity by using her account, which is also a violation of the Computing Policy.",
+                            },
+                          ],
+                          id: 'b58e46d68e0140659b55ef63299b3a1d',
+                        },
+                      ],
                     },
                   },
                 ],
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 scoringStrategy: 'average',
@@ -281,27 +265,21 @@ describe('convert summative', () => {
         unresolvedReferences: [],
         content: {
           stem: {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [{ text: 'MCQ page 2' }],
-                  id: 'd3786bde78b943a9a4404313d0a8400d',
-                },
-              ],
-            },
+            content: [
+              {
+                type: 'p',
+                children: [{ text: 'MCQ page 2' }],
+                id: 'd3786bde78b943a9a4404313d0a8400d',
+              },
+            ],
           },
           choices: [
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'choice 1' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'choice 1' }] }],
               id: 'f3d408f2b88c4e15891a3da9d4848b91',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'choice 2' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'choice 2' }] }],
               id: 'dd1a0ca00db246d3adafbb4b025ba017',
             },
           ],
@@ -318,15 +296,13 @@ describe('convert summative', () => {
                     legacyMatch: 'f3d408f2b88c4e15891a3da9d4848b91',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ type: 'text', text: ' ' }],
-                            id: 'c9d611862b9f4d7f9fa7d554373bf9aa',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ type: 'text', text: ' ' }],
+                          id: 'c9d611862b9f4d7f9fa7d554373bf9aa',
+                        },
+                      ],
                     },
                   },
                   {
@@ -336,36 +312,28 @@ describe('convert summative', () => {
                     legacyMatch: 'dd1a0ca00db246d3adafbb4b025ba017',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ type: 'text', text: ' ' }],
-                            id: 'e047a90c8651468bb8c09e6b99f8d681',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ type: 'text', text: ' ' }],
+                          id: 'e047a90c8651468bb8c09e6b99f8d681',
+                        },
+                      ],
                     },
                   },
                 ],
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 scoringStrategy: 'average',
@@ -512,20 +480,17 @@ describe('convert summative', () => {
                     legacyMatch: '[2,5]',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        id: expect.any(String),
-                        model: [
-                          {
-                            type: 'p',
-                            children: [
-                              {
-                                text: 'Correct!',
-                              },
-                            ],
-                            id: 'cd83c39e3c21465399aba99e6889ce64',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [
+                            {
+                              text: 'Correct!',
+                            },
+                          ],
+                          id: 'cd83c39e3c21465399aba99e6889ce64',
+                        },
+                      ],
                     },
                   },
                   {
@@ -535,20 +500,17 @@ describe('convert summative', () => {
                     legacyMatch: '.*',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        id: expect.any(String),
-                        model: [
-                          {
-                            type: 'p',
-                            children: [
-                              {
-                                text: 'Incorrect.',
-                              },
-                            ],
-                            id: 'b9e0de8754f74e3c96cc3ecb1645d695',
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [
+                            {
+                              text: 'Incorrect.',
+                            },
+                          ],
+                          id: 'b9e0de8754f74e3c96cc3ecb1645d695',
+                        },
+                      ],
                     },
                   },
                 ],

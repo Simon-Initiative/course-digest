@@ -268,120 +268,96 @@ describe('convert feedback', () => {
         imageReferences: undefined,
         content: {
           stem: {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'Indicate the extent to which you agree or disagree with each of the following statements.',
-                    },
-                  ],
-                },
-              ],
-            },
+            content: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: 'Indicate the extent to which you agree or disagree with each of the following statements.',
+                  },
+                ],
+              },
+            ],
           },
           choices: [
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'strongly agree' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'strongly agree' }] }],
               id: '1',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'agree' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'agree' }] }],
               id: '2',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'somewhat agree' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'somewhat agree' }] }],
               id: '3',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [{ text: 'neither agree nor disagree' }],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'neither agree nor disagree' }],
+                },
+              ],
               id: '4',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [{ text: 'somewhat disagree' }],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'somewhat disagree' }],
+                },
+              ],
               id: '5',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: 'disagree' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: 'disagree' }] }],
               id: '6',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [{ text: 'strongly disagree' }],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'strongly disagree' }],
+                },
+              ],
               id: '7',
             },
           ],
           items: [
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      { text: 'I feel like I "belong" in chemistry.' },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'I feel like I "belong" in chemistry.' }],
+                },
+              ],
               id: 'q4',
               required: 'true',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      { text: 'I feel welcomed in my chemistry class.' },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    { text: 'I feel welcomed in my chemistry class.' },
+                  ],
+                },
+              ],
               id: 'q5',
               required: 'true',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'I do not have much in common with other students in my chemistry class.',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'I do not have much in common with other students in my chemistry class.',
+                    },
+                  ],
+                },
+              ],
               id: 'q6',
               required: 'true',
             },
@@ -394,21 +370,15 @@ describe('convert feedback', () => {
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 id: 'q4',
@@ -420,11 +390,9 @@ describe('convert feedback', () => {
                     rule: 'input like {1}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Correct.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Correct.' }] },
+                      ],
                     },
                   },
                   {
@@ -433,11 +401,9 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Incorrect.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
                     },
                   },
                 ],
@@ -451,21 +417,15 @@ describe('convert feedback', () => {
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 id: 'q5',
@@ -477,11 +437,9 @@ describe('convert feedback', () => {
                     rule: 'input like {1}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Correct.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Correct.' }] },
+                      ],
                     },
                   },
                   {
@@ -490,11 +448,9 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Incorrect.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
                     },
                   },
                 ],
@@ -508,21 +464,15 @@ describe('convert feedback', () => {
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 id: 'q6',
@@ -534,11 +484,9 @@ describe('convert feedback', () => {
                     rule: 'input like {1}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Correct.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Correct.' }] },
+                      ],
                     },
                   },
                   {
@@ -547,11 +495,9 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Incorrect.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
                     },
                   },
                 ],
@@ -584,77 +530,61 @@ describe('convert feedback', () => {
         imageReferences: undefined,
         content: {
           stem: {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: '',
-                    },
-                  ],
-                },
-              ],
-            },
+            content: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: '',
+                  },
+                ],
+              },
+            ],
           },
           choices: [
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '1-2 hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '1-2 hours' }] }],
               id: '1',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '2-3 hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '2-3 hours' }] }],
               id: '2',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '3-4 hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '3-4 hours' }] }],
               id: '3',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '4-5 hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '4-5 hours' }] }],
               id: '4',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '5-6 hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '5-6 hours' }] }],
               id: '5',
             },
             {
-              content: {
-                model: [{ type: 'p', children: [{ text: '6+ hours' }] }],
-              },
+              content: [{ type: 'p', children: [{ text: '6+ hours' }] }],
               id: '6',
             },
           ],
           items: [
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'On average, about how much time per week did you spend using the OLI materials? ',
-                      },
-                    ],
-                    id: expect.any(String),
-                  },
-                  {
-                    type: 'p',
-                    children: [{ type: 'text', text: ' ' }],
-                    id: expect.any(String),
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'On average, about how much time per week did you spend using the OLI materials? ',
+                    },
+                  ],
+                  id: expect.any(String),
+                },
+                {
+                  type: 'p',
+                  children: [{ type: 'text', text: ' ' }],
+                  id: expect.any(String),
+                },
+              ],
               id: expect.any(String),
               required: false,
             },
@@ -667,21 +597,15 @@ describe('convert feedback', () => {
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 id: expect.any(String),
@@ -693,11 +617,9 @@ describe('convert feedback', () => {
                     rule: 'input like {1}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Correct.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Correct.' }] },
+                      ],
                     },
                   },
                   {
@@ -706,11 +628,9 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          { type: 'p', children: [{ text: 'Incorrect.' }] },
-                        ],
-                      },
+                      content: [
+                        { type: 'p', children: [{ text: 'Incorrect.' }] },
+                      ],
                     },
                   },
                 ],
@@ -743,18 +663,16 @@ describe('convert feedback', () => {
         imageReferences: [],
         content: {
           stem: {
-            content: {
-              model: [
-                {
-                  type: 'p',
-                  children: [
-                    {
-                      text: 'How do you currently describe your gender identity?',
-                    },
-                  ],
-                },
-              ],
-            },
+            content: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: 'How do you currently describe your gender identity?',
+                  },
+                ],
+              },
+            ],
           },
           inputType: 'text',
           submitAndCompare: false,
@@ -769,31 +687,22 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        id: expect.any(String),
-                        model: [{ type: 'p', children: [{ text: '' }] }],
-                      },
+                      content: [{ type: 'p', children: [{ text: '' }] }],
                     },
                   },
                 ],
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 objectives: [],
@@ -823,160 +732,138 @@ describe('convert feedback', () => {
         imageReferences: [],
         content: {
           stem: {
-            content: {
-              model: [
+            content: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: 'Which categories describe you? Select all that apply to you: your racial or ethnic heritage?',
+                  },
+                ],
+              },
+            ],
+          },
+          choices: [
+            {
+              content: [
                 {
                   type: 'p',
                   children: [
                     {
-                      text: 'Which categories describe you? Select all that apply to you: your racial or ethnic heritage?',
+                      text: 'American Indian or Alaska Native—For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow Inupiat Traditional Government, Nome Eskimo Community',
                     },
                   ],
                 },
               ],
-            },
-          },
-          choices: [
-            {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'American Indian or Alaska Native—For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow Inupiat Traditional Government, Nome Eskimo Community',
-                      },
-                    ],
-                  },
-                ],
-              },
               id: 'A',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Asian—For example, Chinese, Filipino, Asian Indian, Vietnamese, Korean, Japanese',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Asian—For example, Chinese, Filipino, Asian Indian, Vietnamese, Korean, Japanese',
+                    },
+                  ],
+                },
+              ],
               id: 'B',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Black or African American—For example, Jamaican, Haitian, Nigerian, Ethiopian, Somalian',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Black or African American—For example, Jamaican, Haitian, Nigerian, Ethiopian, Somalian',
+                    },
+                  ],
+                },
+              ],
               id: 'C',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Hispanic, Latino or Spanish Origin—For example, Mexican or Mexican American, Puerto Rican, Cuban, Salvadoran, Dominican, Columbian',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Hispanic, Latino or Spanish Origin—For example, Mexican or Mexican American, Puerto Rican, Cuban, Salvadoran, Dominican, Columbian',
+                    },
+                  ],
+                },
+              ],
               id: 'D',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Middle Eastern or North African—For example, Lebanese, Iranian, Egyptian, Syrian, Moroccan, Algerian',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Middle Eastern or North African—For example, Lebanese, Iranian, Egyptian, Syrian, Moroccan, Algerian',
+                    },
+                  ],
+                },
+              ],
               id: 'E',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Native Hawaiian or Other Pacific Islander—For example, Native Hawaiian, Samoan, Chamorro, Tongan, Fijian, Marshallese',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Native Hawaiian or Other Pacific Islander—For example, Native Hawaiian, Samoan, Chamorro, Tongan, Fijian, Marshallese',
+                    },
+                  ],
+                },
+              ],
               id: 'F',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'White—For example, German, Irish, English, Italian, Polish, French',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'White—For example, German, Irish, English, Italian, Polish, French',
+                    },
+                  ],
+                },
+              ],
               id: 'G',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [{ text: 'International student' }],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'International student' }],
+                },
+              ],
               id: 'H',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: 'Some other race, ethnicity, or origin, please specify: ___________',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Some other race, ethnicity, or origin, please specify: ___________',
+                    },
+                  ],
+                },
+              ],
               id: 'I',
             },
             {
-              content: {
-                model: [
-                  {
-                    type: 'p',
-                    children: [{ text: 'I prefer not to answer' }],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [{ text: 'I prefer not to answer' }],
+                },
+              ],
               id: 'J',
             },
           ],
@@ -993,9 +880,7 @@ describe('convert feedback', () => {
                     legacyMatch: 'A',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [{ type: 'p', children: [{ text: 'Correct' }] }],
-                      },
+                      content: [{ type: 'p', children: [{ text: 'Correct' }] }],
                     },
                   },
                   {
@@ -1005,14 +890,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'B',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1022,14 +905,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'C',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1039,14 +920,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'D',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1056,14 +935,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'E',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1073,14 +950,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'F',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1090,14 +965,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'G',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1107,14 +980,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'H',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1124,14 +995,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'I',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1141,14 +1010,12 @@ describe('convert feedback', () => {
                     legacyMatch: 'J',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect' }],
+                        },
+                      ],
                     },
                   },
                   {
@@ -1157,35 +1024,27 @@ describe('convert feedback', () => {
                     rule: 'input like {.*}',
                     feedback: {
                       id: expect.any(String),
-                      content: {
-                        model: [
-                          {
-                            type: 'p',
-                            children: [{ text: 'Incorrect.' }],
-                          },
-                        ],
-                      },
+                      content: [
+                        {
+                          type: 'p',
+                          children: [{ text: 'Incorrect.' }],
+                        },
+                      ],
                     },
                   },
                 ],
                 hints: [
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                   {
                     id: expect.any(String),
-                    content: {
-                      model: [{ type: 'p', children: [{ text: '' }] }],
-                    },
+                    content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
                 scoringStrategy: 'average',
