@@ -1,14 +1,19 @@
 const INLINE_MATH_DELIMITERS: [string, string][] = [
-  ['$', '$'],
   ['$$', '$$'],
   ['\\(', '\\)'],
+  ['\\[', '\\]'],
 ];
 
 const checkForStartingDelimiter = (s: string) =>
   INLINE_MATH_DELIMITERS.find(([start, _end]) => s.endsWith(start));
 
 type Text = { type: 'text'; text: string };
-type InlineFormula = { type: 'formula_inline'; src: string; subtype: 'latex' };
+type InlineFormula = {
+  type: 'formula_inline';
+  src: string;
+  subtype: 'latex';
+  legacyBlockRendered: boolean;
+};
 type Node = Text | InlineFormula;
 
 type ParserAccumulator = {
@@ -54,6 +59,9 @@ export const parseMathJaxFormulas = (text: string) => {
               {
                 type: 'formula_inline',
                 subtype: 'latex',
+                legacyBlockRendered:
+                  lookingForEndDelimiter === '$$' ||
+                  lookingForEndDelimiter === '\\]',
                 src: next.slice(0, next.length - lookingForEndDelimiter.length),
               },
             ],

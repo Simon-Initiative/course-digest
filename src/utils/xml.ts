@@ -558,7 +558,12 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
           // process any text nodes to add inline styles
           n.type === 'text'
             ? Object.assign({ text: n.text }, inlinesToObject(inlines))
-            : { type: 'formula_inline', subtype: n.subtype, src: n.src }
+            : {
+                type: 'formula_inline',
+                subtype: n.subtype,
+                src: n.src,
+                legacyBlockRendered: n.legacyBlockRendered,
+              }
         );
 
         top().children = [...top().children, ...textAndFormulaNodes];
