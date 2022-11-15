@@ -61,6 +61,7 @@ export function transformToFlatDirectory(
   const paths = findFromDOM($);
   Object.keys(paths).forEach((assetReference: any) => {
     // Flatten this file reference into our single, virtual directory
+
     const ref = { filePath, assetReference };
     const url = flatten(ref, summary);
 
@@ -193,7 +194,6 @@ export function flatten(
   summary: MediaSummary
 ): string | null {
   const absolutePath = resolve(ref);
-
   const decodedPath = decodeURIComponent(absolutePath);
 
   if (fs.existsSync(decodedPath)) {
@@ -227,6 +227,7 @@ export function flatten(
     summary.mediaItems[absolutePath].references.push(ref);
     return summary.mediaItems[absolutePath].url;
   }
+
   summary.missing.push(ref);
   return null;
 }
@@ -264,7 +265,8 @@ function generateNewName(
 // of the project
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
-  if (reference.assetReference.includes('webcontent')) {
+
+  if (reference.assetReference.startsWith('webcontent')) {
     dir =
       reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
       'content/';
@@ -345,5 +347,5 @@ function findFromDOM($: any, remote = false): Record<string, Array<string>> {
 }
 
 function isLocalReference(src: string): boolean {
-  return src.startsWith('.') || src.includes('webcontent');
+  return src.startsWith('.') || src.startsWith('webcontent');
 }

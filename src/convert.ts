@@ -41,6 +41,7 @@ export function convert(
     if (mediaSummary.downloadRemote) {
       Media.downloadRemote(file, $, mediaSummary);
     }
+
     Media.transformToFlatDirectory(file, $, mediaSummary);
 
     return item.translate($);
