@@ -3,6 +3,7 @@ import * as stream from 'stream';
 import * as fs from 'fs';
 import { decodeEntities } from './common';
 import { decode } from 'html-entities';
+import { parseMathJaxFormulas } from './mathjax-parser';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -550,8 +551,22 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
       let text = replaceAll(raw, '&amp;', '&');
       text = decode(text, { level: 'html5' });
 
-      const object: any = Object.assign({}, { text }, inlinesToObject(inlines));
-      top().children.push(object);
+      const parsed = parseMathJaxFormulas(text);
+
+      if (parsed) {
+        const textAndFormulaNodes = parsed.map((n) =>
+          // process any text nodes to add inline styles
+          n.type === 'text'
+            ? Object.assign({ text: n.text }, inlinesToObject(inlines))
+            : { type: 'formula_inline', subtype: n.subtype, src: n.src }
+        );
+
+        top().children = [...top().children, ...textAndFormulaNodes];
+      } else {
+        const textNode: any = Object.assign({ text }, inlinesToObject(inlines));
+
+        top().children.push(textNode);
+      }
     });
     parser.on('cdata', (cdata: string) => {
       const text = cdata;
