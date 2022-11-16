@@ -36,17 +36,15 @@ function convertXBlock($: any, item: any, example: boolean) {
   });
   content.stem = {
     id: guid(),
-    content: {
-      model: [
-        {
-          id: guid(),
-          type: 'p',
-          children: [{ text: 'This was a converted image coding exercise' }],
-        },
-        { id: guid(), type: 'code', children: [], language: 'xml' },
-        { id: guid(), type: 'p', children: [{ text: ' ' }] },
-      ],
-    },
+    content: [
+      {
+        id: guid(),
+        type: 'p',
+        children: [{ text: 'This was a converted image coding exercise' }],
+      },
+      { id: guid(), type: 'code', children: [], language: 'xml' },
+      { id: guid(), type: 'p', children: [{ text: ' ' }] },
+    ],
   };
 
   $(item)
@@ -62,9 +60,7 @@ function convertExample($: any, item: any) {
 
   content.stem = {
     id: guid(),
-    content: {
-      model: [{ id: guid(), type: 'p', children: [{ text: ' ' }] }],
-    },
+    content: [{ id: guid(), type: 'p', children: [{ text: ' ' }] }],
   };
 
   let starter = '';
@@ -95,35 +91,29 @@ function defaultContent(example: boolean) {
     feedback: [
       {
         id: '2848932877',
-        content: {
-          id: '2564146359',
-          model: [
-            {
-              type: 'p',
-              children: [
-                {
-                  text: 'Correct',
-                },
-              ],
-            },
-          ],
-        },
+        content: [
+          {
+            type: 'p',
+            children: [
+              {
+                text: 'Correct',
+              },
+            ],
+          },
+        ],
       },
       {
         id: '284893177',
-        content: {
-          id: '256146359',
-          model: [
-            {
-              type: 'p',
-              children: [
-                {
-                  text: 'Wrong',
-                },
-              ],
-            },
-          ],
-        },
+        content: [
+          {
+            type: 'p',
+            children: [
+              {
+                text: 'Wrong',
+              },
+            ],
+          },
+        ],
       },
     ],
     authoring: {
@@ -134,51 +124,42 @@ function defaultContent(example: boolean) {
           hints: [
             {
               id: '2862983244',
-              content: {
-                id: '863806719',
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: ' ',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: ' ',
+                    },
+                  ],
+                },
+              ],
             },
             {
               id: '2486288423',
-              content: {
-                id: '887418037',
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: ' ',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: ' ',
+                    },
+                  ],
+                },
+              ],
             },
             {
               id: '811063065',
-              content: {
-                id: '923739514',
-                model: [
-                  {
-                    type: 'p',
-                    children: [
-                      {
-                        text: ' ',
-                      },
-                    ],
-                  },
-                ],
-              },
+              content: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: ' ',
+                    },
+                  ],
+                },
+              ],
             },
           ],
           scoringStrategy: 'average',

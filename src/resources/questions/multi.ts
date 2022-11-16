@@ -105,9 +105,7 @@ export function buildStem(
   }
 
   return {
-    content: {
-      model: updated,
-    },
+    content: updated,
   };
 }
 
@@ -182,7 +180,7 @@ function produceTorusEquivalents(
       rule: 'input like {.*}',
       feedback: {
         id: guid(),
-        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
       },
     });
   }
@@ -263,7 +261,7 @@ function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
         legacyMatch: m,
         feedback: {
           id: guid(),
-          content: { model: Common.getFeedbackModel(r) },
+          content: Common.getFeedbackModel(r),
         },
       };
       const showPage = Common.getBranchingTarget(r);
@@ -275,7 +273,7 @@ function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: { model: Common.ensureParagraphs(r.children) },
+        content: Common.ensureParagraphs(r.children),
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
@@ -307,10 +305,7 @@ export function buildInputPart(
         legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
-          content: {
-            id: guid(),
-            model: Common.getFeedbackModel(r),
-          },
+          content: Common.getFeedbackModel(r),
         },
       };
       const showPage = Common.getBranchingTarget(r);
@@ -322,10 +317,7 @@ export function buildInputPart(
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: {
-          id: guid(),
-          model: Common.ensureParagraphs(r.children),
-        },
+        content: Common.ensureParagraphs(r.children),
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),

@@ -50,9 +50,7 @@ export function ensureParagraphs(children: any[]) {
 export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
-    content: {
-      model: stripSpuriousText(ensureParagraphs(stem.children)),
-    },
+    content: stripSpuriousText(ensureParagraphs(stem.children)),
   };
 }
 
@@ -72,9 +70,7 @@ export function buildStemFromText(text: string) {
 }
 
 export function buildContentModelFromText(text: string) {
-  return {
-    model: [{ type: 'p', children: [{ text }] }],
-  };
+  return [{ type: 'p', children: [{ text }] }];
 }
 
 export function shuffleTransformation() {
@@ -89,7 +85,7 @@ export function buildChoices(question: any, from = 'multiple_choice') {
   const choices = getChild(question.children, from).children as any[];
 
   return choices.map((c: any) => ({
-    content: { model: ensureParagraphs(c.children) },
+    content: ensureParagraphs(c.children),
     id: c.value,
   }));
 }
@@ -199,13 +195,10 @@ export function buildTextPart(id: string, question: any) {
         rule: `input like {${cleanedMatch}}`,
         feedback: {
           id: guid(),
-          content: {
-            id: guid(),
-            model: maybe(r.children[0]).caseOf({
-              just: (feedback: any) => ensureParagraphs(feedback.children),
-              nothing: () => shortAnswerExplanationOrDefaultModel(question),
-            }),
-          },
+          content: maybe(r.children[0]).caseOf({
+            just: (feedback: any) => ensureParagraphs(feedback.children),
+            nothing: () => shortAnswerExplanationOrDefaultModel(question),
+          }),
         },
       };
       const showPage = getBranchingTarget(r);
@@ -217,10 +210,7 @@ export function buildTextPart(id: string, question: any) {
     hints: ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: {
-          id: guid(),
-          model: ensureParagraphs(r.children),
-        },
+        content: ensureParagraphs(r.children),
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
@@ -232,7 +222,7 @@ export function buildTextPart(id: string, question: any) {
 export function hint() {
   return {
     id: guid(),
-    content: { model: defaultModel() },
+    content: defaultModel(),
   };
 }
 

@@ -25,9 +25,7 @@ export function findCustomTag(
 ): CustomTagDetails | undefined {
   const s = stem === null ? Common.buildStem(question) : stem;
 
-  const custom = (s.content.model as any[]).find(
-    (c) => c.type === 'javascript'
-  );
+  const custom = (s.content as any[]).find((c) => c.type === 'javascript');
   if (custom !== undefined) {
     let inputRefsMap: Map<string, string> | null = null;
     if (containsDynaDropTable(custom) && stem !== null) {
@@ -222,11 +220,9 @@ export function locateImageReferences(layout: string, layoutFilePath: string) {
 }
 
 function stripCustomTag(question: any) {
-  const content = Object.assign({}, question.stem.content, {
-    model: question.stem.content.model.filter(
-      (c: any) => c.type !== 'javascript'
-    ),
-  });
+  const content = question.stem.content.filter(
+    (c: any) => c.type !== 'javascript'
+  );
   const stem = Object.assign({}, question.stem, { content });
   return Object.assign({}, question, { stem });
 }

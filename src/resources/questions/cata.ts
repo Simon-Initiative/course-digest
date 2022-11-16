@@ -119,7 +119,7 @@ function buildCATAPart(question: any) {
         name: r.name,
         feedback: {
           id: guid(),
-          content: { model: Common.getFeedbackModel(r) },
+          content: Common.getFeedbackModel(r),
         },
       };
       const showPage = Common.getBranchingTarget(r);
@@ -131,7 +131,7 @@ function buildCATAPart(question: any) {
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: { model: Common.ensureParagraphs(r.children) },
+        content: Common.ensureParagraphs(r.children),
       }))
     ),
     scoringStrategy: 'average',
@@ -196,11 +196,9 @@ export function cata(question: any) {
       rule: '*',
       feedback: {
         id: guid(),
-        content: {
-          model: [
-            { type: 'p', children: [{ text: 'Incorrect', children: [] }] },
-          ],
-        },
+        content: [
+          { type: 'p', children: [{ text: 'Incorrect', children: [] }] },
+        ],
       },
     };
     model.authoring.parts[0].responses.push(r);
@@ -226,7 +224,7 @@ export function cata(question: any) {
       rule: 'input like {.*}',
       feedback: {
         id: guid(),
-        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
       },
     });
   }

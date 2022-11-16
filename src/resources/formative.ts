@@ -52,7 +52,7 @@ function buildMCQPart(question: any) {
       legacyMatch: replaceAll(r.match, '\\*', '.*'),
       feedback: {
         id: guid(),
-        content: { model: Common.getFeedbackModel(r) },
+        content: Common.getFeedbackModel(r),
       },
     };
     const showPage = Common.getBranchingTarget(r);
@@ -68,7 +68,7 @@ function buildMCQPart(question: any) {
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: { model: Common.ensureParagraphs(r.children) },
+        content: Common.ensureParagraphs(r.children),
       }))
     ),
     scoringStrategy: 'average',
@@ -89,9 +89,7 @@ function buildMCQPart(question: any) {
         rule: `input like {.*}`,
         feedback: {
           id: guid(),
-          content: {
-            model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-          },
+          content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
         },
       };
       r.push(incorrect);
@@ -130,7 +128,7 @@ function buildMCQPart(question: any) {
       rule: 'input like {.*}',
       feedback: {
         id: guid(),
-        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
       },
     });
   }
@@ -160,7 +158,7 @@ function buildOrderingPart(question: any) {
         legacyRule: replaceAll(r.match, '\\*', '.*'),
         feedback: {
           id: guid(),
-          content: { model: Common.getFeedbackModel(r) },
+          content: Common.getFeedbackModel(r),
         },
       };
       const showPage = Common.getBranchingTarget(r);
@@ -172,7 +170,7 @@ function buildOrderingPart(question: any) {
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
-        content: { model: Common.ensureParagraphs(r.children) },
+        content: Common.ensureParagraphs(r.children),
       }))
     ),
     scoringStrategy: 'average',
@@ -185,7 +183,7 @@ function buildLikertSeriesItems(question: any) {
   const items = question.children.filter((p: any) => p.type === 'item');
 
   return items.map((item: any) => ({
-    content: { model: Common.ensureParagraphs(item.children) },
+    content: Common.ensureParagraphs(item.children),
     id: item.id,
     required: item.required,
   }));
@@ -196,9 +194,7 @@ function buildLikertItems(question: any) {
 
   return [
     {
-      content: {
-        model: Common.ensureParagraphs(stem.children),
-      },
+      content: Common.ensureParagraphs(stem.children),
       id: guid(),
       required: false,
     },
@@ -220,7 +216,7 @@ function buildLikertParts(question: any, items: any[]) {
         rule: `input like {${firstChoice.id}}`,
         feedback: {
           id: guid(),
-          content: { model: [{ type: 'p', children: [{ text: 'Correct.' }] }] },
+          content: [{ type: 'p', children: [{ text: 'Correct.' }] }],
         },
       },
       {
@@ -229,9 +225,7 @@ function buildLikertParts(question: any, items: any[]) {
         rule: `input like {.*}`,
         feedback: {
           id: guid(),
-          content: {
-            model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-          },
+          content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
         },
       },
     ],
@@ -306,7 +300,7 @@ function ordering(question: any) {
       rule: 'input like {.*}',
       feedback: {
         id: guid(),
-        content: { model: [{ type: 'p', children: [{ text: 'Incorrect.' }] }] },
+        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
       },
     });
   }
