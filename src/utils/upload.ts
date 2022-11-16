@@ -11,10 +11,11 @@ export const upload = (
   // Read content from the file
   const fileContent = fs.readFileSync(file);
 
+  const subDir = md5.substring(0, 2);
   // Setting up S3 upload parameters
   const params: AWS.S3.PutObjectRequest = {
     Bucket: bucketName,
-    Key: `media/${md5}/${filename}`,
+    Key: `media/${subDir}/${md5}/${filename}`,
     Body: fileContent,
     ContentType: mimeType,
   };
