@@ -10,6 +10,9 @@
     <audience>
 		This organization is intended as an example for OLI content authors.
 	</audience>
+    <pref:preference_values xmlns:pref="http://oli.web.cmu.edu/preferences/">
+      <pref:preference_value fixed="false" value="excel" preference="statistics.package" />
+    </pref:preference_values>
     <labels sequence="Sequence" unit="Unit" module="Module" section="Section" />
     <sequences>
         <sequence id="part1" category="content" audience="all">
@@ -112,6 +115,9 @@
                     </item>
                     <item id="bca2aa2daad6aasasdfasddaade00" scoring_mode="default">
                       <resourceref idref="definition_list" />
+                    </item>
+                    <item id="45375887E0B04DF7A98BF5DA2D17455B" scoring_mode="default">
+                      <resourceref idref="alternatives" />
                     </item>
                 </module>
                 <module id="variables">

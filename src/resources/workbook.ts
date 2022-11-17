@@ -1,5 +1,5 @@
 import * as Histogram from 'src/utils/histogram';
-import { ItemReference, guid } from 'src/utils/common';
+import { guid, ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary, Page } from './resource';
 import {
   standardContentManipulations,
@@ -220,7 +220,8 @@ export class WorkbookPage extends Resource {
 // { type: activity_placeholder ...}
 // { type: content, children: [{ type: p, ...}]}
 //
-const selection = {
+
+const DEFAULT_SELECTION = {
   selection: {
     anchor: { offset: 0, path: [0, 0] },
     focus: { offset: 0, path: [1, 0] },
@@ -228,18 +229,38 @@ const selection = {
 };
 
 const asStructured = (attrs: Record<string, unknown>) =>
-  Object.assign({}, { type: 'content', id: guid() }, selection, attrs);
+  Object.assign({}, { type: 'content', id: guid() }, DEFAULT_SELECTION, attrs);
 
-function introduceStructuredContent(content: any) {
-  const startNewContent = (u: any) =>
+type Element = {
+  type: string;
+};
+
+function isResourceGroup({ type }: Element) {
+  switch (type) {
+    case 'group':
+    case 'example':
+    case 'alternatives':
+    case 'alternative':
+      return true;
+    default:
+      return false;
+  }
+}
+
+function startNewContent(u: any) {
+  return (
     u.length === 0 ||
     u[u.length - 1].type === 'activity_placeholder' ||
-    u[u.length - 1].type === 'group';
+    isResourceGroup(u[u.length - 1])
+  );
+}
 
+export function introduceStructuredContent(content: Element[]): Element[] {
   return content.reduce((u: any, e: any) => {
     if (e.type === 'activity_placeholder') {
       return [...u, e];
     }
+
     if (e.type === 'example') {
       return [
         ...u,
@@ -265,17 +286,21 @@ function introduceStructuredContent(content: any) {
         ),
       ];
     }
-    if (e.type === 'group') {
+
+    if (isResourceGroup(e)) {
       const withStructuredContent = Object.assign({}, e, {
         children: introduceStructuredContent(e.children),
       });
 
       return [...u, withStructuredContent];
     }
+
     if (startNewContent(u)) {
       return [...u, asStructured({ children: [e] })];
     }
+
     u[u.length - 1].children.push(e);
+
     return u;
   }, []);
 }

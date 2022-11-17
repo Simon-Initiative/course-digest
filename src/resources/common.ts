@@ -241,6 +241,7 @@ export function standardContentManipulations($: any) {
   handleDefinitions($);
   handleDialogs($);
   handleConjugations($);
+  handleAlternatives($);
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
@@ -297,6 +298,16 @@ function handleConjugations($: any) {
     if (title) {
       $(elem).attr('title', title);
     }
+  });
+}
+
+function handleAlternatives($: cheerio.Root) {
+  $('alternatives').each((i, alternatives) => {
+    const defaultAlt = $('default', alternatives);
+
+    // set default attribute and remove default child element
+    $(alternatives).attr('default', defaultAlt.text());
+    $(alternatives).children('default').remove();
   });
 }
 
