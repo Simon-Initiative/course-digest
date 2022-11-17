@@ -21,11 +21,11 @@ import * as Magic from './utils/spreadsheet';
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
 export function convert(
-  mediaSummary: Media.MediaSummary,
   projectSummary: ProjectSummary,
   file: string,
   navigable: boolean
 ): Promise<(TorusResource | string)[]> {
+  const { mediaSummary } = projectSummary;
   return determineResourceType(file).then((t: ResourceType) => {
     const item = create(t, file, navigable);
 

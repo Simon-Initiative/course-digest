@@ -183,70 +183,70 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const projectSummary = new ProjectSummary(
       packageDirectory,
       outputDirectory,
-      svnRoot
+      svnRoot,
+      mediaSummary
     );
 
-    return Convert.convert(
-      mediaSummary,
-      projectSummary,
-      specificOrg,
-      false
-    ).then((results) => {
-      const hierarchy = results[0] as Resources.TorusResource;
+    return Convert.convert(projectSummary, specificOrg, false).then(
+      (results) => {
+        const hierarchy = results[0] as Resources.TorusResource;
 
-      return processResources(
-        (file: string) =>
-          Convert.convert(mediaSummary, projectSummary, file, false),
-        references,
-        orgReferences,
-        resourceMap
-      ).then((converted: Resources.TorusResource[]) => {
-        const filterOutTemporaryContent = (updated: any) =>
-          updated.filter(
-            (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
-          );
-
-        let updated = converted;
-
-        updated = Convert.updateDerivativeReferences(updated);
-        updated = Convert.generatePoolTags(updated);
-        updated = filterOutTemporaryContent(updated);
-        updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
-        updated = Convert.globalizeObjectiveReferences(updated);
-        updated = Convert.setGroupPaginationModes(updated);
-        updated = Convert.relativizeLegacyPaths(updated, svnRoot);
-
-        if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
-          updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
-        }
-
-        return Convert.createProducts(
-          updated,
-          orgPaths,
-          specificOrg,
-          projectSummary
-        ).then((updated) => {
-          return addWebContentToMediaSummary(
-            packageDirectory,
-            mediaSummary
-          ).then((results) => {
-            const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-              (k: string) => results.mediaItems[k]
+        return processResources(
+          (file: string) => Convert.convert(projectSummary, file, false),
+          references,
+          orgReferences,
+          resourceMap
+        ).then((converted: Resources.TorusResource[]) => {
+          const filterOutTemporaryContent = (updated: any) =>
+            updated.filter(
+              (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
             );
 
-            return Promise.resolve({
+          let updated = converted;
+
+          updated = Convert.updateDerivativeReferences(updated);
+          updated = Convert.generatePoolTags(updated);
+          updated = filterOutTemporaryContent(updated);
+          updated = Convert.updateNonDirectImageReferences(
+            updated,
+            mediaSummary
+          );
+          updated = Convert.globalizeObjectiveReferences(updated);
+          updated = Convert.setGroupPaginationModes(updated);
+          updated = Convert.relativizeLegacyPaths(updated, svnRoot);
+
+          if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
+            updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
+          }
+
+          return Convert.createProducts(
+            updated,
+            orgPaths,
+            specificOrg,
+            projectSummary
+          ).then((updated) => {
+            return addWebContentToMediaSummary(
               packageDirectory,
-              outputDirectory,
-              svnRoot,
-              hierarchy,
-              finalResources: updated,
-              mediaItems,
-              projectSummary,
+              mediaSummary
+            ).then((results) => {
+              const mediaItems = Object.keys(mediaSummary.mediaItems).map(
+                (k: string) => results.mediaItems[k]
+              );
+
+              return Promise.resolve({
+                packageDirectory,
+                outputDirectory,
+                svnRoot,
+                hierarchy,
+                finalResources: updated,
+                mediaItems,
+                projectSummary,
+              });
             });
           });
         });
-      });
-    });
+      }
+    );
   });
 }
 

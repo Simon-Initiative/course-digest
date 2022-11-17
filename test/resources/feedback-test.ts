@@ -4,12 +4,6 @@ import * as Media from 'src/media';
 import { convert } from 'src/convert';
 import { ProjectSummary } from 'src/project';
 
-const projectSummary = new ProjectSummary(
-  'test/course_packages/migration-4sdfykby_v_1_0-echo',
-  '',
-  ''
-);
-
 describe('convertToFormative', () => {
   test('should convert the feedback model to formative', () => {
     const $ = DOM.read(
@@ -181,6 +175,7 @@ describe('convert feedback', () => {
   it('should translate to valid json', async () => {
     const file =
       'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-feedback/pre_course_student_survey.xml';
+
     const mediaSummary: Media.MediaSummary = {
       mediaItems: {},
       missing: [],
@@ -189,7 +184,14 @@ describe('convert feedback', () => {
       flattenedNames: {},
     };
 
-    const items = await convert(mediaSummary, projectSummary, file, false);
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const items = await convert(projectSummary, file, false);
 
     const page = items[0];
     const activity2_likert = items[2];

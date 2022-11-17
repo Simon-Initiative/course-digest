@@ -2,12 +2,6 @@ import * as Media from 'src/media';
 import { convert } from 'src/convert';
 import { ProjectSummary } from 'src/project';
 
-const projectSummary = new ProjectSummary(
-  'test/course_packages/migration-4sdfykby_v_1_0-echo',
-  '',
-  ''
-);
-
 describe('convert workbook', () => {
   it('should translate to valid json', async () => {
     const file =
@@ -20,7 +14,14 @@ describe('convert workbook', () => {
       flattenedNames: {},
     };
 
-    const converted = await convert(mediaSummary, projectSummary, file, false);
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const converted = await convert(projectSummary, file, false);
 
     expect(converted).toStrictEqual([
       {
@@ -172,7 +173,14 @@ describe('convert workbook', () => {
       flattenedNames: {},
     };
 
-    const converted = await convert(mediaSummary, projectSummary, file, false);
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const converted = await convert(projectSummary, file, false);
 
     expect(converted).toContainEqual(
       expect.objectContaining({

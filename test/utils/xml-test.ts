@@ -1,9 +1,18 @@
+import { MediaSummary } from 'src/media';
 import { ProjectSummary } from 'src/project';
 import { visit, toJSON } from 'src/utils/xml';
 
 const preserved = { p: true, em: true, li: true };
 
-const projectSummary = new ProjectSummary('', '', '');
+const mediaSummary: MediaSummary = {
+  mediaItems: {},
+  missing: [],
+  urlPrefix: '',
+  downloadRemote: false,
+  flattenedNames: {},
+};
+
+const projectSummary = new ProjectSummary('', '', '', mediaSummary);
 
 describe('xml visiting', () => {
   test('should find all tags', () => {

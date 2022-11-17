@@ -1,3 +1,5 @@
+import { MediaSummary } from './media';
+
 function iterableToList<V>(iter: Iterable<V>) {
   const list = [];
 
@@ -12,16 +14,19 @@ export class ProjectSummary {
   packageDirectory: string;
   outputDirectory: string;
   svnRoot: string;
+  mediaSummary: MediaSummary;
   alternativeGroups: Record<string, Set<string>>;
 
   constructor(
     packageDirectory: string,
     outputDirectory: string,
-    svnRoot: string
+    svnRoot: string,
+    mediaSummary: MediaSummary
   ) {
     this.packageDirectory = packageDirectory;
     this.outputDirectory = outputDirectory;
     this.svnRoot = svnRoot;
+    this.mediaSummary = mediaSummary;
 
     this.alternativeGroups = {};
   }
