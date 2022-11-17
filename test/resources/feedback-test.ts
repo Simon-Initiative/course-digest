@@ -2,6 +2,13 @@ import { convertToFormative } from '../../src/resources/feedback';
 import * as DOM from '../../src/utils/dom';
 import * as Media from 'src/media';
 import { convert } from 'src/convert';
+import { ProjectSummary } from 'src/project';
+
+const projectSummary = new ProjectSummary(
+  'test/course_packages/migration-4sdfykby_v_1_0-echo',
+  '',
+  ''
+);
 
 describe('convertToFormative', () => {
   test('should convert the feedback model to formative', () => {
@@ -182,7 +189,7 @@ describe('convert feedback', () => {
       flattenedNames: {},
     };
 
-    const items = await convert(mediaSummary, file, false);
+    const items = await convert(mediaSummary, projectSummary, file, false);
 
     const page = items[0];
     const activity2_likert = items[2];

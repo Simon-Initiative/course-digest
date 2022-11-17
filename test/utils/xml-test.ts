@@ -1,6 +1,9 @@
+import { ProjectSummary } from 'src/project';
 import { visit, toJSON } from 'src/utils/xml';
 
 const preserved = { p: true, em: true, li: true };
+
+const projectSummary = new ProjectSummary('', '', '');
 
 describe('xml visiting', () => {
   test('should find all tags', () => {
@@ -25,7 +28,7 @@ describe('xml conversion', () => {
   test('should convert nested inlines properly', () => {
     const xml = '<p><em style="code">This <em>is</em> some</em></p>';
 
-    return toJSON(xml, preserved).then((result: any) => {
+    return toJSON(xml, projectSummary, preserved).then((result: any) => {
       const c = result.children[0].children;
       expect(c.length).toEqual(3);
 
@@ -46,7 +49,7 @@ describe('xml conversion', () => {
   test('should handle consecutive inlines', () => {
     const xml = '<p><em>This </em><em style="code">is</em><em> some</em></p>';
 
-    return toJSON(xml, preserved).then((result: any) => {
+    return toJSON(xml, projectSummary, preserved).then((result: any) => {
       const c = result.children[0].children;
       expect(c.length).toEqual(3);
 
@@ -67,7 +70,7 @@ describe('xml conversion', () => {
   test('should convert with space', () => {
     const xml = '<p><em>A</em> <em>B</em></p>';
 
-    return toJSON(xml, preserved).then((result: any) => {
+    return toJSON(xml, projectSummary, preserved).then((result: any) => {
       const c = result.children[0].children;
       expect(c.length).toEqual(3);
 
@@ -85,7 +88,7 @@ describe('xml conversion', () => {
   test('should convert no inlines properly', () => {
     const xml = '<p>Here is some text </p>';
 
-    return toJSON(xml, preserved).then((result: any) => {
+    return toJSON(xml, projectSummary, preserved).then((result: any) => {
       const c = result.children[0].children;
       expect(c.length).toEqual(1);
 
@@ -103,7 +106,7 @@ describe('xml conversion', () => {
         </response>
     `;
 
-    const result: any = await toJSON(xml, preserved);
+    const result: any = await toJSON(xml, projectSummary, preserved);
 
     const response = result.children.find((c: any) => c.input === 'q3numeric');
     const feedback = response.children[0];
@@ -127,7 +130,7 @@ describe('xml conversion', () => {
         </response>
     `;
 
-    const result: any = await toJSON(xml, preserved);
+    const result: any = await toJSON(xml, projectSummary, preserved);
 
     const response = result.children.find((c: any) => c.input === 'q3numeric');
     const feedback = response.children[0];
