@@ -13,6 +13,7 @@ import * as XML from 'src/utils/xml';
 import { convertImageCodingActivities } from './image';
 import { maybe } from 'tsmonad';
 import { convertBibliographyEntries } from './bibentry';
+import { ProjectSummary } from 'src/project';
 
 const validPurposes = {
   none: true,
@@ -59,7 +60,10 @@ export class WorkbookPage extends Resource {
     flagStandardContentWarnigns($, page);
   }
 
-  translate($: any): Promise<(TorusResource | string)[]> {
+  translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     const page: Page = {
       type: 'Page',
       id: '',
@@ -133,7 +137,7 @@ export class WorkbookPage extends Resource {
     xml = $.html();
 
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, {
+      XML.toJSON(xml, projectSummary, {
         p: true,
         em: true,
         li: true,

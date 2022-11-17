@@ -9,6 +9,7 @@ import {
 import * as Summarize from './summarize';
 import * as Convert from './convert';
 import * as Media from './media';
+import { ProjectSummary } from './project';
 import { processResources } from './process';
 import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
@@ -51,9 +52,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
 }
 
 interface ConvertedResults {
-  packageDirectory: string;
-  outputDirectory: string;
-  svnRoot: string;
+  projectSummary: ProjectSummary;
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
@@ -181,11 +180,23 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       flattenedNames: {},
     };
 
-    return Convert.convert(mediaSummary, specificOrg, false).then((results) => {
+    const projectSummary = new ProjectSummary(
+      packageDirectory,
+      outputDirectory,
+      svnRoot
+    );
+
+    return Convert.convert(
+      mediaSummary,
+      projectSummary,
+      specificOrg,
+      false
+    ).then((results) => {
       const hierarchy = results[0] as Resources.TorusResource;
 
       return processResources(
-        (file: string) => Convert.convert(mediaSummary, file, false),
+        (file: string) =>
+          Convert.convert(mediaSummary, projectSummary, file, false),
         references,
         orgReferences,
         resourceMap
@@ -209,48 +220,43 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
         }
 
-        return Convert.createProducts(updated, orgPaths, specificOrg).then(
-          (updated) => {
-            return addWebContentToMediaSummary(
-              packageDirectory,
-              mediaSummary
-            ).then((results) => {
-              const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-                (k: string) => results.mediaItems[k]
-              );
+        return Convert.createProducts(
+          updated,
+          orgPaths,
+          specificOrg,
+          projectSummary
+        ).then((updated) => {
+          return addWebContentToMediaSummary(
+            packageDirectory,
+            mediaSummary
+          ).then((results) => {
+            const mediaItems = Object.keys(mediaSummary.mediaItems).map(
+              (k: string) => results.mediaItems[k]
+            );
 
-              return Promise.resolve({
-                packageDirectory,
-                outputDirectory,
-                svnRoot,
-                hierarchy,
-                finalResources: updated,
-                mediaItems,
-              });
+            return Promise.resolve({
+              packageDirectory,
+              outputDirectory,
+              svnRoot,
+              hierarchy,
+              finalResources: updated,
+              mediaItems,
+              projectSummary,
             });
-          }
-        );
+          });
+        });
       });
     });
   });
 }
 
 function writeConvertedResults({
-  packageDirectory,
-  outputDirectory,
-  svnRoot,
+  projectSummary,
   hierarchy,
   finalResources,
   mediaItems,
 }: ConvertedResults) {
-  return Convert.output(
-    packageDirectory,
-    outputDirectory,
-    svnRoot,
-    hierarchy,
-    finalResources,
-    mediaItems
-  );
+  return Convert.output(projectSummary, hierarchy, finalResources, mediaItems);
 }
 
 const anyOf = (ans: string, ...opts: any[]) => {

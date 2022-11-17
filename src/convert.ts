@@ -11,6 +11,7 @@ import { determineResourceType, create } from './resources/create';
 import { executeSerially, guid, valueOr } from './utils/common';
 import { wrapContentInSurveyOrGroup } from './resources/common';
 import * as Media from './media';
+import { ProjectSummary } from './project';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
 import * as tmp from 'tmp';
@@ -21,6 +22,7 @@ type DerivedResourceMap = { [key: string]: TorusResource[] };
 
 export function convert(
   mediaSummary: Media.MediaSummary,
+  projectSummary: ProjectSummary,
   file: string,
   navigable: boolean
 ): Promise<(TorusResource | string)[]> {
@@ -44,7 +46,7 @@ export function convert(
 
     Media.transformToFlatDirectory(file, $, mediaSummary);
 
-    return item.translate($);
+    return item.translate($, projectSummary);
   });
 }
 
@@ -226,14 +228,15 @@ export function updateDerivativeReferences(
 export function createProducts(
   resources: TorusResource[],
   orgPaths: string[],
-  baseOrgPath: string
+  baseOrgPath: string,
+  projectSummary: ProjectSummary
 ): Promise<TorusResource[]> {
   const exceptPrimaryOrg = orgPaths
     .filter((p) => p !== baseOrgPath && !p.endsWith(baseOrgPath))
     .map((path) => {
       const o = new Organization(path, false);
       const $ = DOM.read(path, { normalizeWhitespace: true });
-      return () => o.translateProduct($);
+      return () => o.translateProduct($, projectSummary);
     });
 
   return new Promise((resolve, _reject) => {
@@ -604,19 +607,17 @@ function setGroupPaginationModesForPageHelper(item: any, items: any) {
 }
 
 export function output(
-  courseDirectory: string,
-  outputDirectory: string,
-  svnRoot: string,
+  projectSummary: ProjectSummary,
   hierarchy: TorusResource,
   converted: TorusResource[],
   mediaItems: Media.MediaItem[]
 ) {
   return executeSerially([
-    () => wipeAndCreateOutput(outputDirectory),
-    () => outputManifest(courseDirectory, outputDirectory, svnRoot),
-    () => outputHierarchy(outputDirectory, hierarchy),
-    () => outputMediaManifest(outputDirectory, mediaItems),
-    ...converted.map((r) => () => outputResource(outputDirectory, r)),
+    () => wipeAndCreateOutput(projectSummary),
+    () => outputManifest(projectSummary),
+    () => outputHierarchy(projectSummary, hierarchy),
+    () => outputMediaManifest(projectSummary, mediaItems),
+    ...converted.map((r) => () => outputResource(projectSummary, r)),
   ]);
 }
 
@@ -634,28 +635,25 @@ function outputFile(path: string, o: any): Promise<boolean> {
   });
 }
 
-async function wipeAndCreateOutput(outputDir: string) {
+async function wipeAndCreateOutput({ outputDirectory }: ProjectSummary) {
   // delete non-empty directory and recreate
   return new Promise<void>((resolve, reject) =>
-    fs.existsSync(outputDir)
-      ? fs.rm(outputDir, { recursive: true }, (err) =>
+    fs.existsSync(outputDirectory)
+      ? fs.rm(outputDirectory, { recursive: true }, (err) =>
           err ? reject(err) : resolve()
         )
       : resolve()
   ).then(
     () =>
       new Promise<void>((resolve, reject) =>
-        fs.mkdir(outputDir, (err) => (err ? reject(err) : resolve()))
+        fs.mkdir(outputDirectory, (err) => (err ? reject(err) : resolve()))
       )
   );
 }
 
-function outputManifest(
-  courseDir: string,
-  outputDirectory: string,
-  svnRoot: string
-) {
-  const $ = DOM.read(`${courseDir}/content/package.xml`);
+function outputManifest(projectSummary: ProjectSummary) {
+  const { packageDirectory, outputDirectory, svnRoot } = projectSummary;
+  const $ = DOM.read(`${packageDirectory}/content/package.xml`);
   const title = $('package title').text();
   const description = $('package description').text();
 
@@ -664,17 +662,21 @@ function outputManifest(
     description,
     svnRoot,
     type: 'Manifest',
+    alternativesGroups: projectSummary.getAlternativesGroupsJSON(),
   };
 
   return outputFile(`${outputDirectory}/_project.json`, manifest);
 }
 
-function outputHierarchy(outputDirectory: string, h: TorusResource) {
+function outputHierarchy(
+  { outputDirectory }: ProjectSummary,
+  h: TorusResource
+) {
   return outputFile(`${outputDirectory}/_hierarchy.json`, h);
 }
 
 function outputMediaManifest(
-  outputDirectory: string,
+  { outputDirectory }: ProjectSummary,
   mediaItems: Media.MediaItem[]
 ) {
   const manifest = {
@@ -692,6 +694,9 @@ function outputMediaManifest(
   return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);
 }
 
-function outputResource(outputDirectory: string, resource: TorusResource) {
+function outputResource(
+  { outputDirectory }: ProjectSummary,
+  resource: TorusResource
+) {
   return outputFile(`${outputDirectory}/${resource.id}.json`, resource);
 }

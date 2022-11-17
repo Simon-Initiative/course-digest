@@ -6,6 +6,7 @@ import * as XML from 'src/utils/xml';
 import { failIfHasValue, failIfPresent } from './common';
 
 import { Resource, TorusResource, Hierarchy, Summary } from './resource';
+import { ProjectSummary } from 'src/project';
 
 function removeSequences($: any) {
   const sequences = $('sequences');
@@ -48,7 +49,10 @@ export class Organization extends Resource {
     DOM.rename($, 'section', 'container');
   }
 
-  translate($: any): Promise<(TorusResource | string)[]> {
+  translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     this.restructure($);
     const xml = $.html();
     const h: Hierarchy = {
@@ -64,14 +68,17 @@ export class Organization extends Resource {
     };
 
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml).then((r: any) => {
+      XML.toJSON(xml, projectSummary).then((r: any) => {
         h.children = r.children;
         resolve([h]);
       });
     });
   }
 
-  translateProduct($: any): Promise<(TorusResource | string)[]> {
+  translateProduct(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     this.restructureProduct($);
     const xml = $.html();
     const h: Hierarchy = {
@@ -87,7 +94,7 @@ export class Organization extends Resource {
     };
 
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml).then((r: any) => {
+      XML.toJSON(xml, projectSummary).then((r: any) => {
         r.children.forEach((c: any) => {
           // restructureProduct allows the org node to come through, so that we can
           // grab the title

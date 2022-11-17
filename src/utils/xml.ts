@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { decodeEntities } from './common';
 import { decode } from 'html-entities';
 import { parseMathJaxFormulas } from './mathjax-parser';
+import { ProjectSummary } from 'src/project';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -142,7 +143,11 @@ export function replaceAll(s: string, t: string, w: string) {
   return s.replace(re, w);
 }
 
-export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
+export function toJSON(
+  xml: string,
+  projectSummary: ProjectSummary,
+  preserveMap = {}
+): Promise<unknown> {
   const root: any = {};
   root.children = [];
 
@@ -154,10 +159,18 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
 
   const inlines: any = [];
 
+  let currentAlternativesGroup: any = null;
+
   return new Promise((resolve, reject) => {
     const parser = new xmlParser(preserveMap);
 
     parser.on('opentag', (tag: string, attrs: any) => {
+      const handleAlternatives = () => {
+        if (tag === 'alternatives') {
+          currentAlternativesGroup = top()['group'];
+        }
+      };
+
       if (tag !== null) {
         let cleanedTag = tag.trim();
         if (cleanedTag.endsWith('/')) {
@@ -189,6 +202,8 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
           }
           push(object);
         }
+
+        handleAlternatives();
       }
     });
 
@@ -476,6 +491,19 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         }
       };
 
+      const handleAlternatives = () => {
+        if (tag === 'alternative') {
+          if (currentAlternativesGroup) {
+            projectSummary.addAlternativesGroupValue(
+              currentAlternativesGroup,
+              top()['value']
+            );
+          }
+        } else if (tag === 'alternatives') {
+          currentAlternativesGroup = null;
+        }
+      };
+
       const stringToBoolean = (element: string, attr: string) => {
         if (tag === element && top()[attr] !== undefined) {
           top()[attr] = top()[attr] === 'true' ? true : false;
@@ -533,6 +561,7 @@ export function toJSON(xml: string, preserveMap = {}): Promise<unknown> {
         handleConjugation();
         handleCommandButton();
         handleDescriptionList();
+        handleAlternatives();
         stringToBoolean('formula_inline', 'legacyBlockRendered');
 
         if (top() && top().children === undefined) {
