@@ -308,6 +308,12 @@ function handleAlternatives($: cheerio.Root) {
     // set default attribute and remove default child element
     $(alternatives).attr('default', defaultAlt.text());
     $(alternatives).children('default').remove();
+
+    $(alternatives).attr('strategy', 'user_section_preference');
+  });
+
+  $('alternative').each((i, alternative) => {
+    $(alternative).attr('id', $(alternative).attr('value') as string);
   });
 }
 
