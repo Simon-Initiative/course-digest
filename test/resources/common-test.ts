@@ -4,6 +4,18 @@ import {
 } from 'src/resources/common';
 import * as cheerio from 'cheerio';
 import { toJSON } from 'src/utils/xml';
+import { ProjectSummary } from 'src/project';
+import { MediaSummary } from 'src/media';
+
+const mediaSummary: MediaSummary = {
+  mediaItems: {},
+  missing: [],
+  urlPrefix: '',
+  downloadRemote: false,
+  flattenedNames: {},
+};
+
+const projectSummary = new ProjectSummary('', '', '', mediaSummary);
 
 describe('cdata and codeblocks', () => {
   test('should strip the element', () => {
@@ -34,7 +46,7 @@ describe('cdata and codeblocks', () => {
 
     standardContentManipulations($);
 
-    const result: any = await toJSON($.xml());
+    const result: any = await toJSON($.xml(), projectSummary);
     const img = result.children[0];
     expect(img.type).toBe('img');
   });
@@ -53,13 +65,48 @@ describe('cdata and codeblocks', () => {
     });
 
     standardContentManipulations($1);
-    const p1: any = await toJSON($1.xml());
+    const p1: any = await toJSON($1.xml(), projectSummary);
     const img1 = p1.children[0].children[0];
     expect(img1.type).toBe('img_inline');
 
     standardContentManipulations($2);
-    const p2: any = await toJSON($1.xml());
+    const p2: any = await toJSON($1.xml(), projectSummary);
     const img2 = p2.children[0].children[0];
     expect(img2.type).toBe('img_inline');
+  });
+
+  test('should reorder default alternative to be first', async () => {
+    const content = `
+    <alternatives id="abc" group="statistics.package">
+      <default>Excel2019PC</default>
+      <alternative value="StatCrunch">
+        <p id="1">StatCrunch</p>
+      </alternative>
+      <alternative value="r">
+        <p id="2">StatCrunch</p>
+      </alternative>
+      <alternative value="Excel2019PC">
+        <p id="3">StatCrunch</p>
+      </alternative>
+      <alternative value="Python">
+        <p id="4">StatCrunch</p>
+      </alternative>
+    </alternatives>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+
+    console.debug(result.children[0]);
+
+    expect(result.children[0].children[0].type).toBe('alternative');
+    expect(result.children[0].children[0].value).toBe('Excel2019PC');
+    expect(result.children[0].children[0].id).toBe('Excel2019PC');
   });
 });

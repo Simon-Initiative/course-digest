@@ -303,13 +303,19 @@ function handleConjugations($: any) {
 
 function handleAlternatives($: cheerio.Root) {
   $('alternatives').each((i, alternatives) => {
-    const defaultAlt = $('default', alternatives);
+    $(alternatives).attr('strategy', 'user_section_preference');
 
-    // set default attribute and remove default child element
-    $(alternatives).attr('default', defaultAlt.text());
+    // get default alternative value and remove default child element
+    const defaultValue = $('default', alternatives).text();
     $(alternatives).children('default').remove();
 
-    $(alternatives).attr('strategy', 'user_section_preference');
+    if (defaultValue) {
+      // the default alternative in torus is just the first one in the list
+      // so move the default item to first position
+      $(`alternative[value="${defaultValue}"]`, alternatives).insertBefore(
+        $(alternatives).children().first()
+      );
+    }
   });
 
   $('alternative').each((i, alternative) => {

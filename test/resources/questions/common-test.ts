@@ -2,6 +2,18 @@ import { standardContentManipulations } from 'src/resources/common';
 import { isSubmitAndCompare } from 'src/resources/questions/common';
 import * as cheerio from 'cheerio';
 import { toJSON } from 'src/utils/xml';
+import { ProjectSummary } from 'src/project';
+import { MediaSummary } from 'src/media';
+
+const mediaSummary: MediaSummary = {
+  mediaItems: {},
+  missing: [],
+  urlPrefix: '',
+  downloadRemote: false,
+  flattenedNames: {},
+};
+
+const projectSummary = new ProjectSummary('', '', '', mediaSummary);
 
 it('should return submitAndCompare status', async () => {
   const content1 = `
@@ -95,12 +107,12 @@ it('should return submitAndCompare status', async () => {
   });
 
   standardContentManipulations($1);
-  const root1: any = await toJSON($1.xml());
+  const root1: any = await toJSON($1.xml(), projectSummary);
   const question1: any = getQuestionEl(root1);
   expect(isSubmitAndCompare(question1)).toBe(false);
 
   standardContentManipulations($2);
-  const root2: any = await toJSON($2.xml());
+  const root2: any = await toJSON($2.xml(), projectSummary);
   const question2: any = getQuestionEl(root2);
   expect(isSubmitAndCompare(question2)).toBe(true);
 });

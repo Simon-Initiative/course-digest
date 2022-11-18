@@ -41,12 +41,12 @@ it('should convert example course to valid course digest', async () => {
 
   expect(projectSummary.getAlternativesGroupsJSON()).toEqual({
     'statistics.package': [
+      'Excel2019PC',
       'StatCrunch',
       'r',
       'minitab',
       'excel',
       'ti',
-      'Excel2019PC',
       'Excel2019Mac',
     ],
   });
