@@ -86,7 +86,7 @@ it('should convert content with purpose to groups', async () => {
     'default',
     'organization.xml'
   );
-  const { finalResources } = await convertAction({
+  const { finalResources, mediaItems } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
     outputDir: '',
@@ -97,6 +97,21 @@ it('should convert content with purpose to groups', async () => {
     downloadRemote: false,
     mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
   });
+
+  mediaItems.forEach((mediaItem) => {
+    const { url } = mediaItem;
+    if (url.startsWith('https://torus-media-dev.s3.amazonaws.com/media/')) {
+      // Make sure we're doing a subdir/dir format with the md5 hash on all urls
+      expect(url.substring(47, 49)).toEqual(url.substring(50, 52));
+    }
+  });
+
+  const images = finalResources.find((r) => r.id === 'images') as any;
+  expect(images).toBeDefined();
+  expect(images?.content?.model[0].children[1].src).toEqual(
+    'https://torus-media-dev.s3.amazonaws.com/media/48/487591d48552a1fea781e7437a88fd60/polar%20%26%20bear.jpg'
+  );
+
   expect(finalResources).toContainEqual(
     expect.objectContaining({
       id: 'welcome',

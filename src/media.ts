@@ -59,6 +59,7 @@ export function transformToFlatDirectory(
   summary: MediaSummary
 ) {
   const paths = findFromDOM($);
+
   Object.keys(paths).forEach((assetReference: any) => {
     // Flatten this file reference into our single, virtual directory
 
@@ -80,9 +81,9 @@ export function transformToFlatDirectory(
           dname = dname.substring(dname.indexOf('/'));
           const url2 = url.slice(url.lastIndexOf('media/') + 6);
           const name = $(elem).attr('name');
-          $(elem).replaceWith(
-            `<asset name="${name}">${url2.split('/')[0] + dname}</asset>`
-          );
+          const newUrl = url2.split('/').slice(0, 2).join('/') + dname;
+
+          $(elem).replaceWith(`<asset name="${name}">${newUrl}</asset>`);
         } else {
           $(elem).attr('src', url);
         }
@@ -121,8 +122,16 @@ export function downloadRemote(
       fs.copyFileSync(tmpobj.name, newLocalPath);
     }
 
+    const subPath = md5.substring(0, 2);
     // Store the new media item
-    const url = summary.urlPrefix + '/' + md5 + '/' + encodeURIComponent(name);
+    const url =
+      summary.urlPrefix +
+      '/' +
+      subPath +
+      '/' +
+      md5 +
+      '/' +
+      encodeURIComponent(name);
 
     if (summary.mediaItems[newLocalPath] === undefined) {
       // See if we need to rename this file to avoid conflicts with an already
@@ -200,8 +209,15 @@ export function flatten(
     const md5 = md5File.sync(decodedPath);
 
     const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
+    const subdir = md5.substring(0, 2);
     const toURL = (name: string) =>
-      summary.urlPrefix + '/' + md5 + '/' + encodeURIComponent(name);
+      summary.urlPrefix +
+      '/' +
+      subdir +
+      '/' +
+      md5 +
+      '/' +
+      encodeURIComponent(name);
 
     const name = getName(decodedPath);
 
@@ -271,6 +287,7 @@ export function resolve(reference: MediaItemReference): string {
       reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
       'content/';
   }
+
   return path.resolve(dir, reference.assetReference);
 }
 

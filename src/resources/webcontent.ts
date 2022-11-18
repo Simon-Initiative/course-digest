@@ -27,7 +27,9 @@ export function addWebContentToMediaSummary(
           const absolutePath = path.resolve(file);
           const name = getName(absolutePath);
           const md5 = md5File.sync(absolutePath);
-          const toURL = (name: string) => `${summary.urlPrefix}/${md5}/${name}`;
+          const subdir = md5.substring(0, 2);
+          const toURL = (name: string) =>
+            `${summary.urlPrefix}/${subdir}/${md5}/${name}`;
 
           if (summary.mediaItems[absolutePath] === undefined) {
             const flattenedName = summary.flattenedNames[name]
