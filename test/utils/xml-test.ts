@@ -128,6 +128,11 @@ describe('xml conversion', () => {
         src: '\\mathrm{Density}\\;=\\;\\frac{44.65\\;\\mathrm g}{2.3\\;\\mathrm{mL}}\\;=\\;19\\;\\mathrm g/\\mathrm{mL}',
         subtype: 'latex',
         legacyBlockRendered: true,
+        children: [
+          {
+            text: '',
+          },
+        ],
       },
     ]);
   });
@@ -152,6 +157,11 @@ describe('xml conversion', () => {
         src: '\\mathrm{Density}\\;=\\;\\frac{44.65\\;\\mathrm g}{2.3\\;\\mathrm{mL}}\\;=\\;19\\;\\mathrm g/\\mathrm{mL}',
         subtype: 'latex',
         legacyBlockRendered: false,
+        children: [
+          {
+            text: '',
+          },
+        ],
       },
     ]);
   });

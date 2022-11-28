@@ -592,8 +592,24 @@ export function toJSON(
                 subtype: n.subtype,
                 src: n.src,
                 legacyBlockRendered: n.legacyBlockRendered,
+                children: [
+                  {
+                    text: '',
+                  },
+                ],
               }
         );
+
+        // if (top().type !== 'p') {
+        //   const wrappedInParagraph = {
+        //     type: 'p',
+        //     children: textAndFormulaNodes,
+        //   };
+
+        //   top().children = [...top().children, wrappedInParagraph];
+        // } else {
+        //   top().children = [...top().children, ...textAndFormulaNodes];
+        // }
 
         top().children = [...top().children, ...textAndFormulaNodes];
       } else {
