@@ -27,7 +27,7 @@ it('should convert example course to valid course digest', async () => {
     'organization.xml'
   );
 
-  const { hierarchy } = await convertAction({
+  const { projectSummary, hierarchy } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
     outputDir: '',
@@ -37,6 +37,18 @@ it('should convert example course to valid course digest', async () => {
     specificOrgId,
     downloadRemote: false,
     mediaUrlPrefix: 'https://example-url-prefix',
+  });
+
+  expect(projectSummary.getAlternativesGroupsJSON()).toEqual({
+    'statistics.package': [
+      'Excel2019PC',
+      'StatCrunch',
+      'r',
+      'minitab',
+      'excel',
+      'ti',
+      'Excel2019Mac',
+    ],
   });
 
   expect(hierarchy as Hierarchy).toEqual(

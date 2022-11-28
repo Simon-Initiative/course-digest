@@ -241,6 +241,7 @@ export function standardContentManipulations($: any) {
   handleDefinitions($);
   handleDialogs($);
   handleConjugations($);
+  handleAlternatives($);
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
@@ -297,6 +298,28 @@ function handleConjugations($: any) {
     if (title) {
       $(elem).attr('title', title);
     }
+  });
+}
+
+function handleAlternatives($: cheerio.Root) {
+  $('alternatives').each((i, alternatives) => {
+    $(alternatives).attr('strategy', 'user_section_preference');
+
+    // get default alternative value and remove default child element
+    const defaultValue = $('default', alternatives).text();
+    $(alternatives).children('default').remove();
+
+    if (defaultValue) {
+      // the default alternative in torus is just the first one in the list
+      // so move the default item to first position
+      $(`alternative[value="${defaultValue}"]`, alternatives).insertBefore(
+        $(alternatives).children().first()
+      );
+    }
+  });
+
+  $('alternative').each((i, alternative) => {
+    $(alternative).attr('id', $(alternative).attr('value') as string);
   });
 }
 

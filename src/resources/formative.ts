@@ -24,6 +24,7 @@ import { buildMulti } from './questions/multi';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
+import { ProjectSummary } from 'src/project';
 
 function usesSimpleModel(responses: any[]) {
   return Common.hasCatchAll(responses) && responses.length <= 2;
@@ -552,7 +553,10 @@ export class Formative extends Resource {
     processVariables($);
   }
 
-  translate($: any): Promise<(TorusResource | string)[]> {
+  translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     failIfPresent($, ['response_mult', 'grading_criteria']);
     failIfHasValue($, 'content', 'available', 'instructor_only');
     failIfHasValue($, 'content', 'available', 'feedback_only');
@@ -561,7 +565,7 @@ export class Formative extends Resource {
     performRestructure($);
     const xml = $.html();
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, {
+      XML.toJSON(xml, projectSummary, {
         p: true,
         em: true,
         li: true,

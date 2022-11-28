@@ -3,72 +3,79 @@ import { Resource, TorusResource, Summary, Page } from './resource';
 import { guid } from 'src/utils/common';
 import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
+import { ProjectSummary } from 'src/project';
 
 export class Superactivity extends Resource {
   flagContentWarnigns(_$: any, _page: Page) {
     return;
   }
 
-  translate($: any): Promise<(TorusResource | string)[]> {
+  translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     const xml = $.html();
     const file = this.file;
     const navigable = this.navigable;
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
-        (r: any) => {
-          const legacyId = r.children[0].id;
-          let title = 'Superactivity';
-          const node = r.children[0].children[0];
-          if (node.type === 'title') {
-            title = node.children[0].text;
-          }
+      XML.toJSON(xml, projectSummary, {
+        p: true,
+        em: true,
+        li: true,
+        td: true,
+      }).then((r: any) => {
+        const legacyId = r.children[0].id;
+        let title = 'Superactivity';
+        const node = r.children[0].children[0];
+        if (node.type === 'title') {
+          title = node.children[0].text;
+        }
 
-          const defaults = determineActivityDefaults(r.children[0].type, file);
-          if (!defaults) {
-            resolve(['']);
+        const defaults = determineActivityDefaults(r.children[0].type, file);
+        if (!defaults) {
+          resolve(['']);
+        } else {
+          if (file.includes('x-oli-embed-activity-highstakes') || navigable) {
+            const activity = toActivity(
+              toActivityModel(defaults.base, defaults.src, title, xml),
+              guid(),
+              defaults.subType,
+              title
+            );
+            const model = [
+              {
+                type: 'activity_placeholder',
+                children: [],
+                idref: activity.legacyId,
+              },
+            ];
+            const page: Page = {
+              type: 'Page',
+              id: legacyId,
+              legacyPath: '',
+              legacyId,
+              title,
+              tags: [],
+              unresolvedReferences: [],
+              content: { model },
+              isGraded: true,
+              isSurvey: false,
+              objectives: [],
+              warnings: [],
+            };
+            resolve([page, activity]);
           } else {
-            if (file.includes('x-oli-embed-activity-highstakes') || navigable) {
-              const activity = toActivity(
+            resolve([
+              toActivity(
                 toActivityModel(defaults.base, defaults.src, title, xml),
-                guid(),
+                legacyId,
                 defaults.subType,
                 title
-              );
-              const model = [
-                {
-                  type: 'activity_placeholder',
-                  children: [],
-                  idref: activity.legacyId,
-                },
-              ];
-              const page: Page = {
-                type: 'Page',
-                id: legacyId,
-                legacyPath: '',
-                legacyId,
-                title,
-                tags: [],
-                unresolvedReferences: [],
-                content: { model },
-                isGraded: true,
-                isSurvey: false,
-                objectives: [],
-                warnings: [],
-              };
-              resolve([page, activity]);
-            } else {
-              resolve([
-                toActivity(
-                  toActivityModel(defaults.base, defaults.src, title, xml),
-                  legacyId,
-                  defaults.subType,
-                  title
-                ),
-              ]);
-            }
+              ),
+            ]);
           }
         }
-      );
+      });
     });
   }
 

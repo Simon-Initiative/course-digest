@@ -4,6 +4,7 @@ import * as DOM from 'src/utils/dom';
 import * as tmp from 'tmp';
 import * as fs from 'fs';
 import { Maybe } from 'tsmonad';
+import { ProjectSummary } from 'src/project';
 
 export interface Summary {
   type: 'Summary';
@@ -145,7 +146,7 @@ export abstract class Resource {
     return;
   }
 
-  convert(): Promise<(TorusResource | string)[]> {
+  convert(projectSummary: ProjectSummary): Promise<(TorusResource | string)[]> {
     let $ = DOM.read(this.file, { normalizeWhitespace: false });
     this.restructurePreservingWhitespace($);
 
@@ -155,14 +156,17 @@ export abstract class Resource {
     $ = DOM.read(tmpobj.name);
 
     return Maybe.maybe($?.root()?.html()).caseOf({
-      just: (_xml) => this.translate($),
+      just: (_xml) => this.translate($, projectSummary),
       nothing: () => {
         throw Error('Failed to convert: html element not found');
       },
     });
   }
 
-  abstract translate($: any): Promise<(TorusResource | string)[]>;
+  abstract translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]>;
 
   mapElementName(element: string): string {
     return elementNameMap[element] === undefined

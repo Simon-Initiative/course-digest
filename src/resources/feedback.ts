@@ -6,6 +6,7 @@ import * as XML from '../utils/xml';
 import { guid } from 'src/utils/common';
 import * as Formative from './formative';
 import { valueOr } from 'src/utils/common';
+import { ProjectSummary } from 'src/project';
 
 export function convertToFormative($: cheerio.Root) {
   $('multiple_choice').each((_i, item: cheerio.TagElement) => {
@@ -97,7 +98,10 @@ export class Feedback extends Resource {
     Formative.performRestructure($);
   }
 
-  translate($: cheerio.Root): Promise<(TorusResource | string)[]> {
+  translate(
+    $: cheerio.Root,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     this.restructure($);
     const xml = $.html();
     const page: Page = {
@@ -116,27 +120,30 @@ export class Feedback extends Resource {
     };
 
     return new Promise((resolve, _reject) =>
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
-        (r: any) => {
-          const legacyId = r.children[0].id;
+      XML.toJSON(xml, projectSummary, {
+        p: true,
+        em: true,
+        li: true,
+        td: true,
+      }).then((r: any) => {
+        const legacyId = r.children[0].id;
 
-          const { model, items, unresolvedReferences, title } =
-            Formative.processAssessmentModel(
-              legacyId,
-              r.children[0].children,
-              this.file
-            );
+        const { model, items, unresolvedReferences, title } =
+          Formative.processAssessmentModel(
+            legacyId,
+            r.children[0].children,
+            this.file
+          );
 
-          page.id = r.children[0].id;
-          page.content = {
-            model: [{ type: 'survey', id: guid(), children: model }],
-          };
-          page.title = title;
-          page.unresolvedReferences = unresolvedReferences;
+        page.id = r.children[0].id;
+        page.content = {
+          model: [{ type: 'survey', id: guid(), children: model }],
+        };
+        page.title = title;
+        page.unresolvedReferences = unresolvedReferences;
 
-          resolve([page, ...items]);
-        }
-      )
+        resolve([page, ...items]);
+      })
     );
   }
 

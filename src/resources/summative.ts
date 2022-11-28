@@ -6,6 +6,7 @@ import { processCodeblock, flagStandardContentWarnigns } from './common';
 import * as Formative from './formative';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
+import { ProjectSummary } from 'src/project';
 
 export function convertToFormative($: any) {
   $('multiple_choice').each((i: any, item: any) => {
@@ -74,7 +75,10 @@ export class Summative extends Resource {
     Formative.performRestructure($);
   }
 
-  translate($: any): Promise<(TorusResource | string)[]> {
+  translate(
+    $: any,
+    projectSummary: ProjectSummary
+  ): Promise<(TorusResource | string)[]> {
     const page: Page = {
       type: 'Page',
       id: '',
@@ -106,30 +110,33 @@ export class Summative extends Resource {
     });
 
     return new Promise((resolve, _reject) => {
-      XML.toJSON(xml, { p: true, em: true, li: true, td: true }).then(
-        (r: any) => {
-          const legacyId = r.children[0].id;
+      XML.toJSON(xml, projectSummary, {
+        p: true,
+        em: true,
+        li: true,
+        td: true,
+      }).then((r: any) => {
+        const legacyId = r.children[0].id;
 
-          const { model, items, unresolvedReferences, title } =
-            Formative.processAssessmentModel(
-              legacyId,
-              r.children[0].children,
-              this.file
-            );
-
-          page.id = r.children[0].id;
-          page.legacyId = r.children[0].id;
-          page.objectives = r.children[0].children[0].children.map(
-            (o: any) => o.idref
+        const { model, items, unresolvedReferences, title } =
+          Formative.processAssessmentModel(
+            legacyId,
+            r.children[0].children,
+            this.file
           );
-          page.content = { model };
-          page.isGraded = true;
-          page.title = title;
-          page.unresolvedReferences = unresolvedReferences;
 
-          resolve([page, ...items]);
-        }
-      );
+        page.id = r.children[0].id;
+        page.legacyId = r.children[0].id;
+        page.objectives = r.children[0].children[0].children.map(
+          (o: any) => o.idref
+        );
+        page.content = { model };
+        page.isGraded = true;
+        page.title = title;
+        page.unresolvedReferences = unresolvedReferences;
+
+        resolve([page, ...items]);
+      });
     });
   }
 

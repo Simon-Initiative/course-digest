@@ -9,6 +9,7 @@ import {
 import * as Summarize from './summarize';
 import * as Convert from './convert';
 import * as Media from './media';
+import { ProjectSummary } from './project';
 import { processResources } from './process';
 import { upload } from './utils/upload';
 import { addWebContentToMediaSummary } from './resources/webcontent';
@@ -51,9 +52,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
 }
 
 interface ConvertedResults {
-  packageDirectory: string;
-  outputDirectory: string;
-  svnRoot: string;
+  projectSummary: ProjectSummary;
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
@@ -181,36 +180,51 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       flattenedNames: {},
     };
 
-    return Convert.convert(mediaSummary, specificOrg, false).then((results) => {
-      const hierarchy = results[0] as Resources.TorusResource;
+    const projectSummary = new ProjectSummary(
+      packageDirectory,
+      outputDirectory,
+      svnRoot,
+      mediaSummary
+    );
 
-      return processResources(
-        (file: string) => Convert.convert(mediaSummary, file, false),
-        references,
-        orgReferences,
-        resourceMap
-      ).then((converted: Resources.TorusResource[]) => {
-        const filterOutTemporaryContent = (updated: any) =>
-          updated.filter(
-            (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
+    return Convert.convert(projectSummary, specificOrg, false).then(
+      (results) => {
+        const hierarchy = results[0] as Resources.TorusResource;
+
+        return processResources(
+          (file: string) => Convert.convert(projectSummary, file, false),
+          references,
+          orgReferences,
+          resourceMap
+        ).then((converted: Resources.TorusResource[]) => {
+          const filterOutTemporaryContent = (updated: any) =>
+            updated.filter(
+              (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
+            );
+
+          let updated = converted;
+
+          updated = Convert.updateDerivativeReferences(updated);
+          updated = Convert.generatePoolTags(updated);
+          updated = filterOutTemporaryContent(updated);
+          updated = Convert.updateNonDirectImageReferences(
+            updated,
+            mediaSummary
           );
+          updated = Convert.globalizeObjectiveReferences(updated);
+          updated = Convert.setGroupPaginationModes(updated);
+          updated = Convert.relativizeLegacyPaths(updated, svnRoot);
 
-        let updated = converted;
+          if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
+            updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
+          }
 
-        updated = Convert.updateDerivativeReferences(updated);
-        updated = Convert.generatePoolTags(updated);
-        updated = filterOutTemporaryContent(updated);
-        updated = Convert.updateNonDirectImageReferences(updated, mediaSummary);
-        updated = Convert.globalizeObjectiveReferences(updated);
-        updated = Convert.setGroupPaginationModes(updated);
-        updated = Convert.relativizeLegacyPaths(updated, svnRoot);
-
-        if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
-          updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);
-        }
-
-        return Convert.createProducts(updated, orgPaths, specificOrg).then(
-          (updated) => {
+          return Convert.createProducts(
+            updated,
+            orgPaths,
+            specificOrg,
+            projectSummary
+          ).then((updated) => {
             return addWebContentToMediaSummary(
               packageDirectory,
               mediaSummary
@@ -226,31 +240,23 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
                 hierarchy,
                 finalResources: updated,
                 mediaItems,
+                projectSummary,
               });
             });
-          }
-        );
-      });
-    });
+          });
+        });
+      }
+    );
   });
 }
 
 function writeConvertedResults({
-  packageDirectory,
-  outputDirectory,
-  svnRoot,
+  projectSummary,
   hierarchy,
   finalResources,
   mediaItems,
 }: ConvertedResults) {
-  return Convert.output(
-    packageDirectory,
-    outputDirectory,
-    svnRoot,
-    hierarchy,
-    finalResources,
-    mediaItems
-  );
+  return Convert.output(projectSummary, hierarchy, finalResources, mediaItems);
 }
 
 const anyOf = (ans: string, ...opts: any[]) => {
