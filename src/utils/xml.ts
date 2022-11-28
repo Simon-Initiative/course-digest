@@ -600,17 +600,6 @@ export function toJSON(
               }
         );
 
-        // if (top().type !== 'p') {
-        //   const wrappedInParagraph = {
-        //     type: 'p',
-        //     children: textAndFormulaNodes,
-        //   };
-
-        //   top().children = [...top().children, wrappedInParagraph];
-        // } else {
-        //   top().children = [...top().children, ...textAndFormulaNodes];
-        // }
-
         top().children = [...top().children, ...textAndFormulaNodes];
       } else {
         const textNode: any = Object.assign({ text }, inlinesToObject(inlines));
