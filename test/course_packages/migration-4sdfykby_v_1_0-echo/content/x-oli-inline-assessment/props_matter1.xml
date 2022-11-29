@@ -93,7 +93,42 @@
 
         </question>
 
-
+        <question id="q3">
+          <!--LO:-->
+          <body>For the following equation, write the complete ionic equation on your own paper,
+              identify the spectator ions and then choose the correct net ionic equation from the
+              choices below.
+              <formula>$$\mathrm{Zn}(s)\;+\;2\;{\mathrm{AgNO}}_3(aq)\;\rightarrow\;\mathrm{Zn}({\mathrm{NO}}_3)_2(aq)\;+\;2\;\mathrm{Ag}(s)$$</formula></body>
+          <multiple_choice shuffle="true" select="single">
+              <choice value="A"
+                  ><formula>\(\mathrm{Zn}(s)\;+\;2\;\mathrm{Ag}^+(aq)\;\rightarrow\;\mathrm{Zn}^{2+}(aq)\;+\;2\;\mathrm{Ag}(s)\)</formula></choice>
+              <choice value="B"
+                  ><formula>\(\mathrm{Zn}(s)\;+\;2\;\mathrm{Ag}^{2+}(aq)\;\rightarrow\;\mathrm{Zn}^+(aq)\;+\;2\;\mathrm{Ag}(s)\)</formula></choice>
+              <choice value="C"
+                  ><formula>\(\mathrm{Zn}(s)\;+\;2\;\mathrm{Ag}^+(aq)\;+\;{\mathrm{NO}}_3^-(aq)\;\rightarrow\;\mathrm{Zn}^{2+}(aq)\;+\;2\;\mathrm{Ag}(s)\)</formula></choice>
+              <choice value="D"
+                  ><formula>\(\mathrm{Zn}^{2+}(s)\;+\;2\;\mathrm{Ag}^+(aq)\;\rightarrow\;\mathrm{Zn}^{2+}(aq)\;+\;2\;\mathrm{Ag}^+(s)\)</formula></choice>
+          </multiple_choice>
+          <part>
+              <response match="A" score="1">
+                  <feedback>Correct. The NO<sub>3</sub><sup>−</sup> ion is the spectator ion in
+                      this equation.</feedback>
+              </response>
+              <response match="B" score="0">
+                  <feedback>Incorrect. The zinc ion has a charge of 2+, Zn<sup>2+</sup>, and the
+                      silver ion has a charge of 1+, Ag<sup>1+</sup>.</feedback>
+              </response>
+              <response match="C" score="0">
+                  <feedback>Incorrect. The NO<sub>3</sub><sup>−</sup> ion is the spectator ion and
+                      should be removed from both sides of the equation.</feedback>
+              </response>
+              <response match="D" score="0">
+                  <feedback>Incorrect. The silver and zinc only exist as ions when in aqueous
+                      solution. The solid forms are not ions and should not be represented as such
+                      in the equation. </feedback>
+              </response>
+          </part>
+      </question>
     </page>
 
 

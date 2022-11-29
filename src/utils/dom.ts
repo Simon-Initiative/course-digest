@@ -75,7 +75,18 @@ export function isInlineElement($: any, elem: any) {
   const parent = $(elem).parent();
 
   if (
-    isOneOf(parent[0].name, ['li', 'td', 'th', 'choice', 'feedback', 'hint'])
+    isOneOf(parent[0].name, [
+      'li',
+      'td',
+      'th',
+      'dd',
+      'dt',
+      'choice',
+      'feedback',
+      'hint',
+      'stem',
+      'body',
+    ])
   ) {
     if (parent[0].children.length === 1) {
       return false;

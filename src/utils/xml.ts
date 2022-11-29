@@ -592,6 +592,11 @@ export function toJSON(
                 subtype: n.subtype,
                 src: n.src,
                 legacyBlockRendered: n.legacyBlockRendered,
+                children: [
+                  {
+                    text: '',
+                  },
+                ],
               }
         );
 
