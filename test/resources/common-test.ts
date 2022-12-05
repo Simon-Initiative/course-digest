@@ -47,7 +47,7 @@ describe('cdata and codeblocks', () => {
     standardContentManipulations($);
 
     const result: any = await toJSON($.xml(), projectSummary);
-    const img = result.children[0];
+    const img = result.children[0].children[0];
     expect(img.type).toBe('img');
   });
 
