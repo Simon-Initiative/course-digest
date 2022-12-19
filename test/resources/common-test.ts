@@ -37,7 +37,7 @@ describe('cdata and codeblocks', () => {
   });
 
   test('should convert root images to block imgs', async () => {
-    const content = '<image src="../webcontent/proof_prem.gif"/>';
+    const content = '<root><image src="../webcontent/proof_prem.gif"/></root>';
 
     const $ = cheerio.load(content, {
       normalizeWhitespace: true,
@@ -47,7 +47,7 @@ describe('cdata and codeblocks', () => {
     standardContentManipulations($);
 
     const result: any = await toJSON($.xml(), projectSummary);
-    const img = result.children[0];
+    const img = result.children[0].children[0];
     expect(img.type).toBe('img');
   });
 

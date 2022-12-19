@@ -133,6 +133,13 @@ export function standardContentManipulations($: any) {
   // a closer mapping to the correct rendering.
   DOM.rename($, 'p img', 'img_inline');
   DOM.rename($, 'a img', 'img_inline');
+
+  $('img').each((i: any, item: any) => {
+    if (DOM.isInlineElement($, item)) {
+      item.tagName = 'img_inline';
+    }
+  });
+
   // Inline images should technically be valid in any Slate model element
   // that supports inline elements, but we're only explicitly handling
   // converting images in paragraphs and links (anchors).
