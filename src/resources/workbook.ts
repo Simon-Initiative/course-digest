@@ -1,6 +1,12 @@
 import * as Histogram from 'src/utils/histogram';
 import { guid, ItemReference } from 'src/utils/common';
-import { Resource, TorusResource, Summary, Page, defaultCollabSpaceDefinition } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import {
   standardContentManipulations,
   processCodeblock,
@@ -37,10 +43,7 @@ function liftTitle($: any) {
 }
 
 export function performRestructure($: any) {
-  failIfPresent($, [
-    'multipanel',
-    'dependency',
-  ]);
+  failIfPresent($, ['multipanel', 'dependency']);
   standardContentManipulations($);
 
   liftTitle($);
@@ -79,37 +82,35 @@ export class WorkbookPage extends Resource {
       isSurvey: false,
       objectives: [],
       warnings: [],
-      collabSpace: defaultCollabSpaceDefinition()
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     this.flagContentWarnigns($, page);
     this.restructure($);
 
     // Convert the three forms of Xrefs into regular links
-  $('xref').each((i: any, elem: any) => {
-    const pageValue = $(elem).attr('page');
-    const idref = $(elem).attr('idref');
+    $('xref').each((i: any, elem: any) => {
+      const pageValue = $(elem).attr('page');
+      const idref = $(elem).attr('idref');
 
-    const hasPage = pageValue !== null && pageValue !== undefined;
-    const hasIdref = idref !== null && idref !== undefined;
+      const hasPage = pageValue !== null && pageValue !== undefined;
+      const hasIdref = idref !== null && idref !== undefined;
 
-    // Type 1: page attr points to another page
-    if (hasPage && !hasIdref) {
-      $(elem).attr('idref', pageValue);
-      page.unresolvedReferences.push(pageValue);
+      // Type 1: page attr points to another page
+      if (hasPage && !hasIdref) {
+        $(elem).attr('idref', pageValue);
+        page.unresolvedReferences.push(pageValue);
 
-    // Type 2: page attr points to another page, idref to an item within that page
-    } else if (!hasPage && hasIdref) {
-      $(elem).attr('idref', pageValue);
-      page.unresolvedReferences.push(pageValue);
+        // Type 2: page attr points to another page, idref to an item within that page
+      } else if (!hasPage && hasIdref) {
+        $(elem).attr('idref', pageValue);
+        page.unresolvedReferences.push(pageValue);
 
-    // Type 3: idref points to content item on this page
-    } else if (hasPage && hasIdref) {
-      $(elem).attr('idref', $('workbook_page').attr('id'));
-    }
-    
-  });
-  
+        // Type 3: idref points to content item on this page
+      } else if (hasPage && hasIdref) {
+        $(elem).attr('idref', $('workbook_page').attr('id'));
+      }
+    });
 
     $('activity_placeholder').each((i: any, elem: any) => {
       page.unresolvedReferences.push($(elem).attr('idref'));
@@ -164,11 +165,13 @@ export class WorkbookPage extends Resource {
       }
     });
 
-    const objectives : TorusResource[] = [];
+    const objectives: TorusResource[] = [];
     $('objectives objective').each((i: any, elem: any) => {
       const title = $(elem).text();
       const id = $(elem).attr('id');
-      objectives.push(createObjective(this.file, id, null, title, defaultParameters()))
+      objectives.push(
+        createObjective(this.file, id, null, title, defaultParameters())
+      );
     });
     DOM.remove($, 'objectives');
     xml = $.html();
@@ -198,7 +201,12 @@ export class WorkbookPage extends Resource {
         page.content = { model, bibrefs };
         page.title = r.children[0].title;
 
-        resolve([page, ...imageCodingActivities, ...bibEntries.values(), ...objectives]);
+        resolve([
+          page,
+          ...imageCodingActivities,
+          ...bibEntries.values(),
+          ...objectives,
+        ]);
       });
     });
   }

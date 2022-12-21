@@ -30,7 +30,7 @@ export class Organization extends Resource {
   restructure($: any): any {
     // failIfHasValue($, 'sequence', 'audience', 'instructor');
     failIfPresent($, ['include', 'unordered', 'supplement']);
-    
+
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
     removeSequences($);

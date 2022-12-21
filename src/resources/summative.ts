@@ -1,7 +1,13 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
-import { Resource, TorusResource, Summary, Page, defaultCollabSpaceDefinition } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import { processCodeblock, flagStandardContentWarnigns } from './common';
 import * as Formative from './formative';
 import * as DOM from 'src/utils/dom';
@@ -13,7 +19,6 @@ function handlePartlessResponses($: any, root: string) {
 }
 
 export function convertToFormative($: any) {
-
   handlePartlessResponses($, 'multiple_choice');
   handlePartlessResponses($, 'ordering');
   handlePartlessResponses($, 'short_answer');
@@ -106,7 +111,7 @@ export class Summative extends Resource {
       isSurvey: false,
       objectives: [],
       warnings: [],
-      collabSpace: defaultCollabSpaceDefinition()
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     this.flagContentWarnigns($, page);

@@ -95,14 +95,14 @@ export interface CollabSpaceDefinition {
   participation_min_posts: number;
 }
 
-export function defaultCollabSpaceDefinition() : CollabSpaceDefinition{
+export function defaultCollabSpaceDefinition(): CollabSpaceDefinition {
   return {
     status: 'disabled',
     threaded: true,
     auto_accept: true,
     show_full_history: true,
     participation_min_posts: 0,
-    participation_min_replies: 0
+    participation_min_replies: 0,
   };
 }
 

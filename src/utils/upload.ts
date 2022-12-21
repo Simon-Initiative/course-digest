@@ -36,7 +36,7 @@ export const upload = (
         resolve(data.Location);
         return;
       }
-      resolve("error");
+      resolve('error');
     });
   });
 };
