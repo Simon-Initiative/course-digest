@@ -1,5 +1,5 @@
 import * as Histogram from 'src/utils/histogram';
-import { Resource, TorusResource, Summary, Page } from './resource';
+import { Resource, TorusResource, Summary, Page, defaultCollabSpaceDefinition } from './resource';
 import { guid } from 'src/utils/common';
 import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
@@ -62,6 +62,7 @@ export class Superactivity extends Resource {
               isSurvey: false,
               objectives: [],
               warnings: [],
+              collabSpace: defaultCollabSpaceDefinition()
             };
             resolve([page, activity]);
           } else {

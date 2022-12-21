@@ -58,7 +58,7 @@ export function flattenResourceRefs($: any) {
   const allItems: any = {};
 
   refs.each((i: any, elem: any) => {
-    const id = $(elem).attr('idref');
+    const id = $(elem).attr('idref').trim();
     if (allItems[id] === undefined) {
       allItems[id] = true;
       $(elem).parent().replaceWith(`<item idref="${id}"></item>`);

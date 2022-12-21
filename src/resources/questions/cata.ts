@@ -176,6 +176,22 @@ export function cata(question: any) {
   )[0];
 
   if (correctResponse === undefined) {
+
+    if (model.authoring.parts[0].responses.length === 0) {
+      const r: any = {
+        id: guid(),
+        score: 1,
+        rule: `${choiceIds[0]}`,
+        feedback: {
+          id: guid(),
+          content: [
+            { type: 'p', children: [{ text: 'Correct', children: [] }] },
+          ],
+        },
+      };
+      model.authoring.parts[0].responses.push(r);
+    }
+
     correctResponse = model.authoring.parts[0].responses[0];
   }
 

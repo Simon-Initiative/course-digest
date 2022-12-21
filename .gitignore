@@ -1,7 +1,7 @@
 node_modules
 *~
 out/
-out.zip
+*.zip
 .DS_Store
 .env
 /yarn-error.log

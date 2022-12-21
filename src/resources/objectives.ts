@@ -2,12 +2,42 @@ import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary } from './resource';
 import * as XML from 'src/utils/xml';
+import { create } from 'domain';
 
 function attr($: any, e: any, name: string, defaultValue: any) {
   if ($(e).attr(name) !== undefined && $(e).attr(name) !== null) {
     $(e).attr(name);
   }
   return defaultValue;
+}
+
+export function defaultParameters() {
+  return {
+    category: null,
+    process: null,
+    lowOppportunity: false,
+    minPractice: 2,
+    mediumMastery: 3.5,
+    highMastery: 7
+  };
+}
+
+export function createObjective(file: string, id: string, parentId: string | null, title: string, parameters: any) {
+  return {
+    type: 'Objective',
+    id,
+    parentId,
+    originalType: 'objective',
+    parameters,
+    legacyPath: file,
+    legacyId: id,
+    title,
+    tags: [],
+    unresolvedReferences: [],
+    content: {},
+    objectives: [],
+    warnings: [],
+  } as TorusResource;
 }
 
 export class Objectives extends Resource {
@@ -25,28 +55,14 @@ export class Objectives extends Resource {
       const id = $(elem).attr('id');
       const title = $(elem).text().trim();
 
-      const o = {
-        type: 'Objective',
-        id,
-        parentId,
-        originalType: 'objective',
-        parameters: {
-          category: attr($, elem, 'category', null),
-          process: attr($, elem, 'process', null),
-          lowOppportunity: attr($, elem, 'low_opportunity', false),
-          minPractice: attr($, elem, 'min_practice', 2),
-          mediumMastery: attr($, elem, 'medium_mastery', 3.5),
-          highMastery: attr($, elem, 'high_mastery', 7),
-        },
-        legacyPath: this.file,
-        legacyId: id,
-        title,
-        tags: [],
-        unresolvedReferences: [],
-        content: {},
-        objectives: [],
-        warnings: [],
-      } as TorusResource;
+      const o = createObjective(this.file, id, parentId, title, {
+        category: attr($, elem, 'category', null),
+        process: attr($, elem, 'process', null),
+        lowOppportunity: attr($, elem, 'low_opportunity', false),
+        minPractice: attr($, elem, 'min_practice', 2),
+        mediumMastery: attr($, elem, 'medium_mastery', 3.5),
+        highMastery: attr($, elem, 'high_mastery', 7),
+      });
 
       // parentId is necessary because it makes the id truly global
       map[`${o.id}-${parentId}`] = o;

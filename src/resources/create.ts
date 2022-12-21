@@ -6,6 +6,7 @@ import * as Org from './organization';
 import * as Other from './other';
 import * as Feedback from './feedback';
 import * as Formative from './formative';
+import * as Discussion from './discussion';
 import * as Summative from './summative';
 import * as Objectives from './objectives';
 import * as Pool from './pool';
@@ -19,6 +20,7 @@ const minVersions: Record<string, string> = {
   oli_assessment_mathml: '2_3',
   oli_inline_assessment: '1_3',
   oli_inline_assessment_mathml: '1_3',
+  oli_discussion: '1_0'
 };
 
 export function determineResourceType(file: string): Promise<ResourceType> {
@@ -31,13 +33,13 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     const minVersion = minVersions[dtdBase] || '';
     if (dtdVersion < minVersion) {
       console.error(`unsupported DTD version: ${dtdBase} ${dtdVersion}`);
-      return 'Other';
+      // return 'Other';
     }
 
     if (tag.indexOf('oli_skills_model') !== -1) {
       return 'Skills';
     }
-    if (tag.indexOf('DTD Assessment Pool') !== -1) {
+    if (tag.indexOf('DTD Assessment Pool') !== -1 || tag.indexOf(' pool ') !== -1) {
       return 'Pool';
     }
     if (tag.indexOf('organization') !== -1) {
@@ -61,9 +63,13 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (
       tag.indexOf('oli-embed-activity') !== -1 ||
       tag.indexOf('oli-linked-activity') !== -1 ||
-      tag.indexOf('cmu-ctat-tutor') !== -1
+      tag.indexOf('cmu-ctat-tutor') !== -1 || 
+      tag.indexOf(' ctat ') !== -1
     ) {
       return 'Superactivity';
+    }
+    if (tag.indexOf('oli_discussion') !== -1) {
+      return 'Discussion';
     }
 
     return 'Other';
@@ -101,6 +107,9 @@ export function create(
   }
   if (t === 'Skills') {
     return new Skills.Skills(file, navigable);
+  }
+  if (t === 'Discussion') {
+    return new Discussion.Discussion(file, navigable);
   }
   return new Other.Other(file, navigable);
 }

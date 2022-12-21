@@ -511,10 +511,12 @@ export function determineSubType(question: any): ItemTypes {
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       const firstResponse = Common.getChild(part.children, 'response');
-      question.children.push({
-        type: question.originalType,
-        id: firstResponse.input,
-      });
+      if (firstResponse !== undefined) {
+        question.children.push({
+          type: question.originalType,
+          id: firstResponse.input,
+        });
+      }
     }
 
     return 'oli_multi_input';

@@ -5,6 +5,7 @@ import * as tmp from 'tmp';
 import * as fs from 'fs';
 import { Maybe } from 'tsmonad';
 import { ProjectSummary } from 'src/project';
+import { collectOrgItemReferences } from 'src/utils/resources';
 
 export interface Summary {
   type: 'Summary';
@@ -21,6 +22,7 @@ export type ResourceType =
   | 'Pool'
   | 'Formative'
   | 'Summative'
+  | 'Discussion'
   | 'Feedback'
   | 'Superactivity'
   | 'Skills'
@@ -85,11 +87,32 @@ export interface Unknown extends TorusResource {
   type: 'Unknown';
 }
 
+export interface CollabSpaceDefinition {
+  status: string;
+  threaded: boolean;
+  auto_accept: boolean;
+  show_full_history: boolean;
+  participation_min_replies: number;
+  participation_min_posts: number;
+}
+
+export function defaultCollabSpaceDefinition() : CollabSpaceDefinition{
+  return {
+    status: 'disabled',
+    threaded: true,
+    auto_accept: true,
+    show_full_history: true,
+    participation_min_posts: 0,
+    participation_min_replies: 0
+  };
+}
+
 export interface Page extends TorusResource {
   type: 'Page';
   content: Record<string, unknown>;
   isGraded: boolean;
   isSurvey: boolean;
+  collabSpace: CollabSpaceDefinition;
   objectives: any[];
 }
 
