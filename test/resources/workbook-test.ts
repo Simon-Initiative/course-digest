@@ -36,6 +36,7 @@ describe('convert workbook', () => {
           'newca1a54a0f56a4d429f5aff2c515cab08',
           'newc72f87db5a5543b5ae8582d2d4cd34a7',
         ],
+        collabSpace: expect.any(Object),
         content: {
           model: [
             {
