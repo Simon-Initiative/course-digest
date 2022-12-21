@@ -3,7 +3,7 @@ import { ItemReference } from 'src/utils/common';
 import * as Histogram from 'src/utils/histogram';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
-import { failIfHasValue, failIfPresent } from './common';
+import { failIfPresent } from './common';
 
 import { Resource, TorusResource, Hierarchy, Summary } from './resource';
 import { ProjectSummary } from 'src/project';

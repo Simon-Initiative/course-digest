@@ -2,7 +2,6 @@ import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
 import { Resource, TorusResource, Summary } from './resource';
 import * as XML from 'src/utils/xml';
-import { create } from 'domain';
 
 function attr($: any, e: any, name: string, defaultValue: any) {
   if ($(e).attr(name) !== undefined && $(e).attr(name) !== null) {

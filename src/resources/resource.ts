@@ -5,7 +5,6 @@ import * as tmp from 'tmp';
 import * as fs from 'fs';
 import { Maybe } from 'tsmonad';
 import { ProjectSummary } from 'src/project';
-import { collectOrgItemReferences } from 'src/utils/resources';
 
 export interface Summary {
   type: 'Summary';
