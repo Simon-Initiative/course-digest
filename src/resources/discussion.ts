@@ -1,7 +1,13 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
-import { Resource, TorusResource, Summary, Page, defaultCollabSpaceDefinition } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import { flagStandardContentWarnigns } from './common';
 import * as WorkbookPage from './workbook';
 import * as DOM from 'src/utils/dom';
@@ -14,32 +20,41 @@ export function convertToWorkbook($: any) {
   DOM.rename($, 'workbook_page description', 'body');
 }
 
-function readBooleanParameter($: any, e: string, param: string, defaultValue: boolean) {
+function readBooleanParameter(
+  $: any,
+  e: string,
+  param: string,
+  defaultValue: boolean
+) {
   $(e).each((i: any, elem: any) => {
     const v = $(elem).attr(param);
-    
+
     if (v === null || v === undefined) {
-    return defaultValue;
+      return defaultValue;
     }
     return v === 'true';
   });
   return defaultValue;
 }
 
-function readIntParameter($: any, e: string, param: string, defaultValue: number) {
-    $(e).each((i: any, elem: any) => {
-      const v = $(elem).attr(param);
-      
-      if (v === null || v === undefined) {
+function readIntParameter(
+  $: any,
+  e: string,
+  param: string,
+  defaultValue: number
+) {
+  $(e).each((i: any, elem: any) => {
+    const v = $(elem).attr(param);
+
+    if (v === null || v === undefined) {
       return defaultValue;
-      }
-      return parseInt(v, 10);
-    });
-    return defaultValue;
-  }
+    }
+    return parseInt(v, 10);
+  });
+  return defaultValue;
+}
 
 export class Discussion extends Resource {
-  
   flagContentWarnigns($: any, page: Page) {
     flagStandardContentWarnigns($, page);
   }
@@ -69,11 +84,10 @@ export class Discussion extends Resource {
       isSurvey: false,
       objectives: [],
       warnings: [],
-      collabSpace: defaultCollabSpaceDefinition()
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     this.restructure($);
-    
 
     $('a').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
@@ -105,10 +119,30 @@ export class Discussion extends Resource {
 
         // Override the default collab space configuration
         page.collabSpace.status = 'active';
-        page.collabSpace.auto_accept = readBooleanParameter($, 'options', 'auto_accept', true);
-        page.collabSpace.threaded = readBooleanParameter($, 'options', 'threaded', true);
-        page.collabSpace.participation_min_posts = readIntParameter($, 'requirements', 'posts', 0);
-        page.collabSpace.participation_min_replies = readIntParameter($, 'requirements', 'replies', 0);
+        page.collabSpace.auto_accept = readBooleanParameter(
+          $,
+          'options',
+          'auto_accept',
+          true
+        );
+        page.collabSpace.threaded = readBooleanParameter(
+          $,
+          'options',
+          'threaded',
+          true
+        );
+        page.collabSpace.participation_min_posts = readIntParameter(
+          $,
+          'requirements',
+          'posts',
+          0
+        );
+        page.collabSpace.participation_min_replies = readIntParameter(
+          $,
+          'requirements',
+          'replies',
+          0
+        );
 
         resolve([page]);
       });
@@ -132,7 +166,6 @@ export class Discussion extends Resource {
         if (tag === 'discussion') {
           summary.id = (attrs as any)['id'];
         }
-        
       })
         .then((_result) => {
           resolve(summary);

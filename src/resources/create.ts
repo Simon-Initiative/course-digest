@@ -20,7 +20,7 @@ const minVersions: Record<string, string> = {
   oli_assessment_mathml: '2_3',
   oli_inline_assessment: '1_3',
   oli_inline_assessment_mathml: '1_3',
-  oli_discussion: '1_0'
+  oli_discussion: '1_0',
 };
 
 export function determineResourceType(file: string): Promise<ResourceType> {
@@ -39,7 +39,10 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (tag.indexOf('oli_skills_model') !== -1) {
       return 'Skills';
     }
-    if (tag.indexOf('DTD Assessment Pool') !== -1 || tag.indexOf(' pool ') !== -1) {
+    if (
+      tag.indexOf('DTD Assessment Pool') !== -1 ||
+      tag.indexOf(' pool ') !== -1
+    ) {
       return 'Pool';
     }
     if (tag.indexOf('organization') !== -1) {
@@ -63,7 +66,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (
       tag.indexOf('oli-embed-activity') !== -1 ||
       tag.indexOf('oli-linked-activity') !== -1 ||
-      tag.indexOf('cmu-ctat-tutor') !== -1 || 
+      tag.indexOf('cmu-ctat-tutor') !== -1 ||
       tag.indexOf(' ctat ') !== -1
     ) {
       return 'Superactivity';

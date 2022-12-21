@@ -77,10 +77,8 @@ export function collectOrgItemReferences(packageDirectory: string) {
       results.forEach((r) => {
         if (typeof r !== 'string') {
           r.found().forEach((i) => {
-
             // If this is the first time we have encountered this resource
             if (seenReferences[i.id] === undefined) {
-
               if (id === '' || id === r.id) {
                 seenReferences[i.id] = true;
                 references.push(i.id);

@@ -17,11 +17,17 @@ export function defaultParameters() {
     lowOppportunity: false,
     minPractice: 2,
     mediumMastery: 3.5,
-    highMastery: 7
+    highMastery: 7,
   };
 }
 
-export function createObjective(file: string, id: string, parentId: string | null, title: string, parameters: any) {
+export function createObjective(
+  file: string,
+  id: string,
+  parentId: string | null,
+  title: string,
+  parameters: any
+) {
   return {
     type: 'Objective',
     id,

@@ -176,7 +176,6 @@ export function cata(question: any) {
   )[0];
 
   if (correctResponse === undefined) {
-
     if (model.authoring.parts[0].responses.length === 0) {
       const r: any = {
         id: guid(),
