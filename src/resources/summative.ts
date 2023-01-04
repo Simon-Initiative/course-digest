@@ -1,14 +1,33 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
 import { ItemReference } from 'src/utils/common';
-import { Resource, TorusResource, Summary, Page } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import { processCodeblock, flagStandardContentWarnigns } from './common';
 import * as Formative from './formative';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import { ProjectSummary } from 'src/project';
 
+function handlePartlessResponses($: any, root: string) {
+  DOM.rename($, `${root} responses`, 'part');
+}
+
 export function convertToFormative($: any) {
+  handlePartlessResponses($, 'multiple_choice');
+  handlePartlessResponses($, 'ordering');
+  handlePartlessResponses($, 'short_answer');
+  handlePartlessResponses($, 'fill_in_the_blank');
+  handlePartlessResponses($, 'numeric');
+  handlePartlessResponses($, 'text');
+  handlePartlessResponses($, 'essay');
+  handlePartlessResponses($, 'image_hotspot');
+
   $('multiple_choice').each((i: any, item: any) => {
     DOM.moveAttrToChildren($, item, 'select', 'input');
     DOM.moveAttrToChildren($, item, 'shuffle', 'input');
@@ -92,6 +111,7 @@ export class Summative extends Resource {
       isSurvey: false,
       objectives: [],
       warnings: [],
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     this.flagContentWarnigns($, page);

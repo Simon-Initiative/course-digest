@@ -163,6 +163,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const resourceMap = results[0];
     const orgReferences = [...results[1].orgReferences];
     const orgReferencesOthers = [...results[1].orgReferencesOthers];
+
     const orgPaths = [...results[1].organizationPaths];
 
     const references = [

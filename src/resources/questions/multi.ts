@@ -125,7 +125,7 @@ export function buildChoices(
 function ensureAtLeastOneCorrectResponse(part: any) {
   const responses = part.responses;
 
-  if (!responses.some((r: any) => r.score > 0)) {
+  if (!responses.some((r: any) => r.score > 0) && responses.length > 0) {
     // Find the first that isn't the * and set it to be correct
     const withoutStar = responses.filter((r: any) => r.legacyMatch !== '.*');
     if (withoutStar.length > 0) {

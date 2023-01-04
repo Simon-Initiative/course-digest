@@ -1,6 +1,12 @@
 import * as Histogram from 'src/utils/histogram';
 import { guid, ItemReference } from 'src/utils/common';
-import { Resource, TorusResource, Summary, Page } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import {
   standardContentManipulations,
   processCodeblock,
@@ -11,6 +17,7 @@ import {
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import { convertImageCodingActivities } from './image';
+import { createObjective, defaultParameters } from './objectives';
 import { maybe } from 'tsmonad';
 import { convertBibliographyEntries } from './bibentry';
 import { ProjectSummary } from 'src/project';
@@ -35,25 +42,23 @@ function liftTitle($: any) {
   $('head').children().remove('title');
 }
 
+export function performRestructure($: any) {
+  failIfPresent($, ['multipanel', 'dependency']);
+  standardContentManipulations($);
+
+  liftTitle($);
+  DOM.rename($, 'wb\\:inline', 'activity_placeholder');
+  DOM.rename($, 'inline', 'activity_placeholder');
+  DOM.rename($, 'activity_link', 'a');
+}
+
 export class WorkbookPage extends Resource {
   restructurePreservingWhitespace($: any): any {
     processCodeblock($);
   }
 
   restructure($: any): any {
-    failIfPresent($, [
-      'multipanel',
-      'wb\\:xref',
-      'xref',
-      'objective',
-      'dependency',
-    ]);
-    standardContentManipulations($);
-
-    liftTitle($);
-    DOM.rename($, 'wb\\:inline', 'activity_placeholder');
-    DOM.rename($, 'inline', 'activity_placeholder');
-    DOM.rename($, 'activity_link', 'a');
+    performRestructure($);
   }
 
   flagContentWarnigns($: any, page: Page) {
@@ -77,10 +82,35 @@ export class WorkbookPage extends Resource {
       isSurvey: false,
       objectives: [],
       warnings: [],
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     this.flagContentWarnigns($, page);
     this.restructure($);
+
+    // Convert the three forms of Xrefs into regular links
+    $('xref').each((i: any, elem: any) => {
+      const pageValue = $(elem).attr('page');
+      const idref = $(elem).attr('idref');
+
+      const hasPage = pageValue !== null && pageValue !== undefined;
+      const hasIdref = idref !== null && idref !== undefined;
+
+      // Type 1: page attr points to another page
+      if (hasPage && !hasIdref) {
+        $(elem).attr('idref', pageValue);
+        page.unresolvedReferences.push(pageValue);
+
+        // Type 2: page attr points to another page, idref to an item within that page
+      } else if (!hasPage && hasIdref) {
+        $(elem).attr('idref', pageValue);
+        page.unresolvedReferences.push(pageValue);
+
+        // Type 3: idref points to content item on this page
+      } else if (hasPage && hasIdref) {
+        $(elem).attr('idref', $('workbook_page').attr('id'));
+      }
+    });
 
     $('activity_placeholder').each((i: any, elem: any) => {
       page.unresolvedReferences.push($(elem).attr('idref'));
@@ -134,6 +164,16 @@ export class WorkbookPage extends Resource {
         $(elem).remove();
       }
     });
+
+    const objectives: TorusResource[] = [];
+    $('objectives objective').each((i: any, elem: any) => {
+      const title = $(elem).text();
+      const id = $(elem).attr('id');
+      objectives.push(
+        createObjective(this.file, id, null, title, defaultParameters())
+      );
+    });
+    DOM.remove($, 'objectives');
     xml = $.html();
 
     return new Promise((resolve, _reject) => {
@@ -161,7 +201,12 @@ export class WorkbookPage extends Resource {
         page.content = { model, bibrefs };
         page.title = r.children[0].title;
 
-        resolve([page, ...imageCodingActivities, ...bibEntries.values()]);
+        resolve([
+          page,
+          ...imageCodingActivities,
+          ...bibEntries.values(),
+          ...objectives,
+        ]);
       });
     });
   }

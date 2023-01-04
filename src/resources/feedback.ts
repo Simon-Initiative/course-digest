@@ -1,6 +1,12 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
-import { Resource, TorusResource, Summary, Page } from './resource';
+import {
+  Resource,
+  TorusResource,
+  Summary,
+  Page,
+  defaultCollabSpaceDefinition,
+} from './resource';
 import * as DOM from '../utils/dom';
 import * as XML from '../utils/xml';
 import { guid } from 'src/utils/common';
@@ -117,6 +123,7 @@ export class Feedback extends Resource {
       isSurvey: true,
       objectives: [],
       warnings: [],
+      collabSpace: defaultCollabSpaceDefinition(),
     };
 
     return new Promise((resolve, _reject) =>

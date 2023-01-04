@@ -55,8 +55,11 @@ export function collectOrgItemReferences(packageDirectory: string) {
 
   const filesById = files.reduce((m: any, f) => {
     const lastPart = f.substring(f.lastIndexOf('/') + 1);
-    const parts = lastPart.split('.');
-    m[parts[0]] = f;
+
+    // parse out the resource id from the file name "test.1.xml" => "test"
+    const lastPeriod = lastPart.lastIndexOf('.');
+    const resourceId = lastPart.substring(0, lastPeriod);
+    m[resourceId] = f;
     return m;
   }, {});
 
@@ -74,6 +77,7 @@ export function collectOrgItemReferences(packageDirectory: string) {
       results.forEach((r) => {
         if (typeof r !== 'string') {
           r.found().forEach((i) => {
+            // If this is the first time we have encountered this resource
             if (seenReferences[i.id] === undefined) {
               if (id === '' || id === r.id) {
                 seenReferences[i.id] = true;
@@ -81,7 +85,6 @@ export function collectOrgItemReferences(packageDirectory: string) {
               } else {
                 // Add references from all other organization files that are
                 // not part of the main org
-                // Ensure referenced file exists
 
                 if (filesById[i.id] !== undefined) {
                   seenReferences[i.id] = true;

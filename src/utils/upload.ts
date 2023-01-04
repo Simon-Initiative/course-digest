@@ -30,8 +30,13 @@ export const upload = (
     s3.upload(params, (err: any, data: any) => {
       if (err) {
         reject(err);
+        return;
       }
-      resolve(data.Location);
+      if (data !== undefined) {
+        resolve(data.Location);
+        return;
+      }
+      resolve('error');
     });
   });
 };
