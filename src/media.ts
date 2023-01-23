@@ -95,7 +95,6 @@ export function transformToFlatDirectory(
           );
         } else if ($(elem)[0].name === 'dataset') {
           const pkg = $(elem).attr('package');
-
           $(elem).replaceWith(
             `<dataset package="${pkg}">${url.slice(
               url.lastIndexOf('media/') + 6
