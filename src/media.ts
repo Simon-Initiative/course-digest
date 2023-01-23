@@ -58,7 +58,7 @@ export function transformToFlatDirectory(
   $: any,
   summary: MediaSummary
 ) {
-  const paths = findFromDOM($);
+  const paths = findFromDOM($, filePath);
 
   Object.keys(paths).forEach((assetReference: any) => {
     // Flatten this file reference into our single, virtual directory
@@ -77,13 +77,30 @@ export function transformToFlatDirectory(
             `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
           );
         } else if ($(elem)[0].name === 'asset') {
-          let dname = decodeURIComponent(ref.assetReference);
-          dname = dname.substring(dname.indexOf('/'));
-          const url2 = url.slice(url.lastIndexOf('media/') + 6);
           const name = $(elem).attr('name');
-          const newUrl = url2.split('/').slice(0, 2).join('/') + dname;
+          if (name) {
+            $(elem).replaceWith(
+              `<asset name="${name}">${url.slice(
+                url.lastIndexOf('media/') + 6
+              )}</asset>`
+            );
+          } else {
+            $(elem).replaceWith(
+              `<asset>${url.slice(url.lastIndexOf('media/') + 6)}</asset>`
+            );
+          }
+        } else if ($(elem)[0].name === 'interface') {
+          $(elem).replaceWith(
+            `<interface>${url.slice(url.lastIndexOf('media/') + 6)}</interface>`
+          );
+        } else if ($(elem)[0].name === 'dataset') {
+          const pkg = $(elem).attr('package');
 
-          $(elem).replaceWith(`<asset name="${name}">${newUrl}</asset>`);
+          $(elem).replaceWith(
+            `<dataset package="${pkg}">${url.slice(
+              url.lastIndexOf('media/') + 6
+            )}</dataset>`
+          );
         } else {
           $(elem).attr('src', url);
         }
@@ -97,7 +114,7 @@ export function downloadRemote(
   $: any,
   summary: MediaSummary
 ) {
-  const paths = findFromDOM($, true);
+  const paths = findFromDOM($, filePath, true);
   Object.keys(paths).forEach((assetReference: any) => {
     // Download the file into a temporary file
     const buffer = fetch(assetReference, {}).buffer();
@@ -162,10 +179,27 @@ export function downloadRemote(
           );
         } else if ($(elem)[0].name === 'asset') {
           const name = $(elem).attr('name');
+          if (name) {
+            $(elem).replaceWith(
+              `<asset name="${name}">${url.slice(
+                url.lastIndexOf('media/') + 6
+              )}</asset>`
+            );
+          } else {
+            $(elem).replaceWith(
+              `<asset>${url.slice(url.lastIndexOf('media/') + 6)}</asset>`
+            );
+          }
+        } else if ($(elem)[0].name === 'interface') {
           $(elem).replaceWith(
-            `<asset name="${name}">${url.slice(
+            `<interface>${url.slice(url.lastIndexOf('media/') + 6)}</interface>`
+          );
+        } else if ($(elem)[0].name === 'dataset') {
+          const pkg = $(elem).attr('package');
+          $(elem).replaceWith(
+            `<dataset package="${pkg}">${url.slice(
               url.lastIndexOf('media/') + 6
-            )}</asset>`
+            )}</dataset>`
           );
         } else {
           $(elem).attr('src', url);
@@ -288,7 +322,32 @@ export function resolve(reference: MediaItemReference): string {
       'content/';
   }
 
-  return path.resolve(dir, reference.assetReference);
+  const assetRef = removeQueryParams(reference.assetReference);
+
+  return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
+}
+
+export function removeQueryParams(ref: string): string {
+  return ref.split('?')[0];
+}
+
+export function findInPackage(
+  dir: string,
+  reference: string,
+  absolutePath: string
+): string {
+  const decodedPath = decodeURIComponent(absolutePath);
+
+  if (!fs.existsSync(decodedPath)) {
+    if (dir.endsWith('content/')) return absolutePath;
+    const dirArray: string[] = dir.split('/');
+    dirArray.pop();
+    dirArray.pop();
+    dir = dirArray.join('/') + '/';
+    return findInPackage(dir, reference, path.resolve(dir, reference));
+  }
+
+  return absolutePath;
 }
 
 // Uploads a collection of media items to an S3 bucket, staging them for
@@ -303,7 +362,11 @@ export function stage(
   );
 }
 
-function findFromDOM($: any, remote = false): Record<string, Array<string>> {
+function findFromDOM(
+  $: any,
+  filePath: string,
+  remote = false
+): Record<string, Array<string>> {
   const paths: any = {};
 
   $('pronunciation').each((i: any, elem: any) => {
@@ -354,15 +417,48 @@ function findFromDOM($: any, remote = false): Record<string, Array<string>> {
     }
   });
 
+  $('interface').each((i: any, elem: any) => {
+    if ($(elem).text().includes('webcontent')) {
+      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+    }
+  });
+
+  $('dataset').each((i: any, elem: any) => {
+    if ($(elem).text().includes('webcontent')) {
+      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+    }
+  });
+
   Object.keys(paths)
     .filter((src: string) =>
-      remote ? isLocalReference(src) : !isLocalReference(src)
+      remote
+        ? isLocalReference(src, filePath)
+        : !isLocalReference(src, filePath)
     )
     .forEach((src: string) => delete paths[src]);
 
   return paths;
 }
 
-function isLocalReference(src: string): boolean {
-  return src.startsWith('.') || src.startsWith('webcontent');
+function isLocalReference(src: string, filePath: string): boolean {
+  return (
+    src.startsWith('.') ||
+    src.startsWith('webcontent') ||
+    (isSuperactivity(filePath) && src.includes('webcontent'))
+  );
+}
+
+function isSuperactivity(filePath: string): boolean {
+  return (
+    filePath.includes('x-oli-bio-simulator') ||
+    filePath.includes('x-oli-chat') ||
+    filePath.includes('x-oli-embed') ||
+    filePath.includes('x-oli-linked-activity') ||
+    filePath.includes('x-oli-lti') ||
+    filePath.includes('x-oli-print-certificate') ||
+    filePath.includes('x-oli-repl') ||
+    filePath.includes('x-oli-supertutor') ||
+    filePath.includes('x-cmu-') ||
+    filePath.includes('x-pitt-')
+  );
 }
