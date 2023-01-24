@@ -340,7 +340,7 @@ export function findInPackage(
   if (!fs.existsSync(decodedPath)) {
     if (dir.endsWith('content/')) return absolutePath;
     const dirArray: string[] = dir.split('/');
-    dirArray.pop();
+    if (dirArray[dirArray.length - 1] === '') dirArray.pop();
     dirArray.pop();
     dir = dirArray.join('/') + '/';
     return findInPackage(dir, reference, path.resolve(dir, reference));
