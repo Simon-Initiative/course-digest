@@ -118,7 +118,7 @@ export class Discussion extends Resource {
         page.title = r.children[0].title;
 
         // Override the default collab space configuration
-        page.collabSpace.status = 'active';
+        page.collabSpace.status = 'enabled';
         page.collabSpace.auto_accept = readBooleanParameter(
           $,
           'options',
