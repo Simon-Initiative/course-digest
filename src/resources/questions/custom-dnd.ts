@@ -94,12 +94,29 @@ function processLayout(
   const height = customTag.height;
   const width = customTag.width;
 
+  let targetArea : string;
+  let initiators : string; 
+  if (isXmlFormat($)) {  // convert abstract XML format DND layout
+    targetArea = convertTargetGroup($('targetGroup').first(), $) ;
+    initiators = convertInitiatorGroup($('initiatorGroup').first(), $);
+    console.log("converted XML layout from " + customTag.layoutFile);
+    console.log("targetArea:\n" + targetArea);
+    console.log("initiators:\n" + initiators);
+  } 
+  else { // HTML format: can be extracted directly           
+    targetArea = cutCDATA($('targetArea').first().html() as string);
+    initiators = cutCDATA($('initiators').first().html() as string);
+    console.log("extracted HTML from " + customTag.layoutFile);
+    console.log("targetArea:\n" + targetArea);
+    console.log("initiators:\n" + initiators);
+  }
+
   const updated = Object.assign({}, question, {
     height,
     width,
     layoutStyles: layoutStylesTrimmed,
-    targetArea: cutCDATA($('targetArea').first().html() as string),
-    initiators: cutCDATA($('initiators').first().html() as string),
+    targetArea: targetArea,
+    initiators: initiators,
   });
 
   if (customTag.dynaRefMap) {
@@ -110,6 +127,7 @@ function processLayout(
 }
 
 function cutStyleTags(layout: string) {
+  if (layout === null) return '';
   let s = replaceAll(layout, '<style>', '');
   s = replaceAll(s, '<style type="text/css">', '');
   s = replaceAll(s, '< /style>', '');
@@ -122,6 +140,50 @@ function cutCDATA(content: string) {
   s = replaceAll(s, '\\]\\]>', '');
   return s;
 }
+
+// For converting abstract XML layout spec to HTML format using nested styled divs
+
+function isXmlFormat ($: cheerio.Root): boolean  {
+  // XML uses targetGroup tag, HTML uses targetArea
+  return $('targetGroup').length != 0;
+}
+
+function convertTargetGroup(targetGroup : cheerio.Cheerio, $: cheerio.Root) : string {
+  const rows = 
+    $(targetGroup).children('contentRow').map((i: number, e:cheerio.Element) => 
+      convertContentRow($(e), $)
+    ).toArray().join('');
+
+  return '<div class="oli-dnd-table">\n' 
+          + rows
+          + '</div>';
+}
+
+function convertContentRow(contentRow: cheerio.Cheerio, $: cheerio.Root) : string {
+  const isHeaderRow = $(contentRow).children('target').length === 0;  
+  return ' <div class="dnd-row' + (isHeaderRow ? ' dnd-row-header' : '') + '">'
+         + $(contentRow).children().map((i,e) => 
+             convertCell($(e), $)
+           ).toArray().join('')
+         +'\n </div>\n';
+}
+
+function convertCell(item: cheerio.Cheerio, $: cheerio.Root){
+  if ($(item).is('target')) 
+    return `\n  <div input_ref="${$(item).attr('assessmentId')}" class="dnd-cell target" />`;
+
+  // else <text> element 
+  return  `\n  <div class="dnd-cell">${$(item).html()?.trim()}</div>`;         
+}
+
+function convertInitiatorGroup(initiatorGroup: cheerio.Cheerio, $: cheerio.Root) : string {
+  return $(initiatorGroup).children().map((i, e) => 
+        ` <div input_val="${$(e).attr('assessmentId')}" class="initiator">\n`
+        + $(e).html()?.trim()
+        + '\n </div>\n'
+  ).toArray().join('');
+}
+
 
 function switchInitiatorsWithTargets(
   customTag: CustomTagDetails,
@@ -232,7 +294,7 @@ export const isCustomDnD = (custom: any) =>
   (custom.src !== undefined && custom.src.toLowerCase().includes('dynadrop'));
 
 export const isSupportedDynaDropSrcFile = (filepath: string) =>
-  filepath.toLocaleLowerCase().includes('dynadrophtml');
+  filepath.toLocaleLowerCase().includes('dynadrop'); // DynaDropHTML.js or DynaDrop.js
 
 export const containsDynaDropTable = (custom: any) =>
   custom.src !== undefined && isSupportedDynaDropSrcFile(custom.src);
