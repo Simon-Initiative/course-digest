@@ -29,19 +29,22 @@ export function findCustomTag(
   if (custom !== undefined) {
     let inputRefsMap: Map<string, string> | null = null;
     if (containsDynaDropTable(custom) && stem !== null) {
-      const inputRefs = question.authoring.parts
+      const correctValues = question.authoring.parts
         .map((i: any) => {
           return i.responses
-            .filter((c: any) => c.score === 1)
+            .filter((c: any) => c.score > 0)
             .map((e: any) => {
               return e.rule.replace('input like {', '').replace('}', '');
             });
         })
         .flat();
-      inputRefsMap = inputRefs.reduce(
+      inputRefsMap = correctValues.reduce(
         (acc: Map<string, string>, val: string) => {
-          const v: string[] = val.split('_');
-          acc.set(v[1], v[0]);
+          // split constructed correct response value of form inputId_choiceValue
+          // to build map. Note choiceValue may contain underscores
+          const iSplit = val.indexOf('_');
+          const [inputId, choiceValue] = [val.slice(0, iSplit), val.slice(iSplit + 1)];
+          acc.set(choiceValue, inputId);
           return acc;
         },
         new Map()
@@ -79,6 +82,7 @@ function processLayout(
   baseFileName: string
 ) {
   const baseDir = baseFileName.substring(0, baseFileName.lastIndexOf('/') + 1);
+  console.log("Converting dnd layout " + customTag.layoutFile);
 
   const $ = DOM.read(baseDir + customTag.layoutFile, {
     normalizeWhitespace: false,
@@ -99,22 +103,17 @@ function processLayout(
   if (isXmlFormat($)) {  // convert abstract XML format DND layout
     targetArea = convertTargetGroup($('targetGroup').first(), $) ;
     initiators = convertInitiatorGroup($('initiatorGroup').first(), $);
-    console.log("converted XML layout from " + customTag.layoutFile);
-    console.log("targetArea:\n" + targetArea);
-    console.log("initiators:\n" + initiators);
+    
   } 
   else { // HTML format: can be extracted directly           
     targetArea = cutCDATA($('targetArea').first().html() as string);
     initiators = cutCDATA($('initiators').first().html() as string);
-    console.log("extracted HTML from " + customTag.layoutFile);
-    console.log("targetArea:\n" + targetArea);
-    console.log("initiators:\n" + initiators);
   }
 
   const updated = Object.assign({}, question, {
     height,
     width,
-    layoutStyles: layoutStylesTrimmed,
+    layoutStyles: TABLE_DND_CSS,
     targetArea: targetArea,
     initiators: initiators,
   });
@@ -150,8 +149,8 @@ function isXmlFormat ($: cheerio.Root): boolean  {
 
 function convertTargetGroup(targetGroup : cheerio.Cheerio, $: cheerio.Root) : string {
   const rows = 
-    $(targetGroup).children('contentRow').map((i: number, e:cheerio.Element) => 
-      convertContentRow($(e), $)
+    $(targetGroup).children().map((i: number, e:cheerio.Element) => 
+      convertRow($(e), $)
     ).toArray().join('');
 
   return '<div class="oli-dnd-table">\n' 
@@ -159,10 +158,11 @@ function convertTargetGroup(targetGroup : cheerio.Cheerio, $: cheerio.Root) : st
           + '</div>';
 }
 
-function convertContentRow(contentRow: cheerio.Cheerio, $: cheerio.Root) : string {
-  const isHeaderRow = $(contentRow).children('target').length === 0;  
+// Convert row element which may be <headerRow> or <contentRow> 
+function convertRow(row: cheerio.Cheerio, $: cheerio.Root) : string {  
+  const isHeaderRow = ($(row)[0] as cheerio.TagElement).tagName == 'headerRow';
   return ' <div class="dnd-row' + (isHeaderRow ? ' dnd-row-header' : '') + '">'
-         + $(contentRow).children().map((i,e) => 
+         + $(row).children().map((i,e) => 
              convertCell($(e), $)
            ).toArray().join('')
          +'\n </div>\n';
@@ -226,8 +226,14 @@ function switchInitiatorsWithTargets(
     )
   );
   $initiators('.initiator').map((i: any, x: any) => {
-    const oldVal: string | undefined = $initiators(x).attr('input_val');
+    let oldVal: string | undefined = $initiators(x).attr('input_val');
     let newVal: string | undefined;
+    // in some cases input referenced here by 1-based index alone. In these
+    // cases input seems to have id of form i1, i2, i3.
+    if (oldVal && /^\d$/.test(oldVal)) {
+     oldVal = 'i' + oldVal;
+    } 
+
     customTag.dynaRefMap?.forEach((value: string, key: string) => {
       if (value === oldVal) {
         newVal = key;
@@ -236,6 +242,7 @@ function switchInitiatorsWithTargets(
     if (newVal) {
       $initiators(x).attr('input_val', newVal);
     } else {
+      console.log("Initiator input not found! input_val= " + oldVal);
       updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
       updated.authoring.parts = updated.authoring.parts.filter(
         (i: any) => i.id !== oldVal
@@ -244,7 +251,6 @@ function switchInitiatorsWithTargets(
   });
   updated.targetArea = $targets.html();
   updated.initiators = $initiators.html();
-  updated.layoutStyles = TABLE_DND_CSS;
 }
 
 export function replaceImageReferences(
