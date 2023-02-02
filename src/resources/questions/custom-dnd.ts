@@ -316,7 +316,8 @@ function stripCustomTag(question: any) {
 }
 
 export const isCustomDnD = (custom: any) =>
-  custom.id.toLowerCase() === 'dragdrop' ||
+  // id field may be omitted
+  custom.id?.toLowerCase() === 'dragdrop' ||
   (custom.src !== undefined && custom.src.toLowerCase().includes('dynadrop'));
 
 export const isSupportedDynaDropSrcFile = (filepath: string) =>
