@@ -43,7 +43,10 @@ export function findCustomTag(
           // split constructed correct response value of form inputId_choiceValue
           // to build map. Note choiceValue may contain underscores
           const iSplit = val.indexOf('_');
-          const [inputId, choiceValue] = [val.slice(0, iSplit), val.slice(iSplit + 1)];
+          const [inputId, choiceValue] = [
+            val.slice(0, iSplit),
+            val.slice(iSplit + 1),
+          ];
           acc.set(choiceValue, inputId);
           return acc;
         },
@@ -82,7 +85,7 @@ function processLayout(
   baseFileName: string
 ) {
   const baseDir = baseFileName.substring(0, baseFileName.lastIndexOf('/') + 1);
-  console.log("Converting dnd layout " + customTag.layoutFile);
+  console.log('Converting dnd layout ' + customTag.layoutFile);
 
   const $ = DOM.read(baseDir + customTag.layoutFile, {
     normalizeWhitespace: false,
@@ -98,14 +101,14 @@ function processLayout(
   const height = customTag.height;
   const width = customTag.width;
 
-  let targetArea : string;
-  let initiators : string; 
-  if (isXmlFormat($)) {  // convert abstract XML format DND layout
-    targetArea = convertTargetGroup($('targetGroup').first(), $) ;
+  let targetArea: string;
+  let initiators: string;
+  if (isXmlFormat($)) {
+    // convert abstract XML format DND layout
+    targetArea = convertTargetGroup($('targetGroup').first(), $);
     initiators = convertInitiatorGroup($('initiatorGroup').first(), $);
-    
-  } 
-  else { // HTML format: can be extracted directly           
+  } else {
+    // HTML format: can be extracted directly
     targetArea = cutCDATA($('targetArea').first().html() as string);
     initiators = cutCDATA($('initiators').first().html() as string);
   }
@@ -142,48 +145,65 @@ function cutCDATA(content: string) {
 
 // For converting abstract XML layout spec to HTML format using nested styled divs
 
-function isXmlFormat ($: cheerio.Root): boolean  {
+function isXmlFormat($: cheerio.Root): boolean {
   // XML uses targetGroup tag, HTML uses targetArea
   return $('targetGroup').length != 0;
 }
 
-function convertTargetGroup(targetGroup : cheerio.Cheerio, $: cheerio.Root) : string {
-  const rows = 
-    $(targetGroup).children().map((i: number, e:cheerio.Element) => 
-      convertRow($(e), $)
-    ).toArray().join('');
+function convertTargetGroup(
+  targetGroup: cheerio.Cheerio,
+  $: cheerio.Root
+): string {
+  const rows = $(targetGroup)
+    .children()
+    .map((i: number, e: cheerio.Element) => convertRow($(e), $))
+    .toArray()
+    .join('');
 
-  return '<div class="oli-dnd-table">\n' 
-          + rows
-          + '</div>';
+  return '<div class="oli-dnd-table">\n' + rows + '</div>';
 }
 
-// Convert row element which may be <headerRow> or <contentRow> 
-function convertRow(row: cheerio.Cheerio, $: cheerio.Root) : string {  
+// Convert row element which may be <headerRow> or <contentRow>
+function convertRow(row: cheerio.Cheerio, $: cheerio.Root): string {
   const isHeaderRow = ($(row)[0] as cheerio.TagElement).tagName == 'headerRow';
-  return ' <div class="dnd-row' + (isHeaderRow ? ' dnd-row-header' : '') + '">'
-         + $(row).children().map((i,e) => 
-             convertCell($(e), $)
-           ).toArray().join('')
-         +'\n </div>\n';
+  return (
+    ' <div class="dnd-row' +
+    (isHeaderRow ? ' dnd-row-header' : '') +
+    '">' +
+    $(row)
+      .children()
+      .map((i, e) => convertCell($(e), $))
+      .toArray()
+      .join('') +
+    '\n </div>\n'
+  );
 }
 
-function convertCell(item: cheerio.Cheerio, $: cheerio.Root){
-  if ($(item).is('target')) 
-    return `\n  <div input_ref="${$(item).attr('assessmentId')}" class="dnd-cell target" />`;
+function convertCell(item: cheerio.Cheerio, $: cheerio.Root) {
+  if ($(item).is('target'))
+    return `\n  <div input_ref="${$(item).attr(
+      'assessmentId'
+    )}" class="dnd-cell target" />`;
 
-  // else <text> element 
-  return  `\n  <div class="dnd-cell">${$(item).html()?.trim()}</div>`;         
+  // else <text> element
+  return `\n  <div class="dnd-cell">${$(item).html()?.trim()}</div>`;
 }
 
-function convertInitiatorGroup(initiatorGroup: cheerio.Cheerio, $: cheerio.Root) : string {
-  return $(initiatorGroup).children().map((i, e) => 
-        ` <div input_val="${$(e).attr('assessmentId')}" class="initiator">\n`
-        + $(e).html()?.trim()
-        + '\n </div>\n'
-  ).toArray().join('');
+function convertInitiatorGroup(
+  initiatorGroup: cheerio.Cheerio,
+  $: cheerio.Root
+): string {
+  return $(initiatorGroup)
+    .children()
+    .map(
+      (i, e) =>
+        ` <div input_val="${$(e).attr('assessmentId')}" class="initiator">\n` +
+        $(e).html()?.trim() +
+        '\n </div>\n'
+    )
+    .toArray()
+    .join('');
 }
-
 
 function switchInitiatorsWithTargets(
   customTag: CustomTagDetails,
@@ -231,8 +251,8 @@ function switchInitiatorsWithTargets(
     // in some cases input referenced here by 1-based index alone. In these
     // cases input seems to have id of form i1, i2, i3.
     if (oldVal && /^\d$/.test(oldVal)) {
-     oldVal = 'i' + oldVal;
-    } 
+      oldVal = 'i' + oldVal;
+    }
 
     customTag.dynaRefMap?.forEach((value: string, key: string) => {
       if (value === oldVal) {
@@ -242,7 +262,7 @@ function switchInitiatorsWithTargets(
     if (newVal) {
       $initiators(x).attr('input_val', newVal);
     } else {
-      console.log("Initiator input not found! input_val= " + oldVal);
+      console.log('Initiator input not found! input_val= ' + oldVal);
       updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
       updated.authoring.parts = updated.authoring.parts.filter(
         (i: any) => i.id !== oldVal
