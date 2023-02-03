@@ -41,7 +41,11 @@ export class Superactivity extends Resource {
         if (!defaults) {
           resolve(['']);
         } else {
-          if (file.includes('x-oli-embed-activity-highstakes') || navigable) {
+          if (
+            file.includes('x-oli-embed-activity-highstakes') ||
+            file.includes('x-cmu-ctat-tutor2') ||
+            navigable
+          ) {
             const activity = toActivity(
               toActivityModel(defaults.base, defaults.src, title, xml),
               guid(),
@@ -173,13 +177,13 @@ function determineActivityDefaults(
     case 'ctat':
       if (file.indexOf('x-cmu-ctat-tutor2') !== -1) {
         return {
-          subType: 'oli_ctat2',
+          subType: 'oli_embedded',
           base: 'ctat2',
           src: 'tutor.html',
         };
       }
       return {
-        subType: 'oli_ctat',
+        subType: 'oli_embedded',
         base: 'ctat',
         src: 'tutor.html',
       };
