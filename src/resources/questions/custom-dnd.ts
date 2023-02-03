@@ -30,21 +30,23 @@ export function findCustomTag(
     let inputRefsMap: Map<string, string> | null = null;
     if (containsDynaDropTable(custom) && stem !== null) {
       // build map of correct choiceId => inputId for swapping ids in layout
-      inputRefsMap = new Map<string, string>(); 
-      question.authoring.parts.map((part: any) => {          
-          const inputId = part.id;   
-          const correctValue = part.responses.find((r: any) => r.score > 0)
-                     .rule.replace('input like {', '').replace('}', '');
-          if (correctValue) {
-            // correct value is constructed as inputId_choiceId. Both id parts may have
-            // underscores so extract choiceId as rest of correctValue after inputId_
-            const choiceId = correctValue.slice(inputId.length + 1);
-            // console.log('map choice "' + choiceId + '" => input "' + inputId + '"');
-            inputRefsMap?.set(choiceId, inputId);
-          } else {
-            console.log("correct value not found! input_id = " + inputId);
-          }
-        })
+      inputRefsMap = new Map<string, string>();
+      question.authoring.parts.map((part: any) => {
+        const inputId = part.id;
+        const correctValue = part.responses
+          .find((r: any) => r.score > 0)
+          .rule.replace('input like {', '')
+          .replace('}', '');
+        if (correctValue) {
+          // correct value is constructed as inputId_choiceId. Both id parts may have
+          // underscores so extract choiceId as rest of correctValue after inputId_
+          const choiceId = correctValue.slice(inputId.length + 1);
+          // console.log('map choice "' + choiceId + '" => input "' + inputId + '"');
+          inputRefsMap?.set(choiceId, inputId);
+        } else {
+          console.log('correct value not found! input_id = ' + inputId);
+        }
+      });
     }
     return {
       question: question,
@@ -255,7 +257,7 @@ function switchInitiatorsWithTargets(
     if (newVal) {
       $initiators(x).attr('input_val', newVal);
     } else {
-      console.log('Initiator input not found! input_val= "' + oldVal +'"');
+      console.log('Initiator input not found! input_val= "' + oldVal + '"');
       updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
       updated.authoring.parts = updated.authoring.parts.filter(
         (i: any) => i.id !== oldVal
