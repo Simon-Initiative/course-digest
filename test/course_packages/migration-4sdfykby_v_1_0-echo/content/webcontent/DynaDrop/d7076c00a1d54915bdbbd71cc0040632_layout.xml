@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dragdrop PUBLIC "-//Carnegie Mellon University//DTD Dynadrop Layout 3.8//EN" "http://oli.cmu.edu/dtd/oli_dynadrop_layout_1_0.dtd">
+<dragdrop>
+  <targetGroup>
+    <contentRow>
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">(¬p ∨ q) ∧ (p ∨ ¬q)</span>
+      </text>
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 1</span>
+      </text>
+    </contentRow>
+    <contentRow>
+      <target assessmentId="b3d22ec525534709b3646746de8c7045" />
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 2</span>
+      </text>
+    </contentRow>
+    <contentRow>
+      <target assessmentId="c993e0722fc7463d9b4b88c741e33b99" />
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 3</span>
+      </text>
+    </contentRow>
+    <contentRow>
+      <target assessmentId="cdd17333e6d840ccb6c651037ddd03e5" />
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 4</span>
+      </text>
+    </contentRow>
+    <contentRow>
+      <target assessmentId="e67dc99b4e794842bfd606a83e25a688" />
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 5</span>
+      </text>
+    </contentRow>
+    <contentRow>
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">(p ∧ q) ∨ (¬p ∧ ¬q)</span>
+      </text>
+      <text>
+        <span fontWeight="normal" fontSize="12" fontStyle="normal" textDecoration="none">Step 6</span>
+      </text>
+    </contentRow>
+  </targetGroup>
+  <initiatorGroup shuffle="false" useInitiatorMaxWidth="false">
+    <initiator assessmentId="afa772fc8d9b4e5898eeba4fe73cf14a">
+      <span fontSize="12" fontWeight="normal" fontStyle="normal" textDecoration="none">((¬p ∨ q) ∧ p) ∨ ((¬p ∨ q) ∧ ¬q)</span>
+    </initiator>
+    <initiator assessmentId="eae55509030b435ea0e44f3a9e83436e">
+      <span fontSize="12" fontWeight="normal" fontStyle="normal" textDecoration="none">(¬p ∧ p) ∨ (q ∧ p) ∨ (¬p ∧ ¬q) ∨ (q ∧ ¬q)</span>
+    </initiator>
+    <initiator assessmentId="d42c071ba4204c5bb662249d37bfa3b7">
+      <span fontSize="12" fontWeight="normal" fontStyle="normal" textDecoration="none">⊥ ∨ (q ∧ p) ∨ (¬p ∧ ¬q) ∨ ⊥</span>
+    </initiator>
+    <initiator assessmentId="fd2e597826b443b9b208fa1dcde63425">
+      <span fontSize="12" fontWeight="normal" fontStyle="normal" textDecoration="none">(q ∧ p) ∨ (¬p ∧ ¬q)</span>
+    </initiator>
+  </initiatorGroup>
+</dragdrop>

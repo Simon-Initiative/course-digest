@@ -29,23 +29,24 @@ export function findCustomTag(
   if (custom !== undefined) {
     let inputRefsMap: Map<string, string> | null = null;
     if (containsDynaDropTable(custom) && stem !== null) {
-      const inputRefs = question.authoring.parts
-        .map((i: any) => {
-          return i.responses
-            .filter((c: any) => c.score === 1)
-            .map((e: any) => {
-              return e.rule.replace('input like {', '').replace('}', '');
-            });
-        })
-        .flat();
-      inputRefsMap = inputRefs.reduce(
-        (acc: Map<string, string>, val: string) => {
-          const v: string[] = val.split('_');
-          acc.set(v[1], v[0]);
-          return acc;
-        },
-        new Map()
-      );
+      // build map of correct choiceId => inputId for swapping ids in layout
+      inputRefsMap = new Map<string, string>();
+      question.authoring.parts.map((part: any) => {
+        const inputId = part.id;
+        const correctValue = part.responses
+          .find((r: any) => r.score > 0)
+          .rule.replace('input like {', '')
+          .replace('}', '');
+        if (correctValue) {
+          // correct value is constructed as inputId_choiceId. Both id parts may have
+          // underscores so extract choiceId as rest of correctValue after inputId_
+          const choiceId = correctValue.slice(inputId.length + 1);
+          // console.log('map choice "' + choiceId + '" => input "' + inputId + '"');
+          inputRefsMap?.set(choiceId, inputId);
+        } else {
+          console.log('correct value not found! input_id = ' + inputId);
+        }
+      });
     }
     return {
       question: question,
@@ -79,6 +80,7 @@ function processLayout(
   baseFileName: string
 ) {
   const baseDir = baseFileName.substring(0, baseFileName.lastIndexOf('/') + 1);
+  console.log('Converting dnd layout ' + customTag.layoutFile);
 
   const $ = DOM.read(baseDir + customTag.layoutFile, {
     normalizeWhitespace: false,
@@ -94,12 +96,24 @@ function processLayout(
   const height = customTag.height;
   const width = customTag.width;
 
+  let targetArea: string;
+  let initiators: string;
+  if (isXmlFormat($)) {
+    // convert abstract XML format DND layout
+    targetArea = convertTargetGroup($('targetGroup').first(), $);
+    initiators = convertInitiatorGroup($('initiatorGroup').first(), $);
+  } else {
+    // HTML format: can be extracted directly
+    targetArea = cutCDATA($('targetArea').first().html() as string);
+    initiators = cutCDATA($('initiators').first().html() as string);
+  }
+
   const updated = Object.assign({}, question, {
     height,
     width,
-    layoutStyles: layoutStylesTrimmed,
-    targetArea: cutCDATA($('targetArea').first().html() as string),
-    initiators: cutCDATA($('initiators').first().html() as string),
+    layoutStyles: TABLE_DND_CSS,
+    targetArea: targetArea,
+    initiators: initiators,
   });
 
   if (customTag.dynaRefMap) {
@@ -110,6 +124,7 @@ function processLayout(
 }
 
 function cutStyleTags(layout: string) {
+  if (layout === null) return '';
   let s = replaceAll(layout, '<style>', '');
   s = replaceAll(s, '<style type="text/css">', '');
   s = replaceAll(s, '< /style>', '');
@@ -121,6 +136,68 @@ function cutCDATA(content: string) {
   let s = replaceAll(content, '<!\\[CDATA\\[', '');
   s = replaceAll(s, '\\]\\]>', '');
   return s;
+}
+
+// For converting abstract XML layout spec to HTML format using nested styled divs
+
+function isXmlFormat($: cheerio.Root): boolean {
+  // XML uses targetGroup tag, HTML uses targetArea
+  return $('targetGroup').length != 0;
+}
+
+function convertTargetGroup(
+  targetGroup: cheerio.Cheerio,
+  $: cheerio.Root
+): string {
+  const rows = $(targetGroup)
+    .children()
+    .map((i: number, e: cheerio.Element) => convertRow($(e), $))
+    .toArray()
+    .join('');
+
+  return '<div class="oli-dnd-table">\n' + rows + '</div>';
+}
+
+// Convert row element which may be <headerRow> or <contentRow>
+function convertRow(row: cheerio.Cheerio, $: cheerio.Root): string {
+  const isHeaderRow = ($(row)[0] as cheerio.TagElement).tagName == 'headerRow';
+  return (
+    ' <div class="dnd-row' +
+    (isHeaderRow ? ' dnd-row-header' : '') +
+    '">' +
+    $(row)
+      .children()
+      .map((i, e) => convertCell($(e), $))
+      .toArray()
+      .join('') +
+    '\n </div>\n'
+  );
+}
+
+function convertCell(item: cheerio.Cheerio, $: cheerio.Root) {
+  if ($(item).is('target'))
+    return `\n  <div input_ref="${$(item).attr(
+      'assessmentId'
+    )}" class="dnd-cell target" />`;
+
+  // else <text> element
+  return `\n  <div class="dnd-cell">${$(item).html()?.trim()}</div>`;
+}
+
+function convertInitiatorGroup(
+  initiatorGroup: cheerio.Cheerio,
+  $: cheerio.Root
+): string {
+  return $(initiatorGroup)
+    .children()
+    .map(
+      (i, e) =>
+        ` <div input_val="${$(e).attr('assessmentId')}" class="initiator">\n` +
+        $(e).html()?.trim() +
+        '\n </div>\n'
+    )
+    .toArray()
+    .join('');
 }
 
 function switchInitiatorsWithTargets(
@@ -164,8 +241,14 @@ function switchInitiatorsWithTargets(
     )
   );
   $initiators('.initiator').map((i: any, x: any) => {
-    const oldVal: string | undefined = $initiators(x).attr('input_val');
+    let oldVal: string | undefined = $initiators(x).attr('input_val');
     let newVal: string | undefined;
+    // in some cases input referenced here by 1-based index alone. In these
+    // cases input seems to have id of form i1, i2, i3.
+    if (oldVal && /^\d$/.test(oldVal)) {
+      oldVal = 'i' + oldVal;
+    }
+
     customTag.dynaRefMap?.forEach((value: string, key: string) => {
       if (value === oldVal) {
         newVal = key;
@@ -174,6 +257,7 @@ function switchInitiatorsWithTargets(
     if (newVal) {
       $initiators(x).attr('input_val', newVal);
     } else {
+      console.log('Initiator input not found! input_val= "' + oldVal + '"');
       updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
       updated.authoring.parts = updated.authoring.parts.filter(
         (i: any) => i.id !== oldVal
@@ -182,7 +266,6 @@ function switchInitiatorsWithTargets(
   });
   updated.targetArea = $targets.html();
   updated.initiators = $initiators.html();
-  updated.layoutStyles = TABLE_DND_CSS;
 }
 
 export function replaceImageReferences(
@@ -228,11 +311,12 @@ function stripCustomTag(question: any) {
 }
 
 export const isCustomDnD = (custom: any) =>
-  custom.id.toLowerCase() === 'dragdrop' ||
+  // id field may be omitted
+  custom.id?.toLowerCase() === 'dragdrop' ||
   (custom.src !== undefined && custom.src.toLowerCase().includes('dynadrop'));
 
 export const isSupportedDynaDropSrcFile = (filepath: string) =>
-  filepath.toLocaleLowerCase().includes('dynadrophtml');
+  filepath.toLocaleLowerCase().includes('dynadrop'); // DynaDropHTML.js or DynaDrop.js
 
 export const containsDynaDropTable = (custom: any) =>
   custom.src !== undefined && isSupportedDynaDropSrcFile(custom.src);
