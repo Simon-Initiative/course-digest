@@ -40,28 +40,40 @@ export function hasCatchAllRule(responses: any[]) {
 }
 
 export function ensureParagraphs(children: any[]) {
+  // if all children are text elements: wrap all in single p
   if (children.every((c: any) => c.text !== undefined)) {
     const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
     return [{ type: 'p', children: withEmptyText }];
   }
+
   return children;
+}
+
+export function isBlankText(e: any): boolean {
+  return e && e.text !== undefined && e.text.trim().length === 0;
+}
+
+export function wrapText(children: any) {
+  // if loose text pieces alongside blocks, strip spurious blank ones,
+  // but keep any non-blank ones, wrapping each in a p.
+  if (
+    children.length > 1 &&
+    children.some((b: any) => XML.isBlockElement(b.type))
+  ) {
+    return children
+      .filter((c: any) => !isBlankText(c))
+      .map((c: any) =>
+        c.text !== undefined ? { type: 'p', children: [{ text: c.text }] } : c
+      );
+  }
 }
 
 export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
-    content: stripSpuriousText(ensureParagraphs(stem.children)),
+    content: wrapText(ensureParagraphs(stem.children)),
   };
 }
-
-const stripSpuriousText = (children: any[]) => {
-  if (children.length > 1) {
-    if (children.some((b: any) => XML.isBlockElement(b.type))) {
-      return children.filter((b: any) => b.text === undefined);
-    }
-  }
-  return children;
-};
 
 export function buildStemFromText(text: string) {
   return {
