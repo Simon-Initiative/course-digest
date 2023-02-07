@@ -66,6 +66,8 @@ export function wrapText(children: any) {
         c.text !== undefined ? { type: 'p', children: [{ text: c.text }] } : c
       );
   }
+
+  return children;
 }
 
 export function buildStem(question: any) {
