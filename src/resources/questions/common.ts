@@ -54,7 +54,7 @@ export function isBlankText(e: any): boolean {
 }
 
 export function collectTextsIntoParagraphs(children: any) {
-  let result = [];
+  const result = [];
   let successiveTexts: any[] = [];
   children.forEach((c: any) => {
     if (c.text !== undefined) {
