@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="scientific_notation">
+    <title>tutor</title>
+    <page>
+        
+        <question id="q1">
+            <body>To be sure you understand this process, enter 6.022&times;10<sup>23</sup> in the input box below. 
+                Be sure to use the process as described above.
+                <p><input_ref input="q1numeric"/> </p>
+            </body>
+            <numeric id="q1numeric" size="small"></numeric>
+            <part>
+                <response match="6.022e23" score="10" input="q1numeric">
+                    <feedback>Correct. This is the way to enter scientific notation into numeric input answer boxes 
+                    throughout the course.</feedback>
+                </response>
+                <response match="*" input="q1numeric">
+                    <feedback>Incorrect. Enter 6.022e23 into the input box.  </feedback>
+                </response>
+               
+            </part>
+        </question>
+    </page>
+    
+</assessment>
+
+

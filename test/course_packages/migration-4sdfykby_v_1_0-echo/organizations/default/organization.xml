@@ -1,150 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE organization PUBLIC "-//Carnegie Mellon University//DTD Content Organization Simple 2.3//EN" "http://oli.web.cmu.edu/dtd/oli_content_organization_simple_2_3.dtd">
 <organization id="migration-4sdfykby-1.0_default" version="1.0">
-    <title>
+  <title>
 		Default Organization
 	</title>
-    <description>
+  <description>
 		Sample organization included with the OLI project template.
 	</description>
-    <audience>
+  <audience>
 		This organization is intended as an example for OLI content authors.
 	</audience>
-    <pref:preference_values xmlns:pref="http://oli.web.cmu.edu/preferences/">
-      <pref:preference_value fixed="false" value="excel" preference="statistics.package" />
-    </pref:preference_values>
-    <labels sequence="Sequence" unit="Unit" module="Module" section="Section" />
-    <sequences>
-        <sequence id="part1" category="content" audience="all">
-            <title>
+  <pref:preference_values xmlns:pref="http://oli.web.cmu.edu/preferences/">
+    <pref:preference_value fixed="false" value="excel" preference="statistics.package"/>
+  </pref:preference_values>
+  <labels sequence="Sequence" unit="Unit" module="Module" section="Section"/>
+  <sequences>
+    <sequence id="part1" category="content" audience="all">
+      <title>
 				Project Template
 			</title>
-            <unit id="pre_student_survey">
-                <title>Student Feedback</title>
-                <module id="pre_survey">
-                    <title>Pre-Course Student Expectations</title>
-                    <item>
-                        <resourceref idref="pre_course_survey"/>
-                    </item>
-                </module>
-            </unit>
-            <unit id="lesson1">
-                <title>
+      <unit id="pre_student_survey">
+        <title>Student Feedback</title>
+        <module id="pre_survey">
+          <title>Pre-Course Student Expectations</title>
+          <item>
+            <resourceref idref="pre_course_survey"/>
+          </item>
+        </module>
+      </unit>
+      <unit id="lesson1">
+        <title>
 					Lesson 1
 				</title>
-                <module id="introduction">
-                    <title>
+        <module id="introduction">
+          <title>
 						Introduction
 					</title>
-                    <item id="bca2e8dcf45e4ca5889891c18a62d648" scoring_mode="default">
-                        <resourceref idref="welcome" />
-                    </item>
-                    <item id="ebe32e4f2039442896f67b64a54acd0d" scoring_mode="default">
-                        <resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93" />
-                    </item>
-                    <item id="ebe32e4f2039442896f67b64a54acd0e" scoring_mode="default">
-                        <resourceref idref="newc72f87db5a5543b5ae8582d2d4cd34a7" />
-                    </item>
-                </module>
-                <module id="br">
-                  <title>
+          <item id="bca2e8dcf45e4ca5889891c18a62d648" scoring_mode="default">
+            <resourceref idref="welcome"/>
+          </item>
+          <item id="ebe32e4f2039442896f67b64a54acd0d" scoring_mode="default">
+            <resourceref idref="newe6ddd6fec8f54749a037ef13abd8df93"/>
+          </item>
+          <item id="ebe32e4f2039442896f67b64a54acd0e" scoring_mode="default">
+            <resourceref idref="newc72f87db5a5543b5ae8582d2d4cd34a7"/>
+          </item>
+        </module>
+        <module id="br">
+          <title>
           Branching assessments
         </title>
-                  <item id="bca2e8dcf45e89891c18a62d648" scoring_mode="default">
-                      <resourceref idref="branching_page" />
-                  </item>
-                 
-              </module>
-                <module id="corecomponents">
-                    <title>
+          <item id="bca2e8dcf45e89891c18a62d648" scoring_mode="default">
+            <resourceref idref="branching_page"/>
+          </item>
+        </module>
+        <module id="corecomponents">
+          <title>
 						Core Page Components
 					</title>
-                    <item id="bca2e8dcsssca5889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="submit_and_compare_page" />
-                    </item>
-                    <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="extra" />
-                    </item>
-                    <item id="bca45e4ca5889891c12d699" scoring_mode="default">
-                      <resourceref idref="images" />
-                  </item>
-                    <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="mathml" />
-                    </item>
-                    <item id="bca2e8dc245e4ca5889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="entities" />
-                    </item>
-                    <item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="materials" />
-                    </item>
-                    <item id="bca2e889891c18a62d699" scoring_mode="default">
-                        <resourceref idref="composite" />
-                    </item>
-                    <item id="bca2e88983a62d699" scoring_mode="default">
-                        <resourceref idref="styled_lists" />
-                    </item>
-                    <item id="bca2e88983a62dd699" scoring_mode="default">
-                      <resourceref idref="video" />
-                    </item>
-                    <item id="bca2e88983a62dd6ddd99" scoring_mode="default">
-                      <resourceref idref="tables" />
-                    </item>
-                    <item id="bca2e88dad983a62dd6ddd99" scoring_mode="default">
-                      <resourceref idref="inquiry" />
-                    </item>
-                    <item id="bca2s99" scoring_mode="default">
-                      <resourceref idref="definitions" />
-                    </item>
-                    <item id="bca2a2dd6ddd99" scoring_mode="default">
-                      <resourceref idref="figures" />
-                    </item>
-                    <item id="bca2a2dad6ddd99" scoring_mode="default">
-                      <resourceref idref="dialog" />
-                    </item>
-                    <item id="bca2a2dad6aasdfasdddd99" scoring_mode="default">
-                      <resourceref idref="conjugation" />
-                    </item>
-                    <item id="bca2a2dad6aasdfasddde00" scoring_mode="default">
-                      <resourceref idref="sections" />
-                    </item>
-                    <item id="bca2a2dad6asasdfasddaade00" scoring_mode="default">
-                      <resourceref idref="media" />
-                    </item>
-                    <item id="bca2a2daad6aasasdfasddaade00" scoring_mode="default">
-                      <resourceref idref="command" />
-                    </item>
-                    <item id="bca2aa2daad6aasasdfasddaade00" scoring_mode="default">
-                      <resourceref idref="definition_list" />
-                    </item>
-                    <item id="45375887E0B04DF7A98BF5DA2D17455B" scoring_mode="default">
-                      <resourceref idref="alternatives" />
-                    </item>
-                </module>
-                <module id="variables">
-                    <title>
+          <item id="bca2e8dcsssca5889891c18a62d699" scoring_mode="default">
+            <resourceref idref="submit_and_compare_page"/>
+          </item>
+          <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
+            <resourceref idref="extra"/>
+          </item>
+          <item id="bca45e4ca5889891c12d699" scoring_mode="default">
+            <resourceref idref="images"/>
+          </item>
+          <item id="bca2e8dcf45e4ca5889891c18a62d699" scoring_mode="default">
+            <resourceref idref="mathml"/>
+          </item>
+          <item id="bca2e8dc245e4ca5889891c18a62d699" scoring_mode="default">
+            <resourceref idref="entities"/>
+          </item>
+          <item id="bca2e85e4ca5889891c18a62d699" scoring_mode="default">
+            <resourceref idref="materials"/>
+          </item>
+          <item id="bca2e889891c18a62d699" scoring_mode="default">
+            <resourceref idref="composite"/>
+          </item>
+          <item id="bca2e88983a62d699" scoring_mode="default">
+            <resourceref idref="styled_lists"/>
+          </item>
+          <item id="bca2e88983a62dd699" scoring_mode="default">
+            <resourceref idref="video"/>
+          </item>
+          <item id="bca2e88983a62dd6ddd99" scoring_mode="default">
+            <resourceref idref="tables"/>
+          </item>
+          <item id="bca2e88dad983a62dd6ddd99" scoring_mode="default">
+            <resourceref idref="inquiry"/>
+          </item>
+          <item id="bca2s99" scoring_mode="default">
+            <resourceref idref="definitions"/>
+          </item>
+          <item id="bca2a2dd6ddd99" scoring_mode="default">
+            <resourceref idref="figures"/>
+          </item>
+          <item id="bca2a2dad6ddd99" scoring_mode="default">
+            <resourceref idref="dialog"/>
+          </item>
+          <item id="bca2a2dad6aasdfasdddd99" scoring_mode="default">
+            <resourceref idref="conjugation"/>
+          </item>
+          <item id="bca2a2dad6aasdfasddde00" scoring_mode="default">
+            <resourceref idref="sections"/>
+          </item>
+          <item id="bca2a2dad6asasdfasddaade00" scoring_mode="default">
+            <resourceref idref="media"/>
+          </item>
+          <item id="bca2a2daad6aasasdfasddaade00" scoring_mode="default">
+            <resourceref idref="command"/>
+          </item>
+          <item id="bca2aa2daad6aasasdfasddaade00" scoring_mode="default">
+            <resourceref idref="definition_list"/>
+          </item>
+          <item id="45375887E0B04DF7A98BF5DA2D17455B" scoring_mode="default">
+            <resourceref idref="alternatives"/>
+          </item>
+        </module>
+        <module id="variables">
+          <title>
 						Dynamic Questions
 					</title>
-                    <item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
-                        <resourceref idref="assessment_with_selection" />
-                    </item>
-                </module>
-                <module id="dnd">
-                    <title>
+          <item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
+            <resourceref idref="assessment_with_selection"/>
+          </item>
+        </module>
+        <module id="dnd">
+          <title>
 						Drag and Drop Questions
 					</title>
-					<item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
-						<resourceref idref="customdnd" />
-					</item>
-				</module>
-				<module id="super">
-					<title>
+          <item id="bca2e8dcf45e4ca5832d29" scoring_mode="default">
+            <resourceref idref="customdnd"/>
+          </item>
+        </module>
+        <module id="super">
+          <title>
 						Super Activities
 					</title>
-					<item id="bca2e8dcf45e4ca5836d29" scoring_mode="default">
-						<resourceref idref="embed_super" />
-					</item>
-				</module>
-			</unit>
-		</sequence>
-	</sequences>
+          <item id="bca2e8dcf45e4ca5836d29" scoring_mode="default">
+            <resourceref idref="embed_super"/>
+          </item>
+        </module>
+        <module id="bugfixes">
+          <title>
+					Bug Fixes	
+					</title>
+          <item id="55375887E0B04DF7A98BF5DA2D17455C" scoring_mode="default">
+            <resourceref idref="loosetext"/>
+          </item>
+        </module>
+      </unit>
+    </sequence>
+  </sequences>
 </organization>
