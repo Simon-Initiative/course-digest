@@ -53,18 +53,44 @@ export function isBlankText(e: any): boolean {
   return e && e.text !== undefined && e.text.trim().length === 0;
 }
 
-export function wrapText(children: any) {
+export function collectTextsIntoParagraphs(children: any) {
+  let result = [];
+  let successiveTexts: any[] = [];
+  children.forEach((c: any) => {
+    if (c.text !== undefined) {
+      successiveTexts.push(c);
+    } else {
+      // hit non-text: finish any pending paragraph and reset
+      if (successiveTexts.length > 0) {
+        result.push({ type: 'p', children: successiveTexts });
+        successiveTexts = [];
+      }
+      result.push(c);
+    }
+  });
+  // finish any final pending paragraph
+  if (successiveTexts.length > 0) {
+    result.push({ type: 'p', children: successiveTexts });
+  }
+  return result;
+}
+
+export function wrapLooseText(children: any) {
   // if loose text pieces alongside blocks, strip spurious blank ones,
-  // but keep any non-blank ones, wrapping each in a p.
-  if (
-    children.length > 1 &&
-    children.some((b: any) => XML.isBlockElement(b.type))
-  ) {
-    return children
-      .filter((c: any) => !isBlankText(c))
-      .map((c: any) =>
-        c.text !== undefined ? { type: 'p', children: [{ text: c.text }] } : c
+  // collecting successive non-blank text pieces into p's.
+  if (children.length > 1) {
+    if (children.some((b: any) => XML.isBlockElement(b.type))) {
+      const result = collectTextsIntoParagraphs(
+        children.filter((c: any) => !isBlankText(c))
       );
+      /* 
+      if (children.some((b: any) => b.text !== undefined && !isBlankText(b))) {
+        console.log('wrapText in:' + JSON.stringify(children, null, 2));
+        console.log('wrapText out:' + JSON.stringify(result, null, 2));
+      } 
+      */
+      return result;
+    }
   }
 
   return children;
@@ -73,7 +99,7 @@ export function wrapText(children: any) {
 export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
-    content: wrapText(ensureParagraphs(stem.children)),
+    content: wrapLooseText(ensureParagraphs(stem.children)),
   };
 }
 
