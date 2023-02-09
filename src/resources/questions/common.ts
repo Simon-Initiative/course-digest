@@ -40,28 +40,68 @@ export function hasCatchAllRule(responses: any[]) {
 }
 
 export function ensureParagraphs(children: any[]) {
+  // if all children are text elements: wrap all in single p
   if (children.every((c: any) => c.text !== undefined)) {
     const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
     return [{ type: 'p', children: withEmptyText }];
   }
+
+  return children;
+}
+
+export function isBlankText(e: any): boolean {
+  return e && e.text !== undefined && e.text.trim().length === 0;
+}
+
+export function collectTextsIntoParagraphs(children: any) {
+  const result = [];
+  let successiveTexts: any[] = [];
+  children.forEach((c: any) => {
+    if (c.text !== undefined) {
+      successiveTexts.push(c);
+    } else {
+      // hit non-text: finish any pending paragraph and reset
+      if (successiveTexts.length > 0) {
+        result.push({ type: 'p', children: successiveTexts });
+        successiveTexts = [];
+      }
+      result.push(c);
+    }
+  });
+  // finish any final pending paragraph
+  if (successiveTexts.length > 0) {
+    result.push({ type: 'p', children: successiveTexts });
+  }
+  return result;
+}
+
+export function wrapLooseText(children: any) {
+  // if loose text pieces alongside blocks, strip spurious blank ones,
+  // collecting successive non-blank text pieces into p's.
+  if (children.length > 1) {
+    if (children.some((b: any) => XML.isBlockElement(b.type))) {
+      const result = collectTextsIntoParagraphs(
+        children.filter((c: any) => !isBlankText(c))
+      );
+      /* 
+      if (children.some((b: any) => b.text !== undefined && !isBlankText(b))) {
+        console.log('wrapText in:' + JSON.stringify(children, null, 2));
+        console.log('wrapText out:' + JSON.stringify(result, null, 2));
+      } 
+      */
+      return result;
+    }
+  }
+
   return children;
 }
 
 export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
-    content: stripSpuriousText(ensureParagraphs(stem.children)),
+    content: wrapLooseText(ensureParagraphs(stem.children)),
   };
 }
-
-const stripSpuriousText = (children: any[]) => {
-  if (children.length > 1) {
-    if (children.some((b: any) => XML.isBlockElement(b.type))) {
-      return children.filter((b: any) => b.text === undefined);
-    }
-  }
-  return children;
-};
 
 export function buildStemFromText(text: string) {
   return {
