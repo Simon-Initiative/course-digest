@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="states_dnd_question">
+    <title>Tutor</title>
+    <question id="q1">
+        <body>
+            <p>Drag the name of the state of matter represented by the image on the left to the
+                second column and the description of the state of matter in the last column.</p>
+            <custom type="javascript" height="500" width="680" id="dragDrop"
+                layout="../webcontent/states_dnd_layout.xml">
+                <param name="showInputs">false</param>
+            </custom>
+        </body>
+        <fill_in_the_blank id="l_name_area" shuffle="false">
+            <choice value="liquid_name">liquid_name</choice>
+            <choice value="gas_name">gas_name</choice>
+            <choice value="solid_name">solid_name</choice>
+
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="g_name_area" shuffle="false">
+            <choice value="liquid_name">liquid_name</choice>
+            <choice value="gas_name">gas_name</choice>
+            <choice value="solid_name">solid_name</choice>
+        </fill_in_the_blank>
+
+        <fill_in_the_blank id="s_name_area" shuffle="false">
+            <choice value="liquid_name">liquid_name</choice>
+            <choice value="gas_name">gas_name</choice>
+            <choice value="solid_name">solid_name</choice>
+
+        </fill_in_the_blank>
+
+        <fill_in_the_blank id="l_des_area" shuffle="false">
+            <choice value="liquid_des">liquid_des</choice>
+            <choice value="gas_des">gas_des</choice>
+            <choice value="solid_des">solid_des</choice>
+
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="g_des_area" shuffle="false">
+            <choice value="liquid_des">liquid_des</choice>
+            <choice value="gas_des">gas_des</choice>
+            <choice value="solid_des">solid_des</choice>
+
+
+
+        </fill_in_the_blank>
+        <fill_in_the_blank id="s_des_area" shuffle="false">
+            <choice value="liquid_des">liquid_des</choice>
+            <choice value="gas_des">gas_des</choice>
+            <choice value="solid_des">solid_des</choice>
+
+
+
+        </fill_in_the_blank>
+
+
+        <part>
+            <response input="l_name_area" match="liquid_name" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+            <response input="l_name_area" match="*">
+                <feedback>Incorrect.</feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="g_name_area" match="gas_name" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+            <response input="g_name_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="s_name_area" match="solid_name" score="1">
+                <feedback>Correct.</feedback>
+            </response>
+            <response input="s_name_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="l_des_area" match="liquid_des" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+            <response input="l_des_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+        <part>
+            <response input="g_des_area" match="gas_des" score="1">
+                <feedback>Correct. </feedback>
+            </response>
+            <response input="g_des_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+
+        <part>
+            <response input="s_des_area" match="solid_des" score="1">
+                <feedback>Correct.</feedback>
+            </response>
+            <response input="s_des_area" match="*">
+                <feedback>Incorrect. </feedback>
+            </response>
+
+        </part>
+
+
+
+    </question>
+
+</assessment>
+<?oxy_options track_changes="on"?>
