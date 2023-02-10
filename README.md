@@ -14,7 +14,7 @@ yarn install
 npm run start -- --operation convert --inputDir <course input dir>
 ```
 
-Optionally, you can specify a specific output directory. Defaults to `./out`
+Optionally, you can specify a specific output directory. Defaults to `<inputDir>-out`
 ```
 npm run start -- --operation convert --inputDir <course input dir> --outputDir ./out
 ```
