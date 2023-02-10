@@ -27,16 +27,22 @@ const rl = readline.createInterface({
 });
 
 const optionDefinitions = [
-  { name: 'operation', type: String, defaultOption: true },
+  {
+    name: 'operation',
+    type: String,
+    defaultOption: true,
+    defaultValue: 'convert',
+  },
   { name: 'mediaManifest', type: String },
-  { name: 'outputDir', type: String },
-  { name: 'inputDir', type: String },
+  { name: 'outputDir', type: String, alias: 'o' },
+  { name: 'inputDir', type: String, alias: 'i' },
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
   { name: 'mediaUrlPrefix', type: String },
   { name: 'spreadsheetPath', type: String },
   { name: 'svnRoot', type: String },
   { name: 'downloadRemote', type: Boolean },
+  { name: 'quiet', type: Boolean, alias: 'q' },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
@@ -49,6 +55,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   specificOrg: string;
   specificOrgId: string;
   mediaUrlPrefix: string;
+  quiet: string;
 }
 
 interface ConvertedResults {
@@ -64,7 +71,7 @@ function validateArgs(options: CmdOptions) {
       options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
     }
     if (options.outputDir === undefined) {
-      options.outputDir = './out';
+      options.outputDir = `${options.inputDir}-out`;
     }
     if (options.specificOrg === undefined) {
       options.specificOrg = `${options.inputDir}/organizations/default/organization.xml`;
@@ -73,6 +80,8 @@ function validateArgs(options: CmdOptions) {
       options.svnRoot = '';
     }
     if (options.inputDir) {
+      // ensure absolute file system path, some path resolution steps require this
+      options.inputDir = path.resolve(options.inputDir);
       return [options.inputDir].every(fs.existsSync);
     }
   } else if (options.operation === 'summarize') {
@@ -266,9 +275,10 @@ const anyOf = (ans: string, ...opts: any[]) => {
 };
 
 function suggestUploadAction(options: CmdOptions) {
-  return new Promise<string>((res) =>
-    rl.question('Do you want to upload media assets? [y/N] ', res)
-  ).then((answer: string) => {
+  return new Promise<string>((res) => {
+    if (options.quiet) res('n');
+    else rl.question('Do you want to upload media assets? [y/N] ', res);
+  }).then((answer: string) => {
     if (anyOf(answer || 'n', 'y', 'yes')) {
       return uploadAction(options).then((_r: any) => console.log('Done!'));
     }
@@ -280,7 +290,7 @@ function suggestUploadAction(options: CmdOptions) {
 
 function zipAction(options: CmdOptions) {
   const archive = archiver('zip', { zlib: { level: 9 } });
-  const stream = fs.createWriteStream('out.zip');
+  const stream = fs.createWriteStream(`${options.outputDir}.zip`);
 
   return new Promise<void>((resolve, reject) => {
     archive
@@ -294,9 +304,10 @@ function zipAction(options: CmdOptions) {
 }
 
 function suggestZipAction(options: CmdOptions) {
-  return new Promise<string>((res) =>
-    rl.question('Do you want to create a zip archive? [Y/n] ', res)
-  ).then((answer: string) => {
+  return new Promise<string>((res) => {
+    if (options.quiet) res('n');
+    else rl.question('Do you want to create a zip archive? [Y/n] ', res);
+  }).then((answer: string) => {
     if (anyOf(answer || 'y', 'y', 'yes')) {
       return zipAction(options).then((_r: any) => console.log('Done!'));
     }
@@ -312,7 +323,7 @@ function helpAction() {
   console.log('Usage:\n');
   console.log('Summarizing a course package current OLI DTD element usage:');
   console.log(
-    'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> [--specificOrgId <organization id> --specificOrg <org path>]\n'
+    'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> --specificOrgId <organization id> --specificOrg <org path>\n'
   );
 }
 
