@@ -55,7 +55,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   specificOrg: string;
   specificOrgId: string;
   mediaUrlPrefix: string;
-  quiet: string;
+  quiet: boolean;
 }
 
 interface ConvertedResults {
