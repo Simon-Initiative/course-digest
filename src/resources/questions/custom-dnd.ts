@@ -93,6 +93,10 @@ function processLayout(
     baseDir + customTag.layoutFile
   );
 
+  let stylesToUse = layoutStylesTrimmed;
+  // if no custom styles in tag, include standard stylesheet
+  if (stylesToUse.trim().length == 0) stylesToUse = TABLE_DND_CSS;
+
   const height = customTag.height;
   const width = customTag.width;
 
@@ -111,7 +115,7 @@ function processLayout(
   const updated = Object.assign({}, question, {
     height,
     width,
-    layoutStyles: TABLE_DND_CSS,
+    layoutStyles: stylesToUse,
     targetArea: targetArea,
     initiators: initiators,
   });
@@ -216,6 +220,7 @@ function switchInitiatorsWithTargets(
       {}
     )
   );
+
   const refsFound: string[] = [];
   $targets('.target').map((i: any, x: any) => {
     const oldRef: string | undefined = $targets(x).attr('input_ref');
@@ -240,6 +245,15 @@ function switchInitiatorsWithTargets(
       {}
     )
   );
+
+  const nInitiators = $initiators('.initiator').length;
+  const nTargets = $targets('.target').length;
+  if (nInitiators < nTargets) {
+    console.log(
+      `Fewer initiators (${nInitiators}) than targets (${nTargets})!`
+    );
+  }
+
   $initiators('.initiator').map((i: any, x: any) => {
     let oldVal: string | undefined = $initiators(x).attr('input_val');
     let newVal: string | undefined;

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">		
+#q2_target_container0 {  
+    margin: auto;
+    position:relative; <!-- This is important-->
+    width: 680px;  
+    height: 450px;
+   
+}	
+	.tbody .th {
+    text-align: center;
+}		
+			.target {  
+			  border: 2px;
+			  border-style: dashed;
+			  border-color: #999999; 
+			  display: inline-block; 
+			  position: absolute; 
+			  min-width: 40px;  
+			 
+			  min-height: 40px; 
+			
+			  
+			}
+			
+			
+			.initiator
+			{
+				display: inline-block;
+				min-height: 30px;
+				min-width: 60px;
+				background: #ffc;
+				text-align: center;
+				padding: 4px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			.dragdropspacer
+			{
+				height: 50px;
+			}
+			
+			#solid {  
+    margin: auto;
+    background-image: url("solid_flask.png");
+    background-repeat: no-repeat;     
+    width: 75px;  
+    height: 200px;
+}
+#liquid {  
+    margin: auto;
+    background-image: url("liquid_flask.png");
+    background-repeat: no-repeat;     
+    width: 75px;  
+    height: 200px;
+}
+#gas {  
+    margin: auto;
+    background-image: url("gas_flask.png");
+    background-repeat: no-repeat;     
+    width: 75px;  
+    height: 200px;
+}
+
+
+			
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+		<div id="q2_target_container0">
+		
+		<div id="lefttitle" style="position:absolute;top:15px; left:125px" ><b>State of Matter</b></div>
+
+<div id="righttitle" style="position:absolute;top: 15px; left:350px" ><b>Description of State</b></div>
+
+
+<div id="liquid" style="position:absolute;top:10px; left:5px" ></div>
+
+<div id="gas" style="position:absolute;top:140px; left:5px" ></div>
+
+<div id="solid" style="position:absolute;top:270px; left:5px" ></div>
+
+
+
+
+<div input_ref="l_name_area" class="target"  style="left:125px; top:45px; width:90px; height:60px;"> </div>
+
+<div input_ref="g_name_area" class="target" style="left:125px;top:165px; width:90px; height:60px;"> </div>
+
+
+<div input_ref="s_name_area" class="target"  style="left:125px; top:285px; width:90px; height:60px;"> </div>
+
+<div input_ref="l_des_area" class="target"  style="left:300px; top:45px; width:300px; height:60px;"> </div>
+
+<div input_ref="g_des_area" class="target"  style="left:300px; top:165px; width:300px; height:60px;"> </div>
+
+<div input_ref="s_des_area" class="target" style="left:300px;top:285px; width:300px; height:60px;"> </div>
+
+
+
+
+		    </div>
+			
+		]]>
+    </targetArea>
+    
+    
+    <initiators>
+        <![CDATA[			
+         <div input_val="gas_name" class="initiator">gas</div>
+        	<div input_val="solid_name" class="initiator">solid</div>
+        <div input_val="liquid_name" class="initiator">liquid</div>
+       
+				
+			<div input_val="gas_des" class="initiator">expands to fill container</div>
+			
+			<div input_val="liquid_des" class="initiator">takes the shape of its container, has horizontal surface, and a fixed volume</div>
+			<div input_val="solid_des" class="initiator">has fixed shape and volume</div>
+			
+			
+			
+		
+		
+					
+		]]>
+    </initiators>
+    
+</dragdrop>
+
+
+
+
+
