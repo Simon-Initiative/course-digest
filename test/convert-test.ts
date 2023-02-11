@@ -37,6 +37,7 @@ it('should convert example course to valid course digest', async () => {
     specificOrgId,
     downloadRemote: false,
     mediaUrlPrefix: 'https://example-url-prefix',
+    quiet: false,
   });
 
   expect(projectSummary.getAlternativesGroupsJSON()).toEqual({
@@ -108,6 +109,7 @@ it('should convert content with purpose to groups', async () => {
     specificOrgId,
     downloadRemote: false,
     mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
+    quiet: false,
   });
 
   mediaItems.forEach((mediaItem) => {
