@@ -148,7 +148,7 @@ function produceTorusEquivalents(
   const targeted: any[] = [];
 
   if (item.type === 'text') {
-    part = buildInputPart('text', p, i);
+    part = buildInputPart('text', p, item);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
   } else if (item.type === 'numeric') {
@@ -282,10 +282,49 @@ function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
   };
 }
 
+// for dealing with legacy match expressions
+
+export function isRegExp(match: string) {
+  return match.startsWith('/') && match.endsWith('/');
+}
+
+export function getRegExp(match: string) {
+  return match.slice(1, match.length - 1);
+}
+
+export function hasCasedChars(s: string) {
+  return [...s].some((c) => c.toLowerCase() != c.toUpperCase());
+}
+
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// legacy match value for text input is either special wildcard *
+// a literal string to be matched; or, rarely, /regexp/
+// convert to torus rule, handling case_sensitive setting from input
+export function matchToRule(match: string, input: any, type: any) {
+  let m = match;
+
+  // convert * to standard regexp
+  if (match === '*') {
+    m = '/.*/';
+  } else if (input.case_sensitive === 'false' && hasCasedChars(m)) {
+    // handle as regexp w/case-insensitive option prefix
+    const pat = isRegExp(m) ? getRegExp(m) : escapeRegExp(m);
+    m = `/(?i)${pat}/`;
+    console.log(`case-insensitive ${match} => ${m}`);
+  }
+
+  const toMatch = isRegExp(m) ? getRegExp(m) : m;
+  const operator = isRegExp(m) ? 'like' : type === 'numeric' ? '=' : 'equals';
+  return `input ${operator} {${toMatch}}`;
+}
+
 export function buildInputPart(
   type: 'text' | 'numeric',
   part: any,
-  _i: number
+  input: any
 ) {
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
@@ -295,13 +334,11 @@ export function buildInputPart(
   return {
     id,
     responses: responses.map((r: any) => {
-      const cleanedMatch = replaceAll(r.match, '\\*', '.*');
-      const operator =
-        type === 'numeric' && cleanedMatch !== '.*' ? '=' : 'like';
+      const cleanedMatch = r.match === '*' ? '.*' : r.match;
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: `input ${operator} {${cleanedMatch}}`,
+        rule: matchToRule(r.match, input, type),
         legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
