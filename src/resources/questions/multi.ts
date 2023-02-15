@@ -313,7 +313,6 @@ export function matchToRule(match: string, input: any, type: any) {
     // handle as regexp w/case-insensitive option prefix
     const pat = isRegExp(m) ? getRegExp(m) : escapeRegExp(m);
     m = `/(?i)${pat}/`;
-    console.log(`case-insensitive ${match} => ${m}`);
   }
 
   const toMatch = isRegExp(m) ? getRegExp(m) : m;
