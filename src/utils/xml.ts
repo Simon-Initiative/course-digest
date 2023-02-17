@@ -94,6 +94,7 @@ export function visit(
         Object.keys(attrs).forEach((k) => {
           if (
             typeof (attrs as any)[k] === 'string' &&
+            k !== 'match' &&
             (attrs as any)[k].endsWith('/')
           ) {
             (attrs as any)[k] = (attrs as any)[k].substr(
@@ -184,10 +185,12 @@ export function toJSON(
 
           Object.keys(attrs).forEach((k) => {
             if (k !== '___selfClosing___' && (attrs as any)[k].endsWith('/')) {
-              (attrs as any)[k] = (attrs as any)[k].substr(
-                0,
-                (attrs as any)[k].length - 1
-              );
+              if (k !== 'match') {
+                (attrs as any)[k] = (attrs as any)[k].substr(
+                  0,
+                  (attrs as any)[k].length - 1
+                );
+              }
             }
           });
           Object.keys(attrs).forEach((k) => {

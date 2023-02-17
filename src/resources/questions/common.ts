@@ -31,6 +31,10 @@ export function convertAutoGenResponses(model: any) {
   }
 }
 
+export function convertCatchAll(match: string): string {
+  return match === '*' ? '.*' : match;
+}
+
 export function hasCatchAll(responses: any[]) {
   return responses.some((r) => r.match === 'input like {.*}');
 }
@@ -228,7 +232,7 @@ export function buildTextPart(id: string, question: any) {
   return {
     id: '1',
     responses: responses.map((r: any) => {
-      const cleanedMatch = replaceAll(r.match, '\\*', '.*');
+      const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
