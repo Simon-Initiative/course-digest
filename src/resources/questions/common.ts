@@ -1,5 +1,5 @@
 import { maybe } from 'tsmonad';
-import { guid, replaceAll } from 'src/utils/common';
+import { guid } from 'src/utils/common';
 import * as XML from '../../utils/xml';
 
 export function getChild(collection: any, named: string) {
