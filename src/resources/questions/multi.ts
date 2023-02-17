@@ -318,7 +318,6 @@ export function matchToRule(match: string, input: any, type: any) {
 
   const toMatch = isRegExp(m) ? getRegExp(m) : m;
   const operator = isRegExp(m) ? 'like' : type === 'numeric' ? '=' : 'equals';
-  console.log(`match ${match} => input ${operator} {${toMatch}}`);
   return `input ${operator} {${toMatch}}`;
 }
 
