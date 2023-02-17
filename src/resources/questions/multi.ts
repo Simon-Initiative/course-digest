@@ -297,9 +297,8 @@ export function hasCasedChars(s: string) {
   return [...s].some((c) => c.toLowerCase() != c.toUpperCase());
 }
 
-function escapeRegExp(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+// This escapes argument for the match rule notation
+const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
 
 // legacy match value for text input is either special wildcard *
 // a literal string to be matched; or, rarely, /regexp/
@@ -310,15 +309,19 @@ export function matchToRule(match: string, input: any, type: any) {
   // convert * to standard regexp
   if (match === '*') {
     m = '/.*/';
-  } else if (input.case_sensitive === 'false' && hasCasedChars(m)) {
-    // handle as regexp w/case-insensitive option prefix
-    const pat = isRegExp(m) ? getRegExp(m) : escapeRegExp(m);
-    m = `/(?i)${pat}/`;
+  } else if (isRegExp(m) && input.case_sensitive === 'false') {
+    // if it matters, modify regexp match to be case insensitive
+    if (hasCasedChars(m)) m = `/(?i)${getRegExp(m)}/`;
   }
 
-  const toMatch = isRegExp(m) ? getRegExp(m) : m;
-  const operator = isRegExp(m) ? 'like' : type === 'numeric' ? '=' : 'equals';
-  return `input ${operator} {${toMatch}}`;
+  const matchArg = isRegExp(m) ? getRegExp(m) : m;
+  let operator;
+  if (isRegExp(m)) operator = 'like';
+  else if (type === 'numeric') operator = '=';
+  else if (input.case_sensitive === 'false') operator = 'iequals';
+  else operator = 'equals';
+
+  return `input ${operator} {${escapeInput(matchArg)}}`;
 }
 
 export function buildInputPart(
