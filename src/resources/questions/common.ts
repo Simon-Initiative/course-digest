@@ -1,5 +1,5 @@
 import { maybe } from 'tsmonad';
-import { guid, replaceAll } from 'src/utils/common';
+import { guid } from 'src/utils/common';
 import * as XML from '../../utils/xml';
 
 export function getChild(collection: any, named: string) {
@@ -29,6 +29,10 @@ export function convertAutoGenResponses(model: any) {
     catchAll.rule = 'input like {.*}';
     model.authoring.parts[0].responses.push(catchAll);
   }
+}
+
+export function convertCatchAll(match: string): string {
+  return match === '*' ? '.*' : match;
 }
 
 export function hasCatchAll(responses: any[]) {
@@ -228,7 +232,7 @@ export function buildTextPart(id: string, question: any) {
   return {
     id: '1',
     responses: responses.map((r: any) => {
-      const cleanedMatch = replaceAll(r.match, '\\*', '.*');
+      const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),

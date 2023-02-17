@@ -25,6 +25,7 @@ import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
 import { ProjectSummary } from 'src/project';
+import { convertCatchAll } from './questions/common';
 
 function usesSimpleModel(responses: any[]) {
   return Common.hasCatchAll(responses) && responses.length <= 2;
@@ -49,8 +50,8 @@ function buildMCQPart(question: any) {
     const item: any = {
       id: guid(),
       score: r.score === undefined ? 0 : parseFloat(r.score),
-      rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
-      legacyMatch: replaceAll(r.match, '\\*', '.*'),
+      rule: `input like {${convertCatchAll(r.match)}}`,
+      legacyMatch: convertCatchAll(r.match),
       feedback: {
         id: guid(),
         content: Common.getFeedbackModel(r),

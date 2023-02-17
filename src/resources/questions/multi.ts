@@ -3,6 +3,7 @@
 import { guid, replaceAll } from 'src/utils/common';
 
 import * as Common from './common';
+import { convertCatchAll } from './common';
 
 // a JSON representation of the Formative Legacy model of this question type
 export function buildMulti(
@@ -333,7 +334,7 @@ export function buildInputPart(
   return {
     id,
     responses: responses.map((r: any) => {
-      const cleanedMatch = r.match === '*' ? '.*' : r.match;
+      const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
