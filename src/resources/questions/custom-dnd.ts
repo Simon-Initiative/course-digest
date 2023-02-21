@@ -9,7 +9,6 @@ export type CustomTagDetails = {
   width: string;
   layoutFile: string;
   type: 'custom' | 'other';
-  dynaRefMap: Map<string, string> | null;
 };
 
 export type LayoutFile = {
@@ -27,34 +26,12 @@ export function findCustomTag(
 
   const custom = (s.content as any[]).find((c) => c.type === 'javascript');
   if (custom !== undefined) {
-    let inputRefsMap: Map<string, string> | null = null;
-    if (containsDynaDropTable(custom) && stem !== null) {
-      // build map of correct choiceId => inputId for swapping ids in layout
-      inputRefsMap = new Map<string, string>();
-      question.authoring.parts.map((part: any) => {
-        const inputId = part.id;
-        const correctValue = part.responses
-          .find((r: any) => r.score > 0)
-          .rule.replace('input like {', '')
-          .replace('}', '');
-        if (correctValue) {
-          // correct value is constructed as inputId_choiceId. Both id parts may have
-          // underscores so extract choiceId as rest of correctValue after inputId_
-          const choiceId = correctValue.slice(inputId.length + 1);
-          // console.log('map choice "' + choiceId + '" => input "' + inputId + '"');
-          inputRefsMap?.set(choiceId, inputId);
-        } else {
-          console.log('correct value not found! input_id = ' + inputId);
-        }
-      });
-    }
     return {
       question: question,
       height: custom.height,
       width: custom.width,
       layoutFile: custom.layout,
       type: isCustomDnD(custom) ? 'custom' : 'other',
-      dynaRefMap: inputRefsMap,
     };
   }
   return undefined;
@@ -107,8 +84,8 @@ function processLayout(
     targetArea = convertTargetGroup($('targetGroup').first(), $);
     initiators = convertInitiatorGroup($('initiatorGroup').first(), $);
   } else {
-    // HTML format: can be extracted directly
-    targetArea = cutCDATA($('targetArea').first().html() as string);
+    // HTML format: use directly, but ensure no self-closing tags
+    targetArea = cleanHtml(cutCDATA($('targetArea').first().html() as string));
     initiators = cutCDATA($('initiators').first().html() as string);
   }
 
@@ -119,10 +96,6 @@ function processLayout(
     targetArea: targetArea,
     initiators: initiators,
   });
-
-  if (customTag.dynaRefMap) {
-    switchInitiatorsWithTargets(customTag, updated);
-  }
 
   return [updated, imageReferences];
 }
@@ -182,7 +155,7 @@ function convertCell(item: cheerio.Cheerio, $: cheerio.Root) {
   if ($(item).is('target'))
     return `\n  <div input_ref="${$(item).attr(
       'assessmentId'
-    )}" class="dnd-cell target" />`;
+    )}" class="dnd-cell target"></div>`;
 
   // else <text> element
   return `\n  <div class="dnd-cell">${$(item).html()?.trim()}</div>`;
@@ -204,82 +177,22 @@ function convertInitiatorGroup(
     .join('');
 }
 
-function switchInitiatorsWithTargets(
-  customTag: CustomTagDetails,
-  updated: any
-) {
-  const $targets = cheerio.load(
-    updated.targetArea,
-    Object.assign(
-      {},
-      {
-        normalizeWhitespace: true,
-        xmlMode: true,
-        selfClosingTags: false,
-      },
-      {}
+// replace any self-closing tags, which don't work in the torus implementation
+function cleanHtml(targetArea: any) {
+  return cheerio
+    .load(
+      targetArea,
+      Object.assign(
+        {},
+        {
+          normalizeWhitespace: false,
+          xmlMode: true,
+          selfClosingTags: false,
+        },
+        {}
+      )
     )
-  );
-
-  const refsFound: string[] = [];
-  $targets('.target').map((i: any, x: any) => {
-    const oldRef: string | undefined = $targets(x).attr('input_ref');
-    const newRef: string | undefined = customTag.dynaRefMap?.get(
-      oldRef as string
-    );
-    if (newRef) {
-      refsFound.push(newRef);
-      $targets(x).attr('input_ref', newRef);
-    }
-  });
-
-  const $initiators = cheerio.load(
-    updated.initiators,
-    Object.assign(
-      {},
-      {
-        normalizeWhitespace: true,
-        xmlMode: true,
-        selfClosingTags: false,
-      },
-      {}
-    )
-  );
-
-  const nInitiators = $initiators('.initiator').length;
-  const nTargets = $targets('.target').length;
-  if (nInitiators < nTargets) {
-    console.log(
-      `Fewer initiators (${nInitiators}) than targets (${nTargets})!`
-    );
-  }
-
-  $initiators('.initiator').map((i: any, x: any) => {
-    let oldVal: string | undefined = $initiators(x).attr('input_val');
-    let newVal: string | undefined;
-    // in some cases input referenced here by 1-based index alone. In these
-    // cases input seems to have id of form i1, i2, i3.
-    if (oldVal && /^\d$/.test(oldVal)) {
-      oldVal = 'i' + oldVal;
-    }
-
-    customTag.dynaRefMap?.forEach((value: string, key: string) => {
-      if (value === oldVal) {
-        newVal = key;
-      }
-    });
-    if (newVal) {
-      $initiators(x).attr('input_val', newVal);
-    } else {
-      console.log('Initiator input not found! input_val= "' + oldVal + '"');
-      updated.inputs = updated.inputs.filter((i: any) => i.id !== oldVal);
-      updated.authoring.parts = updated.authoring.parts.filter(
-        (i: any) => i.id !== oldVal
-      );
-    }
-  });
-  updated.targetArea = $targets.html();
-  updated.initiators = $initiators.html();
+    .html();
 }
 
 export function replaceImageReferences(
