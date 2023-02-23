@@ -6,7 +6,7 @@
       "javascript",
       "typescript"
   ],
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   // Runs Prettier, then ESLint
   "editor.codeActionsOnSave": [
     "source.formatDocument",

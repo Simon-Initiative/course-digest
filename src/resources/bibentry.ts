@@ -33,7 +33,8 @@ export function convertBibliographyEntries(
       method: 'text',
     });
 
-    const data = new Cite(bibtexVal);
+    // citation-js parser treats $ (used in some titles) as math delimiter, so escape it.
+    const data = new Cite(bibtexVal.replaceAll('$', '\\$'));
     const cslData = data.get({
       format: 'string',
       type: 'json',
