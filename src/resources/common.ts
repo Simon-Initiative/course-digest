@@ -369,6 +369,7 @@ function handleAlternate($: any, item: string) {
 
 function handleDefinitions($: any) {
   $('definition title').remove();
+  DOM.stripElement($, 'definition material');
 
   $('definition').each((i: any, elem: any) => {
     const term = $(elem).children('definition-term').text();
