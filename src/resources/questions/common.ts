@@ -295,6 +295,3 @@ export function ensureThree(hints?: any[]) {
   }
   return hints;
 }
-export function findDescendants(content: any): any {
-  throw new Error('Function not implemented.');
-}
