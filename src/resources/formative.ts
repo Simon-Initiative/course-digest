@@ -426,10 +426,6 @@ export function toActivity(
       activity.unresolvedReferences.push(a.idref);
     }
   });
-  if (activity.unresolvedReferences.length > 0)
-    console.log(
-      '********************** Q idrefs: ' + activity.unresolvedReferences
-    );
 
   content.authoring.parts.forEach((p: any) => {
     p.responses = p.responses.map((r: any) => {
