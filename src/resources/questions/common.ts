@@ -1,6 +1,7 @@
 import { maybe } from 'tsmonad';
 import { guid } from 'src/utils/common';
 import * as XML from '../../utils/xml';
+import { isInlineTag } from 'src/utils/dom';
 
 export function getChild(collection: any, named: string) {
   const items = collection.filter((e: any) => named == e.type);
@@ -12,6 +13,18 @@ export function getChild(collection: any, named: string) {
 
 export function getChildren(collection: any, named: string) {
   return collection.filter((e: any) => named == e.type);
+}
+
+export function getDescendants(collection: any[], named: string): any[] {
+  if (collection === undefined) return [];
+
+  return collection.reduce((acc: any[], elem: any) => {
+    if (named === elem.type) acc.push(elem);
+
+    acc.push(...getDescendants(elem.children, named));
+
+    return acc;
+  }, []);
 }
 
 export function convertAutoGenResponses(model: any) {
@@ -44,8 +57,8 @@ export function hasCatchAllRule(responses: any[]) {
 }
 
 export function ensureParagraphs(children: any[]) {
-  // if all children are text elements: wrap all in single p
-  if (children.every((c: any) => c.text !== undefined)) {
+  // if all children are text|inline elements: wrap all in single p
+  if (children.every((c: any) => c.text !== undefined || isInlineTag(c.type))) {
     const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
     return [{ type: 'p', children: withEmptyText }];
   }
@@ -61,7 +74,7 @@ export function collectTextsIntoParagraphs(children: any) {
   const result = [];
   let successiveTexts: any[] = [];
   children.forEach((c: any) => {
-    if (c.text !== undefined) {
+    if (c.text !== undefined || isInlineTag(c.type)) {
       successiveTexts.push(c);
     } else {
       // hit non-text: finish any pending paragraph and reset
@@ -281,4 +294,7 @@ export function ensureThree(hints?: any[]) {
     return [...hints, hint()];
   }
   return hints;
+}
+export function findDescendants(content: any): any {
+  throw new Error('Function not implemented.');
 }
