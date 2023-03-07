@@ -419,14 +419,6 @@ export function toActivity(
     baseFileName
   );
 
-  // collect refs from any internal links in stem content
-  const links: any[] = Common.getDescendants(content.stem?.content, 'a');
-  links.forEach((a: any) => {
-    if (a.idref !== undefined && a.idref !== null) {
-      activity.unresolvedReferences.push(a.idref);
-    }
-  });
-
   content.authoring.parts.forEach((p: any) => {
     p.responses = p.responses.map((r: any) => {
       if (r.showPage !== undefined) {
@@ -540,7 +532,6 @@ export function performRestructure($: any) {
   DOM.rename($, 'question body', 'stem');
   DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
-  DOM.rename($, 'activity_link', 'a');
 
   migrateVariables($);
 }
