@@ -5,6 +5,7 @@ import { decodeEntities } from './common';
 import { decode } from 'html-entities';
 import { parseMathJaxFormulas } from './mathjax-parser';
 import { ProjectSummary } from 'src/project';
+import { unescapeWhiteSpace } from 'src/resources/common';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -317,6 +318,13 @@ export function toJSON(
         }
       };
 
+      const unescapeCodeLine = () => {
+        if (tag === 'code_line') {
+          const escapedLine = top().children[0].text;
+          top().children[0].text = unescapeWhiteSpace(escapedLine);
+        }
+      };
+
       const setTransformationData = () => {
         if (tag === 'transformation') {
           top().data = top().children;
@@ -548,6 +556,7 @@ export function toJSON(
         elevatePopoverContent();
         unescapeFormulaSrc();
         unescapeVariableData();
+        unescapeCodeLine();
         setTransformationData();
         setVideoAttributes();
         convertTableAttrstoNumbers();

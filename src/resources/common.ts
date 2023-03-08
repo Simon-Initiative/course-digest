@@ -11,6 +11,19 @@ export interface HasHistogram {
   elementHistogram: Histogram.ElementHistogram;
 }
 
+// Escapes space, tab and backslash, but not newline, for use in code lines
+// BACKSLASH TAB could get normalized to BACKSLASH SP, so uses BACKSLASH T instead
+export function escapeWhiteSpace(s: string) {
+  return s.replace(/[ \t\\]/g, (ch) => '\\' + (ch === '\t' ? 'T' : ch));
+}
+
+export function unescapeWhiteSpace(s: string) {
+  return s.replace(/(?:\\(.))/g, (_match, ch) => (ch === 'T' ? '\t' : ch));
+}
+
+// split into <code_line>'s and escape space in line so it can be
+// preserved through later pass through whitespace-normalizing parsing
+// unescaped in toJSON
 export function processCodeblock($: any) {
   $('codeblock').each((i: any, item: any) => {
     const h = $(item).html();
@@ -18,14 +31,17 @@ export function processCodeblock($: any) {
       const html = h
         .substring(9, h.length - 3)
         .split('\n')
-        .map((r: any) => '<code_line><![CDATA[' + r + ']]></code_line>')
+        .map(
+          (r: any) =>
+            '<code_line><![CDATA[' + escapeWhiteSpace(r) + ']]></code_line>'
+        )
         .reduce((s: string, e: string) => s + e);
 
       $(item).html(html);
     } else {
       const html = h
         .split('\n')
-        .map((r: any) => '<code_line>' + r + '</code_line>')
+        .map((r: any) => '<code_line>' + escapeWhiteSpace(r) + '</code_line>')
         .reduce((s: string, e: string) => s + e);
 
       $(item).html(html);
