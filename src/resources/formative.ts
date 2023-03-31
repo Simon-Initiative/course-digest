@@ -412,6 +412,9 @@ export function toActivity(
   };
 
   activity.id = legacyId + '-' + question.id;
+  // For friendlier titles, detect special case where author already qualified
+  // questionIDs by naming them with assessmentID prefix (done in Chem pools).
+  activity.title = question.id.startsWith(legacyId) ? question.id : activity.id;
 
   const [content, imageReferences] = buildModel(
     subType,
