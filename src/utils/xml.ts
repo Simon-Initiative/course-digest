@@ -548,6 +548,7 @@ export function toJSON(
         ensureTextDoesNotSurroundBlockElement('dt');
         ensureTextDoesNotSurroundBlockElement('li');
         elevateCaption('img');
+        elevateCaption('img_inline');
         elevateCaption('figure');
         elevateCaption('iframe');
         elevateCaption('youtube');
