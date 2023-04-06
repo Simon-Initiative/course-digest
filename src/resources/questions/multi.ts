@@ -166,7 +166,8 @@ function produceTorusEquivalents(
 
     if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
       part.responses.forEach((r: any) => {
-        targeted.push([[r.legacyMatch], r.id]);
+        // must adjust to match part-qualified choiceIds we generate
+        targeted.push([[part.id + '_' + r.legacyMatch], r.id]);
       });
     }
   }
