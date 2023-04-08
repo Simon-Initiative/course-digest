@@ -192,8 +192,8 @@ function produceTorusEquivalents(
 
 // It is terribly unfortunate that we have to write code like this, but the issue is that
 // the legacy system has a really odd way of allowing inputs and parts to be misaligned, that is
-// to say, allowing them to exist in different indices within their respective arrays. It
-// relies on the "input" element from the reponse to indicate which input that part pertains to, but
+// to say, allowing them to exist at different indices within their respective arrays. It
+// relies on the "input" attribute from the reponse to indicate which input that part pertains to, but
 // that attribute is not required.  When it is absent we have to assume that the items and parts
 // are aligned.  So we try first to align with 'input', if that fails we fall back in aligned.
 function collectItemsParts(question: any) {
@@ -239,18 +239,20 @@ function collectItemsParts(question: any) {
   return { items, parts };
 }
 
-function buildDropdownPart(part: any, _i: number, ignorePartId: boolean) {
+function buildDropdownPart(part: any, i: number, ignorePartId: boolean) {
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
-  const firstResponseInputValue =
-    responses.length > 0 ? responses[0].input : guid();
-
+  // May be undefined if parts implicitly aligned w/inputs by ordinal position
+  const firstResponseInputValue = responses[0]?.input;
   const id =
     part.id !== undefined && part.id !== null && !ignorePartId
-      ? part.id + ''
-      : firstResponseInputValue;
+      ? part.id
+      : // take part id from input attr if exists, else generate one
+      firstResponseInputValue
+      ? firstResponseInputValue
+      : 'part' + (i + 1);
 
   return {
     id,
