@@ -153,11 +153,15 @@ function buildOrderingPart(question: any) {
     id: Common.getPartIds(question)[0],
     responses: responses.map((r: any) => {
       const id = guid();
+      const cleanedMatch = convertCatchAll(r.match);
+      // change legacy a,b,c to torus {a b c}. No effect on catchAll so safe on all matches
+      const torusMatch = replaceAll(cleanedMatch, ',', ' ');
       const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
-        rule: `input like {${replaceAll(r.match, '\\*', '.*')}}`,
-        legacyRule: replaceAll(r.match, '\\*', '.*'),
+
+        rule: `input like {${torusMatch}}`,
+        legacyRule: cleanedMatch,
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
@@ -291,6 +295,7 @@ function ordering(question: any) {
   const correctResponse = model.authoring.parts[0].responses.filter(
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
+
   const correctIds = correctResponse.legacyRule.split(',');
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
