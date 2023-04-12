@@ -155,7 +155,7 @@ function buildOrderingPart(question: any) {
       const id = guid();
       const cleanedMatch = convertCatchAll(r.match);
       // change legacy a,b,c to torus {a b c}. No effect on catchAll so safe on all matches
-      const torusMatch = replaceAll(cleanedMatch, ',', ' ');
+      const torusMatch = cleanedMatch.split(/\s*,\s*/).join(' ');
       const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
@@ -296,7 +296,7 @@ function ordering(question: any) {
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
 
-  const correctIds = correctResponse.legacyRule.split(',');
+  const correctIds = correctResponse.legacyRule.split(/\s*,\s*/);
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
