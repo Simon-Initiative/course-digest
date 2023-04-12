@@ -1,6 +1,6 @@
 import { visit } from 'src/utils/xml';
 import * as Histogram from 'src/utils/histogram';
-import { guid, ItemReference, replaceAll } from 'src/utils/common';
+import { guid, ItemReference } from 'src/utils/common';
 import {
   Resource,
   TorusResource,
