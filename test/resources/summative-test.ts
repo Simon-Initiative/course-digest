@@ -268,8 +268,7 @@ describe('convert summative', () => {
         type: 'Activity',
         id: 'newc72f87db5a5543b5ae8582d2d4cd34a7-e652695935d04ce089f473330345ecf5',
         legacyPath: expect.any(String),
-        title:
-          'newc72f87db5a5543b5ae8582d2d4cd34a7-e652695935d04ce089f473330345ecf5',
+        title: 'InlineSummativeAssessment-q3',
         tags: [],
         unresolvedReferences: [],
         content: {
