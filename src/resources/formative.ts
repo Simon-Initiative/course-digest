@@ -482,7 +482,7 @@ export function titleActivity(
       pagePart = pageTitle.replace(/[^\w]|[ ]/g, '');
     }
   }
-  let itemPart = containsGuid(itemId) ? 'q' + questionNumber : itemId;
+  const itemPart = containsGuid(itemId) ? 'q' + questionNumber : itemId;
 
   return pagePart + '-' + itemPart;
 }
