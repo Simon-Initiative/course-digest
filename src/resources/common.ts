@@ -256,6 +256,8 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
 
+  DOM.renameAttribute($, 'audio', 'type', 'audioType');
+
   DOM.rename($, 'extra', 'popup');
 
   handleFormulaMathML($);
