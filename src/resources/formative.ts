@@ -472,10 +472,6 @@ export function titleActivity(
   itemId: string,
   questionNumber: number
 ): string {
-  // Detect special case where author already qualified questionIds
-  // by naming them with assessmentID prefix (done in Chem pools).
-  if (itemId.startsWith(pageId)) return itemId;
-
   let pagePart = pageId;
   if (containsGuid(pagePart)) {
     if (pageTitle && pageTitle !== 'Unknown') {
@@ -483,6 +479,11 @@ export function titleActivity(
     }
   }
   const itemPart = containsGuid(itemId) ? 'q' + questionNumber : itemId;
+
+  // Detect special case where author already qualified questionIds
+  // by naming them with assessmentID prefix (done in Chem pools).
+  // Check after guid replacement so only applies to non-GUID-based ids
+  if (itemPart.startsWith(pagePart)) return itemPart;
 
   return pagePart + '-' + itemPart;
 }
