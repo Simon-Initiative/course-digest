@@ -417,9 +417,8 @@ export function toActivity(
   };
 
   activity.id = legacyId + '-' + question.id;
-  // For friendlier titles, detect special case where author already qualified
-  // questionIDs by naming them with assessmentID prefix (done in Chem pools).
-  activity.title = question.id.startsWith(legacyId) ? question.id : activity.id;
+  // provisional title, may be adjusted by caller w/more context
+  activity.title = activity.id;
 
   const [content, imageReferences] = buildModel(
     subType,
@@ -462,6 +461,36 @@ export function toActivity(
   );
 
   return activity;
+}
+
+// Heuristic to try to construct activity title meaningful to author:
+// Want title to indicate containing assessment or pool and item reference.
+// Where source IDs don't contain guids, we assume they are meaningful ones
+// constructed by course author so use them. Else use page title for page
+// and "q" + index within page for item.
+
+const containsGuid = (s: string): boolean => /[0-9a-fA-f]{32}/.test(s);
+
+export function titleActivity(
+  pageId: string,
+  pageTitle: string | null,
+  itemId: string,
+  questionNumber: number
+): string {
+  let pagePart = pageId;
+  if (containsGuid(pagePart)) {
+    if (pageTitle && pageTitle !== 'Unknown') {
+      pagePart = pageTitle.replace(/[^\w]|[ ]/g, '');
+    }
+  }
+  const itemPart = containsGuid(itemId) ? 'q' + questionNumber : itemId;
+
+  // Detect special case where author already qualified questionIds
+  // by naming them with assessmentID prefix (done in Chem pools).
+  // Check after guid replacement so only applies to non-GUID-based ids
+  if (itemPart.startsWith(pagePart)) return itemPart;
+
+  return pagePart + '-' + itemPart;
 }
 
 function constructObjectives(parts: any): any {
@@ -645,6 +674,7 @@ export function processAssessmentModel(
   const items: any = [];
   const unresolvedReferences: any = [];
   let title = 'Unknown';
+  let questionNumber = 1;
 
   const handleNestableItems = (
     item: any,
@@ -659,6 +689,12 @@ export function processAssessmentModel(
         legacyId,
         baseFileName,
         pageIdIndex
+      );
+      activity.title = titleActivity(
+        legacyId,
+        title,
+        item.id,
+        questionNumber++
       );
       items.push(activity);
 
@@ -681,8 +717,10 @@ export function processAssessmentModel(
 
         const child = item.children[0];
         if (child.type === 'pool') {
+          // question pool embedded inline after selection
           tagId = child.id;
           tagId = tagId === null || tagId === undefined ? guid() : tagId;
+          let poolQuestionNumber = 1;
 
           child.children.forEach((c: any) => {
             if (c.type !== 'title' && c.type !== 'content') {
@@ -693,6 +731,12 @@ export function processAssessmentModel(
                 legacyId,
                 baseFileName,
                 pageIdIndex
+              );
+              pooledActivity.title = titleActivity(
+                tagId,
+                child.title,
+                c.id,
+                poolQuestionNumber++
               );
               pooledActivity.tags = [tagId];
               pooledActivity.scope = 'banked';

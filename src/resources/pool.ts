@@ -38,6 +38,7 @@ export class Pool extends Resource {
           if (item.type === 'pool') {
             const tagId = item.id;
 
+            let poolQuestionNumber = 1;
             item.children.forEach((c: any) => {
               if (c.type !== 'title' && c.type !== 'content') {
                 const subType = Formative.determineSubType(c);
@@ -47,6 +48,12 @@ export class Pool extends Resource {
                   legacyId,
                   this.file,
                   []
+                );
+                pooledActivity.title = Formative.titleActivity(
+                  tagId,
+                  item.title,
+                  c.id,
+                  poolQuestionNumber++
                 );
                 pooledActivity.tags = [tagId];
                 pooledActivity.scope = 'banked';
