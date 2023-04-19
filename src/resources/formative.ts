@@ -294,7 +294,7 @@ function ordering(question: any) {
   };
 
   // ordering choices may specify a custom color. Collect any into choiceID=>colorName map
-  let colorMap: Map<string, string> = new Map();
+  const colorMap: Map<string, string> = new Map();
   Common.getChild(question.children, 'ordering')
     .children.filter((c: any) => c.color !== undefined)
     .forEach((c: any) => colorMap.set(c.value, c.color));
