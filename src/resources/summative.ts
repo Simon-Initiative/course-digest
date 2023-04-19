@@ -8,7 +8,11 @@ import {
   Page,
   defaultCollabSpaceDefinition,
 } from './resource';
-import { processCodeblock, flagStandardContentWarnigns } from './common';
+import {
+  processCodeblock,
+  flagStandardContentWarnigns,
+  processVariables,
+} from './common';
 import * as Formative from './formative';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -80,6 +84,7 @@ export function convertToFormative($: any) {
 export class Summative extends Resource {
   restructurePreservingWhitespace($: any): any {
     processCodeblock($);
+    processVariables($);
   }
 
   flagContentWarnigns($: any, page: Page) {
