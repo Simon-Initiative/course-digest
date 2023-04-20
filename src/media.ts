@@ -384,6 +384,10 @@ function findFromDOM(
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
+  $('image_hotspot').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
   $('audio').each((i: any, elem: any) => {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });

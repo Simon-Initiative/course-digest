@@ -19,7 +19,7 @@ import {
   findCustomTag,
   process as processCustomDnd,
 } from './questions/custom-dnd';
-import { cata } from './questions/cata';
+import { buildCATAPart, cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -268,6 +268,49 @@ function mcq(question: any) {
   };
 }
 
+function processImageHotspot(question: any) {
+  const imageHotspot = Common.getChild(question.children, 'image_hotspot');
+  // uses MCQ part model for single selection, CATA for multiple selection
+  const multiple = imageHotspot.select === 'multiple';
+  const part = multiple ? buildCATAPart(question) : buildMCQPart(question);
+
+  // needed for CATA model:
+  const correctResponse = part.responses.filter(
+    (r: any) => r.score !== undefined && r.score !== 0
+  )[0];
+  const correctIds = correctResponse.legacyMatch.split(/\s*,\s*/);
+
+  return {
+    stem: Common.buildStem(question),
+    choices: getHotspots(imageHotspot),
+    multiple: multiple ? true : false,
+    height: Number(imageHotspot.height),
+    width: Number(imageHotspot.width),
+    imageURL: imageHotspot.src,
+    authoring: {
+      parts: [part],
+      // used with CATA model only:
+      correct: multiple ? [correctIds, correctResponse.id] : [],
+      transformations: [],
+      previewText: '',
+      targeted: part.targeted,
+    },
+  };
+}
+
+function getHotspots(imageHotspot: any) {
+  return Common.getChildren(imageHotspot.children, 'hotspot').map((hs: any) => {
+    const hotspot: any = {
+      id: hs.value,
+      coords: hs.coords.split(',').map(Number),
+      // shape not needed, torus derives from number of coords
+    };
+    if (hs.title !== undefined) hotspot.title = hs.title;
+
+    return hotspot;
+  });
+}
+
 function ordering(question: any) {
   const shuffle = Common.getChild(question.children, 'ordering').shuffle;
   const transformationElement = Common.getChild(
@@ -400,6 +443,9 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_likert') {
     return [likertOrLikertSeries(question)];
   }
+  if (subType === 'oli_image_hotspot') {
+    return [processImageHotspot(question, baseFileName)];
+  }
 
   return [single_response_text(question), []];
 }
@@ -517,7 +563,8 @@ type ItemTypes =
   | 'oli_short_answer'
   | 'oli_ordering'
   | 'oli_multi_input'
-  | 'oli_likert';
+  | 'oli_likert'
+  | 'oli_image_hotspot';
 
 export function determineSubType(question: any): ItemTypes {
   const mcq = Common.getChild(question.children, 'multiple_choice');
@@ -551,6 +598,9 @@ export function determineSubType(question: any): ItemTypes {
   if (likert_scale !== undefined) {
     return 'oli_likert';
   }
+
+  if (Common.getChild(question.children, 'image_hotspot') !== undefined)
+    return 'oli_image_hotspot';
 
   // Handle the case where the original question was a multi-input type but it did not
   // specify any '<input>' elements.  In thise case we restore its orginal type and we
