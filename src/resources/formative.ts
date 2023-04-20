@@ -444,7 +444,7 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
     return [likertOrLikertSeries(question)];
   }
   if (subType === 'oli_image_hotspot') {
-    return [processImageHotspot(question, baseFileName)];
+    return [processImageHotspot(question)];
   }
 
   return [single_response_text(question), []];
