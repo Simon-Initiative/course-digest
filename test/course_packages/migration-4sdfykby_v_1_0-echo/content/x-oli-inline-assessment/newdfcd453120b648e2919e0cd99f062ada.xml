@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+	id="newdfcd453120b648e2919e0cd99f062ada">
+	<title> Nools Basics - Create a Nools rule - 2b</title>
+
+
+	<question id="bfaea614c4f0424bae2d0bb55122b389">
+		<body>
+			<p id="d680cb28e9a343bb9badf915b2f8d1f3">In the Nools rule below, which constraint
+				aligns with the following English constraint (click on the correct section of
+				the code)?
+			</p>
+			<p id="a857252308c642f4b89dd6f1222eacfd">IF there is a Fraction fact (call it f1)
+				such that its name is the first element in givens (call its denominator f1Denom
+				and call its convertedForm &quot;f1Convert&quot;)
+			</p>
+		</body>
+		<image_hotspot id="e54628ff15c04c0089406b3bbfd2845d"
+			src="../webcontent/SimpleCommonMultiple.png" width="431" height="485"
+			select="single">
+			<hotspot value="e39d9f85c5fd44cdb668af2657a24c5d" shape="rect" coords="31,38,310,68" />
+			<hotspot value="c61525087a8945859272e5d629135d66" shape="rect"
+				coords="35,75,389,109" />
+			<hotspot value="a55c5b20beea4ad6b6cc1c69fd8fdc6c" shape="rect"
+				coords="32,123,390,160" />
+			<hotspot value="e0754a995dae4579b0248cfe05a98155" shape="rect"
+				coords="34,177,291,245" />
+			<hotspot value="cc2736f213bc49d6ad50b4821510876b" shape="rect"
+				coords="34,260,286,317" />
+			<hotspot value="d573fe8922024505923f4cfdf91a8747" shape="rect"
+				coords="34,326,294,366" />
+		</image_hotspot>
+		<part id="e6e4e42ddaa0462ab456d60641e59cce">
+			<skillref idref="acd673f8353b4561a568548c057d5b36" />
+			<response match="e39d9f85c5fd44cdb668af2657a24c5d" score="0">
+				<feedback>
+					<p id="ef906a7003c34c7483f21a80f971ebdd">Incorrect. This constraint
+						specifies that there should be a Problem fact, not a Fraction fact.</p>
+				</feedback>
+			</response>
+			<response match="c61525087a8945859272e5d629135d66" score="1">
+				<feedback>
+					<p id="a33cb21d5f7c4f5298cb82a54fd88d0d">Correct.</p>
+				</feedback>
+			</response>
+			<response match="a55c5b20beea4ad6b6cc1c69fd8fdc6c" score="0">
+				<feedback>
+					<p id="bb4efb8c30584d11b4c8d965684df6e4">Incorrect. This constraint
+						specifies that we should have a Fraction fact whose name is the 2nd
+						element in givens (in javascript, arrays are indexed at 0). This
+						constraint also says we should call the Fraction f2 instead of f1.</p>
+				</feedback>
+			</response>
+			<response match="e0754a995dae4579b0248cfe05a98155" score="0">
+				<feedback>
+					<p id="a1c5a94f7fbc41e489b0f726624d3f98">Incorrect. This constraint
+						specifies that we should have a Fraction fact whose name is equal to
+						f1Convert (the convertedForm part of f1)</p>
+				</feedback>
+			</response>
+			<response match="cc2736f213bc49d6ad50b4821510876b" score="0">
+				<feedback>
+					<p id="cbfc56e946824bf4929c80f43236bdbd">Incorrect. This constraint
+						specifies that we should have a Fraction fact whose name is equal to
+						f2Convert (the convertedForm part of f2)</p>
+				</feedback>
+			</response>
+			<response match="d573fe8922024505923f4cfdf91a8747" score="0">
+				<feedback>
+					<p id="fa97ff68e2ae485ab88197fc12378b42">Incorrect. This constraint
+						specifies that there should be an InteraceElement fact, not a Fraction
+						fact.</p>
+				</feedback>
+			</response>
+		</part>
+	</question>
+
+
+</assessment>
