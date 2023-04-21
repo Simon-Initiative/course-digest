@@ -276,7 +276,8 @@ function ordering(question: any) {
   );
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
-  const model = {
+
+  const model: any = {
     stem: Common.buildStem(question),
     choices: Common.buildChoices(question, 'ordering'),
     authoring: {
@@ -291,6 +292,14 @@ function ordering(question: any) {
       targeted: [],
     },
   };
+
+  // ordering choices may specify a custom color. Collect any into choiceID=>colorName map
+  const colorMap: Map<string, string> = new Map();
+  Common.getChild(question.children, 'ordering')
+    .children.filter((c: any) => c.color !== undefined)
+    .forEach((c: any) => colorMap.set(c.value, c.color));
+  // Include optional map if custom color found, serialized as array of [id, color] pairs
+  if (colorMap.size > 0) model.choiceColors = [...colorMap];
 
   const correctResponse = model.authoring.parts[0].responses.filter(
     (r: any) => r.score !== undefined && r.score !== 0
