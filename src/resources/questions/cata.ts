@@ -97,7 +97,7 @@ const updateResponseRules = (model: any) => {
   });
 };
 
-function buildCATAPart(question: any) {
+export function buildCATAPart(question: any) {
   const responses = Common.getChild(question.children, 'part').children.filter(
     (p: any) => p.type === 'response'
   );
@@ -137,6 +137,7 @@ function buildCATAPart(question: any) {
     scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
+    targeted: [],
   };
 
   return part;
