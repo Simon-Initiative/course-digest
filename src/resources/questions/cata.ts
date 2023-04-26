@@ -145,8 +145,8 @@ export function buildCATAPart(question: any) {
   return part;
 }
 
-export function cata(question: any) {
-  const choices = Common.buildChoices(question);
+export function cata(question: any, from = 'multiple_choice') {
+  const choices = Common.buildChoices(question, from);
   const choiceIds = choices.map((c: any) => c.id);
   const transformationElement = Common.getChild(
     question.children,

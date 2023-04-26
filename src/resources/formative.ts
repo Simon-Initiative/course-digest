@@ -242,9 +242,9 @@ function buildLikertParts(question: any, items: any[]) {
   }));
 }
 
-function mcq(question: any) {
+function mcq(question: any, type = 'multiple_choice') {
   const part = buildMCQPart(question);
-  const shuffle = Common.getChild(question.children, 'multiple_choice').shuffle;
+  const shuffle = Common.getChild(question.children, type).shuffle;
   const transformationElement = Common.getChild(
     question.children,
     'transformation'
@@ -253,7 +253,7 @@ function mcq(question: any) {
     transformationElement === undefined ? [] : [transformationElement];
   return {
     stem: Common.buildStem(question),
-    choices: Common.buildChoices(question),
+    choices: Common.buildChoices(question, type),
     authoring: {
       version: 2,
       parts: [part],
@@ -270,36 +270,32 @@ function mcq(question: any) {
 
 function processImageHotspot(question: any) {
   const imageHotspot = Common.getChild(question.children, 'image_hotspot');
-  // uses MCQ part model for single selection, CATA for multiple selection
+  // uses MCQ model for single selection, CATA model for multiple. Restructuring
+  // <hotspot> to <choice> allows leveraging model-building code for those types
   const multiple = imageHotspot.select === 'multiple';
-  const part = multiple ? buildCATAPart(question) : buildMCQPart(question);
-
-  // needed for CATA model:
-  const correctResponse = part.responses.filter(
-    (r: any) => r.score !== undefined && r.score !== 0
-  )[0];
-  const correctIds = correctResponse.legacyMatch.split(/\s*,\s*/);
+  const modelQ: any = multiple
+    ? cata(question, 'image_hotspot')
+    : mcq(question, 'image_hotspot');
 
   return {
-    stem: Common.buildStem(question),
+    stem: modelQ.stem,
     choices: getHotspots(imageHotspot),
     multiple: multiple ? true : false,
     height: Number(imageHotspot.height),
     width: Number(imageHotspot.width),
     imageURL: imageHotspot.src,
     authoring: {
-      parts: [part],
+      parts: modelQ.authoring.parts,
       // used with CATA model only:
-      correct: multiple ? [correctIds, correctResponse.id] : [],
-      transformations: [],
-      previewText: '',
-      targeted: part.targeted,
+      correct: multiple ? modelQ.correct : [],
+      previewText: modelQ.previewText,
+      targeted: modelQ.targeted,
     },
   };
 }
 
 function getHotspots(imageHotspot: any) {
-  return Common.getChildren(imageHotspot.children, 'hotspot').map((hs: any) => {
+  return Common.getChildren(imageHotspot.children, 'choice').map((hs: any) => {
     const hotspot: any = {
       id: hs.value,
       coords: hs.coords.split(',').map(Number),
@@ -637,6 +633,8 @@ export function performRestructure($: any) {
   DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
   DOM.rename($, 'activity_link', 'a');
+  // facilitates processing image hotspot questions:
+  DOM.rename($, 'image_hotspot hotspot', 'choice');
 
   migrateVariables($);
 }
