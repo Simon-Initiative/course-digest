@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    id="newd3845c3c975a4c3f884f431b6d199957">
+    <title>Beatles Quiz</title>
+    <page id="e7d59bf5c9574db9bb16dc1ea13c44f3">
+        <title>Page 1</title>
+        <question id="b7afd329df3d487aaada4e166911797d">
+            <body>
+                <p id="e2f615fab9b14ecdac2ea13a7789616c">Which Beatles are still alive?</p>
+            </body>
+            <multiple_choice shuffle="true" select="multiple" id="a46b7687065d448a862ab4d60f9460a7"
+                labels="false">
+                <choice value="A">John</choice>
+                <choice value="B">Paul</choice>
+                <choice value="C">George</choice>
+                <choice value="D">Ringo</choice>
+            </multiple_choice>
+            <part id="da9dc6e1405d4d7aa6307c0bac840db3">
+                <response match="B,D" score="1">
+                    <feedback>
+                        <p id="d4d4b21f66354470af801152c0840195">Correct</p>
+                    </feedback>
+                </response>
+                <response match="B" score="0">
+                    <feedback>
+                        <p id="b2bf0e3ff9304fdd9ae5df619d4752b4">You got one right</p>
+                    </feedback>
+                </response>
+                <response match="A,C" score="0">
+                    <feedback>
+                        <p id="cb029e3623594adab0bd0ef0a6503a63">You are maximally incorrect</p>
+                    </feedback>
+                </response>
+                <response match="A" name="AUTOGEN_{A}" score="0">
+                    <feedback>
+                        <p id="d3804884990e46deb1b42acf41b3fd57">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,B" name="AUTOGEN_{A,B}" score="0">
+                    <feedback>
+                        <p id="bdadbde578e04f4194123c1bc7ce8ef8">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,B,C" name="AUTOGEN_{A,B,C}" score="0">
+                    <feedback>
+                        <p id="c48a4dee4d1f43109b34c8a55757335a">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,B,C,D" name="AUTOGEN_{A,B,C,D}" score="0">
+                    <feedback>
+                        <p id="b41b4a8e6b7f418ba7528d25047971ca">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,B,D" name="AUTOGEN_{A,B,D}" score="0">
+                    <feedback>
+                        <p id="e73a762a67db40e1a93f719714f9c4b1">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,C,D" name="AUTOGEN_{A,C,D}" score="0">
+                    <feedback>
+                        <p id="eede6e169860487aa593977e9b455c0d">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="A,D" name="AUTOGEN_{A,D}" score="0">
+                    <feedback>
+                        <p id="f8acb6667bdd40af830ab2e375f88574">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="B,C" name="AUTOGEN_{B,C}" score="0">
+                    <feedback>
+                        <p id="e4436377880745f2831e82b85aa83b6a">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="B,C,D" name="AUTOGEN_{B,C,D}" score="0">
+                    <feedback>
+                        <p id="d9753a41eb094f4fb8367785369dc9bf">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="C" name="AUTOGEN_{C}" score="0">
+                    <feedback>
+                        <p id="d30bb13ea983435b85cde69da0e9599d">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="C,D" name="AUTOGEN_{C,D}" score="0">
+                    <feedback>
+                        <p id="a9a2db612c1042f68acc0b9c54d05fc5">Wrong answer</p>
+                    </feedback>
+                </response>
+                <response match="D" name="AUTOGEN_{D}" score="0">
+                    <feedback>
+                        <p id="feb6f1ea1f904d028526a579f58c63d7">Wrong answer</p>
+                    </feedback>
+                </response>
+            </part>
+        </question>
+        <question id="ad62335f0a85499fbcdb4f59355daf1a">
+            <body>
+                <p id="b2d258a10ecd4f3d811d933c9cf95e3b">Click the faces of those that are still
+                    alive:</p>
+            </body>
+            <image_hotspot id="dd6167073d9748168007b54f9c615df5"
+                src="../webcontent/beatles-toast.jpeg" width="480" height="360" select="multiple">
+                <hotspot value="A" shape="rect"
+                    coords="358,91,468,201" />
+                <hotspot value="B" shape="circle" coords="153,146,36" />
+                <hotspot value="C" shape="circle" coords="274,140,41" />
+                <hotspot value="D" shape="circle" coords="53,148,47" />
+            </image_hotspot>
+            <part id="c05a0fc93b4e44a5b4585ce9049bdc61">
+                <response match="A" score="0">
+                    <feedback>
+                        <p id="a2cbd0c10028492d9d04e79dd5d89e4e">Not John</p>
+                    </feedback>
+                </response>
+                <response match="B,D" score="1">
+                    <feedback>
+                        <p id="a4439541d9fe4549b7de7130d6343e9f">Correct</p>
+                    </feedback>
+                </response>
+                <response match="A,C" score="0">
+                    <feedback>
+                        <p id="c3b1c25edcbb43ab8a80c76d96da3d1e">Maximally incorrect</p>
+                    </feedback>
+                </response>
+                <response match="B" score="1">
+                    <feedback>
+                        <p id="bbef446b3cdd4187b7db4f0242f306a8">One right </p>
+                    </feedback>
+                </response>
+                <response match="D" score="1">
+                    <feedback>
+                        <p id="bbef446b3cdd4187b7db4f0242f306a9">One right </p>
+                    </feedback>
+                </response>
+            </part>
+        </question>
+    </page>
+</assessment>

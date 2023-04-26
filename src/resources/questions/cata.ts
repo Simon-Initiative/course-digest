@@ -1,6 +1,7 @@
 import { guid } from 'src/utils/common';
 import * as Common from './common';
 import { matchListRule } from './rules';
+import { convertCatchAll } from './common';
 
 // Helper. Assumes a correct ID is given
 interface Identifiable {
@@ -115,7 +116,8 @@ export function buildCATAPart(question: any) {
       const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
-        rule: r.match,
+        rule: convertCatchAll(r.match),
+        legacyMatch: convertCatchAll(r.match),
         name: r.name,
         feedback: {
           id: guid(),
@@ -143,8 +145,8 @@ export function buildCATAPart(question: any) {
   return part;
 }
 
-export function cata(question: any) {
-  const choices = Common.buildChoices(question);
+export function cata(question: any, from = 'multiple_choice') {
+  const choices = Common.buildChoices(question, from);
   const choiceIds = choices.map((c: any) => c.id);
   const transformationElement = Common.getChild(
     question.children,
