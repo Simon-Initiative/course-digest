@@ -19,7 +19,7 @@ import {
   findCustomTag,
   process as processCustomDnd,
 } from './questions/custom-dnd';
-import { buildCATAPart, cata } from './questions/cata';
+import { cata } from './questions/cata';
 import { buildMulti } from './questions/multi';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
