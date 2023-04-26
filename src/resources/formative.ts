@@ -287,9 +287,9 @@ function processImageHotspot(question: any) {
     authoring: {
       parts: modelQ.authoring.parts,
       // used with CATA model only:
-      correct: multiple ? modelQ.correct : [],
-      previewText: modelQ.previewText,
-      targeted: modelQ.targeted,
+      correct: multiple ? modelQ.authoring.correct : [],
+      previewText: modelQ.authoring.previewText,
+      targeted: modelQ.authoring.targeted,
     },
   };
 }
