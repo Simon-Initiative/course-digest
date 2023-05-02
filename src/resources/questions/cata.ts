@@ -79,9 +79,10 @@ export function extractArgs(legacyPat: string): string[] {
 // and/orRules from rules.tsx take variable length argument lists.
 // invertRule(x) => (!(x)) so parenthesized and parenthesizes its argument, but
 // and/or/union/disjoinRules(X, Y, Z) => Z OP (Y OP (X)) w/no outer parens, so
-// safe if top-level or used as non-final arg to another and/or/union, but would
-// have to have result wrapped in parens to be safe as LAST argument to
+// safe if top-level or used as non-final arg to another and/or/union, but has
+// to have result wrapped in parens to be safe as LAST argument to
 // another and/or/union/disjoinRules.
+const parenthesize = (expr: string) => '(' + expr + ')';
 
 export function convertSetRule(setOp: string, set: string[], all: string[]) {
   // examples use set=[A,B] all=[A,B,C,D]
@@ -106,7 +107,7 @@ export function convertSetRule(setOp: string, set: string[], all: string[]) {
     case '>': // proper superset: (like {A} && like {B}) && (like {C} || like {D})
       return andRules(
         disjoinRules(others.map(createMatchRule)),
-        unionRules(set.map(createMatchRule))
+        parenthesize(unionRules(set.map(createMatchRule)))
       );
     case '><': // intersection: like {A} || like {B}
       return disjoinRules(set.map(createMatchRule));
@@ -129,7 +130,6 @@ function convertSetRuleTrace(setOp: string, set: string[], all: string[]) {
   return result;
 }
 */
-
 // Update all response rules based on a model with new choices that
 // are not yet reflected by the rules.
 
