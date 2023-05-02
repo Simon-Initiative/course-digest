@@ -56,6 +56,26 @@ export function hasCatchAllRule(responses: any[]) {
   return responses.some((r) => r.rule === 'input like {.*}');
 }
 
+export function makeFeedback(text: string) {
+  return {
+    id: guid(),
+    content: [{ type: 'p', children: [{ text: text }] }],
+  };
+}
+
+export function makeCatchAllResponse() {
+  return {
+    id: guid(),
+    score: 0,
+    rule: 'input like {.*}',
+    feedback: makeFeedback('Incorrect.'),
+  };
+}
+
+export function ensureCatchAllResponse(responses: any[]): void {
+  if (!hasCatchAllRule(responses)) responses.push(makeCatchAllResponse());
+}
+
 export function ensureParagraphs(children: any[]) {
   // if all children are text|inline elements: wrap all in single p
   if (children.every((c: any) => c.text !== undefined || isInlineTag(c.type))) {

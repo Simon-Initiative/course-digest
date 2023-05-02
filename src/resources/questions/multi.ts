@@ -175,17 +175,7 @@ function produceTorusEquivalents(
   input.id = item.id;
   input.partId = part.id;
 
-  if (!Common.hasCatchAllRule(part.responses)) {
-    part.responses.push({
-      id: guid(),
-      score: 0,
-      rule: 'input like {.*}',
-      feedback: {
-        id: guid(),
-        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-      },
-    });
-  }
+  Common.ensureCatchAllResponse(part.responses);
 
   return { input, part, choices, targeted };
 }

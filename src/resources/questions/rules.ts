@@ -8,8 +8,6 @@ export const andRules = (...rules: string[]) => rules.reduce(andTwoRules);
 const orTwoRules = (rule1: string, rule2: string) => `${rule2} || (${rule1})`;
 export const orRules = (...rules: string[]) => rules.reduce(orTwoRules);
 
-export const isCatchAllResponse = (response: any) => response.rule === '.*';
-
 export function setDifference<T>(subtractedFrom: T[], toSubtract: T[]) {
   return subtractedFrom.filter((x) => !toSubtract.includes(x));
 }

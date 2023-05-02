@@ -85,21 +85,13 @@ function buildMCQPart(question: any) {
     let incorrect = r.filter((r: any) => r.score === 0)[0];
 
     if (incorrect === undefined) {
-      incorrect = {
-        id: guid(),
-        score: 0,
-        rule: `input like {.*}`,
-        feedback: {
-          id: guid(),
-          content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-        },
-      };
+      incorrect = Common.makeCatchAllResponse();
       r.push(incorrect);
+    } else {
+      incorrect.rule = 'input like {.*}';
     }
 
     let other = r.filter((r: any) => r.score !== 0)[0];
-    incorrect.rule = 'input like {.*}';
-
     if (other === null || other === undefined) {
       other = r.filter((r: any) => r.id !== incorrect.id)[0];
     }
@@ -123,17 +115,7 @@ function buildMCQPart(question: any) {
 
   model.targeted = targeted;
 
-  if (!Common.hasCatchAllRule(r)) {
-    model.responses.push({
-      id: guid(),
-      score: 0,
-      rule: 'input like {.*}',
-      feedback: {
-        id: guid(),
-        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-      },
-    });
-  }
+  Common.ensureCatchAllResponse(model.responses);
 
   return model;
 }
@@ -161,7 +143,7 @@ function buildOrderingPart(question: any) {
         score: r.score === undefined ? 0 : parseInt(r.score),
 
         rule: `input like {${torusMatch}}`,
-        legacyRule: cleanedMatch,
+        legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
@@ -225,15 +207,7 @@ function buildLikertParts(question: any, items: any[]) {
           content: [{ type: 'p', children: [{ text: 'Correct.' }] }],
         },
       },
-      {
-        id: guid(),
-        score: 0,
-        rule: `input like {.*}`,
-        feedback: {
-          id: guid(),
-          content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-        },
-      },
+      Common.makeCatchAllResponse(),
     ],
     scoringStrategy: 'average',
     objectives: [],
@@ -344,21 +318,11 @@ function ordering(question: any) {
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
 
-  const correctIds = correctResponse.legacyRule.split(/\s*,\s*/);
+  const correctIds = correctResponse.legacyMatch.split(/\s*,\s*/);
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
-  if (!Common.hasCatchAllRule(model.authoring.parts[0].responses)) {
-    model.authoring.parts[0].responses.push({
-      id: guid(),
-      score: 0,
-      rule: 'input like {.*}',
-      feedback: {
-        id: guid(),
-        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-      },
-    });
-  }
+  Common.ensureCatchAllResponse(model.authoring.parts[0].responses);
 
   return model;
 }
@@ -470,6 +434,9 @@ export function toActivity(
   activity.id = legacyId + '-' + question.id;
   // provisional title, may be adjusted by caller w/more context
   activity.title = activity.id;
+
+  /* const result = Common.getDescendants(question.children, 'response_mult');
+  if (result.length > 0) console.log('q uses response_mult: ' + q.id); */
 
   const [content, imageReferences] = buildModel(
     subType,
@@ -664,6 +631,7 @@ export class Formative extends Resource {
     projectSummary: ProjectSummary
   ): Promise<(TorusResource | string)[]> {
     failIfPresent($, ['response_mult', 'grading_criteria']);
+
     failIfHasValue($, 'content', 'available', 'instructor_only');
     failIfHasValue($, 'content', 'available', 'feedback_only');
     failIfHasValue($, 'content', 'available', 'never');

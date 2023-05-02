@@ -78,7 +78,7 @@ export function addWarning(
   resource.warnings.push({ idref, description });
 }
 
-export function failIfPresent($: any, items: string[]) {
+export function failIfPresent($: cheerio.Root, items: string[]) {
   items.forEach((e: string) => {
     $(e).each((_i: any, _item: any) => {
       console.log(`unsupported element [${e}] detected, exiting`);
