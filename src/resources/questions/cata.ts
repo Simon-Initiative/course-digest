@@ -283,7 +283,6 @@ export function cata(question: any, from = 'multiple_choice') {
   // co-exist, resulting in three entries which display as responses to [A,B], though are
   // not equivalent behind the scenes. Until torus authoring improved this is best we can do.
   responseList.forEach((r: any) => {
-    if (r === undefined) console.log('UNDEFINED in response list');
     if (r.id !== correctResponse.id && !hasCatchAllMatch(r)) {
       (model.authoring.targeted as any).push([extractArgs(r.rule), r.id]);
     }
