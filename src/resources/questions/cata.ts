@@ -134,10 +134,7 @@ function convertSetRuleTrace(setOp: string, set: string[], all: string[]) {
 // are not yet reflected by the rules.
 
 function findResponse(model: any, id: string) {
-  const result = model.authoring.parts[0].responses.find(
-    (r: any) => r.id === id
-  );
-  return result ? result : null;
+  return model.authoring.parts[0].responses.find((r: any) => r.id === id);
 }
 
 // NB: this applies to a (normalized) legacy match pattern, NOT a torus rule
