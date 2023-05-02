@@ -1,6 +1,6 @@
 import { guid } from 'src/utils/common';
 import * as Common from './common';
-import { matchListRule } from './rules';
+import { andRules, matchListRule } from './rules';
 import { convertCatchAll } from './common';
 
 // Helper. Assumes a correct ID is given
@@ -59,42 +59,111 @@ export const invertRule = (rule: string) => `(!(${rule}))`;
 export const unionTwoRules = (rule1: string, rule2: string) =>
   `${rule2} && (${rule1})`;
 export const unionRules = (rules: string[]) => rules.reduce(unionTwoRules);
+export const disjoinTwoRules = (rule1: string, rule2: string) =>
+  `${rule2} || (${rule1})`;
+export const disjoinRules = (rules: string[]) => rules.reduce(disjoinTwoRules);
 
 // Other
 export function setDifference<T>(subtractedFrom: T[], toSubtract: T[]) {
   return subtractedFrom.filter((x) => !toSubtract.includes(x));
 }
 
+// Extract arg list from match pattern which may be set-theoretic form "<={ a,b, c }".
+export function extractArgs(legacyPat: string): string[] {
+  const setRuleMatch = legacyPat.match(/\{([^}]+)\}/);
+  const argList = setRuleMatch ? setRuleMatch[1] : legacyPat;
+  return argList.trim().split(/\s*,\s*/);
+}
+
+// For combining rules: union/disjoinRules take array of rule strings,
+// and/orRules from rules.tsx take variable length argument lists.
+// invertRule(x) => (!(x)) so parenthesized and parenthesizes its argument, but
+// and/or/union/disjoinRules(X, Y, Z) => Z OP (Y OP (X)) w/no outer parens, so
+// safe if top-level or used as non-final arg to another and/or/union, but would
+// have to have result wrapped in parens to be safe as LAST argument to
+// another and/or/union/disjoinRules.
+
+export function convertSetRule(setOp: string, set: string[], all: string[]) {
+  // examples use set=[A,B] all=[A,B,C,D]
+  const others = setDifference(all, set);
+  switch (setOp) {
+    case '<=': // subset:  ! (like {C} || like {D})
+      return invertRule(disjoinRules(others.map(createMatchRule)));
+    case '<': // proper subset: ! (like {C} || like {D})) && ! (like {A} && like {B}))
+      return others.length === 0
+        ? // special case for proper subset of all (useful esp when correct = all)
+          invertRule(unionRules(set.map(createMatchRule)))
+        : andRules(
+            invertRule(disjoinRules(others.map(createMatchRule))),
+            invertRule(unionRules(set.map(createMatchRule)))
+          );
+    case '=':
+      return matchListRule(all, set);
+    case '!=':
+      return invertRule(matchListRule(all, set));
+    case '>=': // superset:  like {A} && like {B}
+      return unionRules(set.map(createMatchRule));
+    case '>': // proper superset: (like {A} && like {B}) && (like {C} || like {D})
+      return andRules(
+        disjoinRules(others.map(createMatchRule)),
+        unionRules(set.map(createMatchRule))
+      );
+    case '><': // intersection: like {A} || like {B}
+      return disjoinRules(set.map(createMatchRule));
+      break;
+    case '<>': // disjoint: ! (like {A} || like {B})
+      return invertRule(disjoinRules(set.map(createMatchRule)));
+      break;
+    default:
+      console.log('unrecognized set operator in match, ignored: ' + setOp);
+      return matchListRule(all, set);
+  }
+}
+
+/*
+function convertSetRuleTrace(setOp: string, set: string[], all: string[]) {
+  console.log(
+    `convertSetRule: ${setOp}{${set.join(',')}}  U={${all.join(',')}}`
+  );
+  const result = convertSetRule(setOp, set, all);
+  console.log('convertSetRule ==> ' + result);
+  return result;
+}
+*/
+
 // Update all response rules based on a model with new choices that
 // are not yet reflected by the rules.
 
-function getResponseBy(model: any, fn: any) {
-  const result = model.authoring.parts[0].responses.filter(fn);
-  if (result.length > 0) {
-    return result[0];
-  }
-  return null;
+function findResponse(model: any, id: string) {
+  const result = model.authoring.parts[0].responses.find(
+    (r: any) => r.id === id
+  );
+  return result ? result : null;
 }
 
+// NB: this applies to a (normalized) legacy match pattern, NOT a torus rule
+export const hasCatchAllMatch = (response: any) => response.rule === '.*';
+
 const updateResponseRules = (model: any) => {
+  const allChoices = model.choices.map((c: any) => c.id);
+
+  // translate correct set response rule
   getCorrectResponse(model).rule = matchListRule(
-    model.choices.map((c: any) => c.id),
+    allChoices,
     getCorrectChoiceIds(model)
   );
 
-  const catchAll = model.authoring.parts[0].responses.filter(
-    (r: any) => r.rule === '*'
-  );
-  if (catchAll.length !== 0) {
-    catchAll[0].rule = 'input like {.*}';
-  }
+  // translate legacy catchAll match to torus rule
+  const catchAll = model.authoring.parts[0].responses.find(hasCatchAllMatch);
+  if (catchAll) catchAll.rule = 'input like {.*}';
 
+  // translate rules in targeted feedback responses, checking for set-theoretic match rules
   model.authoring.targeted.forEach((assoc: any) => {
-    getResponseBy(model, (r: any) => r.id === getResponseId(assoc)).rule =
-      matchListRule(
-        model.choices.map((c: any) => c.id),
-        getChoiceIds(assoc)
-      );
+    const r = findResponse(model, getResponseId(assoc));
+    const setOpMatch = r.rule.match(/^([!<=>]+)\{/);
+    r.rule = setOpMatch
+      ? convertSetRule(setOpMatch[1], getChoiceIds(assoc), allChoices)
+      : matchListRule(allChoices, getChoiceIds(assoc));
   });
 };
 
@@ -113,12 +182,15 @@ export function buildCATAPart(question: any) {
     id: Common.getPartIds(question)[0],
     responses: responses.map((r: any) => {
       const id = guid();
+      const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
         id,
         score: r.score === undefined ? 0 : parseInt(r.score),
-        rule: convertCatchAll(r.match),
-        legacyMatch: convertCatchAll(r.match),
-        name: r.name,
+        // "rule" assigned here is only provisional, holding catchAll-normalized
+        // legacy match pattern to be translated later on
+        rule: cleanedMatch,
+        legacyMatch: cleanedMatch,
+        namremoveSetOpse: r.name,
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
@@ -171,81 +243,58 @@ export function cata(question: any, from = 'multiple_choice') {
       incorrect: [],
     },
   };
+  const responseList = model.authoring.parts[0].responses;
 
+  // Replaces any auto-generated incorrect responses with single catchall.
   Common.convertAutoGenResponses(model);
 
-  let correctResponse = model.authoring.parts[0].responses.filter(
+  let correctResponse = responseList.find(
     (r: any) => r.score !== undefined && r.score !== 0
-  )[0];
-
-  if (correctResponse === undefined) {
-    if (model.authoring.parts[0].responses.length === 0) {
-      const r: any = {
+  );
+  // ensure a correct response if none
+  if (correctResponse === null) {
+    console.log('No correct response: ' + question.id);
+    if (responseList.length === 0) {
+      responseList.push({
         id: guid(),
         score: 1,
         rule: `${choiceIds[0]}`,
-        feedback: {
-          id: guid(),
-          content: [
-            { type: 'p', children: [{ text: 'Correct', children: [] }] },
-          ],
-        },
-      };
-      model.authoring.parts[0].responses.push(r);
+        feedback: Common.makeFeedback('Correct'),
+      });
     }
 
-    correctResponse = model.authoring.parts[0].responses[0];
+    correctResponse = responseList[0];
   }
 
+  // authoring display uses correct response id set to response pairing
   const correctIds = correctResponse.rule.split(',');
-  (model.authoring.correct as any).push(correctIds);
-  (model.authoring.correct as any).push(correctResponse.id);
+  (model.authoring.correct as any).push(correctIds, correctResponse.id);
+  // incorrect id->response pairing no longer needed by latest V2 schema
 
-  const incorrectIds = choiceIds.filter((x: any) => !correctIds.includes(x));
-  const incorrectResponses = model.authoring.parts[0].responses.filter(
-    (r: any) => r.rule === '*' || r.rule === 'input like {.*}'
-  );
-
-  let incorrectResponse: any;
-  if (incorrectResponses.length === 0) {
-    const r: any = {
+  // ensure a catchAll response.
+  if (!responseList.find(hasCatchAllMatch)) {
+    responseList.push({
       id: guid(),
       score: 0,
-      rule: '*',
-      feedback: {
-        id: guid(),
-        content: [
-          { type: 'p', children: [{ text: 'Incorrect', children: [] }] },
-        ],
-      },
-    };
-    model.authoring.parts[0].responses.push(r);
-    incorrectResponse = r;
-  } else {
-    incorrectResponse = incorrectResponses[0];
+      rule: '.*', // legacy match pattern awaiting translation below
+      feedback: Common.makeFeedback('Correct'),
+    });
   }
-  (model.authoring.incorrect as any).push(incorrectIds);
-  (model.authoring.incorrect as any).push(incorrectResponse.id);
 
-  model.authoring.parts[0].responses.forEach((r: any) => {
-    if (r.id !== correctResponse.id && r.id !== incorrectResponse.id) {
-      (model.authoring.targeted as any).push([r.rule.split(','), r.id]);
+  // collect targeted feedback responses into mapping from choice ID lists displayed
+  // in torus authoring interface. Any set-theoretic match rules still indexed by argument
+  // sets so match patterns "a,b", "<{a,b}" [subset], and ">{a,b}" [superset] could all
+  // co-exist, resulting in three entries which display as responses to [A,B], though are
+  // not equivalent behind the scenes. Until torus authoring improved this is best we can do.
+  responseList.forEach((r: any) => {
+    if (r === undefined) console.log('UNDEFINED in response list');
+    if (r.id !== correctResponse.id && !hasCatchAllMatch(r)) {
+      (model.authoring.targeted as any).push([extractArgs(r.rule), r.id]);
     }
   });
 
+  // this converts response rules
   updateResponseRules(model);
-
-  if (!Common.hasCatchAllRule(model.authoring.parts[0].responses)) {
-    model.authoring.parts[0].responses.push({
-      id: guid(),
-      score: 0,
-      rule: 'input like {.*}',
-      feedback: {
-        id: guid(),
-        content: [{ type: 'p', children: [{ text: 'Incorrect.' }] }],
-      },
-    });
-  }
 
   return model;
 }
