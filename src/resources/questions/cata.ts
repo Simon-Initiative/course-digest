@@ -119,7 +119,6 @@ export function convertSetRule(setOp: string, set: string[], all: string[]) {
       return matchListRule(all, set);
   }
 }
-
 /*
 function convertSetRuleTrace(setOp: string, set: string[], all: string[]) {
   console.log(
@@ -252,7 +251,7 @@ export function cata(question: any, from = 'multiple_choice') {
     (r: any) => r.score !== undefined && r.score !== 0
   );
   // ensure a correct response if none
-  if (correctResponse === null) {
+  if (correctResponse === undefined) {
     console.log('No correct response: ' + question.id);
     if (responseList.length === 0) {
       responseList.push({
