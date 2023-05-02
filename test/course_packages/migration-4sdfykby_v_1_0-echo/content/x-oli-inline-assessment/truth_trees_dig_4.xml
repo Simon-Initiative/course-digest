@@ -1,0 +1,72 @@
+<?xml version="1.1" encoding="utf-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<assessment id="truth_trees_dig_4">
+	<title>Understanding Truth-Trees</title>
+
+	<question id="q3">
+		<body>
+			<p>For each truth-value assignment below, indicate the truth-value of <m:math
+					xmlns:m="http://www.w3.org/1998/Math/MathML">
+					<m:mrow>
+						<m:mo fence="true" class="openparen">(</m:mo>
+						<m:mrow>
+							<m:mo fence="true" class="openparen">(</m:mo>
+							<m:mi>P</m:mi>
+							<m:mo class="breakbefore">&#8744;</m:mo>
+							<m:mi>Q</m:mi>
+							<m:mo fence="true" class="closeparen">)</m:mo>
+						</m:mrow>
+						<m:mo class="breakbefore">&#8594;</m:mo>
+						<m:mrow>
+							<m:mo fence="true" class="openparen">(</m:mo>
+							<m:mi>P</m:mi>
+							<m:mo class="breakbefore" lspace="thickmathspace"
+								rspace="thickmathspace">&#38;</m:mo>
+							<m:mi>Q</m:mi>
+							<m:mo fence="true" class="closeparen">)</m:mo>
+						</m:mrow>
+						<m:mo fence="true" class="closeparen">)</m:mo>
+					</m:mrow>
+				</m:math>
+				on that assignment by clicking on the appropriate truth-value on each row:</p>
+			<!--	<input_ref input="q3-input" /> !-->
+		</body>
+		<image_hotspot id="q3-input" src="../webcontent/images/truth_trees_dig_4_image.png"
+			width="232" height="111" select="multiple">
+			<hotspot value="At" shape="rect" coords="121,23,143,42" />
+			<hotspot value="Af" shape="rect" coords="150,23,172,42" />
+			<hotspot value="Bt" shape="rect" coords="121,45,143,64" />
+			<hotspot value="Bf" shape="rect" coords="150,45,172,64" />
+			<hotspot value="Ct" shape="rect" coords="121,67,143,86" />
+			<hotspot value="Cf" shape="rect" coords="150,67,172,86" />
+			<hotspot value="Dt" shape="rect" coords="121,89,143,108" />
+			<hotspot value="Df" shape="rect" coords="150,89,172,108" />
+		</image_hotspot>
+		<part>
+			<response match="At,Bf,Cf,Dt" input="q3-input" score="1">
+				<feedback>That's right!</feedback>
+			</response>
+			<response match="&#60;{At,Bf,Cf,Dt}" input="q3-input" score="0">
+				<feedback>All your selections are correct, but you've missed one or more rows.</feedback>
+			</response>
+			<response match="&#62;={At,Af}" input="q3-input" score="0">
+				<feedback>You should only select one truth-value on each row!</feedback>
+			</response>
+			<response match="&#62;={Bt,Bf}" input="q3-input" score="0">
+				<feedback>You should only select one truth-value on each row!</feedback>
+			</response>
+			<response match="&#62;={Ct,Cf}" input="q3-input" score="0">
+				<feedback>You should only select one truth-value on each row!</feedback>
+			</response>
+			<response match="&#62;={Dt,Df}" input="q3-input" score="0">
+				<feedback>You should only select one truth-value on each row!</feedback>
+			</response>
+			<response match="*" input="q3-input" score="0">
+				<feedback>That's incorrect. Read the truth-value assignments that make the formula
+					false off the truth-tree for the negation of the formula.</feedback>
+			</response>
+			<hint>Read the truth-value assignments that make the formula false off the truth-tree
+				for the negation of the formula.</hint>
+		</part>
+	</question>
+</assessment>
