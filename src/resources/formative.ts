@@ -435,8 +435,9 @@ export function toActivity(
   // provisional title, may be adjusted by caller w/more context
   activity.title = activity.id;
 
-  /* const result = Common.getDescendants(question.children, 'response_mult');
-  if (result.length > 0) console.log('q uses response_mult: ' + q.id); */
+  const result = Common.getDescendants(question.children, 'response_mult');
+  if (result.length > 0)
+    console.log(question.id + ' unsupported element: response_mult ');
 
   const [content, imageReferences] = buildModel(
     subType,
