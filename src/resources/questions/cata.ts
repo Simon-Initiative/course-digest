@@ -230,7 +230,9 @@ export function cata(question: any, from = 'multiple_choice') {
       version: 2,
       parts: [buildCATAPart(question)],
       transformations: [
-        ...(question.shuffle ? [Common.shuffleTransformation()] : []),
+        ...(question.shuffle === 'true'
+          ? [Common.shuffleTransformation()]
+          : []),
         ...transformationsArray,
       ],
       previewText: '',

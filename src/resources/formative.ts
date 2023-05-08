@@ -233,7 +233,7 @@ function mcq(question: any, type = 'multiple_choice') {
       parts: [part],
 
       transformations: [
-        ...(shuffle ? [Common.shuffleTransformation()] : []),
+        ...(shuffle === 'true' ? [Common.shuffleTransformation()] : []),
         ...transformationsArray,
       ],
       previewText: '',
@@ -297,7 +297,7 @@ function ordering(question: any) {
       version: 2,
       parts: [buildOrderingPart(question)],
       transformations: [
-        ...(shuffle ? [Common.shuffleTransformation()] : []),
+        ...(shuffle === 'true' ? [Common.shuffleTransformation()] : []),
         ...transformationsArray,
       ],
       previewText: '',
