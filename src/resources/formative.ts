@@ -651,6 +651,8 @@ export class Formative extends Resource {
         feedback: true,
         explanation: true,
         material: true,
+        anchor: true,
+        translation: true,
         dt: true,
         dd: true,
       }).then((r: any) => {
