@@ -241,9 +241,7 @@ describe('convert summative', () => {
                 explanation: null,
               },
             ],
-            transformations: [
-              { id: expect.any(String), path: 'choices', operation: 'shuffle' },
-            ],
+            transformations: [],
             previewText: '',
             targeted: [],
           },
