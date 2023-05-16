@@ -100,6 +100,8 @@ export function transformToFlatDirectory(
               url.lastIndexOf('media/') + 6
             )}</dataset>`
           );
+        } else if ($(elem)[0].name === 'link') {
+          $(elem).attr('href', url);
         } else {
           $(elem).attr('src', url);
         }
@@ -366,6 +368,7 @@ function findFromDOM(
   filePath: string,
   remote = false
 ): Record<string, Array<string>> {
+  // maps path => array of elements referencing it
   const paths: any = {};
 
   $('pronunciation').each((i: any, elem: any) => {
@@ -412,6 +415,19 @@ function findFromDOM(
 
   $('embed_activity source').each((i: any, elem: any) => {
     paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+  });
+
+  $('iframe').each((i: any, elem: any) => {
+    if ($(elem).attr('src').includes('webcontent'))
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+
+  // link to webcontent. NB: this executes BEFORE <link> renamed to <a>
+  $('link').each((i: any, elem: any) => {
+    const href = $(elem).attr('href');
+    if (href !== undefined && href.includes('webcontent')) {
+      paths[href] = [elem, ...$(paths[href])];
+    }
   });
 
   $('asset').each((i: any, elem: any) => {
