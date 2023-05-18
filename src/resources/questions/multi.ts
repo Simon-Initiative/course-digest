@@ -32,6 +32,16 @@ export function buildMulti(
       torusParts.push(part);
     }
   }
+  /*
+  const dropdowns = inputs.filter((i) => i.inputType === 'dropdown');
+  if (!dropdowns.every((e, _i, arr) => e.shuffle === arr[0].shuffle)) {
+    console.log(
+      'mixed shuffle vals in multi ' +
+        question.id +
+        ':' +
+        dropdowns.map((i: any) => i.shuffle).join(',')
+    );
+  }*/
   const transformation = Common.getChild(question.children, 'transformation');
 
   torusParts.reduce((seen, part) => {
@@ -160,6 +170,7 @@ function produceTorusEquivalents(
     part = buildDropdownPart(p, i, ignorePartId);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'dropdown';
+    // input.shuffle = item.shuffle;
 
     choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);

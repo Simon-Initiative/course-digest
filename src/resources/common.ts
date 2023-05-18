@@ -142,6 +142,7 @@ export function standardContentManipulations($: any) {
   // Default to block images
   DOM.rename($, 'image', 'img');
   DOM.rename($, 'link', 'a');
+
   // Images "nested" inside paragraphs and links become inline images.
   // Block images are wrapped inside figures in Torus, so even if an
   // image in a legacy course is intended as a block semantically, with
@@ -211,6 +212,7 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p p');
 
   DOM.stripElement($, 'li p');
+
   DOM.rename($, 'li img', 'img_inline');
   DOM.stripElement($, 'p quote');
 
