@@ -151,6 +151,15 @@
             <resourceref idref="embed_super" />
           </item>
         </module>
+        <module id="links">
+          <title>
+           Link Handling 
+          </title>
+          <item id="bca2e8dcf45e4ca5836d20" scoring_mode="default">
+            <resourceref idref="histogram1" />
+          </item>
+        </module>
+
         <module id="bugfixes">
           <title>
             Bug Fixes
