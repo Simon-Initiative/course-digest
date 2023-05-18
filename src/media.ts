@@ -418,14 +418,16 @@ function findFromDOM(
   });
 
   $('iframe').each((i: any, elem: any) => {
-    if ($(elem).attr('src').includes('webcontent'))
-      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    const src = $(elem).attr('src');
+    if (src !== undefined && isRelativeUrl(src)) {
+      paths[src] = [elem, ...$(paths[src])];
+    }
   });
 
   // link to webcontent. NB: this executes BEFORE <link> renamed to <a>
   $('link').each((i: any, elem: any) => {
     const href = $(elem).attr('href');
-    if (href !== undefined && href.includes('webcontent')) {
+    if (href !== undefined && isRelativeUrl(href)) {
       paths[href] = [elem, ...$(paths[href])];
     }
   });
@@ -458,6 +460,9 @@ function findFromDOM(
 
   return paths;
 }
+
+const absUrlPrefix = new RegExp('^[a-z]+://', 'i');
+const isRelativeUrl = (url: string): boolean => !url.match(absUrlPrefix);
 
 function isLocalReference(src: string, filePath: string): boolean {
   return (
