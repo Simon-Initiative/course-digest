@@ -33,13 +33,13 @@ const optionDefinitions = [
     defaultOption: true,
     defaultValue: 'convert',
   },
-  { name: 'mediaManifest', type: String },
+  { name: 'mediaManifest', type: String, alias: 'm' },
   { name: 'outputDir', type: String, alias: 'o' },
   { name: 'inputDir', type: String, alias: 'i' },
   { name: 'specificOrg', type: String },
   { name: 'specificOrgId', type: String },
-  { name: 'mediaUrlPrefix', type: String },
-  { name: 'spreadsheetPath', type: String },
+  { name: 'mediaUrlPrefix', type: String, alias: 'p' },
+  { name: 'spreadsheetPath', type: String, alias: 's' },
   { name: 'svnRoot', type: String },
   { name: 'downloadRemote', type: Boolean },
   { name: 'quiet', type: Boolean, alias: 'q' },
@@ -321,9 +321,14 @@ function helpAction() {
   console.log('OLI Legacy Course Package Digest Tool');
   console.log('-------------------------------------\n');
   console.log('Usage:\n');
-  console.log('Summarizing a course package current OLI DTD element usage:');
   console.log(
-    'npm run start --operation [summarize | convert | upload] --inputDir <course package dir> --outputDir <outdir dir> --mediaUrlPrefix <public S3 media url prefix> --specificOrgId <organization id> --specificOrg <org path>\n'
+    'npm run start -- [convert] --inputDir <course package dir> --mediaUrlPrefix <public S3 media url prefix>  [--outputDir <outdir dir>] [--specificOrg <org path>]'
+  );
+  console.log(
+    'npm run start -- upload --mediaManifest <outputDir/_media-manifest.json>'
+  );
+  console.log(
+    'npm run start -- summarize --inputDir <course package dir> --outputDir <output dir>\n'
   );
 }
 
@@ -339,7 +344,7 @@ function main() {
 
   if (validateArgs(options)) {
     if (options.operation === 'summarize') {
-      summaryAction(options);
+      summaryAction(options).then(exit);
     } else if (options.operation === 'convert') {
       convertAction(options)
         .then(writeConvertedResults)
@@ -347,7 +352,9 @@ function main() {
         .then(() => suggestUploadAction(options))
         .then(exit);
     } else if (options.operation === 'upload') {
-      uploadAction(options).then((_r: any) => console.log('Done!'));
+      uploadAction(options)
+        .then((_r: any) => console.log('Done!'))
+        .then(exit);
     } else {
       helpAction();
       exit();
