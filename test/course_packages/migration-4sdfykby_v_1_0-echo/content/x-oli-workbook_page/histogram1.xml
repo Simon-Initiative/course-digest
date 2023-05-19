@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+  xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+  xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/"
+  xmlns:theme="http://oli.web.cmu.edu/presentation/"
+  xmlns:wb="http://oli.web.cmu.edu/activity/workbook/"
+  id="histogram1">
+  <head>
+    <title>Histogram: Intervals</title>
+  </head>
+  <body>
+
+    <p> Following is a link to a local webcontent file: <link href="../webcontent/polar-bear.jpg">Polar
+      Bear image</link>
+    </p>
+    <p> Following links to an external page: <link href="http://google.com">Google Search</link>
+    </p>
+
+    <p>Following frames a local webcontent file. It should display, though
+      interactive 'html activity' functionality via local scripts is not yet supported</p>
+    <iframe id="_i_2" src="../webcontent/histogram_of_grades.html" height="800" width="800">
+      <popout enable="false" />
+    </iframe>
+
+    <p>Following frames an external website.</p>
+    <iframe id="_i_3" src="https://oli.cmu.edu" height="800" width="800">
+      <popout enable="false" />
+    </iframe>
+
+  </body>
+</workbook_page>
