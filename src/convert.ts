@@ -291,7 +291,10 @@ export function globalizeObjectiveReferences(
 
   return resources.map((r: TorusResource) => {
     if (r.type === 'Page' || r.type === 'Objective') {
-      (r as Page).objectives = mapArray((r as Page).objectives);
+      // dangling skillrefs will have no id mapping: remove from list.
+      (r as Page).objectives = mapArray((r as Page).objectives).filter(
+        (id) => id != undefined
+      );
       return r;
     }
     if (r.type === 'Activity') {
