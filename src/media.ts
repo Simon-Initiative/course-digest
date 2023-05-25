@@ -433,7 +433,10 @@ function findFromDOM(
   });
 
   $('asset').each((i: any, elem: any) => {
-    if ($(elem).text().includes('webcontent')) {
+    if (
+      $(elem).text().includes('webcontent') &&
+      $(elem).attr('name') !== 'basepath'
+    ) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
     }
   });
