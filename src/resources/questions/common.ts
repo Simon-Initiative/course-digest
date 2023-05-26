@@ -158,6 +158,12 @@ export function shuffleTransformation() {
   };
 }
 
+export function shufflePartTransformation(partId: string) {
+  const t = shuffleTransformation();
+  (t as any).partId = partId;
+  return t;
+}
+
 export function buildChoices(question: any, from = 'multiple_choice') {
   const choices = getChild(question.children, from).children as any[];
 

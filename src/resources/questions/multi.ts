@@ -17,6 +17,7 @@ export function buildMulti(
   const inputs: any[] = [];
   const allTargeted: any[] = [];
   const torusParts: any[] = [];
+  const transformations: any[] = [];
 
   if (items.length === parts.length && items.length > 0) {
     for (let i = 0; i < items.length; i++) {
@@ -30,19 +31,14 @@ export function buildMulti(
       targeted.forEach((c: any) => allTargeted.push(c));
       inputs.push(input);
       torusParts.push(part);
+      if (input.inputType === 'dropdown' && input.shuffle === 'true') {
+        transformations.push(Common.shufflePartTransformation(part.id));
+      }
     }
   }
-  /*
-  const dropdowns = inputs.filter((i) => i.inputType === 'dropdown');
-  if (!dropdowns.every((e, _i, arr) => e.shuffle === arr[0].shuffle)) {
-    console.log(
-      'mixed shuffle vals in multi ' +
-        question.id +
-        ':' +
-        dropdowns.map((i: any) => i.shuffle).join(',')
-    );
-  }*/
+
   const transformation = Common.getChild(question.children, 'transformation');
+  if (transformation !== undefined) transformations.push(transformation);
 
   torusParts.reduce((seen, part) => {
     if (seen[part.id] === undefined) {
@@ -64,7 +60,7 @@ export function buildMulti(
     authoring: {
       targeted: allTargeted,
       parts: torusParts,
-      transformations: transformation === undefined ? [] : [transformation],
+      transformations: transformations,
       previewText: '',
     },
   };
@@ -170,7 +166,7 @@ function produceTorusEquivalents(
     part = buildDropdownPart(p, i, ignorePartId);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'dropdown';
-    // input.shuffle = item.shuffle;
+    input.shuffle = item.shuffle;
 
     choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);
