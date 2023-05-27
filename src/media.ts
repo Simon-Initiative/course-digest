@@ -454,7 +454,9 @@ function findFromDOM(
   });
 
   $('audio').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    if ($(elem).attr('src') !== undefined) {
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    }
   });
 
   $('audio source').each((i: any, elem: any) => {

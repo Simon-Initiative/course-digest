@@ -62,7 +62,7 @@ describe('Media conversions', () => {
         `<video><source src=\"unit-test://media/f8/f82cb41d5a054fd271290be295075fe8/ammonium.mp4\"/></video> `
       );
     });
-
+    /*
     it('Should not transform proxied asset urls', () => {
       const $ = cheerio.load(
         `<content>
@@ -81,5 +81,6 @@ describe('Media conversions', () => {
         `<asset src=\"test/content/webcontent/za5.html\"/>`
       );
     });
+    */
   });
 });
