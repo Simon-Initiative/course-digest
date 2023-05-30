@@ -12,22 +12,15 @@
   </head>
   <body>
 
-    <p> Following is a link to a local webcontent file: <link href="../webcontent/polar-bear.jpg">Polar
-      Bear image</link>
-    </p>
-    <p> Following links to an external page: <link href="http://google.com">Google Search</link>
-    </p>
 
-    <p>Following frames a local webcontent file. It should display, though
-      interactive 'html activity' functionality via local scripts is not yet supported</p>
-    <iframe id="_i_2" src="../webcontent/histogram_of_grades.html" height="800" width="800">
+    <p>Following frames a local webcontent file. It should display and support interaction
+      via loading of associated scripts and styles</p>
+    <iframe id="_i_2"
+      src="../webcontent/html_activities/histogram_of_grades/histogram_of_grades.html" height="800"
+      width="800">
       <popout enable="false" />
     </iframe>
 
-    <p>Following frames an external website.</p>
-    <iframe id="_i_3" src="https://oli.cmu.edu" height="800" width="800">
-      <popout enable="false" />
-    </iframe>
 
   </body>
 </workbook_page>

@@ -153,7 +153,7 @@
         </module>
         <module id="links">
           <title>
-           Link Handling 
+            Link Handling
           </title>
           <item id="bca2e8dcf45e4ca5836d20" scoring_mode="default">
             <resourceref idref="histogram1" />

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as md5File from 'md5-file';
 import * as tmp from 'tmp';
+import * as DOM from 'src/utils/dom';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fetch = require('sync-fetch');
@@ -52,18 +53,25 @@ export interface UploadFailure {
   error: string;
 }
 
-// From a DOM object, find all media item references;
+// From a DOM object, find all media item references and replace
+// returns true if any were modified
 export function transformToFlatDirectory(
   filePath: string,
   $: any,
   summary: MediaSummary
-) {
+): boolean {
+  let modified = false;
+
   const paths = findFromDOM($, filePath);
 
   Object.keys(paths).forEach((assetReference: any) => {
-    // Flatten this file reference into our single, virtual directory
+    // If ref to HTML file, see if need converted version modified to use flattened asset URLs
+    // !! Might want to restrict this to certain referring elements only, such as iframes.
+    const referenceToUse = assetReference.toLowerCase().endsWith('.html')
+      ? handleHtmlMedia(assetReference, filePath, summary)
+      : assetReference;
 
-    const ref = { filePath, assetReference };
+    const ref = { filePath, assetReference: referenceToUse };
     const url = flatten(ref, summary);
 
     // Update the URL in the XML DOM
@@ -106,8 +114,60 @@ export function transformToFlatDirectory(
           $(elem).attr('src', url);
         }
       });
+      modified = true;
     }
   });
+  return modified;
+}
+
+// Handle local HTML files functioning as media by checking for references to other local files
+// such as css and script. If any are found, generate a new HTML file in a temp directory with
+// local references replaced by media library URLs.
+// Returns: possibly new local asset reference to use for this html file.
+export function handleHtmlMedia(
+  htmlReference: string, // relative path from src file to HTML file
+  filePath: string, // path of src file referencing the HTML file
+  summary: MediaSummary
+): string {
+  const htmlPath = resolve({ assetReference: htmlReference, filePath });
+  console.log('Converting HTML media ' + htmlPath);
+
+  // !!! could check from summary if we have already converted this file
+
+  // parse HTML file. Ensure no self-closing tags to avoid problems.
+  const $ = DOM.read(htmlPath, {
+    normalizeWhitespace: false,
+    xmlMode: true,
+    selfClosingTags: false,
+  });
+
+  // replace references within it as for other resource files. Requires code
+  // to find local URL references in html elements as well as legacy XML elements.
+  const modified = transformToFlatDirectory(htmlPath, $, summary);
+
+  // write the modified file out into a local directory
+  if (modified) {
+    // put converted html files in tmp dir alongside project root
+    const iContent = htmlPath.indexOf('/content/');
+    const projectRootPath = htmlPath.substring(0, iContent);
+    const tmpDirPath = projectRootPath + '-converted';
+
+    // Use same subtree within tmp as in project content, so can match up w/source
+    const contentRelativePath = htmlPath.substring(
+      iContent + '/content/'.length
+    );
+    const filePath = tmpDirPath + '/' + contentRelativePath;
+    const fileDirPath = filePath.substring(0, filePath.lastIndexOf('/'));
+    if (!fs.existsSync(fileDirPath))
+      fs.mkdirSync(fileDirPath, { recursive: true });
+
+    fs.writeFileSync(filePath, $.html());
+
+    // modify local html path to return
+    htmlReference = filePath;
+  }
+
+  return htmlReference;
 }
 
 export function downloadRemote(
@@ -230,13 +290,15 @@ export function transformToFlatDirectoryURLReferences(
   activity.content.layoutStyles = layout;
 }
 
-// Take a collection of media item references and flatten them into a single
-// virtual directory, being careful to account for the same name
-// (but different file) in different directories.
+// Take one in the collection of media item references and derive reference to
+// its location in the single flattened virtual directory being built up, being
+// careful to account for the same name (but different file) in different directories.
+// returns url, updating media summary
 export function flatten(
   ref: MediaItemReference,
   summary: MediaSummary
 ): string | null {
+  // console.log('flatten: ref=' + ref.assetReference + ' from ' + ref.filePath);
   const absolutePath = resolve(ref);
   const decodedPath = decodeURIComponent(absolutePath);
 
@@ -278,7 +340,7 @@ export function flatten(
     summary.mediaItems[absolutePath].references.push(ref);
     return summary.mediaItems[absolutePath].url;
   }
-
+  // console.log('flatten: file does not exist');
   summary.missing.push(ref);
   return null;
 }
@@ -392,7 +454,9 @@ function findFromDOM(
   });
 
   $('audio').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    if ($(elem).attr('src') !== undefined) {
+      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+    }
   });
 
   $('audio source').each((i: any, elem: any) => {
@@ -453,11 +517,27 @@ function findFromDOM(
     }
   });
 
+  // Used when processing HTML Media files:
+
+  // local script assets
+  $('script').each((i: any, elem: any) => {
+    const src = $(elem).attr('src');
+    if (src !== undefined && isRelativeUrl(src)) {
+      paths[src] = [elem, ...$(paths[src])];
+    }
+  });
+  // local img assets
+  $('img').each((i: any, elem: any) => {
+    const src = $(elem).attr('src');
+    if (src !== undefined && isRelativeUrl(src)) {
+      paths[src] = [elem, ...$(paths[src])];
+    }
+  });
+  // local css assets fortuitously handled by 'link' href processing
+
   Object.keys(paths)
     .filter((src: string) =>
-      remote
-        ? isLocalReference(src, filePath)
-        : !isLocalReference(src, filePath)
+      remote ? isRelativeUrl(src) : !isRelativeUrl(src)
     )
     .forEach((src: string) => delete paths[src]);
 
@@ -467,6 +547,7 @@ function findFromDOM(
 const absUrlPrefix = new RegExp('^[a-z]+://', 'i');
 const isRelativeUrl = (url: string): boolean => !url.match(absUrlPrefix);
 
+/*
 function isLocalReference(src: string, filePath: string): boolean {
   return (
     src.startsWith('.') ||
@@ -489,3 +570,4 @@ function isSuperactivity(filePath: string): boolean {
     filePath.includes('x-pitt-')
   );
 }
+*/

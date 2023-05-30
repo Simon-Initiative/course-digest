@@ -1,0 +1,61 @@
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="histogram_of_grades.js"></script>
+  <link rel="stylesheet" href="gh-buttons.css"></style>
+  <style>
+    <!--Hacks for proper iframe responsive support-->
+    body {
+      width: 1px;
+      min-width: 100%;
+    }
+
+    .bar rect {
+      fill: steelblue;
+      shape-rendering: crispEdges;
+    }
+
+    .number circle {
+      fill: steelblue;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .button-selector {
+      line-height: 26px;
+      vertical-align: top;
+    }
+
+    .individual-numbers {
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <svg class='graph'/>
+  <svg class='individual-numbers'/>
+  <p>
+    <label for="bin-width">Move slider to select bin width: </label>
+    <input type='range' name='bin-width' id='bin-slider' min="1" max="25"/>
+    <span id='binwidth-display'></span>
+  </p>
+  <label class='button-selector'>or choose a value: </label>
+  <div class='button-group'>
+    <button type='button' class='binwidth button' data-value=1>1</button>
+    <button type='button' class='binwidth button' data-value=2>2</button>
+    <button type='button' class='binwidth button' data-value=5>5</button>
+    <button type='button' class='binwidth button active' data-value=10>10</button>
+    <button type='button' class='binwidth button' data-value=20>20</button>
+    <button type='button' class='binwidth button' data-value=25>25</button>
+  </div>
+  <p>
+   <label for='grade-checkbox'>Show individual grades </label> 
+    <input type='checkbox' name='grade-checkbox' id='show-grades'/> 
+  </p>
+</body>
+</html>
