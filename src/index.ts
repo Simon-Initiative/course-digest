@@ -36,8 +36,7 @@ const optionDefinitions = [
   { name: 'mediaManifest', type: String, alias: 'm' },
   { name: 'outputDir', type: String, alias: 'o' },
   { name: 'inputDir', type: String, alias: 'i' },
-  { name: 'specificOrg', type: String },
-  { name: 'specificOrgId', type: String },
+  { name: 'specificOrg', type: String, alias: 'g' },
   { name: 'mediaUrlPrefix', type: String, alias: 'p' },
   { name: 'spreadsheetPath', type: String, alias: 's' },
   { name: 'svnRoot', type: String },
@@ -74,7 +73,7 @@ function validateArgs(options: CmdOptions) {
       options.outputDir = `${options.inputDir}-out`;
     }
     if (options.specificOrg === undefined) {
-      options.specificOrg = `${options.inputDir}/organizations/default/organization.xml`;
+      options.specificOrg = 'default';
     }
     if (options.svnRoot === undefined) {
       options.svnRoot = '';
@@ -109,7 +108,7 @@ function summaryAction(options: CmdOptions) {
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory),
+    () => collectOrgItemReferences(packageDirectory, options.specificOrg),
   ])
     .then((results: any) =>
       processResources(
@@ -165,7 +164,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 
   return executeSerially([
     () => mapResources(packageDirectory),
-    () => collectOrgItemReferences(packageDirectory),
+    () => collectOrgItemReferences(packageDirectory, specificOrg),
     () => getLearningObjectiveIds(packageDirectory),
     () => getSkillIds(packageDirectory),
   ]).then((results: any) => {
@@ -197,7 +196,8 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       mediaSummary
     );
 
-    return Convert.convert(projectSummary, specificOrg, false).then(
+    const specificOrgPath = `${packageDirectory}/organizations/${specificOrg}/organization.xml`;
+    return Convert.convert(projectSummary, specificOrgPath, false).then(
       (results) => {
         const hierarchy = results[0] as Resources.TorusResource;
 
@@ -322,7 +322,7 @@ function helpAction() {
   console.log('-------------------------------------\n');
   console.log('Usage:\n');
   console.log(
-    'npm run start -- [convert] --inputDir <course package dir> --mediaUrlPrefix <public S3 media url prefix>  [--outputDir <outdir dir>] [--specificOrg <org path>]'
+    'npm run start -- [convert] --inputDir <course package dir> --mediaUrlPrefix <public S3 media url prefix>  [--outputDir <outdir dir>] [--specificOrg <org folder name>]'
   );
   console.log(
     'npm run start -- upload --mediaManifest <outputDir/_media-manifest.json>'

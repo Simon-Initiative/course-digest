@@ -228,11 +228,11 @@ export function updateDerivativeReferences(
 export function createProducts(
   resources: TorusResource[],
   orgPaths: string[],
-  baseOrgPath: string,
+  baseOrg: string,
   projectSummary: ProjectSummary
 ): Promise<TorusResource[]> {
   const exceptPrimaryOrg = orgPaths
-    .filter((p) => p !== baseOrgPath && !p.endsWith(baseOrgPath))
+    .filter((p) => !p.endsWith(`${baseOrg}/organization.xml`))
     .map((path) => {
       const o = new Organization(path, false);
       const $ = DOM.read(path, { normalizeWhitespace: true });
