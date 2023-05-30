@@ -17,15 +17,8 @@ it('should convert example course to valid course digest', async () => {
     'migration-4sdfykby_v_1_0-echo'
   );
 
-  const specificOrgId = 'migration-4sdfykby-1.0_default';
-  const specificOrg = path.join(
-    __dirname,
-    'course_packages',
-    'migration-4sdfykby_v_1_0-echo',
-    'organizations',
-    'default',
-    'organization.xml'
-  );
+  // const specificOrgId = 'migration-4sdfykby-1.0_default';
+  const specificOrg = 'default';
 
   const { projectSummary, hierarchy } = await convertAction({
     operation: 'convert',
@@ -34,7 +27,6 @@ it('should convert example course to valid course digest', async () => {
     svnRoot: '',
     inputDir: packageDirectory,
     specificOrg,
-    specificOrgId,
     downloadRemote: false,
     mediaUrlPrefix: 'https://example-url-prefix',
     quiet: false,
@@ -90,15 +82,8 @@ it('should convert content with purpose to groups', async () => {
     'migration-4sdfykby_v_1_0-echo'
   );
 
-  const specificOrgId = 'migration-4sdfykby-1.0_default';
-  const specificOrg = path.join(
-    __dirname,
-    'course_packages',
-    'migration-4sdfykby_v_1_0-echo',
-    'organizations',
-    'default',
-    'organization.xml'
-  );
+  // const specificOrgId = 'migration-4sdfykby-1.0_default';
+  const specificOrg = 'default';
   const { finalResources, mediaItems } = await convertAction({
     operation: 'convert',
     mediaManifest: '',
@@ -106,7 +91,6 @@ it('should convert content with purpose to groups', async () => {
     svnRoot: '',
     inputDir: packageDirectory,
     specificOrg,
-    specificOrgId,
     downloadRemote: false,
     mediaUrlPrefix: 'https://torus-media-dev.s3.amazonaws.com/media',
     quiet: false,

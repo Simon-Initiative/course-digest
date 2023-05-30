@@ -52,7 +52,6 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   svnRoot: string;
   downloadRemote: boolean;
   specificOrg: string;
-  specificOrgId: string;
   mediaUrlPrefix: string;
   quiet: boolean;
 }
