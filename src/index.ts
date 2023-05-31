@@ -96,9 +96,13 @@ function validateArgs(options: CmdOptions) {
   } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
   } else if (options.operation === 'merge') {
-    return options.outputDir
-      && options.mergePathA && fs.existsSync(options.mergePathA) 
-      && options.mergePathB && fs.existsSync(options.mergePathB);
+    return (
+      options.outputDir &&
+      options.mergePathA &&
+      fs.existsSync(options.mergePathA) &&
+      options.mergePathB &&
+      fs.existsSync(options.mergePathB)
+    );
   }
 
   return false;
@@ -365,7 +369,11 @@ function main() {
         .then((_r: any) => console.log('Done!'))
         .then(exit);
     } else if (options.operation === 'merge') {
-      Merge.mergeDigests(options.mergePathA, options.mergePathB, options.outputDir);
+      Merge.mergeDigests(
+        options.mergePathA,
+        options.mergePathB,
+        options.outputDir
+      );
       exit();
     } else {
       helpAction();
