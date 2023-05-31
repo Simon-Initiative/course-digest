@@ -42,7 +42,7 @@ export function mergeDigests(pathA: string, pathB: string, pathOut: string) {
     copyResources(resourcesB, pathB, pathOut);
 }
 
-function mergeProject(projectA: any, projectB: any) {
+function mergeProject(projectA: any, _projectB: any) {
   // Project A is the source of truth
   return projectA;
 }

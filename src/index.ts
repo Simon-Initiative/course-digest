@@ -21,7 +21,6 @@ import * as commandLineArgs from 'command-line-args';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
-import { merge } from './utils/histogram';
 
 const rl = readline.createInterface({
   input: process.stdin,
