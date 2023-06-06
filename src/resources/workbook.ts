@@ -13,6 +13,7 @@ import {
   wrapContentInGroup,
   flagStandardContentWarnigns,
   failIfPresent,
+  fixListItemsWithBlocks,
 } from './common';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
@@ -191,6 +192,8 @@ export class WorkbookPage extends Resource {
         const model = introduceStructuredContent(
           r.children[0].children[1].children
         );
+
+        fixListItemsWithBlocks(r);
 
         page.id = r.children[0].id;
         page.legacyId = page.id;
