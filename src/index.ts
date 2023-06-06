@@ -20,6 +20,7 @@ import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
+import * as Merge from './merge';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -42,10 +43,12 @@ const optionDefinitions = [
   { name: 'svnRoot', type: String },
   { name: 'downloadRemote', type: Boolean },
   { name: 'quiet', type: Boolean, alias: 'q' },
+  { name: 'mergePathA', type: String, alias: 'a' },
+  { name: 'mergePathB', type: String, alias: 'b' },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
-  operation: 'summarize' | 'convert' | 'upload';
+  operation: 'summarize' | 'convert' | 'upload' | 'merge';
   mediaManifest: string;
   outputDir: string;
   inputDir: string;
@@ -54,6 +57,8 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   specificOrg: string;
   mediaUrlPrefix: string;
   quiet: boolean;
+  mergePathA: string;
+  mergePathB: string;
 }
 
 interface ConvertedResults {
@@ -88,6 +93,14 @@ function validateArgs(options: CmdOptions) {
     }
   } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
+  } else if (options.operation === 'merge') {
+    return (
+      options.outputDir &&
+      options.mergePathA &&
+      fs.existsSync(options.mergePathA) &&
+      options.mergePathB &&
+      fs.existsSync(options.mergePathB)
+    );
   }
 
   return false;
@@ -354,6 +367,13 @@ function main() {
       uploadAction(options)
         .then((_r: any) => console.log('Done!'))
         .then(exit);
+    } else if (options.operation === 'merge') {
+      Merge.mergeDigests(
+        options.mergePathA,
+        options.mergePathB,
+        options.outputDir
+      );
+      exit();
     } else {
       helpAction();
       exit();
