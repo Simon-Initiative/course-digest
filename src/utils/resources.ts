@@ -42,16 +42,19 @@ export function mapResourcesInNamedDirectory(
   });
 }
 
-function determineDefaultOrgId(packageDirectory: string) {
+function determineOrgId(packageDirectory: string, specificOrg: string) {
   const $ = DOM.read(
-    `${packageDirectory}/organizations/default/organization.xml`
+    `${packageDirectory}/organizations/${specificOrg}/organization.xml`
   );
   return $('organization').first().attr('id');
 }
 
-export function collectOrgItemReferences(packageDirectory: string) {
+export function collectOrgItemReferences(
+  packageDirectory: string,
+  specificOrg: string
+) {
   const files = glob.sync(`${packageDirectory}/**/*.xml`, {});
-  const id = determineDefaultOrgId(packageDirectory);
+  const id = determineOrgId(packageDirectory, specificOrg);
 
   const filesById = files.reduce((m: any, f) => {
     const lastPart = f.substring(f.lastIndexOf('/') + 1);
