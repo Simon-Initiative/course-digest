@@ -214,8 +214,8 @@ export function standardContentManipulations($: any) {
 
   // Change to allow block elements within list items
   // DOM.stripElement($, 'li p');
-
   // DOM.rename($, 'li img', 'img_inline');
+
   DOM.stripElement($, 'p quote');
 
   $('p table').remove();
@@ -659,8 +659,8 @@ export function wrapContentInSurvey(content: any[]) {
 // after JSONification from XML DOM elements to make use of existing wrapLooseText
 export function fixListItemsWithBlocks(rootObj: any) {
   const listItems: any[] = Common.getDescendants(rootObj.children, 'li');
-  listItems.forEach((a: any) => {
+  listItems.forEach((li: any) => {
     // wrapLooseText only modifies if block elements alongside texts
-    a.children = Common.wrapLooseText(a.children);
+    li.children = Common.wrapLooseText(li.children);
   });
 }

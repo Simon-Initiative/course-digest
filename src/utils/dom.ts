@@ -76,7 +76,8 @@ export function isInlineElement($: any, elem: any) {
 
   if (
     isOneOf(parent[0].name, [
-      'li',
+      // now treat images in li as block
+      // 'li',
       'td',
       'th',
       'dd',
