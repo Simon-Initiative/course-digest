@@ -112,7 +112,7 @@ export function collectTextsIntoParagraphs(children: any) {
   return result;
 }
 
-export function wrapLooseText(children: any, trace: boolean = false) {
+export function wrapLooseText(children: any, trace = false) {
   // if loose text pieces alongside blocks, strip spurious blank ones,
   // collecting successive non-blank text pieces into p's.
   if (children.length > 1) {
