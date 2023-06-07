@@ -545,7 +545,7 @@ function findFromDOM(
 }
 
 const absUrlPrefix = new RegExp('^[a-z]+://', 'i');
-const isRelativeUrl = (url: string): boolean => !url.match(absUrlPrefix);
+const isRelativeUrl = (url: string): boolean => !url.trim().match(absUrlPrefix);
 
 /*
 function isLocalReference(src: string, filePath: string): boolean {
