@@ -112,7 +112,7 @@ export function collectTextsIntoParagraphs(children: any) {
   return result;
 }
 
-export function wrapLooseText(children: any) {
+export function wrapLooseText(children: any, trace = false) {
   // if loose text pieces alongside blocks, strip spurious blank ones,
   // collecting successive non-blank text pieces into p's.
   if (children.length > 1) {
@@ -120,12 +120,15 @@ export function wrapLooseText(children: any) {
       const result = collectTextsIntoParagraphs(
         children.filter((c: any) => !isBlankText(c))
       );
-      /* 
-      if (children.some((b: any) => b.text !== undefined && !isBlankText(b))) {
+
+      if (
+        trace &&
+        children.some((b: any) => b.text !== undefined && !isBlankText(b))
+      ) {
         console.log('wrapText in:' + JSON.stringify(children, null, 2));
         console.log('wrapText out:' + JSON.stringify(result, null, 2));
-      } 
-      */
+      }
+
       return result;
     }
   }

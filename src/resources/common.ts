@@ -2,6 +2,7 @@ import { ItemReference, guid } from 'src/utils/common';
 import * as Histogram from 'src/utils/histogram';
 import * as DOM from 'src/utils/dom';
 import { TorusResource } from './resource';
+import * as Common from './questions/common';
 
 export interface HasReferences {
   found: () => ItemReference[];
@@ -211,9 +212,10 @@ export function standardContentManipulations($: any) {
   DOM.stripElement($, 'p p');
   DOM.stripElement($, 'p p');
 
-  DOM.stripElement($, 'li p');
+  // Change to allow block elements within list items
+  // DOM.stripElement($, 'li p');
+  // DOM.rename($, 'li img', 'img_inline');
 
-  DOM.rename($, 'li img', 'img_inline');
   DOM.stripElement($, 'p quote');
 
   $('p table').remove();
@@ -650,4 +652,15 @@ export function wrapContentInSurvey(content: any[]) {
     id: guid(),
     children: content,
   };
+}
+
+// Normalize all LIs below given rootObj that contain block items such as images to wrap
+// text in paragraphs for Slate editor requirements. Operates on javascript content objects
+// after JSONification from XML DOM elements to make use of existing wrapLooseText
+export function fixListItemsWithBlocks(rootObj: any) {
+  const listItems: any[] = Common.getDescendants(rootObj.children, 'li');
+  listItems.forEach((li: any) => {
+    // wrapLooseText only modifies if block elements alongside texts
+    li.children = Common.wrapLooseText(li.children);
+  });
 }
