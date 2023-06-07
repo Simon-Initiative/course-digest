@@ -116,16 +116,28 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'definition term', 'definition-term');
 
+  // Change sub within sub to distinct doublesub mark. Will remove the
+  // regular sub style from doublesub text when collecting styles in toJSON
+  DOM.rename($, 'sub sub', 'doublesub');
+
   // Convert all inline markup elements to <em> tags, this
   // greatly simplifies downstream conversionto JSON
   $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
   $('term').each((i: any, item: any) => $(item).attr('style', 'term'));
   $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
   $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
+  $('doublesub').each((i: any, item: any) =>
+    $(item).attr('style', 'doublesub')
+  );
+  $('deemphasis').each((i: any, item: any) =>
+    $(item).attr('style', 'deemphasis')
+  );
   DOM.rename($, 'var', 'em');
   DOM.rename($, 'term', 'em');
   DOM.rename($, 'sub', 'em');
   DOM.rename($, 'sup', 'em');
+  DOM.rename($, 'doublesub', 'em');
+  DOM.rename($, 'deemphasis', 'em');
 
   // <code> is a mixed element, we only want to translate the inline <code>
   // instances to <em> elements.  The block level <code> will get converted

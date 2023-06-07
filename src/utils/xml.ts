@@ -60,6 +60,10 @@ function inlineAttrName(attrs: Record<string, unknown>) {
     return 'sub';
   } else if (attrs['style'] === 'sup') {
     return 'sup';
+  } else if (attrs['style'] === 'doublesub') {
+    return 'doublesub';
+  } else if (attrs['style'] === 'deemphasis') {
+    return 'deemphasis';
   } else {
     return 'strong';
   }
@@ -68,6 +72,7 @@ function inlineAttrName(attrs: Record<string, unknown>) {
 function inlinesToObject(inlines: any) {
   return inlines.reduce((m: any, style: any) => {
     m[style] = true;
+    if (style === 'doublesub') delete m['sub'];
     return m;
   }, {});
 }
