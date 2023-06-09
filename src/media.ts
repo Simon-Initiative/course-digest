@@ -89,13 +89,7 @@ export function transformToFlatDirectory(
   const paths = findFromDOM($, filePath);
 
   Object.keys(paths).forEach((assetReference: any) => {
-    // If ref to HTML file, see if need converted version modified to use flattened asset URLs
-    // !! Might want to restrict this to certain referring elements only, such as iframes.
-    const referenceToUse = assetReference.toLowerCase().endsWith('.html')
-      ? handleHtmlMedia(assetReference, filePath, summary)
-      : assetReference;
-
-    const ref = { filePath, assetReference: referenceToUse };
+    const ref = { filePath, assetReference };
     const url = flatten(ref, summary);
 
     // Update the URL in the XML DOM
