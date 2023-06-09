@@ -36,7 +36,7 @@ const optionDefinitions = [
     defaultValue: 'convert',
   },
   { name: 'mediaManifest', type: String, alias: 'm' },
-  { name: 'createMediaBundle', type: String },
+  { name: 'webContentBundle', type: String, alias: 'w' },
   { name: 'outputDir', type: String, alias: 'o' },
   { name: 'inputDir', type: String, alias: 'i' },
   { name: 'specificOrg', type: String, alias: 'g' },
@@ -68,7 +68,7 @@ interface ConvertedResults {
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
-  mediaBundle?: Media.MediaBundle;
+  webContentBundle?: Media.WebContentBundle;
 }
 
 function validateArgs(options: CmdOptions) {
@@ -164,8 +164,8 @@ function uploadMediaItems(items: Media.ProcessedMediaItem[]) {
   const uploaders = items.map((m: Media.MediaItem) => {
     return () => {
       console.log(`Uploading ${m.file}...`);
-      return upload(m.file, m.name, m.mimeType, m.md5, bucketName).then(
-        (location) => console.log(`${location} complete`)
+      return upload(m.file, m.url, m.mimeType, bucketName).then((location) =>
+        console.log(`${location} complete`)
       );
     };
   });
@@ -264,13 +264,13 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
               packageDirectory,
               projectSummary,
               mediaSummary,
-              options.createMediaBundle
+              options.webContentBundle
             ).then((results) => {
               const mediaItems = Object.keys(mediaSummary.mediaItems).map(
                 (k: string) => results.mediaItems[k]
               );
 
-              const mediaBundle = results.mediaBundle;
+              const webContentBundle = results.webContentBundle;
 
               return Promise.resolve({
                 packageDirectory,
@@ -279,7 +279,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
                 hierarchy,
                 finalResources: updated,
                 mediaItems,
-                mediaBundle,
+                webContentBundle,
                 projectSummary,
               });
             });
@@ -295,14 +295,14 @@ function writeConvertedResults({
   hierarchy,
   finalResources,
   mediaItems,
-  mediaBundle,
+  webContentBundle,
 }: ConvertedResults) {
   return Convert.output(
     projectSummary,
     hierarchy,
     finalResources,
     mediaItems,
-    mediaBundle
+    webContentBundle
   );
 }
 
@@ -342,11 +342,11 @@ function suggestUploadAction(options: CmdOptions) {
         new Promise<string>((res) => {
           if (options.quiet) res('n');
           else {
-            if (manifest.mediaBundle) {
-              const { name, bundleSize } = manifest.mediaBundle;
+            if (manifest.webContentBundle) {
+              const { name, totalSize } = manifest.webContentBundle;
               rl.question(
                 `Do you want to upload media bundle as '${name}' (${filesize(
-                  bundleSize
+                  totalSize
                 )})? [y/N] `,
                 res
               );
@@ -357,10 +357,10 @@ function suggestUploadAction(options: CmdOptions) {
         })
     )
     .then((answer: string) => {
-      if (manifest.mediaBundle) {
+      if (manifest.webContentBundle) {
         if (anyOf(answer || 'n', 'y', 'yes')) {
-          return uploadMediaItems(manifest.mediaBundle.items).then((_r: any) =>
-            console.log('Done!')
+          return uploadMediaItems(manifest.webContentBundle.items).then(
+            (_r: any) => console.log('Done!')
           );
         }
 

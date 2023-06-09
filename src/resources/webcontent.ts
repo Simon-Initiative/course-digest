@@ -11,7 +11,7 @@ export function addWebContentToMediaSummary(
   directory: string,
   projectSummary: ProjectSummary,
   summary: MediaSummary,
-  createMediaBundle?: string
+  webContentBundle?: string
 ): Promise<MediaSummary> {
   return new Promise((resolve, _reject) => {
     glob(
@@ -26,11 +26,9 @@ export function addWebContentToMediaSummary(
 
         sortedFiles.forEach((file: string) => {
           const absolutePath = path.resolve(file);
-          const name = getName(absolutePath);
+          const name = path.basename(absolutePath);
           const md5 = md5File.sync(absolutePath);
           const subdir = md5.substring(0, 2);
-          const toURL = (name: string) =>
-            `${summary.urlPrefix}/${subdir}/${md5}/${name}`;
 
           if (summary.mediaItems[absolutePath] === undefined) {
             const flattenedName = summary.flattenedNames[name]
@@ -46,32 +44,42 @@ export function addWebContentToMediaSummary(
               md5,
               mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
               references: [],
-              url: toURL(flattenedName),
+              url: `${summary.urlPrefix}/${subdir}/${md5}/${flattenedName}`,
             };
           }
         });
 
-        if (createMediaBundle) {
-          // Create a media bundle of the webcontent hierarchy if createMediaBundle is specified
-          const items = files.map((file: string) =>
-            processFileAsMediaItem(
-              file,
-              summary.urlPrefix,
+        if (webContentBundle) {
+          // Create a webcontent bundle of the directory hierarchy if webContentBundle is specified
+          const items = files.map((file: string) => {
+            const absolutePath = path.resolve(file);
+            const name = path.basename(absolutePath);
+            const relativePath = getPathRelativeToPackage(
               projectSummary.packageDirectory,
-              createMediaBundle
-            )
-          );
+              absolutePath
+            );
+            const md5 = md5File.sync(absolutePath);
 
-          const bundleSize = items.reduce(
+            return {
+              file: absolutePath,
+              fileSize: getFilesizeInBytes(absolutePath),
+              name,
+              md5,
+              mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
+              url: `${summary.urlPrefix}/webcontent/${webContentBundle}/${relativePath}`,
+            };
+          });
+
+          const totalSize = items.reduce(
             (acc: number, item: ProcessedMediaItem) => acc + item.fileSize,
             0
           );
 
-          summary.mediaBundle = {
-            name: createMediaBundle,
-            url: `${summary.urlPrefix}/bundles/${createMediaBundle}`,
+          summary.webContentBundle = {
+            name: webContentBundle,
+            url: `${summary.urlPrefix}/webcontent/${webContentBundle}`,
             items,
-            bundleSize,
+            totalSize,
           };
         }
 
@@ -81,32 +89,10 @@ export function addWebContentToMediaSummary(
   });
 }
 
-const getName = (file: string) => file.substr(file.lastIndexOf('webcontent'));
 const getPathRelativeToPackage = (
   packageDirectory: string,
   absolutePath: string
 ) => path.relative(packageDirectory, absolutePath);
-
-function processFileAsMediaItem(
-  file: string,
-  urlPrefix: string,
-  packageDirectory: string,
-  mediaBundleId: string
-): ProcessedMediaItem {
-  const absolutePath = path.resolve(file);
-  const name = path.basename(absolutePath);
-  const relativePath = getPathRelativeToPackage(packageDirectory, absolutePath);
-  const md5 = md5File.sync(absolutePath);
-
-  return {
-    file: absolutePath,
-    fileSize: getFilesizeInBytes(absolutePath),
-    name,
-    md5,
-    mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
-    url: `${urlPrefix}/bundles/${mediaBundleId}/${relativePath}`,
-  };
-}
 
 function getFilesizeInBytes(filename: string) {
   const stats = fs.statSync(filename);

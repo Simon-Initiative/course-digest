@@ -16,7 +16,7 @@ export interface MediaSummary {
   urlPrefix: string;
   downloadRemote: boolean;
   flattenedNames: { [k: string]: string };
-  mediaBundle?: MediaBundle;
+  webContentBundle?: WebContentBundle;
 }
 
 export interface FlattenResult {
@@ -50,18 +50,18 @@ export interface ProcessedMediaItem {
   md5: string;
 }
 
-export interface MediaBundle {
+export interface WebContentBundle {
   name: string;
   url: string;
   items: ProcessedMediaItem[];
-  bundleSize: number;
+  totalSize: number;
 }
 
 export interface MediaManifest {
   type: 'MediaManifest';
   mediaItems: ProcessedMediaItem[];
   mediaItemsSize: number;
-  mediaBundle?: MediaBundle;
+  webContentBundle?: WebContentBundle;
 }
 
 export type UploadResult = UploadSuccess | UploadFailure;
