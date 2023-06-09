@@ -614,13 +614,14 @@ export function output(
   projectSummary: ProjectSummary,
   hierarchy: TorusResource,
   converted: TorusResource[],
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  mediaBundle?: Media.MediaBundle
 ) {
   return executeSerially([
     () => wipeAndCreateOutput(projectSummary),
     () => outputManifest(projectSummary),
     () => outputHierarchy(projectSummary, hierarchy),
-    () => outputMediaManifest(projectSummary, mediaItems),
+    () => outputMediaManifest(projectSummary, mediaItems, mediaBundle),
     ...converted.map((r) => () => outputResource(projectSummary, r)),
   ]);
 }
@@ -681,9 +682,10 @@ function outputHierarchy(
 
 function outputMediaManifest(
   { outputDirectory }: ProjectSummary,
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  mediaBundle?: Media.MediaBundle
 ) {
-  const manifest = {
+  const manifest: Media.MediaManifest = {
     mediaItems: mediaItems.map((m: Media.MediaItem) => ({
       name: m.flattenedName,
       file: m.file,
@@ -692,8 +694,28 @@ function outputMediaManifest(
       mimeType: m.mimeType,
       md5: m.md5,
     })),
+    mediaItemsSize: mediaItems.reduce(
+      (sum: number, m: Media.MediaItem) => sum + m.fileSize,
+      0
+    ),
     type: 'MediaManifest',
   };
+
+  if (mediaBundle) {
+    manifest.mediaBundle = {
+      name: mediaBundle.name,
+      url: mediaBundle.url,
+      items: mediaBundle.items.map((m: Media.MediaItem) => ({
+        file: m.file,
+        name: m.flattenedName,
+        url: m.url,
+        mimeType: m.mimeType,
+        fileSize: m.fileSize,
+        md5: m.md5,
+      })),
+      bundleSize: mediaBundle.bundleSize,
+    };
+  }
 
   return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);
 }

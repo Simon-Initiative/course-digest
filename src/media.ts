@@ -16,6 +16,7 @@ export interface MediaSummary {
   urlPrefix: string;
   downloadRemote: boolean;
   flattenedNames: { [k: string]: string };
+  mediaBundle?: MediaBundle;
 }
 
 export interface FlattenResult {
@@ -38,6 +39,29 @@ export interface MediaItem {
   fileSize: number;
   md5: string;
   references: MediaItemReference[];
+}
+
+export interface ProcessedMediaItem {
+  file: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  fileSize: number;
+  md5: string;
+}
+
+export interface MediaBundle {
+  name: string;
+  url: string;
+  items: ProcessedMediaItem[];
+  bundleSize: number;
+}
+
+export interface MediaManifest {
+  type: 'MediaManifest';
+  mediaItems: ProcessedMediaItem[];
+  mediaItemsSize: number;
+  mediaBundle?: MediaBundle;
 }
 
 export type UploadResult = UploadSuccess | UploadFailure;

@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
+import { filesize } from 'filesize';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
@@ -35,6 +36,7 @@ const optionDefinitions = [
     defaultValue: 'convert',
   },
   { name: 'mediaManifest', type: String, alias: 'm' },
+  { name: 'createMediaBundle', type: String },
   { name: 'outputDir', type: String, alias: 'o' },
   { name: 'inputDir', type: String, alias: 'i' },
   { name: 'specificOrg', type: String, alias: 'g' },
@@ -66,6 +68,7 @@ interface ConvertedResults {
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
+  mediaBundle?: Media.MediaBundle;
 }
 
 function validateArgs(options: CmdOptions) {
@@ -143,18 +146,22 @@ function summaryAction(options: CmdOptions) {
     .catch((err: any) => console.log(err));
 }
 
-function uploadAction(options: CmdOptions) {
+function readMediaManifest(options: CmdOptions): Media.MediaManifest {
   const mediaManifest =
     options.mediaManifest ||
     path.join(options.outputDir, '_media-manifest.json');
 
   const raw = fs.readFileSync(mediaManifest);
-  const manifest = JSON.parse(raw.toString());
+
+  return JSON.parse(raw.toString());
+}
+
+function uploadMediaItems(items: Media.ProcessedMediaItem[]) {
   const bucketName = Maybe.maybe(process.env.MEDIA_BUCKET_NAME).valueOrThrow(
     Error('MEDIA_BUCKET_NAME not set in config')
   );
 
-  const uploaders = manifest.mediaItems.map((m: Media.MediaItem) => {
+  const uploaders = items.map((m: Media.MediaItem) => {
     return () => {
       console.log(`Uploading ${m.file}...`);
       return upload(m.file, m.name, m.mimeType, m.md5, bucketName).then(
@@ -164,6 +171,12 @@ function uploadAction(options: CmdOptions) {
   });
 
   return executeSerially(uploaders);
+}
+
+export function uploadAction(options: CmdOptions) {
+  const manifest = readMediaManifest(options);
+
+  return uploadMediaItems(manifest.mediaItems);
 }
 
 export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
@@ -249,11 +262,15 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           ).then((updated) => {
             return addWebContentToMediaSummary(
               packageDirectory,
-              mediaSummary
+              projectSummary,
+              mediaSummary,
+              options.createMediaBundle
             ).then((results) => {
               const mediaItems = Object.keys(mediaSummary.mediaItems).map(
                 (k: string) => results.mediaItems[k]
               );
+
+              const mediaBundle = results.mediaBundle;
 
               return Promise.resolve({
                 packageDirectory,
@@ -262,6 +279,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
                 hierarchy,
                 finalResources: updated,
                 mediaItems,
+                mediaBundle,
                 projectSummary,
               });
             });
@@ -277,8 +295,15 @@ function writeConvertedResults({
   hierarchy,
   finalResources,
   mediaItems,
+  mediaBundle,
 }: ConvertedResults) {
-  return Convert.output(projectSummary, hierarchy, finalResources, mediaItems);
+  return Convert.output(
+    projectSummary,
+    hierarchy,
+    finalResources,
+    mediaItems,
+    mediaBundle
+  );
 }
 
 const anyOf = (ans: string, ...opts: any[]) => {
@@ -287,17 +312,62 @@ const anyOf = (ans: string, ...opts: any[]) => {
 };
 
 function suggestUploadAction(options: CmdOptions) {
+  const manifest = readMediaManifest(options);
+
   return new Promise<string>((res) => {
     if (options.quiet) res('n');
-    else rl.question('Do you want to upload media assets? [y/N] ', res);
-  }).then((answer: string) => {
-    if (anyOf(answer || 'n', 'y', 'yes')) {
-      return uploadAction(options).then((_r: any) => console.log('Done!'));
-    }
+    else {
+      const { mediaItems, mediaItemsSize } = manifest;
 
-    console.log('Skipping media upload.');
-    return;
-  });
+      rl.question(
+        `Do you want to upload ${mediaItems.length} media assets (${filesize(
+          mediaItemsSize
+        )})? [y/N]`,
+        res
+      );
+    }
+  })
+    .then((answer: string) => {
+      if (anyOf(answer || 'n', 'y', 'yes')) {
+        return uploadMediaItems(manifest.mediaItems).then((_r: any) =>
+          console.log('Done!')
+        );
+      }
+
+      console.log('Skipping media upload.');
+      return;
+    })
+    .then(
+      () =>
+        new Promise<string>((res) => {
+          if (options.quiet) res('n');
+          else {
+            if (manifest.mediaBundle) {
+              const { name, bundleSize } = manifest.mediaBundle;
+              rl.question(
+                `Do you want to upload media bundle as '${name}' (${filesize(
+                  bundleSize
+                )})? [y/N] `,
+                res
+              );
+            } else {
+              res('n');
+            }
+          }
+        })
+    )
+    .then((answer: string) => {
+      if (manifest.mediaBundle) {
+        if (anyOf(answer || 'n', 'y', 'yes')) {
+          return uploadMediaItems(manifest.mediaBundle.items).then((_r: any) =>
+            console.log('Done!')
+          );
+        }
+
+        console.log('Skipping media bundle upload.');
+      }
+      return;
+    });
 }
 
 function zipAction(options: CmdOptions) {
