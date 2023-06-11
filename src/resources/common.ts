@@ -161,7 +161,8 @@ export function standardContentManipulations($: any) {
   // image in a legacy course is intended as a block semantically, with
   // newlines before or after, converting to inline images feels like
   // a closer mapping to the correct rendering.
-  DOM.rename($, 'p img', 'img_inline');
+  // AW: this undesirable for images inside paragraphs
+  // DOM.rename($, 'p img', 'img_inline');
   DOM.rename($, 'a img', 'img_inline');
 
   $('img').each((i: any, item: any) => {
