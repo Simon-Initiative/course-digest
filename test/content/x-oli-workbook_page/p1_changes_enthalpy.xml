@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC " -//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page id="p1_changes_enthalpy" xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    xmlns:bib="http://bibtexml.sf.net/" xmlns:pref="http://oli.web.cmu.edu/preferences/"
+    xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/">
+
+
+    <head>
+        <title>Changes in Enthalpy</title>
+        <objref idref="enthalpy" />
+    </head>
+
+    <body>
+        <p>
+            <activity_link idref="Periodic_Table" target="new">
+                <em>Reference: The Periodic Table of Elements</em>
+            </activity_link>
+        </p>
+        <p>Chemists ordinarily use a property known as enthalpy (<em style="italic">H</em>) to
+            describe the thermodynamics of chemical and physical processes. Enthalpy is defined as
+            the sum of a system’s internal energy (<em style="italic">E</em>) and the mathematical
+            product of its pressure (<em style="italic">P</em>) and volume (<em style="italic"
+            >V</em>
+            ):</p>
+        <formula><em style="italic">H</em> = <em style="italic">E</em> + <em style="italic"
+            >PV</em></formula>
+        <p>Since it is derived from three state functions (<em style="italic">E</em>, <em
+                style="italic">P</em>, and <em style="italic">V</em>), enthalpy is also a state
+            function. Enthalpy values for specific substances cannot be measured directly; only
+            enthalpy changes for chemical or physical processes can be determined. For processes
+            that take place at constant pressure (a common condition for many chemical and physical
+            changes), the enthalpy change (Δ<em style="italic">H</em>) is:</p>
+        <formula>Δ<em style="italic">H</em> = Δ<em style="italic">E</em> + <em style="italic"
+            >P</em>Δ<em
+                style="italic">V</em>
+        </formula>
+        <p>The mathematical product <em style="italic">P</em>Δ<em style="italic">V</em> represents
+            work (<em style="italic">w</em>), namely, expansion or pressure-volume work as noted. By
+            their definitions, the arithmetic signs of Δ<em style="italic">V</em> and <em
+                style="italic">w</em> will always be opposite:</p>
+        <p> Substituting this equation into the enthalpy-change equation yields: </p>
+        <formula>Δ<em style="italic">H</em> = Δ<em style="italic">E</em> + <em style="italic"
+            >P</em>Δ<em
+                style="italic">V</em></formula>
+        <formula><em style="italic">P</em>Δ<em style="italic">V</em> = Δ<em style="italic">E</em> - <em
+                style="italic">w</em> (at constant pressure, <em style="italic"
+            >P</em>)</formula>
+
+    </body>
+</workbook_page>
