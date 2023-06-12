@@ -75,6 +75,23 @@ function validateArgs(options: CmdOptions) {
   if (options.operation === 'convert') {
     if (options.mediaUrlPrefix === undefined) {
       options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
+    } else {
+      // remove any trailing slashes from the media URL prefix
+      options.mediaUrlPrefix = options.mediaUrlPrefix
+        .trim()
+        .replace(/\/+$/, '');
+
+      try {
+        // validate that the media URL prefix is a valid URL
+        new URL(options.mediaUrlPrefix);
+
+        // currently there are places in the code that assume the media URL prefix ends with '/media', so we should validate this assumption
+        if (!options.mediaUrlPrefix.endsWith('/media')) throw new Error();
+      } catch (error) {
+        throw new Error(
+          `Invalid mediaUrlPrefix '${options.mediaUrlPrefix}': Media URL prefix must be a valid URL including a protocol (e.g. 'https://') and end with '/media'`
+        );
+      }
     }
     if (options.outputDir === undefined) {
       options.outputDir = `${options.inputDir}-out`;

@@ -9,8 +9,10 @@ export const upload = (
 ) => {
   // Read content from the file
   const fileContent = fs.readFileSync(file);
-  // Get the s3 path by removing the host from the url, assume the host is the first part of the url and there is no protocol
-  const s3Path = url.slice(url.indexOf('/') + 1);
+
+  // Get the s3 path by removing the host (and leading slash returned by pathname) from the url
+  // assumes the url string given is a valid url
+  const s3Path = new URL(url).pathname.slice(1);
 
   // Setting up S3 upload parameters
   const params: AWS.S3.PutObjectRequest = {
@@ -36,7 +38,7 @@ export const upload = (
         resolve(data.Location);
         return;
       }
-      resolve('error');
+      reject(`S3 upload error: returned data is undefined for ${file}`);
     });
   });
 };
