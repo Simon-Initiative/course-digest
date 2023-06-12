@@ -85,8 +85,9 @@ export function isInlineElement($: any, elem: any) {
       'choice',
       'feedback',
       'hint',
-      'stem',
-      'body',
+      // AW: inlining in these contexts leads to undesired left-alignment:
+      // 'stem',
+      // 'body',
     ])
   ) {
     if (parent[0].children.length === 1) {
