@@ -47,5 +47,18 @@
                 style="italic">w</em> (at constant pressure, <em style="italic"
             >P</em>)</formula>
 
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Some text</p>
+                        <formula>Some formula</formula>
+                        <formula>Some formula</formula>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
     </body>
 </workbook_page>

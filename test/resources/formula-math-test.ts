@@ -31,6 +31,13 @@ describe('formulas and mathml', () => {
     )
       .convert(projectSummary)
       .then((results) => {
+        // This one checks the formula in the table cell
+        expect(
+          (results[0] as any).content.model[0].children[9].children[0]
+            .children[0].children[0].children[3].type
+        ).toBe('callout');
+
+        // This checks the root level callouts
         expect((results[0] as any).content.model[0].children[2].type).toBe(
           'callout'
         );
