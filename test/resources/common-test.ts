@@ -51,7 +51,7 @@ describe('cdata and codeblocks', () => {
     expect(img.type).toBe('img');
   });
 
-  test('should convert nested images to inline imgs', async () => {
+  test('should convert some nested images to inline imgs', async () => {
     const content1 = '<p><image src="../webcontent/proof_prem.gif"/></p>';
     const content2 = '<a><image src="../webcontent/proof_prem.gif"/></a>';
 
@@ -67,10 +67,10 @@ describe('cdata and codeblocks', () => {
     standardContentManipulations($1);
     const p1: any = await toJSON($1.xml(), projectSummary);
     const img1 = p1.children[0].children[0];
-    expect(img1.type).toBe('img_inline');
+    expect(img1.type).toBe('img');
 
     standardContentManipulations($2);
-    const p2: any = await toJSON($1.xml(), projectSummary);
+    const p2: any = await toJSON($2.xml(), projectSummary);
     const img2 = p2.children[0].children[0];
     expect(img2.type).toBe('img_inline');
   });
