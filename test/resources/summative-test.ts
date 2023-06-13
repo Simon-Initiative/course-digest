@@ -570,7 +570,14 @@ describe('convert summative', () => {
         id: 'd0122cf806954b40ac9beba5c24aab13-de863cf6eecd46828909a1cbb70614e1',
         subType: 'oli_short_answer',
         content: expect.objectContaining({
-          grading: 'instructor',
+          authoring: expect.objectContaining({
+            parts: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'ffffdc1d54624b6ca9e19277e108f6a2',
+                gradingApproach: 'manual',
+              }),
+            ]),
+          }),
         }),
       })
     );

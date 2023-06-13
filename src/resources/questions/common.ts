@@ -260,19 +260,18 @@ export function getBranchingTarget(response: any) {
   return response.children[0]['xml:lang'];
 }
 
+function getGradingApproach(question: any) {
+  return question.grading === 'instructor' ? 'manual' : 'automatic';
+}
+
 export function buildTextPart(id: string, question: any) {
-  const responses = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'response'
-  );
-  const hints = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'hint'
-  );
-  const skillrefs = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'skillref'
-  );
+  const part = getChild(question.children, 'part');
+  const responses = part.children.filter((p: any) => p.type === 'response');
+  const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
   return {
-    id: '1',
+    id: part.id,
     responses: responses.map((r: any) => {
       const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
@@ -302,6 +301,7 @@ export function buildTextPart(id: string, question: any) {
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
     explanation: maybeBuildPartExplanation(responses),
+    gradingApproach: getGradingApproach(question),
   };
 }
 
