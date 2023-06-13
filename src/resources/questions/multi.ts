@@ -91,7 +91,7 @@ export function buildStem(
   skipInputRefValidation: boolean
 ) {
   const stem = Common.getChild(question.children, 'stem');
-  const model = Common.ensureParagraphs(stem.children);
+  const model = Common.wrapLooseText(Common.ensureParagraphs(stem.children));
   const foundInputs: any = {};
   const updated = updateInputRefs(model, foundInputs);
 

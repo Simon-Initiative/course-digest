@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pool PUBLIC "-//Carnegie Mellon University//DTD Assessment Pool MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<pool xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="po7_orbital_dia_UA_pool">
+    <title>orbital_dia_UA_pool</title>
+    <content available="always">
+        <p id="f8ce447db495428883112bf655747fbd"/>
+    </content>
+    <fill_in_the_blank id="po7_v1_orbital_dia">
+        <body>The abbreviated orbital diagram for an atom is shown below. <image
+                src="../webcontent/ua_v1_orbital_dia.PNG"/>
+            <p> What element is represented by this orbital diagram? <input_ref input="one"/>
+            </p>
+            <p> Which element will have chemical properties most similar to those of the element
+                represented above? <input_ref input="two"/>
+            </p>
+            <p>How many valence electrons does this atom have? <input_ref input="three"/></p>
+            <p>How many unpaired electrons does this atom have? <input_ref input="four"/></p>
+        </body>
+        <input id="one" shuffle="false">
+            <choice value="A">As </choice>
+            <choice value="B">Br</choice>
+            <choice value="C">P</choice>
+            <choice value="D">Se</choice>
+            <choice value="E">Te </choice>
+
+
+        </input>
+        <input id="two" shuffle="false">
+            <choice value="A">As </choice>
+            <choice value="B">Br</choice>
+            <choice value="C">P</choice>
+            <choice value="D">Se</choice>
+            <choice value="E">Te </choice>
+        </input>
+        <input shuffle="false" id="three">
+            <choice value="A">4 </choice>
+            <choice value="B">6</choice>
+            <choice value="C">10</choice>
+            <choice value="D">16</choice>
+        </input>
+
+        <input shuffle="false" id="four">
+            <choice value="A">0 </choice>
+            <choice value="B">1</choice>
+            <choice value="C">2</choice>
+            <choice value="D">3</choice>
+            <choice value="E">4</choice>
+        </input>
+
+        <part id="one" score_out_of="3">
+            <response match="A" input="one" score="0">
+                <feedback>Incorrect. Atoms of As have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>3</sup>. </feedback>
+           <feedback>Incorrect. 
+           <p><em>Solution</em></p>
+           Atoms of Se have the electron configuration
+           [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. 
+           </feedback>
+            </response>
+            <response match="B" input="one" score="0">
+                <feedback>Incorrect. Atoms of Br have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>. </feedback>
+                <feedback>Incorrect. 
+                    <p><em>Solution</em></p>
+                    Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. 
+                </feedback>
+            
+            </response>
+
+            <response match="C" input="one" score="0">
+                <feedback>Incorrect. Atoms of S have the electron configuration
+                    [Ne]3<em style="italic">s</em><sup>2</sup>3<em style="italic">p</em><sup>4</sup>. </feedback>
+                <feedback>Incorrect. 
+                    <p><em>Solution</em></p>
+                    Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. 
+                </feedback>
+            
+            </response>
+
+            <response match="D" input="one" score="3">
+                <feedback>Correct. Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. </feedback>
+            </response>
+
+            <response match="E" input="one" score="0">
+                <feedback>Incorrect. Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>. </feedback>
+                <feedback>Incorrect. 
+                    <p><em>Solution</em></p>
+                    Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. 
+                </feedback>
+            
+            </response>
+
+
+        </part>
+        <part id="two" score_out_of="3">
+            <response match="E" input="two" score="3">
+                <feedback>Correct. Te has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+            <response match="*" input="two" score="0">
+                <feedback>Incorrect. An element has chemical properties that are most similar to
+                    other elements in the same Group (column) in the periodic table. </feedback>
+                <feedback>Incorrect. 
+                <p><em>Solution</em></p>
+                Te has chemical properties most similar to this element since it
+                is in the same Group (column) in the periodic table.
+                </feedback>
+            </response>
+
+
+        </part>
+
+        <part id="three" score_out_of="3">
+            <response match="B" input="three" score="3">
+                <feedback>Correct. This atom has 6 valence (outer shell) electrons. </feedback>
+            </response>
+            <response match="*" input="three" score="0">
+                <feedback>Incorrect. The valence electrons are (only) the outer shell electrons.
+                </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 6 valence (outer shell) electrons. </feedback>
+            </response>
+
+
+        </part>
+        <part id="four" score_out_of="3">
+            <response match="C" input="four" score="3">
+                <feedback>Correct. This atom has 2 unpaired electrons. </feedback>
+            </response>
+            <response match="*" input="four" score="0">
+                <feedback>Incorrect. An electron is 'unpaired' if it is the only electron in an
+                    orbital. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p> This atom has 2 unpaired electrons. </feedback>
+            </response>
+
+
+        </part>
+
+    </fill_in_the_blank>
+    <fill_in_the_blank id="po7_v2_orbital_dia">
+        <body>The abbreviated orbital diagram for an atom is shown below. <image
+                src="../webcontent/ua_v2_orbital_dia.PNG"/>
+            <p> What element is represented by this orbital diagram? <input_ref input="one"/>
+            </p>
+            <p> Which element will have chemical properties most similar to those of the element
+                represented above? <input_ref input="two"/>
+            </p>
+            <p>How many valence electrons does this atom have? <input_ref input="three"/></p>
+            <p>How many unpaired electrons does this atom have? <input_ref input="four"/></p>
+        </body>
+        <input id="one" shuffle="false">
+            <choice value="A">Br </choice>
+            <choice value="B">Cl</choice>
+            <choice value="C">I</choice>
+            <choice value="D">Kr</choice>
+            <choice value="E">Se </choice>
+
+
+        </input>
+        <input id="two" shuffle="false">
+            <choice value="A">I </choice>
+            <choice value="B">Kr</choice>
+            <choice value="C">Se</choice>
+            <choice value="D">Te</choice>
+            <choice value="E">Xe </choice>
+
+        </input>
+        <input shuffle="false" id="three">
+            <choice value="A">5 </choice>
+            <choice value="B">7</choice>
+            <choice value="C">10</choice>
+            <choice value="D">17</choice>
+        </input>
+
+        <input shuffle="false" id="four">
+            <choice value="A">0 </choice>
+            <choice value="B">1</choice>
+            <choice value="C">2</choice>
+            <choice value="D">3</choice>
+            <choice value="E">4</choice>
+        </input>
+
+        <part id="one" score_out_of="3">
+            <response match="A" input="one" score="3">
+                <feedback>Correct. Atoms of Br have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>. </feedback>
+            </response>
+            <response match="B" input="one" score="0">
+                <feedback>Incorrect. Atoms of Cl have the electron configuration
+                    [Ne]3<em style="italic">s</em><sup>2</sup>3<em style="italic">p</em><sup>5</sup>. </feedback>
+                <feedback>Incorrect.
+                <p><em>Solution</em></p>
+                Atoms of Br have the electron configuration
+                [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>.
+                </feedback>
+            </response>
+
+            <response match="C" input="one" score="0">
+                <feedback>Incorrect. Atoms of I have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>5</sup>. </feedback>
+           
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Br have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>.
+                </feedback>
+            </response>
+
+            <response match="D" input="one" score="0">
+                <feedback>Incorrect. Atoms of Kr have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>6</sup>. </feedback>
+           
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Br have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>.
+                </feedback>
+            </response>
+
+            <response match="E" input="one" score="0">
+                <feedback>Incorrect. Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. </feedback>
+          
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Br have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>5</sup>.
+                </feedback>
+            </response>
+
+
+        </part>
+        <part id="two" score_out_of="3">
+            <response match="A" input="two" score="3">
+                <feedback>Correct. I has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+            <response match="*" input="two" score="0">
+                <feedback>Incorrect. An element has chemical properties that are most similar to
+                    other elements in the same Group (column) in the periodic table. </feedback>
+                <feedback>Incorrect. 
+                    <p><em>Solution</em></p>
+                    
+                    I has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+
+
+        </part>
+
+        <part id="three" score_out_of="3">
+            <response match="B" input="three" score="3">
+                <feedback>Correct. This atom has 7 valence (outer shell) electrons. </feedback>
+            </response>
+            <response match="*" input="three" score="0">
+                <feedback>Incorrect. The valence electrons are (only) the outer shell electrons.
+                </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 7 valence (outer shell) electrons. </feedback>
+            </response>
+
+
+        </part>
+        <part id="four" score_out_of="3">
+            <response match="B" input="four" score="3">
+                <feedback>Correct. This atom has 1 unpaired electron. </feedback>
+            </response>
+            <response match="*" input="four" score="0">
+                <feedback>Incorrect. An electron is 'unpaired' if it is the only electron in an
+                    orbital. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 1 unpaired electron. </feedback>
+            </response>
+
+
+        </part>
+
+    </fill_in_the_blank>
+    <fill_in_the_blank id="po7_v3_orbital_dia">
+        <body>The abbreviated orbital diagram for an atom is shown below. <image
+                src="../webcontent/ua_v3_orbital_dia.PNG"/>
+            <p> What element is represented by this orbital diagram? <input_ref input="one"/>
+            </p>
+            <p> Which element will have chemical properties most similar to those of the element
+                represented above? <input_ref input="two"/>
+            </p>
+            <p>How many valence electrons does this atom have? <input_ref input="three"/></p>
+            <p>How many unpaired electrons does this atom have? <input_ref input="four"/></p>
+        </body>
+        <input id="one" shuffle="false">
+            <choice value="A">As </choice>
+            <choice value="B">Bi</choice>
+            <choice value="C">Sb</choice>
+            <choice value="D">Sn</choice>
+            <choice value="E">Te </choice>
+
+
+        </input>
+        <input id="two" shuffle="false">
+            <choice value="A">Bi</choice>
+            <choice value="B">Pb</choice>
+            <choice value="C">Po</choice>
+            <choice value="D">Sn</choice>
+            <choice value="E">Te </choice>
+
+        </input>
+        <input shuffle="false" id="three">
+            <choice value="A">3 </choice>
+            <choice value="B">5</choice>
+            <choice value="C">10</choice>
+            <choice value="D">15</choice>
+        </input>
+
+        <input shuffle="false" id="four">
+            <choice value="A">0 </choice>
+            <choice value="B">1</choice>
+            <choice value="C">2</choice>
+            <choice value="D">3</choice>
+            <choice value="E">4</choice>
+        </input>
+
+        <part id="one" score_out_of="3">
+            <response match="A" input="one" score="0">
+                <feedback>Incorrect. Atoms of As have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>3</sup>. </feedback>
+           
+            <feedback>Incorrect.
+            <p><em>Solution</em></p>
+            Atoms of Sb have the electron configuration
+            [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>.
+            </feedback>
+            </response>
+            <response match="B" input="one" score="0">
+                <feedback>Incorrect. Atoms of Bi have the electron configuration
+                    [Xe]6<em style="italic">s</em><sup>2</sup>4<em style="italic">f</em><sup>14</sup>5<em style="italic">d</em><sup>10</sup>6<em style="italic">p</em><sup>3</sup>. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Sb have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>.
+                </feedback>
+            
+            </response>
+
+            <response match="C" input="one" score="3">
+                <feedback>Correct. Atoms of Sb have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>. </feedback>
+            </response>
+
+            <response match="D" input="one" score="0">
+                <feedback>Incorrect. Atoms of Sn have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>2</sup>. </feedback>
+            
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Sb have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>.
+                </feedback>
+            </response>
+
+            <response match="E" input="one" score="0">
+                <feedback>Incorrect. Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>. </feedback>
+          
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Sb have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>.
+                </feedback>
+            </response>
+
+
+        </part>
+        <part id="two" score_out_of="3">
+            <response match="A" input="two" score="3">
+                <feedback>Correct. Bi has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+            <response match="*" input="two" score="0">
+                <feedback>Incorrect. An element has chemical properties that are most similar to
+                    other elements in the same Group (column) in the periodic table. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Bi has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+
+
+        </part>
+
+        <part id="three" score_out_of="3">
+            <response match="B" input="three" score="3">
+                <feedback>Correct. This atom has 5 valence (outer shell) electrons. </feedback>
+            </response>
+            <response match="*" input="three" score="0">
+                <feedback>Incorrect. The valence electrons are (only) the outer shell electrons.
+                </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 5 valence (outer shell) electrons. </feedback>
+            </response>
+
+
+        </part>
+        <part id="four" score_out_of="3">
+            <response match="D" input="four" score="3">
+                <feedback>Correct. This atom has 3 unpaired electrons. </feedback>
+            </response>
+            <response match="*" input="four" score="0">
+                <feedback>Incorrect. An electron is 'unpaired' if it is the only electron in an
+                    orbital. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 3 unpaired electrons. </feedback>
+            </response>
+
+
+        </part>
+
+    </fill_in_the_blank>
+
+
+    <fill_in_the_blank id="po7_v4_orbital_dia">
+        <body>The abbreviated orbital diagram for an atom is shown below. <image
+                src="../webcontent/ua_v4_orbital_dia.PNG"/>
+            <p> What element is represented by this orbital diagram? <input_ref input="one"/>
+            </p>
+            <p> Which element will have chemical properties most similar to those of the element
+                represented above? <input_ref input="two"/>
+            </p>
+            <p>How many valence electrons does this atom have? <input_ref input="three"/></p>
+            <p>How many unpaired electrons does this atom have? <input_ref input="four"/></p>
+        </body>
+        <input id="one" shuffle="false">
+            <choice value="A">I</choice>
+            <choice value="B">Po</choice>
+            <choice value="C">Se</choice>
+            <choice value="D">Sb</choice>
+            <choice value="E">Te </choice>
+
+
+        </input>
+        <input id="two" shuffle="false">
+            <choice value="A">At</choice>
+            <choice value="B">Bi</choice>
+            <choice value="C">I</choice>
+            <choice value="D">Po</choice>
+            <choice value="E">Sb </choice>
+
+        </input>
+        <input shuffle="false" id="three">
+            <choice value="A">4 </choice>
+            <choice value="B">6</choice>
+            <choice value="C">10</choice>
+            <choice value="D">16</choice>
+        </input>
+
+        <input shuffle="false" id="four">
+            <choice value="A">0 </choice>
+            <choice value="B">1</choice>
+            <choice value="C">2</choice>
+            <choice value="D">3</choice>
+            <choice value="E">4</choice>
+        </input>
+
+        <part id="one" score_out_of="3">
+            <response match="A" input="one" score="0">
+                <feedback>Incorrect. Atoms of As have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>5</sup>. </feedback>
+            <feedback>Incorrect.
+            <p><em>Solution</em></p>
+            Atoms of Te have the electron configuration
+            [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>.
+            </feedback>
+            
+            </response>
+            <response match="B" input="one" score="0">
+                <feedback>Incorrect. Atoms of Po have the electron configuration
+                    [Xe]6<em style="italic">s</em><sup>2</sup>4<em style="italic">f</em><sup>14</sup>5<em style="italic">d</em><sup>10</sup>6<em style="italic">p</em><sup>4</sup>. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>.
+                </feedback>
+            
+            </response>
+
+            <response match="C" input="one" score="0">
+                <feedback>Incorrect. Atoms of Se have the electron configuration
+                    [Ar]4<em style="italic">s</em><sup>2</sup>3<em style="italic">d</em><sup>10</sup>4<em style="italic">p</em><sup>4</sup>. </feedback>
+           
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>.
+                </feedback>
+            </response>
+
+            <response match="D" input="one" score="0">
+                <feedback>Incorrect. Atoms of Sb have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>3</sup>. </feedback>
+            
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>.
+                </feedback>
+            </response>
+
+            <response match="E" input="one" score="3">
+                <feedback>Correct. Atoms of Te have the electron configuration
+                    [Kr]5<em style="italic">s</em><sup>2</sup>4<em style="italic">d</em><sup>10</sup>5<em style="italic">p</em><sup>4</sup>. </feedback>
+            </response>
+
+
+        </part>
+        <part id="two" score_out_of="3">
+            <response match="D" input="two" score="3">
+                <feedback>Correct. Te has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+            <response match="*" input="two" score="0">
+                <feedback>Incorrect. An element has chemical properties that are most similar to
+                    other elements in the same Group (column) in the periodic table. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    Te has chemical properties most similar to this element since it
+                    is in the same Group (column) in the periodic table. </feedback>
+            </response>
+
+
+        </part>
+
+        <part id="three" score_out_of="3">
+            <response match="B" input="three" score="3">
+                <feedback>Correct. This atom has 6 valence (outer shell) electrons. </feedback>
+            </response>
+            <response match="*" input="three" score="0">
+                <feedback>Incorrect. The valence electrons are (only) the outer shell electrons.
+                </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 6 valence (outer shell) electrons. </feedback>
+            </response>
+
+
+        </part>
+        <part id="four" score_out_of="3">
+            <response match="C" input="four" score="3">
+                <feedback>Correct. This atom has 2 unpaired electrons.</feedback>
+            </response>
+            <response match="*" input="four" score="0">
+                <feedback>Incorrect. An electron is 'unpaired' if it is the only electron in an
+                    orbital. </feedback>
+                <feedback>Incorrect.
+                    <p><em>Solution</em></p>
+                    This atom has 2 unpaired electrons.</feedback>
+            </response>
+
+
+        </part>
+
+    </fill_in_the_blank>
+
+
+
+
+</pool>
