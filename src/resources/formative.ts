@@ -334,6 +334,7 @@ function single_response_text(question: any) {
     stem: Common.buildStem(question),
     inputType: 'text',
     submitAndCompare: Common.isSubmitAndCompare(question),
+    grading: question.grading,
     authoring: {
       parts: [Common.buildTextPart(Common.getPartIds(question)[0], question)],
       transformations: transformation === undefined ? [] : [transformation],
