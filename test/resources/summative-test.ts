@@ -567,7 +567,7 @@ describe('convert summative', () => {
     expect(converted).toContainEqual(
       expect.objectContaining({
         type: 'Activity',
-        id: 'd0122cf806954b40ac9beba5c24aab13-de863cf6eecd46828909a1cbb70614e1',
+        id: 'assessment_with_grading-de863cf6eecd46828909a1cbb70614e1',
         subType: 'oli_short_answer',
         content: expect.objectContaining({
           authoring: expect.objectContaining({
