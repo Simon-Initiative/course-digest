@@ -1,5 +1,8 @@
 import { handleFormulaMathML } from 'src/resources/common';
 import * as cheerio from 'cheerio';
+import { WorkbookPage } from 'src/resources/workbook';
+import { MediaSummary } from 'src/media';
+import { ProjectSummary } from 'src/project';
 
 function process(xml: string): any {
   const $ = cheerio.load(xml, {
@@ -9,8 +12,47 @@ function process(xml: string): any {
   handleFormulaMathML($);
   return $.xml();
 }
+const mediaSummary: MediaSummary = {
+  mediaItems: {},
+  missing: [],
+  urlPrefix: '',
+  downloadRemote: false,
+  flattenedNames: {},
+};
+
+const projectSummary = new ProjectSummary('', '', '', mediaSummary);
 
 describe('formulas and mathml', () => {
+  test('should convert formulas to block callouts from enthalpy sample page', async () => {
+    // MER-2130
+    await new WorkbookPage(
+      './test/content/x-oli-workbook_page/p1_changes_enthalpy.xml',
+      true
+    )
+      .convert(projectSummary)
+      .then((results) => {
+        // This one checks the formula in the table cell
+        expect(
+          (results[0] as any).content.model[0].children[9].children[0]
+            .children[0].children[0].children[3].type
+        ).toBe('callout');
+
+        // This checks the root level callouts
+        expect((results[0] as any).content.model[0].children[2].type).toBe(
+          'callout'
+        );
+      });
+  });
+
+  test('should convert formulas to callouts', () => {
+    expect(
+      process(
+        '<body><p>Paragraph Before</p><formula>Δ<em style="italic">H</em> = Δ<em style="italic">E</em> + <em style="italic">P</em>Δ<em style="italic">V</em></formula><p>Paragraph After</p></body>'
+      )
+    ).toContain(
+      '<callout><p>&#x394;<em style="italic">H</em> = &#x394;<em style="italic">E</em> + <em style="italic">P</em>&#x394;<em style="italic">V</em></p></callout>'
+    );
+  });
   test('should properly identify and convert inlines', () => {
     expect(
       process('<body><formula>test</formula><p>test</p></body>').indexOf(

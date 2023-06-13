@@ -9,6 +9,24 @@ import {
 import * as cheerio from 'cheerio';
 
 describe('dom mutations', () => {
+  test('blank text elements implicityly created by whitespace in a body tag should not affect isInlineElement test', () => {
+    const content = `<body>
+      <p></p>
+      <formula>hi</formula>
+      <p></p>
+    </body>`;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    const refs = $('formula');
+
+    refs.each((i: any, elem: any) => {
+      expect(isInlineElement($, elem)).toBeFalsy();
+    });
+  });
   test('should return that the formula is not inline', () => {
     const content = '<td><formula>test</formula></td>';
 
