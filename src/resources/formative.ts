@@ -601,6 +601,7 @@ export function performRestructure($: any) {
   DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
   DOM.rename($, 'activity_link', 'a');
+
   // facilitates processing image hotspot questions:
   DOM.rename($, 'image_hotspot hotspot', 'choice');
 
