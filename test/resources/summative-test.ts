@@ -543,4 +543,43 @@ describe('convert summative', () => {
       })
     );
   });
+
+  it('converts essay with grading manual', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/assessment_with_grading.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      downloadRemote: false,
+      flattenedNames: {},
+    };
+
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const converted = await convert(projectSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'assessment_with_grading-de863cf6eecd46828909a1cbb70614e1',
+        subType: 'oli_short_answer',
+        content: expect.objectContaining({
+          authoring: expect.objectContaining({
+            parts: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'ffffdc1d54624b6ca9e19277e108f6a2',
+                gradingApproach: 'manual',
+              }),
+            ]),
+          }),
+        }),
+      })
+    );
+  });
 });

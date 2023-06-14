@@ -689,6 +689,7 @@ describe('convert feedback', () => {
             parts: [
               {
                 id: expect.any(String),
+                gradingApproach: 'automatic',
                 responses: [
                   {
                     id: expect.any(String),
