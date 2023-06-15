@@ -46,6 +46,15 @@ describe('rename links', () => {
     expect(caption[1].page).toBeUndefined();
   });
 
+  test('should store the ignored idref in anchor', () => {
+    const content = results[0].content.model[0].children;
+    const [, p2, img] = content;
+    const caption = img.caption;
+    expect(p2.children[1].anchor).toBe('link1id');
+    expect(caption[1].anchor).toBe('link3id');
+    expect(p2.children[3].anchor).toEqual('link2id');
+  });
+
   test('should maintain idref in activity_links', () => {
     const content = results[0].content.model[0].children;
     const [p1] = content;

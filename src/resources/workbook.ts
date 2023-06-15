@@ -101,15 +101,22 @@ export class WorkbookPage extends Resource {
       elem.tagName = 'a';
 
       // Type 1: page attr points to another page
-      // Type 2: page attr points to another page, idref to an item within that page (and we ignore it)
-      if (hasPage) {
+      if (hasPage && !idref) {
         $(elem).attr('idref', pageValue);
         $(elem).removeAttr('page');
         page.unresolvedReferences.push(pageValue);
+      } else if (hasPage && idref) {
+        // Type 2: page attr points to another page, idref to an item within that page
+        $(elem).attr('idref', pageValue);
+        $(elem).attr('anchor', idref); // Store the idref as an anchor for future use, but it'll be ignored in torus for now.
+        $(elem).removeAttr('page');
+        page.unresolvedReferences.push(pageValue);
+
         // Type 3: idref points to content item on this page so make a link to this page.
         //         Should we just remove the link since we don't have capability to link to items on the page in torus?
       } else if (!hasPage && hasIdref) {
         $(elem).attr('idref', $('workbook_page').attr('id'));
+        $(elem).attr('anchor', idref); // Store the idref as an anchor for future use, but it'll be ignored in torus for now.
       }
     });
 
