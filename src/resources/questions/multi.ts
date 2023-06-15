@@ -158,10 +158,12 @@ function produceTorusEquivalents(
     part = buildInputPart('text', p, item);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
+    input.size = item.size;
   } else if (item.type === 'numeric') {
     part = buildInputPart('numeric', p, i);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
+    input.size = item.size;
   } else {
     part = buildDropdownPart(p, i, ignorePartId);
     ensureAtLeastOneCorrectResponse(part);
