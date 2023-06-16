@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Assessment MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="assessment_with_grading" recommended_attempts="3" max_attempts="3">
+    <title>Module test: Effective Digital Learning (Essay Active Learning)</title>
+    <page id="ea466b8c12654495919407f478424d6b">
+        <title>Page 1</title>
+        <essay id="de863cf6eecd46828909a1cbb70614e1" grading="instructor">
+            <body>
+                <p id="c49a13fa12a04314a0ae74dd0fb1c0c1">In your own words, with examples from your own field, explain the concept of
+                    <em style="italic">active learning.</em>
+                </p>
+            </body>
+            <part id="ffffdc1d54624b6ca9e19277e108f6a2">
+                <response match="*" score="1">
+                    <feedback>
+                        <p id="ba6a1620bb8e42da8097a660d09fe706" />
+                    </feedback>
+                </response>
+            </part>
+        </essay>
+    </page>
+</assessment>

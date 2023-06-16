@@ -332,7 +332,7 @@ function single_response_text(question: any) {
 
   return {
     stem: Common.buildStem(question),
-    inputType: 'text',
+    inputType: 'textarea',
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
       parts: [Common.buildTextPart(Common.getPartIds(question)[0], question)],
@@ -601,6 +601,7 @@ export function performRestructure($: any) {
   DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
   DOM.rename($, 'activity_link', 'a');
+
   // facilitates processing image hotspot questions:
   DOM.rename($, 'image_hotspot hotspot', 'choice');
 

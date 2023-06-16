@@ -126,6 +126,9 @@
           <item id="bca2e8dcf45e4ca588989dc18a62d29" scoring_mode="default">
             <resourceref idref="assessment_with_selection" />
           </item>
+          <item id="bca2e8dcf45e4ca588989dc18a62d30" scoring_mode="default">
+            <resourceref idref="assessment_with_grading" />
+          </item>
         </module>
         <module id="dnd">
           <title>
@@ -159,7 +162,6 @@
             <resourceref idref="histogram1" />
           </item>
         </module>
-
         <module id="bugfixes">
           <title>
             Bug Fixes
