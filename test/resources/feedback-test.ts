@@ -683,7 +683,7 @@ describe('convert feedback', () => {
               },
             ],
           },
-          inputType: 'text',
+          inputType: 'textarea',
           submitAndCompare: false,
           authoring: {
             parts: [
