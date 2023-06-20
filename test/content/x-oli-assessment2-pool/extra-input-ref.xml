@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pool PUBLIC "-//Carnegie Mellon University//DTD Assessment Pool MathML 2.4//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_mathml_2_4.dtd">
+<pool xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/" id="interp_zscore_pool">
+    <title>interp_zscore_pool</title>
+    <numeric id="q2_interp_zscore">
+        <body>
+            <p>Suppose the scores on an exam are normally distributed with a mean μ = 75 points, and
+                standard deviation σ = 8 points. </p>
+            <p>Suppose that the top 4% of the exams will be given an
+                A+. In order to be given an A+, an exam must earn at least what score? Report your
+                answer in
+                whole numbers.</p>
+            <p>
+                <input_ref input="A" />
+            </p>
+        </body>
+        <skillref idref="zscoreinterp" />
+        <input labels="false" shuffle="false">
+            <choice value="A" />
+        </input>
+        <part>
+            <response input="A" match="89" score="10">
+                <feedback>Correct. We need to find the exam score such that the probability of
+                    getting a score
+                    above it is 0.04. Equivalently, we need to find the exam score such that the
+                    probability of
+                    getting a score below it is 1 − 0.04 = 0.96. The z-score with a probability
+                    closest to 0.96
+                    (which is 0.9599) is 1.75. This means that the exam score that we are looking
+                    for is 1.75 * SD
+                    above the mean, and therefore is 75 + 1.75 * SD = 75 + 14 = 89. </feedback>
+            </response>
+            <response input="A" match="77" score="0">
+                <feedback>Incorrect. It seems that you have found the minimum exam score in order
+                    for an exam to
+                    be in the top 40% of all exam scores. However, you should find the minimum exam
+                    score that
+                    would allow an exam to earn an A+.</feedback>
+            </response>
+            <response input="A" match="0.516" score="0">
+                <feedback>Incorrect. It seems that you have found the proportion of exams that have
+                    a score of
+                    at most 79 points. However, you should find the minimum exam score that would
+                    allow an exam to
+                    earn an A+.</feedback>
+            </response>
+            <response input="A" match="*" score="0">
+                <feedback>Incorrect. You need to find the exam score such that the probability of
+                    getting a
+                    score above it is 0.04. Equivalently, you need to find the exam score such that
+                    the probability
+                    of getting a score below it is 1 − 0.04 = 0.96. Determine the z-score that has a
+                    probability
+                    closest to 0.96. The exam score that you are looking for is: μ + z(σ).</feedback>
+            </response>
+        </part>
+    </numeric>
+</pool>

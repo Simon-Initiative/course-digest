@@ -340,8 +340,16 @@ function ordering(question: any) {
 function single_response_text(question: any) {
   const transformation = Common.getChild(question.children, 'transformation');
 
+  const response = Common.getChild(question.children, 'short_answer');
+  const id = response?.id;
+
+  const stem = Common.buildStem(question);
+  stem.content = Common.ensureNoEmptyChildren(
+    Common.removeRedundantInputRefs(stem.content, id)
+  );
+
   return {
-    stem: Common.buildStem(question),
+    stem,
     inputType: 'textarea',
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
