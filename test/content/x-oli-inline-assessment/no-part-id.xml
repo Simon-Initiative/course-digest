@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+
+<assessment id="u3_m4_mean3_tutor5ps">
+    <title>Tutor</title>
+    <page>
+        <question id="q1">
+            <body>
+                <p>What is the probability that the mean SAT-M score of a random sample of 4
+                    students who took the test that year is more than 600? Explain why you can solve
+                    this problem, even though the sample size (n = 4) is very low.</p>
+            </body>
+            <short_answer id="A" />
+            <part>
+                <response input="A" match="*" score="1" />
+                <explanation>
+                    <p>Since the scores on the SAT-M in the population follow a normal distribution,
+                        the sample mean automatically also follows a normal distribution, for any
+                        sample size <?oxy_delete author="mmyers" timestamp="20101122T195548-0500" content=" (see comment 4)"?>. Therefore, the mean has a normal distribution with the same
+                        mean as the population, 507, and standard deviation </p>
+                    <image src="../../webcontent/flash/_u4_m4_lbdtutor4c_image1.jpg"
+                        alt="equation for standard deviation" />
+                    <p>The z-score of 600 is therefore:</p>
+                    <image src="../../webcontent/flash/_u4_m4_lbdtutor4c_image2.jpg"
+                        alt="equation for Z score = 1.68" />
+                    <p>And therefore,</p>
+                    <image src="../../webcontent/flash/_u4_m4_lbdtutor4c_image3.jpg"
+                        alt="equation for probability difference =.0465" />
+                    <p>We find that while it is very common to find students who score above 600 on
+                        the SAT-M, it would be quite unlikely (4.65% chance) for the mean score of a
+                        sample of 4 students to be above 600. </p>
+                </explanation>
+            </part>
+        </question>
+    </page>
+</assessment>

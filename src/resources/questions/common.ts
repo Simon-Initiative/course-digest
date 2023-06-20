@@ -316,7 +316,7 @@ export function buildTextPart(id: string, question: any) {
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
   return {
-    id: part.id,
+    id: part.id || id,
     responses: responses.map((r: any) => {
       const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
