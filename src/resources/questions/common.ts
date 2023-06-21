@@ -136,6 +136,51 @@ export function wrapLooseText(children: any, trace = false) {
   return children;
 }
 
+/*
+ * Recursively iterate through children, finding any input_ref pointing at the
+ * redundantInputId, remove it, and return the result.
+ */
+export function removeRedundantInputRefs(
+  children: any[],
+  redundantInputId: string
+) {
+  if (!Array.isArray(children)) return children;
+  return children
+    .filter((c) => !(c.type === 'input_ref' && c.input === redundantInputId))
+    .map((child) => {
+      if (child.children) {
+        child.children = removeRedundantInputRefs(
+          child.children,
+          redundantInputId
+        );
+      }
+      return child;
+    });
+}
+
+/*
+ * Recursively iterate through children, finding any node with an empty children value
+ * and adding a {text: ''} node to it and return the result.
+ */
+export function ensureNoEmptyChildren(children: any) {
+  if (Array.isArray(children) && children.length === 0) {
+    children.push({ text: '' });
+  } else if (Array.isArray(children)) {
+    children = children.map((child: any) => {
+      if (Array.isArray(child.children)) {
+        return {
+          ...child,
+          children: ensureNoEmptyChildren(child.children),
+        };
+      } else {
+        return child;
+      }
+    });
+  }
+
+  return children;
+}
+
 export function buildStem(question: any) {
   const stem = getChild(question.children, 'stem');
   return {
@@ -271,7 +316,7 @@ export function buildTextPart(id: string, question: any) {
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
   return {
-    id: part.id,
+    id: part.id || id,
     responses: responses.map((r: any) => {
       const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
