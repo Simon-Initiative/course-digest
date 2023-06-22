@@ -122,6 +122,7 @@ const inlineTags = {
   term: true,
   extra: true,
   text: true,
+  xref: true,
 };
 
 export function isInlineTag(tag: string) {

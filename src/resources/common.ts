@@ -171,6 +171,18 @@ export function standardContentManipulations($: any) {
     }
   });
 
+  $('caption').each((i: any, item: any) => {
+    const containsInlineOnly = item.children.every(
+      (c: any) =>
+        c.type === 'text' || (c.type == 'tag' && DOM.isInlineTag(c.name))
+    );
+
+    // We must wrap these inlines only in a paragraph
+    if (containsInlineOnly) {
+      $(item).html(`<p>${$(item).html()}</p>`);
+    }
+  });
+
   // Inline images should technically be valid in any Slate model element
   // that supports inline elements, but we're only explicitly handling
   // converting images in paragraphs and links (anchors).
