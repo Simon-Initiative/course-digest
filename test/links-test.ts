@@ -33,7 +33,7 @@ describe('rename links', () => {
     expect(p1.children[1].type).toEqual('a'); // activity_link gets renamed to a
     expect(p2.children[1].type).toEqual('a'); // xref gets renamed to a
     expect(p2.children[3].type).toEqual('a'); // xref gets renamed to a
-    expect(caption[1].type).toEqual('a'); // xref gets renamed to a
+    expect(caption[0].children[1].type).toEqual('a'); // xref gets renamed to a
   });
 
   test('should not have page attributes', () => {
@@ -43,7 +43,7 @@ describe('rename links', () => {
     expect(p1.children[1].page).toBeUndefined();
     expect(p2.children[1].page).toBeUndefined();
     expect(p2.children[3].page).toBeUndefined();
-    expect(caption[1].page).toBeUndefined();
+    expect(caption[0].children[1].page).toBeUndefined();
   });
 
   test('should store the ignored idref in anchor', () => {
@@ -51,7 +51,7 @@ describe('rename links', () => {
     const [, p2, img] = content;
     const caption = img.caption;
     expect(p2.children[1].anchor).toBe('link1id');
-    expect(caption[1].anchor).toBe('link3id');
+    expect(caption[0].children[1].anchor).toBe('link3id');
     expect(p2.children[3].anchor).toEqual('link2id');
   });
 
@@ -61,12 +61,12 @@ describe('rename links', () => {
     expect(p1.children[1].idref).toEqual('Periodic_Table');
   });
 
-  test('should move page to idref in xref', () => {
+  test('should move page to idref in xref in captions', () => {
     const content = results[0].content.model[0].children;
     const [, p2, img] = content;
     const caption = img.caption;
     expect(p2.children[1].idref).toEqual('link1page'); // Make sure the page attribute got moved into idref
-    expect(caption[1].idref).toEqual('link3page'); // Make sure the page attribute got moved into idref inside captions
+    expect(caption[0].children[1].idref).toEqual('link3page'); // Make sure the page attribute got moved into idref inside captions
   });
 
   test("should move current page to idref if there's no page attribute", () => {
