@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+    xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/"
+    xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="_u4_m04_behavior_of_mean2">
+    <head>
+        <title>Behavior of Sample Mean (2 of 3)</title>
+        <objref idref="apply_sampling_distribution_of_sample_mean" />
+    </head>
+    <body>
+        <p id="c020a78d048c4922bee20659e204a7ba">The results we got in our simulations are not
+            surprising. Advanced probability theory confirms that by asserting the following:</p>
+        <section id="d7ea7a22c2554534aaa034bdb5b6e2f9">
+            <title>The Sampling Distribution of the Sample Mean</title>
+            <body>
+                <p id="dca00248d5904d5d8e0a64d45be7fd93">If repeated random samples of a given size
+                    n are taken from a population of values for a quantitative variable, where the
+                    population mean is <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                        overflow="scroll">
+                        <m:mi>μ</m:mi>
+                    </m:math> and the population standard
+                    deviation is <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                        overflow="scroll">
+                        <m:mi>σ</m:mi>
+                    </m:math>, then the mean of all sample
+                    means (<m:math xmlns:m="http://www.w3.org/1998/Math/MathML" overflow="scroll">
+                        <m:mover accent="true">
+                            <m:mrow>
+                                <m:mi>x</m:mi>
+                            </m:mrow>
+                            <m:mo>¯</m:mo>
+                        </m:mover>
+                    </m:math>)
+                    is population mean <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                        overflow="scroll">
+                        <m:mi>μ</m:mi>
+                    </m:math>. As for the spread of all sample
+                    means, theory dictates the behavior much more precisely than saying that there
+                    is less spread for larger samples. In fact, the standard deviation of all sample
+                    means (<m:math xmlns:m="http://www.w3.org/1998/Math/MathML" overflow="scroll">
+                        <m:mover accent="true">
+                            <m:mrow>
+                                <m:mi>x</m:mi>
+                            </m:mrow>
+                            <m:mo>¯</m:mo>
+                        </m:mover>
+                    </m:math>)
+                    is exactly <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                        overflow="scroll">
+                        <m:mfrac>
+                            <m:mrow>
+                                <m:mi>σ</m:mi>
+                            </m:mrow>
+                            <m:mrow>
+                                <m:msqrt>
+                                    <m:mrow>
+                                        <m:mi>n</m:mi>
+                                    </m:mrow>
+                                </m:msqrt>
+                            </m:mrow>
+                        </m:mfrac>
+                    </m:math>.
+                    Since the square root of sample size n appears in the denominator, the standard
+                    deviation does decrease as sample size increases. </p>
+                <section id="fef2a281b48d470c814bad3b131159dd" purpose="learnbydoing">
+                    <title>Learn By Doing</title>
+                    <body>
+                        <p id="daa964de3f484d60867fa79c10c47b83">The Federal Pell Grant Program
+                            provides need-based grants to low-income undergraduate and certain
+                            postbaccalaureate students to promote access to postsecondary education.
+                            According to the National Postsecondary Student Aid Study conducted by
+                            the U.S. Department of Education in 2008, the average Pell grant award
+                            for 2007-2008 was $2,600. Assume that the standard deviation in Pell
+                            grant awards was $500.</p>
+                        <wb:inline idref="u3_m4_mean2_tutor1" purpose="learnbydoing" />
+                    </body>
+                </section>
+                <wb:inline idref="u3_m4_mean2_tutor1_1" purpose="didigetthis" />
+                <p id="d524c9a4f49d476fa6219c3abcad9a6c">Let&apos;s compare and contrast what we now
+                    know about the sampling distributions for sample means and sample proportions. </p>
+                <table id="befe1bcecff94e6eb463a7ffdab37734" summary="" rowstyle="plain">
+                    <cite id="i37fe27c6f1554f948a087e880d597680" />
+                    <caption />
+                    <tr>
+                        <th colspan="1" rowspan="1" align="left" />
+                        <th colspan="1" rowspan="1" align="left" />
+                        <th colspan="1" rowspan="1" align="left" />
+                        <th colspan="3" rowspan="1" align="left">
+                            <p id="aaff5ce7745f34fb8b692b355a9fdeaae">Sampling Distribution</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="af8abf92e480446c8a14eec16c089885d">Variable</p>
+                        </th>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="aaf1ad74c0f2d4602aa209abd58f5c6d3">Parameter</p>
+                        </th>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="adc7e0c07a1e7432fafc03cd0dc56168c">Statistic</p>
+                        </th>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="abbe68b0a125c43458409a22fcd22a780">Center</p>
+                        </th>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="afcd3a5c2bfb24dc99e04849a2a4f645a">Spread</p>
+                        </th>
+                        <th colspan="1" rowspan="1" align="left">
+                            <p id="aa360c14cafb14530b7ae6eb91f39eb49">Shape</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="ac8332ab3b0fc4902a0cf8eee49162fdf">Categorical (example:
+                                left-handed or not)</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="aa903e182bd5741739b70da5c9ed07743">p = population proportion</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="ad7eec6db53449dd9daf7af66cd249f5"><m:math
+                                    xmlns:m="http://www.w3.org/1998/Math/MathML" overflow="scroll">
+                                    <m:mover accent="true">
+                                        <m:mrow>
+                                            <m:mi>p</m:mi>
+                                        </m:mrow>
+                                        <m:mo>ˆ</m:mo>
+                                    </m:mover>
+                                </m:math>
+                                = sample proportion</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="ad9dfe5b98336463596c95d4241ceea4f">p</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="f1377a90d49141c2bde7725b40d804cc">
+                                <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                                    overflow="scroll">
+                                    <m:msqrt>
+                                        <m:mrow>
+                                            <m:mfrac>
+                                                <m:mrow>
+                                                    <m:mi>p</m:mi>
+                                                    <m:mo>(</m:mo>
+                                                    <m:mn>1</m:mn>
+                                                    <m:mo>-</m:mo>
+                                                    <m:mi>p</m:mi>
+                                                    <m:mo>)</m:mo>
+                                                </m:mrow>
+                                                <m:mrow>
+                                                    <m:mi>n</m:mi>
+                                                </m:mrow>
+                                            </m:mfrac>
+                                        </m:mrow>
+                                    </m:msqrt>
+                                </m:math>
+                            </p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="ad080dbebd94a424db008ce2302fa1b40">Normal IF np ≥ 10 and n(1 - p)
+                                ≥ 10</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="aa1a86b8280ac4ddca23970246bad0a20">Quantitative (example: age)</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="ac2332c38c3e34a45b8daeacf6ebc297b">μ = population mean, σ =
+                                population standard deviation</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="c22875b71c1e4e00932f3203ed4db0f3"><m:math
+                                    xmlns:m="http://www.w3.org/1998/Math/MathML" overflow="scroll">
+                                    <m:mover accent="true">
+                                        <m:mrow>
+                                            <m:mi>x</m:mi>
+                                        </m:mrow>
+                                        <m:mo>¯</m:mo>
+                                    </m:mover>
+                                </m:math>
+                                = sample mean</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="acb70729fa30340199338c3a9276e705c">μ</p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="cfc47a2bf13c44b1b7731a5464b6d378">
+                                <m:math xmlns:m="http://www.w3.org/1998/Math/MathML"
+                                    overflow="scroll">
+                                    <m:mfrac>
+                                        <m:mrow>
+                                            <m:mi>σ</m:mi>
+                                        </m:mrow>
+                                        <m:mrow>
+                                            <m:msqrt>
+                                                <m:mrow>
+                                                    <m:mi>n</m:mi>
+                                                </m:mrow>
+                                            </m:msqrt>
+                                        </m:mrow>
+                                    </m:mfrac>
+                                </m:math>
+                            </p>
+                        </td>
+                        <td colspan="1" rowspan="1" align="left">
+                            <p id="abe953206582408d9fcb2ce6eb14e567">
+                                <em style="italic">When will the distribution of sample means be
+                                    approximately normal ?</em>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                <p id="e02815c4dab247bbadfe3d1417825d08">Now we will investigate the shape of the
+                    sampling distribution of sample means. When we were discussing the sampling
+                    distribution of sample proportions, we said that this distribution is
+                    approximately normal if np ≥ 10 and n(1 - p) ≥ 10. In other words, we had a
+                    guideline based on sample size for determining the conditions under which we
+                    could use normal probability calculations for sample proportions. </p>
+                <p id="b6e2d5a9b1ad40bbb05945e03978a0a8">When will the distribution of sample means
+                    be approximately normal? Does this depend on the size of the sample? </p>
+                <p id="dc6dd0d8bc5a48129f51707a1140c05e">It seems reasonable that a population with
+                    a normal distribution will have sample means that are normally distributed even
+                    for very small samples. We saw this illustrated in the previous simulation with
+                    samples of size 9. </p>
+                <p id="e10c36517369479f8bed8e6bf51bdad0">What happens if the distribution of the
+                    variable in the population is heavily skewed? Do sample means have a skewed
+                    distribution also? If we take really large samples, will the sample means become
+                    more normally distributed? </p>
+                <p id="ce49747492bb43f9ae9a4fecd8a81f5a">In the next simulation, we will investigate
+                    these questions. </p>
+                <youtube id="e4d1fe09d78c46959622ead3e691a860" src="cyNqdostWzk" height="300"
+                    width="500" controls="true">
+                    <cite id="i9f5cc2e4a4b04caba4027e0e1dd3bb3d" />
+                    <caption />
+                    <popout enable="false"></popout>
+                </youtube>
+                <wb:inline idref="u3_m4_mean2_tutor2ps" purpose="didigetthis" />
+            </body>
+        </section>
+        <p id="bc612edb46af46c888628a28448c9407">To summarize, the distribution of sample means will
+            be approximately normal as long as the sample size is large enough. This discovery is
+            probably the single most important result presented in introductory statistics courses.
+            It is stated formally as the Central Limit Theorem. </p>
+        <p id="b3a681fe905a42e1904b1ef981542c75">We will depend on the Central Limit Theorem again
+            and again in order to do normal probability calculations when we use sample means to
+            draw conclusions about a population mean. We now know that we can do this even if the
+            population distribution is not normal. </p>
+        <p id="a66252f3b8e243f785737128e435bb68">How large a sample size do we need in order to
+            assume that sample means will be normally distributed? Well, it really depends on the
+            population distribution, as we saw in the simulation. The general rule of thumb is that
+            samples of size 30 or greater will have a fairly normal distribution regardless of the
+            shape of the distribution of the variable in the population. </p>
+        <p id="b6966715e20d45d9aa5698a143f95671">Comment: For categorical variables, our claim that
+            sample proportions are approximately normal for large enough n is actually a special
+            case of the Central Limit Theorem. </p>
+    </body>
+</workbook_page>

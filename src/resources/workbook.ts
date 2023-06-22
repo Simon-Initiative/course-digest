@@ -43,11 +43,33 @@ function liftTitle($: any) {
   $('head').children().remove('title');
 }
 
+export function removeDoubleGroupHeaders($: any) {
+  /* MER-2182 Sometimes, there are wb:inline elements inside a section element, where both the 
+     inline and the section specifies a purpose. In cases where those are the same purpose, we 
+     get double headers. We should ignore the purpose on inline elements if they are already 
+     inside a section for that purpose.
+*/
+  $('group').each((i: any, elem: any) => {
+    const purpose = $(elem).attr('purpose');
+    if (purpose) {
+      $(elem)
+        .find('wb\\:inline')
+        .each((j: any, subElem: any) => {
+          const subPurpose = $(subElem).attr('purpose');
+          if (subPurpose === purpose) {
+            $(subElem).removeAttr('purpose'); // Remove the inline-level purpose
+          }
+        });
+    }
+  });
+}
+
 export function performRestructure($: any) {
   failIfPresent($, ['multipanel', 'dependency']);
   standardContentManipulations($);
 
   liftTitle($);
+  removeDoubleGroupHeaders($);
   DOM.rename($, 'wb\\:inline', 'activity_placeholder');
   DOM.rename($, 'inline', 'activity_placeholder');
   DOM.rename($, 'activity_link', 'a');
