@@ -76,14 +76,44 @@ export function ensureCatchAllResponse(responses: any[]): void {
   if (!hasCatchAllRule(responses)) responses.push(makeCatchAllResponse());
 }
 
+/*
+ * If children *only* contains inline elements, wrap them all in a single paragraph.
+ */
 export function ensureParagraphs(children: any[]) {
   // if all children are text|inline elements: wrap all in single p
   if (children.every((c: any) => c.text !== undefined || isInlineTag(c.type))) {
     const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
     return [{ type: 'p', children: withEmptyText }];
   }
-
   return children;
+}
+
+/* Looks through children and wraps any inline elements in paragraphs. It will keep
+ * elements next to each other in the same paragraph, only splitting when we hit a
+ * block element (as defined by text || !isInlineTag(...) )
+ *
+ * ex: [inline1, inline2, block, inline3] => [ p[inline1, inline2], block, p[inline3] ]
+ */
+export function wrapInlinesWithParagraphs(children: any) {
+  const result = [];
+  let successiveInline: any[] = [];
+  children.forEach((c: any) => {
+    if (c.text !== undefined || isInlineTag(c.type)) {
+      successiveInline.push(c);
+    } else {
+      // hit non-inline: finish any pending paragraph and reset
+      if (successiveInline.length > 0) {
+        result.push({ type: 'p', children: successiveInline });
+        successiveInline = [];
+      }
+      result.push(c);
+    }
+  });
+  // finish any final pending paragraph
+  if (successiveInline.length > 0) {
+    result.push({ type: 'p', children: successiveInline });
+  }
+  return result;
 }
 
 export function isBlankText(e: any): boolean {
@@ -241,7 +271,7 @@ const shortAnswerExplanationOrDefaultModel = (question: any) => {
     const explanation = getChild(firstPart.children, 'explanation');
 
     if (explanation !== undefined) {
-      return ensureParagraphs(explanation.children);
+      return wrapInlinesWithParagraphs(explanation.children);
     } else {
       return defaultModel();
     }

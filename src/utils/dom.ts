@@ -123,6 +123,7 @@ const inlineTags = {
   extra: true,
   text: true,
   xref: true,
+  img_inline: true,
 };
 
 export function isInlineTag(tag: string) {
