@@ -124,6 +124,8 @@ const inlineTags = {
   text: true,
   xref: true,
   img_inline: true,
+  input_ref: true,
+  formula_inline: true,
 };
 
 export function isInlineTag(tag: string) {

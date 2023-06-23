@@ -77,15 +77,13 @@ export function ensureCatchAllResponse(responses: any[]): void {
 }
 
 /*
- * If children *only* contains inline elements, wrap them all in a single paragraph.
+ * Same as wrapInlinesWithParagraphs, but if there are no children, returns an empty paragraph.
  */
 export function ensureParagraphs(children: any[]) {
-  // if all children are text|inline elements: wrap all in single p
-  if (children.every((c: any) => c.text !== undefined || isInlineTag(c.type))) {
-    const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
-    return [{ type: 'p', children: withEmptyText }];
-  }
-  return children;
+  const result = wrapInlinesWithParagraphs(children);
+  return result.length === 0
+    ? [{ type: 'p', children: [{ text: ' ' }] }] // Add an empty p if no children at all.
+    : result;
 }
 
 /* Looks through children and wraps any inline elements in paragraphs. It will keep
@@ -97,18 +95,20 @@ export function ensureParagraphs(children: any[]) {
 export function wrapInlinesWithParagraphs(children: any) {
   const result = [];
   let successiveInline: any[] = [];
-  children.forEach((c: any) => {
-    if (c.text !== undefined || isInlineTag(c.type)) {
-      successiveInline.push(c);
-    } else {
-      // hit non-inline: finish any pending paragraph and reset
-      if (successiveInline.length > 0) {
-        result.push({ type: 'p', children: successiveInline });
-        successiveInline = [];
+  children
+    .filter((c: any) => !isBlankText(c))
+    .forEach((c: any) => {
+      if (c.text !== undefined || isInlineTag(c.type)) {
+        successiveInline.push(c);
+      } else {
+        // hit non-inline: finish any pending paragraph and reset
+        if (successiveInline.length > 0) {
+          result.push({ type: 'p', children: successiveInline });
+          successiveInline = [];
+        }
+        result.push(c);
       }
-      result.push(c);
-    }
-  });
+    });
   // finish any final pending paragraph
   if (successiveInline.length > 0) {
     result.push({ type: 'p', children: successiveInline });
