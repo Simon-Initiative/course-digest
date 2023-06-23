@@ -120,34 +120,12 @@ export function isBlankText(e: any): boolean {
   return e && e.text !== undefined && e.text.trim().length === 0;
 }
 
-export function collectTextsIntoParagraphs(children: any) {
-  const result = [];
-  let successiveTexts: any[] = [];
-  children.forEach((c: any) => {
-    if (c.text !== undefined || isInlineTag(c.type)) {
-      successiveTexts.push(c);
-    } else {
-      // hit non-text: finish any pending paragraph and reset
-      if (successiveTexts.length > 0) {
-        result.push({ type: 'p', children: successiveTexts });
-        successiveTexts = [];
-      }
-      result.push(c);
-    }
-  });
-  // finish any final pending paragraph
-  if (successiveTexts.length > 0) {
-    result.push({ type: 'p', children: successiveTexts });
-  }
-  return result;
-}
-
 export function wrapLooseText(children: any, trace = false) {
   // if loose text pieces alongside blocks, strip spurious blank ones,
   // collecting successive non-blank text pieces into p's.
   if (children.length > 1) {
     if (children.some((b: any) => XML.isBlockElement(b.type))) {
-      const result = collectTextsIntoParagraphs(
+      const result = wrapInlinesWithParagraphs(
         children.filter((c: any) => !isBlankText(c))
       );
 
@@ -158,11 +136,9 @@ export function wrapLooseText(children: any, trace = false) {
         console.log('wrapText in:' + JSON.stringify(children, null, 2));
         console.log('wrapText out:' + JSON.stringify(result, null, 2));
       }
-
       return result;
     }
   }
-
   return children;
 }
 
