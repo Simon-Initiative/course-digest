@@ -102,6 +102,54 @@ Has numeric with range
 				</response>
 			</part>
 		</numeric>
+		<text id="e5ebe5696e45434bafab99232214a5d9" grading="automatic" whitespace="trim" case_sensitive="false" evaluation="regex" keyboard="none">
+			<body>
+				<p id="de031569c2d646fb9fe1496acf17df29">Add
+					<input_ref input="b9e53c010ebb4aba98b15c0dd4fa4d23" />,
+					<input_ref input="a00d8d2bf2f74ed998e55f99e6a871fa" />, or
+					<input_ref input="f6f5a4f03df64b39936f8109eb3927a0" /> components
+				</p>
+			</body>
+			<input id="b9e53c010ebb4aba98b15c0dd4fa4d23" size="small" />
+			<input id="a00d8d2bf2f74ed998e55f99e6a871fa" size="medium" />
+			<input id="f6f5a4f03df64b39936f8109eb3927a0" size="large" />
+			<part id="d20717e1b87b446590f10492b6ce16f5">
+				<response match="answer" score="1" input="b9e53c010ebb4aba98b15c0dd4fa4d23">
+					<feedback>
+						<p id="adb7e81b5d534963aae47b8ada85f1c4">Correct!</p>
+					</feedback>
+				</response>
+				<response match="*" score="0" input="b9e53c010ebb4aba98b15c0dd4fa4d23">
+					<feedback>
+						<p id="f91195aab2084874a1ba4110189afecc">Incorrect.</p>
+					</feedback>
+				</response>
+			</part>
+			<part id="b5cb8c8064b74e6f9396867e0a713eda">
+				<response match="answer" score="1" input="a00d8d2bf2f74ed998e55f99e6a871fa">
+					<feedback>
+						<p id="ce0bfc19779c4ee6ba00ab4f133ed551">Correct!</p>
+					</feedback>
+				</response>
+				<response match="*" score="0" input="a00d8d2bf2f74ed998e55f99e6a871fa">
+					<feedback>
+						<p id="b3ff80bac45346b7b7422d521cd907dd">Incorrect.</p>
+					</feedback>
+				</response>
+			</part>
+			<part id="cdf71be04fc9429da6e3f3500a4a2da6">
+				<response match="answer" score="1" input="f6f5a4f03df64b39936f8109eb3927a0">
+					<feedback>
+						<p id="a869f98c549e46fc833b17b965ee273d">Correct!</p>
+					</feedback>
+				</response>
+				<response match="*" score="0" input="f6f5a4f03df64b39936f8109eb3927a0">
+					<feedback>
+						<p id="c9c415ba0f434c6fb6935aba8ecfb8d1">Incorrect.</p>
+					</feedback>
+				</response>
+			</part>
+		</text>
 	</page>
 	<page id="e497866ff13a4946a45f556ad7a75b16">
 		<title>
