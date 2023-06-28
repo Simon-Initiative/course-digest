@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="num_sig_fig_digt">
+    <title>Tutor</title>
+    <page>
+
+        <question id="q1">
+
+            <body><p>Indicate the number of significant figures in each of the following
+                    measurements.</p>
+                <p>1.00&times;10<sup>3</sup> g <input_ref input="pt1"/></p>
+                <p>0.004330 cm <input_ref input="pt2"/></p>
+                <p>Round each of the following measurements to 3 significant figures.</p>
+                <table>
+                    <tr>
+                        <td align="center"><em style="bold">Measurement</em></td>
+                        <td align="center"><em style="bold">Measurement Rounded to 3 Significant
+                                Figures</em></td>
+                    </tr>
+                    <tr>
+                        <td>219,034 m</td>
+                        <td><input_ref input="pt3"/></td>
+                    </tr>
+                    <tr>
+                        <td>25.38 L</td>
+                        <td><input_ref input="pt4"/></td>
+                    </tr>
+                    <tr>
+                        <td>0.003109 mg</td>
+                        <td><input_ref input="pt5"/></td>
+                    </tr>
+                </table>
+            </body>
+
+
+            <numeric id="pt1" size="small"/>
+            <numeric id="pt2" size="small"/>
+            <numeric id="pt3" size="small" notation="scientific"></numeric>
+            <numeric id="pt4" size="small"/>
+            <numeric id="pt5" size="small"/>
+            <part id="pt1">
+                <response match="3" score="10" input="pt1">
+                    <feedback>Correct. Trailing zeros to the right of the decimal are significant.
+                    </feedback>
+                </response>
+                <response match="*" input="pt1">
+                    <feedback>Incorrect Try again.</feedback>
+                    <feedback>Incorrect. Trailing zeros to the right of the decimal are significant.
+                    </feedback>
+                </response>
+            </part>
+
+            <part id="pt2">
+                <response match="4" score="10" input="pt2">
+                    <feedback>Correct. Leading zeros are never significant and trailing zeros to the
+                        right of a decimal are significant. </feedback>
+                </response>
+                <response match="*" input="pt2">
+                    <feedback>Incorrect Try again.</feedback>
+                    <feedback>Incorrect. Leading zeros are never significant and trailing zeros to
+                        the right of a decimal are significant. </feedback>
+                </response>
+            </part>
+            <part id="pt3">
+                <response match="2.19e5" score="10" input="pt3">
+                    <feedback>Correct. To round this measurement to 3 significant figures, you must use scientific notation. The measurement of 219,000 m has an undetermined number of significant figures as it is ambiguous 
+                        whether the three zeros are placeholders or part of the measurement. To remove this ambiguity, the measurement should be 
+                        recored using scientific notation. The correct answer is 2.19&times;10<sup>5</sup>. Entered as: 2.19e5.
+                    </feedback>
+                </response>
+                <response match="219000" score="0" input="pt3">
+                    <feedback>Not quite. The measurement of 219,000 m has an undetermined number of significant figures as it is ambiguous 
+                        whether the three zeros are placeholders or part of the measurement. To remove this ambiguity, the measurement should be 
+                        recored using scientific notation. The correct answer is 2.19&times;10<sup>5</sup>. Entered as: 2.19e5. 
+                    </feedback>
+                </response>
+               
+                <response match="*" input="pt3">
+                    <feedback>Incorrect Try again.</feedback>
+                    <feedback>Incorrect. To round this measurement to 3 significant figures, you must use scientific notation. The measurement of 219,000 m has an undetermined number of significant figures as it is ambiguous 
+                        whether the three zeros are placeholders or part of the measurement. To remove this ambiguity, the measurement should be 
+                        recored using scientific notation. The correct answer is 2.19&times;10<sup>5</sup>. Entered as: 2.19e5.
+                    </feedback>
+                </response>
+            </part>
+            <part id="pt4">
+                <response match="25.4" score="10" input="pt4">
+                    <feedback>Correct. Drop the 8 and round the 3 up to a 4. </feedback>
+                </response>
+                <response match="*" input="pt4">
+                    <feedback>Incorrect Try again.</feedback>
+                    <feedback>Incorrect. Drop the 8 and round the 3 up to a 4. </feedback>
+                </response>
+            </part>
+            <part id="pt5">
+                <response match="0.00311" score="10" input="pt5">
+                    <feedback>Correct. In dropping the 9, three significant figures are left in the
+                        measurement. The leading zeros are not significant, but the trailing zero
+                        is. </feedback>
+                </response>
+                <response match="*" input="pt5">
+                    <feedback>Incorrect Try again.</feedback>
+                    <feedback>Incorrect. In dropping the 9, three significant figures are left in
+                        the measurement. The leading zeros are not significant, but the trailing
+                        zero is. </feedback>
+                </response>
+            </part>
+
+        </question>
+
+    </page>
+</assessment>
