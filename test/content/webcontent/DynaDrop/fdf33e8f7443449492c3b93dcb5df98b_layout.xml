@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dragdrop PUBLIC "-//Carnegie Mellon University//DTD Dynadrop Layout 3.8//EN" "http://oli.cmu.edu/dtd/oli_dynadrop_layout_1_0.dtd">
+<dragdrop>
+  <layoutStyles><![CDATA[<style type="text/css"></style>]]></layoutStyles>
+  <targetArea><![CDATA[<div class="oli-dnd-table"> <div class="dnd-row dnd-row-header"> <div class="dnd-cell">Värde</div> <div class="dnd-cell">Datatyp
+
+</div></div> <div class="dnd-row"> <div class="dnd-cell">23</div> <div input_ref="f2b0c677f6b34ebe9596e62618b60bd1" class="dnd-cell target"></div></div> <div class="dnd-row"> <div class="dnd-cell">"-419.3"&nbsp;
+</div> <div input_ref="f4f4c67b439a4675bdaaece80f11b3ef" class="dnd-cell target"></div></div> <div class="dnd-row"> <div class="dnd-cell">'integer'
+</div> <div input_ref="bf9b1e6a35a7498c928f58dbc0516f32" class="dnd-cell target"></div></div> <div class="dnd-row"> <div class="dnd-cell">3.14</div> <div input_ref="a0814fa75920476bb0e64ceb2843c92c" class="dnd-cell target"></div></div></div>]]></targetArea>
+  <initiators><![CDATA[<div input_val="ddeb38530aaf48f4b888dd823c045453" class="initiator">Heltal</div> <div input_val="f5a8850be42d4eb6b23a8b24394e0f6a" class="initiator">Flyttal</div> <div input_val="a9dbb54ce2d441399fcb15e1a450d5a4" class="initiator">Sträng</div> <div input_val="d391d9911f3846db832f3561928c9cc5" class="initiator">Sträng</div>]]></initiators>
+</dragdrop>
