@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<assessment xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    id="newc6e3d55242dc4ee69bf4fe506e222793">
+    <title>Övning: Tilldelning och datatyper</title>
+    <page id="f7567a6a86584a43a3ac65f377c33315">
+        <title>Page 1</title>
+        <question id="fca0391e17f542cda9478e0f4431f244">
+            <body>
+                <p id="f1626f21c183478e9b75566169f2d606">Para ihop varje värde med sin datatyp</p>
+                <custom id="fdf33e8f7443449492c3b93dcb5df98b" type="javascript" logging="false"
+                    src="../webcontent/DynaDrop/DynaDropHTML.js" width="100" height="100"
+                    layout="../webcontent/DynaDrop/fdf33e8f7443449492c3b93dcb5df98b_layout.xml">
+                    <param name="showInputs">false</param>
+                </custom>
+            </body>
+            <fill_in_the_blank shuffle="true" id="ddeb38530aaf48f4b888dd823c045453">
+                <choice value="a0814fa75920476bb0e64ceb2843c92c">a0814fa75920476bb0e64ceb2843c92c</choice>
+                <choice value="bf9b1e6a35a7498c928f58dbc0516f32">bf9b1e6a35a7498c928f58dbc0516f32</choice>
+                <choice value="f2b0c677f6b34ebe9596e62618b60bd1">f2b0c677f6b34ebe9596e62618b60bd1</choice>
+                <choice value="f4f4c67b439a4675bdaaece80f11b3ef">f4f4c67b439a4675bdaaece80f11b3ef</choice>
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="f5a8850be42d4eb6b23a8b24394e0f6a">
+                <choice value="a0814fa75920476bb0e64ceb2843c92c">a0814fa75920476bb0e64ceb2843c92c</choice>
+                <choice value="bf9b1e6a35a7498c928f58dbc0516f32">bf9b1e6a35a7498c928f58dbc0516f32</choice>
+                <choice value="f2b0c677f6b34ebe9596e62618b60bd1">f2b0c677f6b34ebe9596e62618b60bd1</choice>
+                <choice value="f4f4c67b439a4675bdaaece80f11b3ef">f4f4c67b439a4675bdaaece80f11b3ef</choice>
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="a9dbb54ce2d441399fcb15e1a450d5a4">
+                <choice value="a0814fa75920476bb0e64ceb2843c92c">a0814fa75920476bb0e64ceb2843c92c</choice>
+                <choice value="bf9b1e6a35a7498c928f58dbc0516f32">bf9b1e6a35a7498c928f58dbc0516f32</choice>
+                <choice value="f2b0c677f6b34ebe9596e62618b60bd1">f2b0c677f6b34ebe9596e62618b60bd1</choice>
+                <choice value="f4f4c67b439a4675bdaaece80f11b3ef">f4f4c67b439a4675bdaaece80f11b3ef</choice>
+            </fill_in_the_blank>
+            <fill_in_the_blank shuffle="true" id="d391d9911f3846db832f3561928c9cc5">
+                <choice value="a0814fa75920476bb0e64ceb2843c92c">a0814fa75920476bb0e64ceb2843c92c</choice>
+                <choice value="bf9b1e6a35a7498c928f58dbc0516f32">bf9b1e6a35a7498c928f58dbc0516f32</choice>
+                <choice value="f2b0c677f6b34ebe9596e62618b60bd1">f2b0c677f6b34ebe9596e62618b60bd1</choice>
+                <choice value="f4f4c67b439a4675bdaaece80f11b3ef">f4f4c67b439a4675bdaaece80f11b3ef</choice>
+            </fill_in_the_blank>
+            <part id="b6e1db59c3a3470cb8f382bcbc41663f">
+                <skillref idref="fd32ce9ed22e43b6855c9dcad9c0de23" />
+                <response match="a0814fa75920476bb0e64ceb2843c92c" score="0"
+                    input="ddeb38530aaf48f4b888dd823c045453">
+                    <feedback>
+                        <p id="fdd55e4a0b4d4fa59f525f51886e57c9">Fel, detta är ej ett heltal.</p>
+                    </feedback>
+                </response>
+                <response match="bf9b1e6a35a7498c928f58dbc0516f32" score="0"
+                    input="ddeb38530aaf48f4b888dd823c045453">
+                    <feedback>
+                        <p id="aacbeca867e5431fa95b6b1b6c54c7fe">Fel, heltal kan inte stå inom <code>
+                            &apos;</code> tecken</p>
+                    </feedback>
+                </response>
+                <response match="f2b0c677f6b34ebe9596e62618b60bd1" score="1"
+                    input="ddeb38530aaf48f4b888dd823c045453">
+                    <feedback>
+                        <p id="a107da4620f34ecd96838bc8c1699d25">Rätt!</p>
+                    </feedback>
+                </response>
+                <response match="f4f4c67b439a4675bdaaece80f11b3ef" score="0"
+                    input="ddeb38530aaf48f4b888dd823c045453">
+                    <feedback>
+                        <p id="a4ab0fbc8a5a4b4dbd48bade955aad9d">Fel, heltal kan inte stå inom <code>
+                            &quot;</code> tecken</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="d18fd52ec2944c17b05096d722f8e52f">
+                <skillref idref="fd32ce9ed22e43b6855c9dcad9c0de23" />
+                <response match="a0814fa75920476bb0e64ceb2843c92c" score="1"
+                    input="f5a8850be42d4eb6b23a8b24394e0f6a">
+                    <feedback>
+                        <p id="d98f84452c794f30b308a4fdbccb8921">Rätt!</p>
+                    </feedback>
+                </response>
+                <response match="bf9b1e6a35a7498c928f58dbc0516f32" score="0"
+                    input="f5a8850be42d4eb6b23a8b24394e0f6a">
+                    <feedback>
+                        <p id="ef4db57133104f5d8ad9c262cf954c31">Fel, flyttal kan inte stå inom <code>
+                            &apos;</code> tecken</p>
+                    </feedback>
+                </response>
+                <response match="f2b0c677f6b34ebe9596e62618b60bd1" score="0"
+                    input="f5a8850be42d4eb6b23a8b24394e0f6a">
+                    <feedback>
+                        <p id="e8c3fd4f463c437ab6f1d37f242a6a4a">Fel, flyttal måste alltid ha en
+                            decimalpunkt, så detta skulle i så fall skrivas som 23.0.</p>
+                    </feedback>
+                </response>
+                <response match="f4f4c67b439a4675bdaaece80f11b3ef" score="0"
+                    input="f5a8850be42d4eb6b23a8b24394e0f6a">
+                    <feedback>
+                        <p id="b307d371af54475985a7151d4c9c7063">Fel, flyttal kan inte stå inom <code>
+                            &quot;</code> tecken</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="b2baca91ca25456aa259c70846fb9595">
+                <skillref idref="fd32ce9ed22e43b6855c9dcad9c0de23" />
+                <response match="a0814fa75920476bb0e64ceb2843c92c" score="0"
+                    input="a9dbb54ce2d441399fcb15e1a450d5a4">
+                    <feedback>
+                        <p id="a1a734adf85a40d7a78f497771eae2b5">Fel, detta är inte en sträng.</p>
+                    </feedback>
+                </response>
+                <response match="bf9b1e6a35a7498c928f58dbc0516f32" score="1"
+                    input="a9dbb54ce2d441399fcb15e1a450d5a4">
+                    <feedback>
+                        <p id="f8d404ca5276414e85805edcd293ac5f">Rätt!</p>
+                    </feedback>
+                </response>
+                <response match="f2b0c677f6b34ebe9596e62618b60bd1" score="0"
+                    input="a9dbb54ce2d441399fcb15e1a450d5a4">
+                    <feedback>
+                        <p id="d4ce0adcaea24606b5f4cbbccde7ed18">Fel, detta är inte en sträng.</p>
+                    </feedback>
+                </response>
+                <response match="f4f4c67b439a4675bdaaece80f11b3ef" score="1"
+                    input="a9dbb54ce2d441399fcb15e1a450d5a4">
+                    <feedback>
+                        <p id="d53cdcc1643544f08ad487a1217454d3">Rätt!</p>
+                    </feedback>
+                </response>
+            </part>
+            <part id="dfc24dad00e248d2a7dced51b158e1cb">
+                <skillref idref="fd32ce9ed22e43b6855c9dcad9c0de23" />
+                <response match="a0814fa75920476bb0e64ceb2843c92c" score="0"
+                    input="d391d9911f3846db832f3561928c9cc5">
+                    <feedback>
+                        <p id="adce4edbafdc4620963f2e7207464754">Fel, detta är inte en sträng.</p>
+                    </feedback>
+                </response>
+                <response match="bf9b1e6a35a7498c928f58dbc0516f32" score="1"
+                    input="d391d9911f3846db832f3561928c9cc5">
+                    <feedback>
+                        <p id="e5378a6ba6f34001bb9c534737ba2c02">Rätt!</p>
+                    </feedback>
+                </response>
+                <response match="f2b0c677f6b34ebe9596e62618b60bd1" score="0"
+                    input="d391d9911f3846db832f3561928c9cc5">
+                    <feedback>
+                        <p id="d258fe94a2c948429aa64d4f046a66e0">Fel, detta är inte en sträng.</p>
+                    </feedback>
+                </response>
+                <response match="f4f4c67b439a4675bdaaece80f11b3ef" score="1"
+                    input="d391d9911f3846db832f3561928c9cc5">
+                    <feedback>
+                        <p id="a55e61896b8048e48b6caaf160da6105">Rätt!</p>
+                    </feedback>
+                </response>
+            </part>
+        </question>
+    </page>
+</assessment>
