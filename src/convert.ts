@@ -136,44 +136,79 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     return m;
   }, {});
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-    let activity = byActivityId[a.resourceId + '-' + a.questionId];
-    if (activity === undefined) {
-      // Could not find directly, see if we can find it by strictly the question id
-      activity = Object.values(byActivityId).find((ac: TorusResource) =>
-        ac.id.endsWith('-' + a.questionId)
-      );
-    }
-    if (activity !== undefined) {
-      const objectives = activity.objectives;
 
-      const mappedSkillIds = a.skillIds.map((id) => {
-        if (bySkillId[id] !== undefined) {
-          return bySkillId[id].id;
-        }
-        console.log(
-          'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
-            id
-        );
-        return null;
-      });
+    // If the question id is null, we apply the attached skills to all questions in the resource
+    if (a.questionId === null) {
 
-      // If no partId specified, apply the skills to all parts present in the activity
-      if (a.partId === null) {
-        activity.objectives = Object.keys(objectives).reduce(
+      const activities = Object.values(byActivityId).filter((ac: TorusResource) =>
+        ac.id.startsWith(a.resourceId + '-'));
+
+      activities.forEach((activity: TorusResource) => {
+
+        const mappedSkillIds = a.skillIds.map((id) => {
+          if (bySkillId[id] !== undefined) {
+            return bySkillId[id].id;
+          }
+          console.log(
+            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+              id
+          );
+          return null;
+        });
+
+        const objectives = (activity as any).objectives;
+
+        (activity as any).objectives = Object.keys(objectives).reduce(
           (m: any, k: string) => {
             m[k] = mappedSkillIds;
             return m;
           },
           {}
         );
-      } else {
-        objectives[a.partId] = mappedSkillIds;
-      }
+      });
+    
+
     } else {
-      console.log(
-        `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
-      );
+      let activity = byActivityId[a.resourceId + '-' + a.questionId];
+      if (activity === undefined) {
+        // Could not find directly, see if we can find it by strictly the question id
+        activity = Object.values(byActivityId).find((ac: TorusResource) =>
+          ac.id.endsWith('-' + a.questionId)
+        );
+      }
+      if (activity !== undefined) {
+        const objectives = activity.objectives;
+  
+        const mappedSkillIds = a.skillIds.map((id) => {
+          if (bySkillId[id] !== undefined) {
+            return bySkillId[id].id;
+          }
+          console.log(
+            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+              id
+          );
+          return null;
+        });
+  
+        // If no partId specified, apply the skills to all parts present in the activity
+        if (a.partId === null) {
+          activity.objectives = Object.keys(objectives).reduce(
+            (m: any, k: string) => {
+              m[k] = mappedSkillIds;
+              return m;
+            },
+            {}
+          );
+        } else {
+          objectives[a.partId] = mappedSkillIds;
+        }
+      } else {
+        console.log(
+          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
+        );
+      }
     }
+
   });
 
   // Finally, update the objective-skill parent-child relationships

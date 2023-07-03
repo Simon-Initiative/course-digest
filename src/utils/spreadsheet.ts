@@ -168,7 +168,7 @@ function extractAttachments(wb: XLSX.WorkBook): SpreadsheetAttachment[] {
         resourceId: sheet['A' + row].v,
         questionId: sheet['B' + row].v,
         partId: sheet['C' + row] === undefined ? null : sheet['C' + row].v,
-        skillIds: ['D', 'E', 'F', 'G', 'H', 'I']
+        skillIds: ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
           .map((col: string) => sheet[col + row])
           .filter((s) => s !== undefined)
           .map((s) => s.v),
