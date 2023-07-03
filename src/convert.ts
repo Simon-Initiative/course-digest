@@ -136,15 +136,13 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     return m;
   }, {});
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-
     // If the question id is null, we apply the attached skills to all questions in the resource
     if (a.questionId === null) {
-
-      const activities = Object.values(byActivityId).filter((ac: TorusResource) =>
-        ac.id.startsWith(a.resourceId + '-'));
+      const activities = Object.values(byActivityId).filter(
+        (ac: TorusResource) => ac.id.startsWith(a.resourceId + '-')
+      );
 
       activities.forEach((activity: TorusResource) => {
-
         const mappedSkillIds = a.skillIds.map((id) => {
           if (bySkillId[id] !== undefined) {
             return bySkillId[id].id;
@@ -166,8 +164,6 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
           {}
         );
       });
-    
-
     } else {
       let activity = byActivityId[a.resourceId + '-' + a.questionId];
       if (activity === undefined) {
@@ -178,7 +174,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
       }
       if (activity !== undefined) {
         const objectives = activity.objectives;
-  
+
         const mappedSkillIds = a.skillIds.map((id) => {
           if (bySkillId[id] !== undefined) {
             return bySkillId[id].id;
@@ -189,7 +185,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
           );
           return null;
         });
-  
+
         // If no partId specified, apply the skills to all parts present in the activity
         if (a.partId === null) {
           activity.objectives = Object.keys(objectives).reduce(
@@ -208,7 +204,6 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         );
       }
     }
-
   });
 
   // Finally, update the objective-skill parent-child relationships
