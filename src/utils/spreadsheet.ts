@@ -163,16 +163,20 @@ function extractAttachments(wb: XLSX.WorkBook): SpreadsheetAttachment[] {
   try {
     let row = 3;
     while (true) {
-      if (sheet['A' + row] === undefined) break;
-      all.push({
-        resourceId: sheet['A' + row].v,
-        questionId: sheet['B' + row].v,
-        partId: sheet['C' + row] === undefined ? null : sheet['C' + row].v,
-        skillIds: ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
-          .map((col: string) => sheet[col + row])
-          .filter((s) => s !== undefined)
-          .map((s) => s.v),
-      });
+      try {
+        if (sheet['A' + row] === undefined) break;
+        all.push({
+          resourceId: sheet['A' + row].v,
+          questionId: sheet['B' + row] === undefined ? null : sheet['B' + row].v,
+          partId: sheet['C' + row] === undefined ? null : sheet['C' + row].v,
+          skillIds: ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
+            .map((col: string) => sheet[col + row])
+            .filter((s) => s !== undefined)
+            .map((s) => s.v),
+        });
+      } catch (e) {
+        console.log('error encountered in extracting attachments row : ' + row);
+      }
       row++;
     }
   } catch (e) {

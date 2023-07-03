@@ -216,10 +216,15 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     const objective = byObjectiveId[a.id];
     if (objective !== undefined) {
       const mappedSkillIds = a.skillIds.map((id) => {
-        return bySkillId[id].id;
+        if (bySkillId[id] !== undefined) {
+          return bySkillId[id].id;
+        }
+        return null;
       });
 
-      objective.objectives = [...objective.objectives, ...mappedSkillIds];
+      const withoutNulls = mappedSkillIds.filter((id) => id !== null);
+
+      objective.objectives = [...objective.objectives, ...withoutNulls];
     }
   });
 
