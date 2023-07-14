@@ -809,7 +809,9 @@ export function processAssessmentModel(
               ],
             },
           },
-          count: parseInt(item.count),
+          // for wildcard count meaning 'all in pool', enter pool tag here. Post-processing after all
+          // resources seen will replace with count of items with that tag.
+          count: item.count == '*' ? tagId : parseInt(item.count),
           id: guid(),
         } as any;
 
