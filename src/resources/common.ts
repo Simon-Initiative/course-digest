@@ -556,12 +556,14 @@ export function handleTheorems($: any) {
 
   DOM.rename($, 'theorem title', 'h4');
   DOM.eliminateLevel($, 'theorem statement');
+
   $('theorem proof').each((i: any, item: any) => {
     $(item).prepend('<h5>Proof</h5>');
   });
   DOM.eliminateLevel($, 'theorem proof');
 
-  DOM.rename($, 'theorem', 'group');
+  // theorem in torus just a sequence of block items
+  DOM.eliminateLevel($, 'theorem');
 }
 
 export function handleFormulaMathML($: any) {
