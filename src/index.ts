@@ -61,6 +61,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   quiet: boolean;
   mergePathA: string;
   mergePathB: string;
+  webContentBundle: string;
 }
 
 interface ConvertedResults {
@@ -362,7 +363,7 @@ function suggestUploadAction(options: CmdOptions) {
             if (manifest.webContentBundle) {
               const { name, totalSize } = manifest.webContentBundle;
               rl.question(
-                `Do you want to upload media bundle as '${name}' (${filesize(
+                `Do you want to upload webcontent bundle as '${name}' (${filesize(
                   totalSize
                 )})? [y/N] `,
                 res
@@ -440,6 +441,7 @@ function main() {
   dotenv.config();
 
   const options = commandLineArgs(optionDefinitions) as CmdOptions;
+  console.log('options.webContentBundle = ' + options.webContentBundle);
 
   if (validateArgs(options)) {
     if (options.operation === 'summarize') {
