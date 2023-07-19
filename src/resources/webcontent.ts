@@ -84,13 +84,13 @@ export const webBundleUrl = (
 
 export const pathToBundleUrl = (
   absolutePath: string,
-  projectSummary: ProjectSummary
+  packageDirectory: string,
+  mediaSummary: MediaSummary
 ) => {
   const relativePath = getPathRelativeToContentRoot(
-    projectSummary.packageDirectory,
+    packageDirectory,
     absolutePath
   );
-  const { mediaSummary } = projectSummary;
   const { urlPrefix } = mediaSummary;
   const webBundleName = mediaSummary.webContentBundle!.name;
 

@@ -83,9 +83,9 @@ export interface UploadFailure {
 export function transformToFlatDirectory(
   filePath: string,
   $: any,
-  projectSummary: ProjectSummary
+  mediaSummary: MediaSummary,
+  projectDirectory: string
 ): boolean {
-  const { mediaSummary } = projectSummary;
   let modified = false;
 
   // paths maps from reference string to list of DOM elements containing it
@@ -104,7 +104,7 @@ export function transformToFlatDirectory(
         // For link, iframe and superactivity source and webcontent assets, use a
         // webBundle URL rather than a flattened media library URL when webBundle requested.
         mediaSummary.webContentBundle?.name && isWebBundleElement(elem)
-          ? getWebBundleUrl(ref, projectSummary)
+          ? getWebBundleUrl(ref, projectDirectory, mediaSummary)
           : flatten(ref, mediaSummary);
 
       // URL-generating functions should return null url if file doesn't exist
@@ -383,17 +383,18 @@ export function flatten(
 // like flatten but get gets URL into web bundle tree instead
 export function getWebBundleUrl(
   ref: MediaItemReference,
-  projectSummary: ProjectSummary
+  projectDirectory: string,
+  mediaSummary: MediaSummary
 ): string | null {
   const absolutePath = resolve(ref);
   const decodedPath = decodeURIComponent(absolutePath);
 
   if (fs.existsSync(decodedPath)) {
-    return pathToBundleUrl(decodedPath, projectSummary);
+    return pathToBundleUrl(decodedPath, projectDirectory, mediaSummary);
   }
 
   // else file not found:
-  projectSummary.mediaSummary.missing.push(ref);
+  mediaSummary.missing.push(ref);
   return null;
 }
 

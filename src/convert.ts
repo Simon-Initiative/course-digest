@@ -45,7 +45,12 @@ export function convert(
       Media.downloadRemote(file, $, mediaSummary);
     }
 
-    Media.transformToFlatDirectory(file, $, projectSummary);
+    Media.transformToFlatDirectory(
+      file,
+      $,
+      mediaSummary,
+      projectSummary.packageDirectory
+    );
 
     return item.translate($, projectSummary);
   });
