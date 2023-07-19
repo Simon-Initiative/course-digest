@@ -69,6 +69,9 @@ export function flattenResourceRefs($: any) {
   $('duplicate').remove();
 }
 
+const removeEmptyText = (elem: any) =>
+  !(elem.type === 'text' && elem.data.trim() === '');
+
 // Utility function that allows determining whether an instance of a mixed type element (e.g. formula) is
 // needs to be considered inline or block.
 export function isInlineElement($: any, elem: any) {
@@ -85,17 +88,21 @@ export function isInlineElement($: any, elem: any) {
       'choice',
       'feedback',
       'hint',
-      'stem',
-      'body',
+      // AW: inlining in these contexts leads to undesired left-alignment:
+      // 'stem',
+      // 'body',
     ])
   ) {
     if (parent[0].children.length === 1) {
       return false;
     }
 
-    return parent[0].children.some(
-      (c: any) => c.type === 'text' || (c.type == 'tag' && isInlineTag(c.name))
-    );
+    return parent[0].children
+      .filter(removeEmptyText)
+      .some(
+        (c: any) =>
+          c.type === 'text' || (c.type == 'tag' && isInlineTag(c.name))
+      );
   }
   return false;
 }
@@ -115,6 +122,10 @@ const inlineTags = {
   term: true,
   extra: true,
   text: true,
+  xref: true,
+  img_inline: true,
+  input_ref: true,
+  formula_inline: true,
 };
 
 export function isInlineTag(tag: string) {

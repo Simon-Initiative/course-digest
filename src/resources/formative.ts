@@ -223,10 +223,20 @@ function mcq(question: any, type = 'multiple_choice') {
     question.children,
     'transformation'
   );
+  const mc = Common.getChild(question.children, type);
+  const mcqId = mc.id;
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
+  const stem = Common.buildStem(question);
+
+  // Sometimes, there's a redundant input_ref in the input for a multiple_choice question, so let's
+  // strip that out. See MER-2147 for more details.
+  stem.content = Common.ensureNoEmptyChildren(
+    Common.removeRedundantInputRefs(stem.content, mcqId)
+  );
+
   return {
-    stem: Common.buildStem(question),
+    stem,
     choices: Common.buildChoices(question, type),
     authoring: {
       version: 2,
@@ -330,9 +340,17 @@ function ordering(question: any) {
 function single_response_text(question: any) {
   const transformation = Common.getChild(question.children, 'transformation');
 
+  const response = Common.getChild(question.children, 'short_answer');
+  const id = response?.id;
+
+  const stem = Common.buildStem(question);
+  stem.content = Common.ensureNoEmptyChildren(
+    Common.removeRedundantInputRefs(stem.content, id)
+  );
+
   return {
-    stem: Common.buildStem(question),
-    inputType: 'text',
+    stem,
+    inputType: 'textarea',
     submitAndCompare: Common.isSubmitAndCompare(question),
     authoring: {
       parts: [Common.buildTextPart(Common.getPartIds(question)[0], question)],
@@ -601,6 +619,7 @@ export function performRestructure($: any) {
   DOM.remove($, 'no_response');
   DOM.eliminateLevel($, 'section');
   DOM.rename($, 'activity_link', 'a');
+
   // facilitates processing image hotspot questions:
   DOM.rename($, 'image_hotspot hotspot', 'choice');
 
@@ -790,7 +809,9 @@ export function processAssessmentModel(
               ],
             },
           },
-          count: parseInt(item.count),
+          // for wildcard count meaning 'all in pool', enter pool tag here. Post-processing after all
+          // resources seen will replace with count of items with that tag.
+          count: item.count == '*' ? tagId : parseInt(item.count),
           id: guid(),
         } as any;
 

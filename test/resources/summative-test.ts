@@ -483,6 +483,7 @@ describe('convert summative', () => {
           inputs: [
             {
               inputType: 'numeric',
+              size: 'small',
               id: 'f88e94a8ec9145beb832e773ac6bfc79',
               partId: 'cc5855a41c294080ac063e54b654cf72',
             },
@@ -539,6 +540,96 @@ describe('convert summative', () => {
             transformations: [],
             previewText: '',
           }),
+        }),
+      })
+    );
+  });
+
+  it('converts essay with grading manual', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/assessment_with_grading.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      downloadRemote: false,
+      flattenedNames: {},
+    };
+
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const converted = await convert(projectSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'assessment_with_grading-de863cf6eecd46828909a1cbb70614e1',
+        subType: 'oli_short_answer',
+        content: expect.objectContaining({
+          authoring: expect.objectContaining({
+            parts: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'ffffdc1d54624b6ca9e19277e108f6a2',
+                gradingApproach: 'manual',
+              }),
+            ]),
+          }),
+        }),
+      })
+    );
+  });
+
+  it('retains size attribute on numeric and text inputs for oli_multi_input activities', async () => {
+    const file =
+      'test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-assessment2/newe6ddd6fec8f54749a037ef13abd8df93.xml';
+    const mediaSummary: Media.MediaSummary = {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: '',
+      downloadRemote: false,
+      flattenedNames: {},
+    };
+
+    const projectSummary = new ProjectSummary(
+      'test/course_packages/migration-4sdfykby_v_1_0-echo',
+      '',
+      '',
+      mediaSummary
+    );
+
+    const converted = await convert(projectSummary, file, false);
+
+    expect(converted).toContainEqual(
+      expect.objectContaining({
+        type: 'Activity',
+        id: 'newe6ddd6fec8f54749a037ef13abd8df93-e5ebe5696e45434bafab99232214a5d9',
+        subType: 'oli_multi_input',
+        content: expect.objectContaining({
+          inputs: expect.arrayContaining([
+            expect.objectContaining({
+              inputType: 'text',
+              size: 'small',
+              id: 'b9e53c010ebb4aba98b15c0dd4fa4d23',
+              partId: 'd20717e1b87b446590f10492b6ce16f5',
+            }),
+            expect.objectContaining({
+              inputType: 'text',
+              size: 'medium',
+              id: 'a00d8d2bf2f74ed998e55f99e6a871fa',
+              partId: 'b5cb8c8064b74e6f9396867e0a713eda',
+            }),
+            expect.objectContaining({
+              inputType: 'text',
+              size: 'large',
+              id: 'f6f5a4f03df64b39936f8109eb3927a0',
+              partId: 'cdf71be04fc9429da6e3f3500a4a2da6',
+            }),
+          ]),
         }),
       })
     );

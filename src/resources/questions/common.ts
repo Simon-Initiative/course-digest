@@ -76,40 +76,48 @@ export function ensureCatchAllResponse(responses: any[]): void {
   if (!hasCatchAllRule(responses)) responses.push(makeCatchAllResponse());
 }
 
+/*
+ * Same as wrapInlinesWithParagraphs, but if there are no children, returns an empty paragraph.
+ */
 export function ensureParagraphs(children: any[]) {
-  // if all children are text|inline elements: wrap all in single p
-  if (children.every((c: any) => c.text !== undefined || isInlineTag(c.type))) {
-    const withEmptyText = children.length === 0 ? [{ text: ' ' }] : children;
-    return [{ type: 'p', children: withEmptyText }];
-  }
+  const result = wrapInlinesWithParagraphs(children);
+  return result.length === 0
+    ? [{ type: 'p', children: [{ text: ' ' }] }] // Add an empty p if no children at all.
+    : result;
+}
 
-  return children;
+/* Looks through children and wraps any inline elements in paragraphs. It will keep
+ * elements next to each other in the same paragraph, only splitting when we hit a
+ * block element (as defined by text || !isInlineTag(...) )
+ *
+ * ex: [inline1, inline2, block, inline3] => [ p[inline1, inline2], block, p[inline3] ]
+ */
+export function wrapInlinesWithParagraphs(children: any) {
+  const result = [];
+  let successiveInline: any[] = [];
+  children
+    .filter((c: any) => !isBlankText(c))
+    .forEach((c: any) => {
+      if (c.text !== undefined || isInlineTag(c.type)) {
+        successiveInline.push(c);
+      } else {
+        // hit non-inline: finish any pending paragraph and reset
+        if (successiveInline.length > 0) {
+          result.push({ type: 'p', children: successiveInline });
+          successiveInline = [];
+        }
+        result.push(c);
+      }
+    });
+  // finish any final pending paragraph
+  if (successiveInline.length > 0) {
+    result.push({ type: 'p', children: successiveInline });
+  }
+  return result;
 }
 
 export function isBlankText(e: any): boolean {
   return e && e.text !== undefined && e.text.trim().length === 0;
-}
-
-export function collectTextsIntoParagraphs(children: any) {
-  const result = [];
-  let successiveTexts: any[] = [];
-  children.forEach((c: any) => {
-    if (c.text !== undefined || isInlineTag(c.type)) {
-      successiveTexts.push(c);
-    } else {
-      // hit non-text: finish any pending paragraph and reset
-      if (successiveTexts.length > 0) {
-        result.push({ type: 'p', children: successiveTexts });
-        successiveTexts = [];
-      }
-      result.push(c);
-    }
-  });
-  // finish any final pending paragraph
-  if (successiveTexts.length > 0) {
-    result.push({ type: 'p', children: successiveTexts });
-  }
-  return result;
 }
 
 export function wrapLooseText(children: any, trace = false) {
@@ -117,7 +125,7 @@ export function wrapLooseText(children: any, trace = false) {
   // collecting successive non-blank text pieces into p's.
   if (children.length > 1) {
     if (children.some((b: any) => XML.isBlockElement(b.type))) {
-      const result = collectTextsIntoParagraphs(
+      const result = wrapInlinesWithParagraphs(
         children.filter((c: any) => !isBlankText(c))
       );
 
@@ -128,9 +136,52 @@ export function wrapLooseText(children: any, trace = false) {
         console.log('wrapText in:' + JSON.stringify(children, null, 2));
         console.log('wrapText out:' + JSON.stringify(result, null, 2));
       }
-
       return result;
     }
+  }
+  return children;
+}
+
+/*
+ * Recursively iterate through children, finding any input_ref pointing at the
+ * redundantInputId, remove it, and return the result.
+ */
+export function removeRedundantInputRefs(
+  children: any[],
+  redundantInputId: string
+) {
+  if (!Array.isArray(children)) return children;
+  return children
+    .filter((c) => !(c.type === 'input_ref' && c.input === redundantInputId))
+    .map((child) => {
+      if (child.children) {
+        child.children = removeRedundantInputRefs(
+          child.children,
+          redundantInputId
+        );
+      }
+      return child;
+    });
+}
+
+/*
+ * Recursively iterate through children, finding any node with an empty children value
+ * and adding a {text: ''} node to it and return the result.
+ */
+export function ensureNoEmptyChildren(children: any) {
+  if (Array.isArray(children) && children.length === 0) {
+    children.push({ text: '' });
+  } else if (Array.isArray(children)) {
+    children = children.map((child: any) => {
+      if (Array.isArray(child.children)) {
+        return {
+          ...child,
+          children: ensureNoEmptyChildren(child.children),
+        };
+      } else {
+        return child;
+      }
+    });
   }
 
   return children;
@@ -196,7 +247,7 @@ const shortAnswerExplanationOrDefaultModel = (question: any) => {
     const explanation = getChild(firstPart.children, 'explanation');
 
     if (explanation !== undefined) {
-      return ensureParagraphs(explanation.children);
+      return wrapInlinesWithParagraphs(explanation.children);
     } else {
       return defaultModel();
     }
@@ -260,19 +311,18 @@ export function getBranchingTarget(response: any) {
   return response.children[0]['xml:lang'];
 }
 
+function getGradingApproach(question: any) {
+  return question.grading === 'instructor' ? 'manual' : 'automatic';
+}
+
 export function buildTextPart(id: string, question: any) {
-  const responses = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'response'
-  );
-  const hints = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'hint'
-  );
-  const skillrefs = getChild(question.children, 'part').children.filter(
-    (p: any) => p.type === 'skillref'
-  );
+  const part = getChild(question.children, 'part');
+  const responses = part.children.filter((p: any) => p.type === 'response');
+  const hints = part.children.filter((p: any) => p.type === 'hint');
+  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
 
   return {
-    id: '1',
+    id: part.id || id,
     responses: responses.map((r: any) => {
       const cleanedMatch = convertCatchAll(r.match);
       const item: any = {
@@ -302,6 +352,7 @@ export function buildTextPart(id: string, question: any) {
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
     explanation: maybeBuildPartExplanation(responses),
+    gradingApproach: getGradingApproach(question),
   };
 }
 

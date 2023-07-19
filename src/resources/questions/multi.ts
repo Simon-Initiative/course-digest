@@ -52,8 +52,10 @@ export function buildMulti(
     return seen;
   }, {});
 
+  const stem = buildStem(question, inputs, skipInputRefValidation);
+
   return {
-    stem: buildStem(question, inputs, skipInputRefValidation),
+    stem,
     choices: allChoices,
     inputs,
     submitPerPart: true,
@@ -91,7 +93,7 @@ export function buildStem(
   skipInputRefValidation: boolean
 ) {
   const stem = Common.getChild(question.children, 'stem');
-  const model = Common.ensureParagraphs(stem.children);
+  const model = Common.wrapLooseText(Common.ensureParagraphs(stem.children));
   const foundInputs: any = {};
   const updated = updateInputRefs(model, foundInputs);
 
@@ -158,10 +160,12 @@ function produceTorusEquivalents(
     part = buildInputPart('text', p, item);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'text';
+    input.size = item.size;
   } else if (item.type === 'numeric') {
     part = buildInputPart('numeric', p, i);
     ensureAtLeastOneCorrectResponse(part);
     input.inputType = 'numeric';
+    input.size = item.size;
   } else {
     part = buildDropdownPart(p, i, ignorePartId);
     ensureAtLeastOneCorrectResponse(part);
@@ -179,7 +183,49 @@ function produceTorusEquivalents(
     }
   }
 
-  input.id = item.id;
+  if (item.id) {
+    input.id = item.id;
+  } else if (item.type === 'text' || item.type === 'numeric') {
+    if (item.children.length === 1) {
+      /*
+        Sometimes, we run into a multi-question that the item does not have an id, but there is an
+        input ref that points at the choice value.  In this case, we can use the choice value as the
+        input id. Example:
+
+        <numeric id="q2_interp_zscore">
+          <body>
+              <p>A question goes here</p>
+              <p>
+                  <input_ref input="A" />
+              </p>
+          </body>          
+          <input labels="false" shuffle="false">
+              <choice value="A" />
+          </input>
+          <part>
+              <response input="A" match="89" score="10">
+                  <feedback>Correct. We need to find the exam score such that the probability of
+                      getting a score
+                      above it is 0.04. Equivalently, we need to find the exam score such that the
+                      probability of
+                      getting a score below it is 1 − 0.04 = 0.96. The z-score with a probability
+                      closest to 0.96
+                      (which is 0.9599) is 1.75. This means that the exam score that we are looking
+                      for is 1.75 * SD
+                      above the mean, and therefore is 75 + 1.75 * SD = 75 + 14 = 89. </feedback>
+              </response>            
+          </part>
+        </numeric>
+      */
+      const choice = item.children[0];
+      input.id = choice.value;
+    }
+  }
+
+  if (!input.id) {
+    console.warn('No input id found for item: ', item);
+  }
+
   input.partId = part.id;
 
   Common.ensureCatchAllResponse(part.responses);

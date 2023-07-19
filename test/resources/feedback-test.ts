@@ -683,12 +683,13 @@ describe('convert feedback', () => {
               },
             ],
           },
-          inputType: 'text',
+          inputType: 'textarea',
           submitAndCompare: false,
           authoring: {
             parts: [
               {
                 id: expect.any(String),
+                gradingApproach: 'automatic',
                 responses: [
                   {
                     id: expect.any(String),

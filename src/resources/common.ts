@@ -161,12 +161,27 @@ export function standardContentManipulations($: any) {
   // image in a legacy course is intended as a block semantically, with
   // newlines before or after, converting to inline images feels like
   // a closer mapping to the correct rendering.
-  DOM.rename($, 'p img', 'img_inline');
+  // AW: this undesirable for images inside paragraphs
+  // DOM.rename($, 'p img', 'img_inline');
   DOM.rename($, 'a img', 'img_inline');
 
   $('img').each((i: any, item: any) => {
     if (DOM.isInlineElement($, item)) {
       item.tagName = 'img_inline';
+    }
+  });
+
+  stripEmptyCaptions($, 'iframe');
+
+  $('caption').each((i: any, item: any) => {
+    const containsInlineOnly = item.children.every(
+      (c: any) =>
+        c.type === 'text' || (c.type == 'tag' && DOM.isInlineTag(c.name))
+    );
+
+    // We must wrap these inlines only in a paragraph
+    if (containsInlineOnly) {
+      $(item).html(`<p>${$(item).html()}</p>`);
     }
   });
 
@@ -209,7 +224,7 @@ export function standardContentManipulations($: any) {
 
   // iframe and youtube are both designed to scale responsively within Torus, so
   // we need to strip out height and width attrs if they exist
-  stripMediaSizing($, 'iframe');
+  stripNonDefaultMediaSizing($, 'iframe');
   stripMediaSizing($, 'youtube');
 
   DOM.stripElement($, 'p ol');
@@ -314,6 +329,44 @@ function handleCommandButtons($: any) {
   // paragraphs inside of list-items, but downstream code eliminates those
   // conditions.
   $('command_button').wrap('<p></p>');
+}
+
+// We don't want empty caption tags ie <caption /> to be expanded to an empty caption with <p></p> in it for iframes (maybe others?)
+// This will remove those before they get expanded
+function stripEmptyCaptions($: any, selector: string) {
+  $(selector).each((i: any, item: any) => {
+    const caption = $(item).find('caption');
+    if (caption !== undefined) {
+      const noText = caption.text().trim() === '';
+      const noChildren = caption.children().length === 0;
+      if (noText && noChildren) {
+        // This is an empty <caption /> node, trash it.
+        caption.remove();
+      }
+    }
+  });
+}
+
+// Strip any sizing that's not the default 800x450 that iframes use
+// The thinking is that if the author has specified a size, they want
+// that size, and we shouldn't override it.  However, if they haven't
+// specified a size and left the default, we want to use the default torus
+// size.
+function stripNonDefaultMediaSizing(
+  $: any,
+  selector: string,
+  width = 800,
+  height = 450
+) {
+  $(selector).each((i: any, item: any) => {
+    if (
+      $(item).attr('width') === width.toString() &&
+      $(item).attr('height') === height.toString()
+    ) {
+      $(item).removeAttr('height');
+      $(item).removeAttr('width');
+    }
+  });
 }
 
 function stripMediaSizing($: any, selector: string) {

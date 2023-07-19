@@ -43,11 +43,33 @@ function liftTitle($: any) {
   $('head').children().remove('title');
 }
 
+export function removeDoubleGroupHeaders($: any) {
+  /* MER-2182 Sometimes, there are wb:inline elements inside a section element, where both the 
+     inline and the section specifies a purpose. In cases where those are the same purpose, we 
+     get double headers. We should ignore the purpose on inline elements if they are already 
+     inside a section for that purpose.
+*/
+  $('group').each((i: any, elem: any) => {
+    const purpose = $(elem).attr('purpose');
+    if (purpose) {
+      $(elem)
+        .find('wb\\:inline')
+        .each((j: any, subElem: any) => {
+          const subPurpose = $(subElem).attr('purpose');
+          if (subPurpose === purpose) {
+            $(subElem).removeAttr('purpose'); // Remove the inline-level purpose
+          }
+        });
+    }
+  });
+}
+
 export function performRestructure($: any) {
   failIfPresent($, ['multipanel', 'dependency']);
   standardContentManipulations($);
 
   liftTitle($);
+  removeDoubleGroupHeaders($);
   DOM.rename($, 'wb\\:inline', 'activity_placeholder');
   DOM.rename($, 'inline', 'activity_placeholder');
   DOM.rename($, 'activity_link', 'a');
@@ -97,19 +119,26 @@ export class WorkbookPage extends Resource {
       const hasPage = pageValue !== null && pageValue !== undefined;
       const hasIdref = idref !== null && idref !== undefined;
 
+      // Change it to a link
+      elem.tagName = 'a';
+
       // Type 1: page attr points to another page
-      if (hasPage && !hasIdref) {
+      if (hasPage && !idref) {
         $(elem).attr('idref', pageValue);
+        $(elem).removeAttr('page');
         page.unresolvedReferences.push(pageValue);
-
+      } else if (hasPage && idref) {
         // Type 2: page attr points to another page, idref to an item within that page
-      } else if (!hasPage && hasIdref) {
         $(elem).attr('idref', pageValue);
+        $(elem).attr('anchor', idref); // Store the idref as an anchor for future use, but it'll be ignored in torus for now.
+        $(elem).removeAttr('page');
         page.unresolvedReferences.push(pageValue);
 
-        // Type 3: idref points to content item on this page
-      } else if (hasPage && hasIdref) {
+        // Type 3: idref points to content item on this page so make a link to this page.
+        //         Should we just remove the link since we don't have capability to link to items on the page in torus?
+      } else if (!hasPage && hasIdref) {
         $(elem).attr('idref', $('workbook_page').attr('id'));
+        $(elem).attr('anchor', idref); // Store the idref as an anchor for future use, but it'll be ignored in torus for now.
       }
     });
 

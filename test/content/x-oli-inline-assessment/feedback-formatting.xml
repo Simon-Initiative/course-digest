@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment MathML 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_mathml_1_4.dtd">
+<?xml-stylesheet type="text/css" href="http://oli.web.cmu.edu/authoring/oxy-author/oli_inline_assessment_1_1.css"?>
+<assessment id="isotope_atomic_mass_2_lbd">
+    <title>tutor</title>
+    <page>
+        <question id="q3">
+
+            <body>Potassium has an atomic mass of 39.098 amu. This element has 3 naturally occurring
+                isotopes: K−39, K−40, and K−41. Without doing any calculations and without any
+                additional information, what can you conclude about the relative abundances of these
+                three isotopes of potassium?</body>
+            <short_answer id="qsub_0" />
+            <part id="qpart_0">
+                <response input="qsub_0" match="*" score="10" />
+                <hint>The atomic mass on the periodic table are calculated based on the percent
+                    abundance of each isotope. </hint>
+                <hint>Isotopes with greater percent abundance contribute more to the atomic mass
+                    than those with a lesser percent abundance.</hint>
+                <explanation>Because the atomic mass on the periodic table is very close to 39, you
+                    can conclude that the most abundant of the 3 isotopes is K-39. <p>In fact the
+                    percent abundances are: K-39 is 93.3%. K-41 is 6.7%. K-40 is 0.012%. </p> It is
+                    common that elements have one isotope that is far more abundant than the other
+                    (although not always the case). If the atomic mass on the periodic table is very
+                    close to a whole number, it is safe to assume that if you rounded that value to
+                    the nearest whole number you would have the mass number of the most common
+                    isotope for that element. Like we see with potassium.</explanation>
+            </part>
+        </question>
+    </page>
+
+</assessment>

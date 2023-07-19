@@ -17,6 +17,7 @@ import * as fs from 'fs';
 import * as tmp from 'tmp';
 import { Organization } from './resources/organization';
 import * as Magic from './utils/spreadsheet';
+import { getDescendants } from './resources/questions/common';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
@@ -544,6 +545,24 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   });
 
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
+}
+
+const getPoolCount = (resources: TorusResource[], tag: string): number =>
+  resources.filter((r) => r.type === 'Activity' && r.tags.includes(tag)).length;
+
+export function fixWildcardSelections(resources: TorusResource[]) {
+  resources
+    .filter((r) => r.type === 'Page')
+    .forEach((page) => {
+      getDescendants((page as Page).content.model as any[], 'selection')
+        // wildcard selections marked by tag string in count field
+        .filter((sel: any) => typeof sel.count === 'string')
+        .forEach(
+          (sel: any) => (sel.count = getPoolCount(resources, sel.count))
+        );
+    });
+
+  return resources;
 }
 
 // For every group that contained a branching assessment, set the paginationMode attr
