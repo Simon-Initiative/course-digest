@@ -89,22 +89,26 @@ export function transformToFlatDirectory(
   const { mediaSummary } = projectSummary;
   let modified = false;
 
-  // paths maps from reference string (maybe relative) to list of DOM elements containing it
+  // paths maps from reference string to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
+
+  const isWebBundleElement = (e: any) =>
+    ['link', 'iframe', 'asset'].includes($(e)[0].name) ||
+    ($(e)[0].name === 'source' && $(e).parent()[0].name === 'embed_activity');
 
   Object.keys(paths).forEach((assetReference: any) => {
     const ref = { filePath, assetReference };
 
     // Update the URL in the XML DOM
     paths[assetReference].forEach((elem) => {
-      // For link or iframe elements, use a webBundle URL rather than
-      // a flattened media library URL if webBundle was requested.
       const url =
-        ($(elem)[0].name === 'link' || $(elem)[0].name === 'iframe') &&
-        mediaSummary.webContentBundle?.name
+        // For link, iframe and superactivity source and webcontent assets, use a
+        // webBundle URL rather than a flattened media library URL when webBundle requested.
+        mediaSummary.webContentBundle?.name && isWebBundleElement(elem)
           ? getWebBundleUrl(ref, projectSummary)
           : flatten(ref, mediaSummary);
 
+      // URL-generating functions should return null url if file doesn't exist
       if (url !== null) {
         if (
           $(elem)[0].name === 'source' &&
@@ -381,11 +385,17 @@ export function flatten(
 export function getWebBundleUrl(
   ref: MediaItemReference,
   projectSummary: ProjectSummary
-): string {
+): string | null {
   const absolutePath = resolve(ref);
   const decodedPath = decodeURIComponent(absolutePath);
 
-  return pathToBundleUrl(decodedPath, projectSummary);
+  if (fs.existsSync(decodedPath)) {
+    return pathToBundleUrl(decodedPath, projectSummary);
+  }
+
+  // else file not found:
+  projectSummary.mediaSummary.missing.push(ref);
+  return null;
 }
 
 function getFilesizeInBytes(filename: string) {
