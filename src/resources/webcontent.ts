@@ -13,7 +13,7 @@ export function addWebContentToMediaSummary(
   webContentBundle?: string
 ): Promise<MediaSummary> {
   return new Promise((resolve, _reject) => {
-    // no-op if not webcontent bundle not requested on command line
+    // do nothing if webcontent bundle not requested
     if (!webContentBundle) {
       resolve(summary);
       return;
@@ -23,10 +23,9 @@ export function addWebContentToMediaSummary(
       `${directory}/**/webcontent/**/*`,
       { nodir: true },
       (err: any, files: string[]) => {
-        console.log('webcontent file count: ' + files.length);
         // Sort file paths by depth to ensure that shallower paths are processed first when a
         // filename conflict, in the now relatively flatted webcontent file structure, is detected
-        // (This no longer necessary, but gives reasonable order)
+        // [This no longer necessary w/webBundle method, but gives reasonable order]
         const sortedFiles = [...files].sort((a: string, b: string) => {
           return a.split('/').length - b.split('/').length;
         });
@@ -45,7 +44,11 @@ export function addWebContentToMediaSummary(
             name,
             md5,
             mimeType: mime.lookup(absolutePath) || 'application/octet-stream',
-            url: `${summary.urlPrefix}/bundles/${webContentBundle}/${relativePath}`,
+            url: `${webBundleUrl(
+              summary.urlPrefix,
+              webContentBundle,
+              relativePath
+            )}`,
           };
         });
 
@@ -54,12 +57,8 @@ export function addWebContentToMediaSummary(
           0
         );
 
-        summary.webContentBundle = {
-          name: webContentBundle,
-          url: `${summary.urlPrefix}/webcontent/${webContentBundle}`,
-          items,
-          totalSize,
-        };
+        summary.webContentBundle!.items = items;
+        summary.webContentBundle!.totalSize = totalSize;
 
         resolve(summary);
       }
@@ -67,10 +66,36 @@ export function addWebContentToMediaSummary(
   });
 }
 
-const getPathRelativeToContentRoot = (
+export const getPathRelativeToContentRoot = (
   packageDirectory: string,
   absolutePath: string
 ) => path.relative(packageDirectory + '/content', absolutePath);
+
+export const webBundleRootUrl = (
+  mediaUrlPrefix: string,
+  webBundleName: string
+) => `${mediaUrlPrefix}/bundles/${webBundleName}`;
+
+export const webBundleUrl = (
+  mediaUrlPrefix: string,
+  webBundleName: string,
+  relativePath: string
+) => `${webBundleRootUrl(mediaUrlPrefix, webBundleName)}/${relativePath}`;
+
+export const pathToBundleUrl = (
+  absolutePath: string,
+  projectSummary: ProjectSummary
+) => {
+  const relativePath = getPathRelativeToContentRoot(
+    projectSummary.packageDirectory,
+    absolutePath
+  );
+  const { mediaSummary } = projectSummary;
+  const { urlPrefix } = mediaSummary;
+  const webBundleName = mediaSummary.webContentBundle!.name;
+
+  return `${webBundleUrl(urlPrefix, webBundleName, relativePath)}`;
+};
 
 function getFilesizeInBytes(filename: string) {
   const stats = fs.statSync(filename);

@@ -12,7 +12,10 @@ import * as Media from './media';
 import { ProjectSummary } from './project';
 import { processResources } from './process';
 import { upload } from './utils/upload';
-import { addWebContentToMediaSummary } from './resources/webcontent';
+import {
+  addWebContentToMediaSummary,
+  webBundleRootUrl as webBundleRootUrl,
+} from './resources/webcontent';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as readline from 'readline';
@@ -231,6 +234,15 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       downloadRemote,
       flattenedNames: {},
     };
+    // if optional webContentBundle requested, initialize here
+    // used to communicate flag value to intermediate processing
+    if (options.webContentBundle)
+      mediaSummary.webContentBundle = {
+        name: options.webContentBundle,
+        items: [],
+        totalSize: 0,
+        url: webBundleRootUrl(options.mediaUrlPrefix, options.webContentBundle),
+      };
 
     const projectSummary = new ProjectSummary(
       packageDirectory,

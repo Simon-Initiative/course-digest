@@ -44,7 +44,7 @@ export function convert(
       Media.downloadRemote(file, $, mediaSummary);
     }
 
-    Media.transformToFlatDirectory(file, $, mediaSummary);
+    Media.transformToFlatDirectory(file, $, projectSummary);
 
     return item.translate($, projectSummary);
   });

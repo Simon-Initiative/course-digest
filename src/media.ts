@@ -9,6 +9,8 @@ import * as DOM from 'src/utils/dom';
 const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import { replaceImageReferences } from './resources/questions/custom-dnd';
+import { ProjectSummary } from './project';
+import { pathToBundleUrl } from './resources/webcontent';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -82,19 +84,28 @@ export interface UploadFailure {
 export function transformToFlatDirectory(
   filePath: string,
   $: any,
-  summary: MediaSummary
+  projectSummary: ProjectSummary
 ): boolean {
+  const { mediaSummary } = projectSummary;
   let modified = false;
 
+  // paths maps from reference string (maybe relative) to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
 
   Object.keys(paths).forEach((assetReference: any) => {
     const ref = { filePath, assetReference };
-    const url = flatten(ref, summary);
 
     // Update the URL in the XML DOM
-    if (url !== null) {
-      paths[assetReference].forEach((elem) => {
+    paths[assetReference].forEach((elem) => {
+      // For link or iframe elements, use a webBundle URL rather than
+      // a flattened media library URL if webBundle was requested.
+      const url =
+        ($(elem)[0].name === 'link' || $(elem)[0].name === 'iframe') &&
+        mediaSummary.webContentBundle?.name
+          ? getWebBundleUrl(ref, projectSummary)
+          : flatten(ref, mediaSummary);
+
+      if (url !== null) {
         if (
           $(elem)[0].name === 'source' &&
           $(elem).parent()[0].name !== 'video'
@@ -131,12 +142,14 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      });
-      modified = true;
-    }
+      }
+    });
+    modified = true;
   });
   return modified;
 }
+
+/* Replaced by webBundle mechanism
 
 // Handle local HTML files functioning as media by checking for references to other local files
 // such as css and script. If any are found, generate a new HTML file in a temp directory with
@@ -187,6 +200,7 @@ export function handleHtmlMedia(
 
   return htmlReference;
 }
+*/
 
 export function downloadRemote(
   filePath: string,
@@ -363,6 +377,17 @@ export function flatten(
   return null;
 }
 
+// like flatten but get gets URL into web bundle tree instead
+export function getWebBundleUrl(
+  ref: MediaItemReference,
+  projectSummary: ProjectSummary
+): string {
+  const absolutePath = resolve(ref);
+  const decodedPath = decodeURIComponent(absolutePath);
+
+  return pathToBundleUrl(decodedPath, projectSummary);
+}
+
 function getFilesizeInBytes(filename: string) {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
@@ -443,12 +468,13 @@ export function stage(
   );
 }
 
+// returns map from asset references (paths) => array of DOM elements referencing it
 function findFromDOM(
   $: any,
   filePath: string,
   remote = false
 ): Record<string, Array<string>> {
-  // maps path => array of elements referencing it
+  // result to be returned
   const paths: any = {};
 
   $('pronunciation').each((i: any, elem: any) => {
@@ -553,6 +579,7 @@ function findFromDOM(
   });
   // local css assets fortuitously handled by 'link' href processing
 
+  // return only local or remote references as requested
   Object.keys(paths)
     .filter((src: string) =>
       remote ? isRelativeUrl(src) : !isRelativeUrl(src)
