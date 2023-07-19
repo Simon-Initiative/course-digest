@@ -8,7 +8,6 @@ import * as tmp from 'tmp';
 const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import { replaceImageReferences } from './resources/questions/custom-dnd';
-import { ProjectSummary } from './project';
 import { pathToBundleUrl } from './resources/webcontent';
 
 export interface MediaSummary {
