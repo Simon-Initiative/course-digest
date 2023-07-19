@@ -196,8 +196,11 @@ function uploadMediaItems(items: Media.ProcessedMediaItem[]) {
 
 export function uploadAction(options: CmdOptions) {
   const manifest = readMediaManifest(options);
+  const bundleItems = manifest.webContentBundle
+    ? manifest.webContentBundle.items
+    : [];
 
-  return uploadMediaItems(manifest.mediaItems);
+  return uploadMediaItems(manifest.mediaItems.concat(bundleItems));
 }
 
 export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
