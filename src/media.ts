@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as md5File from 'md5-file';
 import * as tmp from 'tmp';
-import * as DOM from 'src/utils/dom';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fetch = require('sync-fetch');
