@@ -457,7 +457,6 @@ function main() {
   dotenv.config();
 
   const options = commandLineArgs(optionDefinitions) as CmdOptions;
-  console.log('options.webContentBundle = ' + options.webContentBundle);
 
   if (validateArgs(options)) {
     if (options.operation === 'summarize') {
