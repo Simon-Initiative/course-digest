@@ -45,7 +45,12 @@ export function convert(
       Media.downloadRemote(file, $, mediaSummary);
     }
 
-    Media.transformToFlatDirectory(file, $, mediaSummary);
+    Media.transformToFlatDirectory(
+      file,
+      $,
+      mediaSummary,
+      projectSummary.packageDirectory
+    );
 
     return item.translate($, projectSummary);
   });
@@ -633,13 +638,14 @@ export function output(
   projectSummary: ProjectSummary,
   hierarchy: TorusResource,
   converted: TorusResource[],
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  webContentBundle?: Media.WebContentBundle
 ) {
   return executeSerially([
     () => wipeAndCreateOutput(projectSummary),
     () => outputManifest(projectSummary),
     () => outputHierarchy(projectSummary, hierarchy),
-    () => outputMediaManifest(projectSummary, mediaItems),
+    () => outputMediaManifest(projectSummary, mediaItems, webContentBundle),
     ...converted.map((r) => () => outputResource(projectSummary, r)),
   ]);
 }
@@ -700,9 +706,10 @@ function outputHierarchy(
 
 function outputMediaManifest(
   { outputDirectory }: ProjectSummary,
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  webContentBundle?: Media.WebContentBundle
 ) {
-  const manifest = {
+  const manifest: Media.MediaManifest = {
     mediaItems: mediaItems.map((m: Media.MediaItem) => ({
       name: m.flattenedName,
       file: m.file,
@@ -711,8 +718,28 @@ function outputMediaManifest(
       mimeType: m.mimeType,
       md5: m.md5,
     })),
+    mediaItemsSize: mediaItems.reduce(
+      (sum: number, m: Media.MediaItem) => sum + m.fileSize,
+      0
+    ),
     type: 'MediaManifest',
   };
+
+  if (webContentBundle) {
+    manifest.webContentBundle = {
+      name: webContentBundle.name,
+      url: webContentBundle.url,
+      items: webContentBundle.items.map((m: Media.MediaItem) => ({
+        file: m.file,
+        name: m.flattenedName,
+        url: m.url,
+        mimeType: m.mimeType,
+        fileSize: m.fileSize,
+        md5: m.md5,
+      })),
+      totalSize: webContentBundle.totalSize,
+    };
+  }
 
   return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);
 }
