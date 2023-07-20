@@ -283,6 +283,7 @@ export function standardContentManipulations($: any) {
     );
   });
 
+  DOM.renameAttribute($, 'theorem', 'type', 'theoremtype');
   DOM.renameAttribute($, 'pronunciation', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
@@ -291,6 +292,7 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'extra', 'popup');
 
+  handleTheorems($);
   handleFormulaMathML($);
   sideBySideMaterials($);
   handleInquiry($);
@@ -539,6 +541,29 @@ export function flagStandardContentWarnigns($: any, resource: TorusResource) {
       addWarning(resource, 'materials material');
     }
   });
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export function handleTheorems($: any) {
+  // if no title, legacy shows type name in bold as theorem header
+  $('theorem:not(:has(title))').each((i: any, item: any) => {
+    const typeHeader = capitalize($(item).attr('theoremtype'));
+    $(item).prepend(`<h5><em>${typeHeader}</em></h5>`);
+  });
+
+  DOM.rename($, 'theorem title', 'h4');
+  DOM.eliminateLevel($, 'theorem statement');
+
+  $('theorem proof').each((i: any, item: any) => {
+    $(item).prepend('<h5>Proof</h5>');
+  });
+  DOM.eliminateLevel($, 'theorem proof');
+
+  // theorem in torus just a sequence of block items
+  DOM.eliminateLevel($, 'theorem');
 }
 
 export function handleFormulaMathML($: any) {
