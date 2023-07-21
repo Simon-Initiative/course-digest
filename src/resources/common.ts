@@ -261,6 +261,15 @@ export function standardContentManipulations($: any) {
   );
 
   DOM.rename($, 'composite_activity', 'group');
+
+  DOM.renameAttribute($, 'pullout', 'type', 'pullouttype');
+  $('pullout[pullouttype]').each((i: number, item: any) => {
+    const typeId = $(item).attr('pullouttype');
+    const typeHeader = capitalize(
+      typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId)
+    );
+    $(item).prepend(`<em>${typeHeader}...</em>`);
+  });
   DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'group');
 
