@@ -265,9 +265,7 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'pullout', 'type', 'pullouttype');
   $('pullout[pullouttype]').each((i: number, item: any) => {
     const typeId = $(item).attr('pullouttype');
-    const typeHeader = capitalize(
-      typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId)
-    );
+    const typeHeader = typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId);
     $(item).prepend(`<em>${typeHeader}...</em>`);
   });
   DOM.rename($, 'pullout title', 'p');
