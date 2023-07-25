@@ -469,8 +469,12 @@ function handleDefinitions($: any) {
 
 function handleInquiry($: any) {
   DOM.rename($, 'inquiry title', 'p');
+  // Insert "Question" and "Answer" headers
+  $('inquiry question').before('<h4><em>Question</em></h4>');
+  $('inquiry answer').before('<h5><em>Answer</em></h5>');
   DOM.rename($, 'inquiry question', 'p');
   DOM.rename($, 'inquiry answer', 'p');
+
   DOM.stripElement($, 'inquiry');
 }
 
