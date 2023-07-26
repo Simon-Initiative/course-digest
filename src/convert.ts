@@ -587,7 +587,6 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
 }
 
-
 // For every page, enable the discussion.
 export function enableDiscussions(resources: TorusResource[]): TorusResource[] {
   return resources.map((r) => {
