@@ -3,12 +3,12 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import * as md5File from 'md5-file';
 import * as tmp from 'tmp';
-import * as DOM from 'src/utils/dom';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import { replaceImageReferences } from './resources/questions/custom-dnd';
+import { pathToBundleUrl } from './resources/webcontent';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -16,6 +16,7 @@ export interface MediaSummary {
   urlPrefix: string;
   downloadRemote: boolean;
   flattenedNames: { [k: string]: string };
+  webContentBundle?: WebContentBundle;
 }
 
 export interface FlattenResult {
@@ -40,6 +41,29 @@ export interface MediaItem {
   references: MediaItemReference[];
 }
 
+export interface ProcessedMediaItem {
+  file: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  fileSize: number;
+  md5: string;
+}
+
+export interface WebContentBundle {
+  name: string;
+  url: string;
+  items: ProcessedMediaItem[];
+  totalSize: number;
+}
+
+export interface MediaManifest {
+  type: 'MediaManifest';
+  mediaItems: ProcessedMediaItem[];
+  mediaItemsSize: number;
+  webContentBundle?: WebContentBundle;
+}
+
 export type UploadResult = UploadSuccess | UploadFailure;
 
 export interface UploadSuccess {
@@ -58,25 +82,32 @@ export interface UploadFailure {
 export function transformToFlatDirectory(
   filePath: string,
   $: any,
-  summary: MediaSummary
+  mediaSummary: MediaSummary,
+  projectDirectory: string
 ): boolean {
   let modified = false;
 
+  // paths maps from reference string to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
 
-  Object.keys(paths).forEach((assetReference: any) => {
-    // If ref to HTML file, see if need converted version modified to use flattened asset URLs
-    // !! Might want to restrict this to certain referring elements only, such as iframes.
-    const referenceToUse = assetReference.toLowerCase().endsWith('.html')
-      ? handleHtmlMedia(assetReference, filePath, summary)
-      : assetReference;
+  const isWebBundleElement = (e: any) =>
+    ['link', 'iframe', 'asset'].includes($(e)[0].name) ||
+    ($(e)[0].name === 'source' && $(e).parent()[0].name === 'embed_activity');
 
-    const ref = { filePath, assetReference: referenceToUse };
-    const url = flatten(ref, summary);
+  Object.keys(paths).forEach((assetReference: any) => {
+    const ref = { filePath, assetReference };
 
     // Update the URL in the XML DOM
-    if (url !== null) {
-      paths[assetReference].forEach((elem) => {
+    paths[assetReference].forEach((elem) => {
+      const url =
+        // For link, iframe and superactivity source and webcontent assets, use a
+        // webBundle URL rather than a flattened media library URL when webBundle requested.
+        mediaSummary.webContentBundle?.name && isWebBundleElement(elem)
+          ? getWebBundleUrl(ref, projectDirectory, mediaSummary)
+          : flatten(ref, mediaSummary);
+
+      // URL-generating functions should return null url if file doesn't exist
+      if (url !== null) {
         if (
           $(elem)[0].name === 'source' &&
           $(elem).parent()[0].name !== 'video'
@@ -113,12 +144,14 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      });
-      modified = true;
-    }
+      }
+    });
+    modified = true;
   });
   return modified;
 }
+
+/* Replaced by webBundle mechanism
 
 // Handle local HTML files functioning as media by checking for references to other local files
 // such as css and script. If any are found, generate a new HTML file in a temp directory with
@@ -169,6 +202,7 @@ export function handleHtmlMedia(
 
   return htmlReference;
 }
+*/
 
 export function downloadRemote(
   filePath: string,
@@ -345,6 +379,24 @@ export function flatten(
   return null;
 }
 
+// like flatten but get gets URL into web bundle tree instead
+export function getWebBundleUrl(
+  ref: MediaItemReference,
+  projectDirectory: string,
+  mediaSummary: MediaSummary
+): string | null {
+  const absolutePath = resolve(ref);
+  const decodedPath = decodeURIComponent(absolutePath);
+
+  if (fs.existsSync(decodedPath)) {
+    return pathToBundleUrl(decodedPath, projectDirectory, mediaSummary);
+  }
+
+  // else file not found:
+  mediaSummary.missing.push(ref);
+  return null;
+}
+
 function getFilesizeInBytes(filename: string) {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
@@ -425,12 +477,13 @@ export function stage(
   );
 }
 
+// returns map from asset references (paths) => array of DOM elements referencing it
 function findFromDOM(
   $: any,
   filePath: string,
   remote = false
 ): Record<string, Array<string>> {
-  // maps path => array of elements referencing it
+  // result to be returned
   const paths: any = {};
 
   $('pronunciation').each((i: any, elem: any) => {
@@ -535,6 +588,7 @@ function findFromDOM(
   });
   // local css assets fortuitously handled by 'link' href processing
 
+  // return only local or remote references as requested
   Object.keys(paths)
     .filter((src: string) =>
       remote ? isRelativeUrl(src) : !isRelativeUrl(src)

@@ -33,6 +33,7 @@ it('should convert example course to valid course digest', async () => {
     mergePathA: '',
     mergePathB: '',
     discussionsOn: false,
+    webContentBundle: '',
   });
 
   expect(projectSummary.getAlternativesGroupsJSON()).toEqual({
@@ -100,6 +101,7 @@ it('should convert content with purpose to groups', async () => {
     mergePathA: '',
     mergePathB: '',
     discussionsOn: false,
+    webContentBundle: '',
   });
 
   mediaItems.forEach((mediaItem) => {

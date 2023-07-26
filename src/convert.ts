@@ -17,6 +17,7 @@ import * as fs from 'fs';
 import * as tmp from 'tmp';
 import { Organization } from './resources/organization';
 import * as Magic from './utils/spreadsheet';
+import { getDescendants } from './resources/questions/common';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
@@ -44,7 +45,12 @@ export function convert(
       Media.downloadRemote(file, $, mediaSummary);
     }
 
-    Media.transformToFlatDirectory(file, $, mediaSummary);
+    Media.transformToFlatDirectory(
+      file,
+      $,
+      mediaSummary,
+      projectSummary.packageDirectory
+    );
 
     return item.translate($, projectSummary);
   });
@@ -581,6 +587,7 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
 }
 
+
 // For every page, enable the discussion.
 export function enableDiscussions(resources: TorusResource[]): TorusResource[] {
   return resources.map((r) => {
@@ -589,6 +596,23 @@ export function enableDiscussions(resources: TorusResource[]): TorusResource[] {
     }
     return r;
   });
+
+const getPoolCount = (resources: TorusResource[], tag: string): number =>
+  resources.filter((r) => r.type === 'Activity' && r.tags.includes(tag)).length;
+
+export function fixWildcardSelections(resources: TorusResource[]) {
+  resources
+    .filter((r) => r.type === 'Page')
+    .forEach((page) => {
+      getDescendants((page as Page).content.model as any[], 'selection')
+        // wildcard selections marked by tag string in count field
+        .filter((sel: any) => typeof sel.count === 'string')
+        .forEach(
+          (sel: any) => (sel.count = getPoolCount(resources, sel.count))
+        );
+    });
+
+  return resources;
 }
 
 // For every group that contained a branching assessment, set the paginationMode attr
@@ -659,13 +683,14 @@ export function output(
   projectSummary: ProjectSummary,
   hierarchy: TorusResource,
   converted: TorusResource[],
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  webContentBundle?: Media.WebContentBundle
 ) {
   return executeSerially([
     () => wipeAndCreateOutput(projectSummary),
     () => outputManifest(projectSummary),
     () => outputHierarchy(projectSummary, hierarchy),
-    () => outputMediaManifest(projectSummary, mediaItems),
+    () => outputMediaManifest(projectSummary, mediaItems, webContentBundle),
     ...converted.map((r) => () => outputResource(projectSummary, r)),
   ]);
 }
@@ -726,9 +751,10 @@ function outputHierarchy(
 
 function outputMediaManifest(
   { outputDirectory }: ProjectSummary,
-  mediaItems: Media.MediaItem[]
+  mediaItems: Media.MediaItem[],
+  webContentBundle?: Media.WebContentBundle
 ) {
-  const manifest = {
+  const manifest: Media.MediaManifest = {
     mediaItems: mediaItems.map((m: Media.MediaItem) => ({
       name: m.flattenedName,
       file: m.file,
@@ -737,8 +763,28 @@ function outputMediaManifest(
       mimeType: m.mimeType,
       md5: m.md5,
     })),
+    mediaItemsSize: mediaItems.reduce(
+      (sum: number, m: Media.MediaItem) => sum + m.fileSize,
+      0
+    ),
     type: 'MediaManifest',
   };
+
+  if (webContentBundle) {
+    manifest.webContentBundle = {
+      name: webContentBundle.name,
+      url: webContentBundle.url,
+      items: webContentBundle.items.map((m: Media.MediaItem) => ({
+        file: m.file,
+        name: m.flattenedName,
+        url: m.url,
+        mimeType: m.mimeType,
+        fileSize: m.fileSize,
+        md5: m.md5,
+      })),
+      totalSize: webContentBundle.totalSize,
+    };
+  }
 
   return outputFile(`${outputDirectory}/_media-manifest.json`, manifest);
 }

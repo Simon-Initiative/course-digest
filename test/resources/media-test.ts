@@ -41,7 +41,7 @@ describe('Media conversions', () => {
         { normalizeWhitespace: true, xmlMode: true }
       );
 
-      transformToFlatDirectory('.', $, testSummary());
+      transformToFlatDirectory('.', $, testSummary(), '');
 
       expect($.html()).toContain(
         `<audio src=\"unit-test://media/95/954fb22bada7700b4adfdf1a8d93f157/F1L10s224.mp3\"/>`

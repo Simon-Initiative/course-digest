@@ -3,19 +3,21 @@ import * as fs from 'fs';
 
 export const upload = (
   file: string,
-  filename: string,
+  url: string,
   mimeType: string,
-  md5: string,
   bucketName: string
 ) => {
   // Read content from the file
   const fileContent = fs.readFileSync(file);
 
-  const subDir = md5.substring(0, 2);
+  // Get the s3 path by removing the host (and leading slash returned by pathname) from the url
+  // assumes the url string given is a valid url
+  const s3Path = new URL(url).pathname.slice(1);
+
   // Setting up S3 upload parameters
   const params: AWS.S3.PutObjectRequest = {
     Bucket: bucketName,
-    Key: `media/${subDir}/${md5}/${filename}`,
+    Key: s3Path,
     Body: fileContent,
     ContentType: mimeType,
   };
@@ -36,7 +38,7 @@ export const upload = (
         resolve(data.Location);
         return;
       }
-      resolve('error');
+      reject(`S3 upload error: returned data is undefined for ${file}`);
     });
   });
 };

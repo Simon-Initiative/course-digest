@@ -12,12 +12,16 @@ import * as Media from './media';
 import { ProjectSummary } from './project';
 import { processResources } from './process';
 import { upload } from './utils/upload';
-import { addWebContentToMediaSummary } from './resources/webcontent';
+import {
+  addWebContentToMediaSummary,
+  webBundleRootUrl as webBundleRootUrl,
+} from './resources/webcontent';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as readline from 'readline';
 import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
+import { filesize } from 'filesize';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
@@ -35,6 +39,7 @@ const optionDefinitions = [
     defaultValue: 'convert',
   },
   { name: 'mediaManifest', type: String, alias: 'm' },
+  { name: 'webContentBundle', type: String, alias: 'w' },
   { name: 'outputDir', type: String, alias: 'o' },
   { name: 'inputDir', type: String, alias: 'i' },
   { name: 'specificOrg', type: String, alias: 'g' },
@@ -61,6 +66,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   mergePathA: string;
   mergePathB: string;
   discussionsOn: boolean;
+  webContentBundle: string;
 }
 
 interface ConvertedResults {
@@ -68,12 +74,30 @@ interface ConvertedResults {
   hierarchy: Resources.TorusResource;
   finalResources: Resources.TorusResource[];
   mediaItems: Media.MediaItem[];
+  webContentBundle?: Media.WebContentBundle;
 }
 
 function validateArgs(options: CmdOptions) {
   if (options.operation === 'convert') {
     if (options.mediaUrlPrefix === undefined) {
       options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
+    } else {
+      // remove any trailing slashes from the media URL prefix
+      options.mediaUrlPrefix = options.mediaUrlPrefix
+        .trim()
+        .replace(/\/+$/, '');
+
+      try {
+        // validate that the media URL prefix is a valid URL
+        new URL(options.mediaUrlPrefix);
+
+        // currently there are places in the code that assume the media URL prefix ends with '/media', so we should validate this assumption
+        if (!options.mediaUrlPrefix.endsWith('/media')) throw new Error();
+      } catch (error) {
+        throw new Error(
+          `Invalid mediaUrlPrefix '${options.mediaUrlPrefix}': Media URL prefix must be a valid URL including a protocol (e.g. 'https://') and end with '/media'`
+        );
+      }
     }
     if (options.outputDir === undefined) {
       options.outputDir = `${options.inputDir}-out`;
@@ -145,27 +169,40 @@ function summaryAction(options: CmdOptions) {
     .catch((err: any) => console.log(err));
 }
 
-function uploadAction(options: CmdOptions) {
+function readMediaManifest(options: CmdOptions): Media.MediaManifest {
   const mediaManifest =
     options.mediaManifest ||
     path.join(options.outputDir, '_media-manifest.json');
 
   const raw = fs.readFileSync(mediaManifest);
-  const manifest = JSON.parse(raw.toString());
+
+  return JSON.parse(raw.toString());
+}
+
+function uploadMediaItems(items: Media.ProcessedMediaItem[]) {
   const bucketName = Maybe.maybe(process.env.MEDIA_BUCKET_NAME).valueOrThrow(
     Error('MEDIA_BUCKET_NAME not set in config')
   );
 
-  const uploaders = manifest.mediaItems.map((m: Media.MediaItem) => {
+  const uploaders = items.map((m: Media.MediaItem) => {
     return () => {
       console.log(`Uploading ${m.file}...`);
-      return upload(m.file, m.name, m.mimeType, m.md5, bucketName).then(
-        (location) => console.log(`${location} complete`)
+      return upload(m.file, m.url, m.mimeType, bucketName).then((location) =>
+        console.log(`${location} complete`)
       );
     };
   });
 
   return executeSerially(uploaders);
+}
+
+export function uploadAction(options: CmdOptions) {
+  const manifest = readMediaManifest(options);
+  const bundleItems = manifest.webContentBundle
+    ? manifest.webContentBundle.items
+    : [];
+
+  return uploadMediaItems(manifest.mediaItems.concat(bundleItems));
 }
 
 export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
@@ -203,6 +240,15 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
       downloadRemote,
       flattenedNames: {},
     };
+    // if optional webContentBundle requested, initialize here
+    // used to communicate flag value to intermediate processing
+    if (options.webContentBundle)
+      mediaSummary.webContentBundle = {
+        name: options.webContentBundle,
+        items: [],
+        totalSize: 0,
+        url: webBundleRootUrl(options.mediaUrlPrefix, options.webContentBundle),
+      };
 
     const projectSummary = new ProjectSummary(
       packageDirectory,
@@ -231,6 +277,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 
           updated = Convert.updateDerivativeReferences(updated);
           updated = Convert.generatePoolTags(updated);
+          updated = Convert.fixWildcardSelections(updated);
           updated = filterOutTemporaryContent(updated);
           updated = Convert.updateNonDirectImageReferences(
             updated,
@@ -256,11 +303,15 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           ).then((updated) => {
             return addWebContentToMediaSummary(
               packageDirectory,
-              mediaSummary
+              projectSummary,
+              mediaSummary,
+              options.webContentBundle
             ).then((results) => {
               const mediaItems = Object.keys(mediaSummary.mediaItems).map(
                 (k: string) => results.mediaItems[k]
               );
+
+              const webContentBundle = results.webContentBundle;
 
               return Promise.resolve({
                 packageDirectory,
@@ -269,6 +320,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
                 hierarchy,
                 finalResources: updated,
                 mediaItems,
+                webContentBundle,
                 projectSummary,
               });
             });
@@ -284,8 +336,15 @@ function writeConvertedResults({
   hierarchy,
   finalResources,
   mediaItems,
+  webContentBundle,
 }: ConvertedResults) {
-  return Convert.output(projectSummary, hierarchy, finalResources, mediaItems);
+  return Convert.output(
+    projectSummary,
+    hierarchy,
+    finalResources,
+    mediaItems,
+    webContentBundle
+  );
 }
 
 const anyOf = (ans: string, ...opts: any[]) => {
@@ -294,17 +353,62 @@ const anyOf = (ans: string, ...opts: any[]) => {
 };
 
 function suggestUploadAction(options: CmdOptions) {
+  const manifest = readMediaManifest(options);
+
   return new Promise<string>((res) => {
     if (options.quiet) res('n');
-    else rl.question('Do you want to upload media assets? [y/N] ', res);
-  }).then((answer: string) => {
-    if (anyOf(answer || 'n', 'y', 'yes')) {
-      return uploadAction(options).then((_r: any) => console.log('Done!'));
-    }
+    else {
+      const { mediaItems, mediaItemsSize } = manifest;
 
-    console.log('Skipping media upload.');
-    return;
-  });
+      rl.question(
+        `Do you want to upload ${mediaItems.length} media assets (${filesize(
+          mediaItemsSize
+        )})? [y/N]`,
+        res
+      );
+    }
+  })
+    .then((answer: string) => {
+      if (anyOf(answer || 'n', 'y', 'yes')) {
+        return uploadMediaItems(manifest.mediaItems).then((_r: any) =>
+          console.log('Done!')
+        );
+      }
+
+      console.log('Skipping media upload.');
+      return;
+    })
+    .then(
+      () =>
+        new Promise<string>((res) => {
+          if (options.quiet) res('n');
+          else {
+            if (manifest.webContentBundle) {
+              const { name, totalSize } = manifest.webContentBundle;
+              rl.question(
+                `Do you want to upload webcontent bundle as '${name}' (${filesize(
+                  totalSize
+                )})? [y/N] `,
+                res
+              );
+            } else {
+              res('n');
+            }
+          }
+        })
+    )
+    .then((answer: string) => {
+      if (manifest.webContentBundle) {
+        if (anyOf(answer || 'n', 'y', 'yes')) {
+          return uploadMediaItems(manifest.webContentBundle.items).then(
+            (_r: any) => console.log('Done!')
+          );
+        }
+
+        console.log('Skipping media bundle upload.');
+      }
+      return;
+    });
 }
 
 function zipAction(options: CmdOptions) {
