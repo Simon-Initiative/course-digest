@@ -596,6 +596,7 @@ export function enableDiscussions(resources: TorusResource[]): TorusResource[] {
     }
     return r;
   });
+}
 
 const getPoolCount = (resources: TorusResource[], tag: string): number =>
   resources.filter((r) => r.type === 'Activity' && r.tags.includes(tag)).length;
