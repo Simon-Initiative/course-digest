@@ -50,6 +50,7 @@ const optionDefinitions = [
   { name: 'quiet', type: Boolean, alias: 'q' },
   { name: 'mergePathA', type: String, alias: 'a' },
   { name: 'mergePathB', type: String, alias: 'b' },
+  { name: 'discussionsOn', type: Boolean, alias: 'd' },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
@@ -64,6 +65,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   quiet: boolean;
   mergePathA: string;
   mergePathB: string;
+  discussionsOn: boolean;
   webContentBundle: string;
 }
 
@@ -210,6 +212,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
   const specificOrg = options.specificOrg;
   const spreadsheetPath = options.spreadsheetPath;
   const downloadRemote = options.downloadRemote;
+  const discussionsOn = options.discussionsOn;
 
   return executeSerially([
     () => mapResources(packageDirectory),
@@ -283,6 +286,10 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           updated = Convert.globalizeObjectiveReferences(updated);
           updated = Convert.setGroupPaginationModes(updated);
           updated = Convert.relativizeLegacyPaths(updated, svnRoot);
+
+          if (discussionsOn) {
+            updated = Convert.enableDiscussions(updated);
+          }
 
           if (spreadsheetPath !== undefined && spreadsheetPath !== null) {
             updated = Convert.applyMagicSpreadsheet(updated, spreadsheetPath);

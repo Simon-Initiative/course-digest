@@ -142,43 +142,73 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     return m;
   }, {});
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-    let activity = byActivityId[a.resourceId + '-' + a.questionId];
-    if (activity === undefined) {
-      // Could not find directly, see if we can find it by strictly the question id
-      activity = Object.values(byActivityId).find((ac: TorusResource) =>
-        ac.id.endsWith('-' + a.questionId)
+    // If the question id is null, we apply the attached skills to all questions in the resource
+    if (a.questionId === null) {
+      const activities = Object.values(byActivityId).filter(
+        (ac: TorusResource) => ac.id.startsWith(a.resourceId + '-')
       );
-    }
-    if (activity !== undefined) {
-      const objectives = activity.objectives;
 
-      const mappedSkillIds = a.skillIds.map((id) => {
-        if (bySkillId[id] !== undefined) {
-          return bySkillId[id].id;
-        }
-        console.log(
-          'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
-            id
-        );
-        return null;
-      });
+      activities.forEach((activity: TorusResource) => {
+        const mappedSkillIds = a.skillIds.map((id) => {
+          if (bySkillId[id] !== undefined) {
+            return bySkillId[id].id;
+          }
+          console.log(
+            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+              id
+          );
+          return null;
+        });
 
-      // If no partId specified, apply the skills to all parts present in the activity
-      if (a.partId === null) {
-        activity.objectives = Object.keys(objectives).reduce(
+        const objectives = (activity as any).objectives;
+
+        (activity as any).objectives = Object.keys(objectives).reduce(
           (m: any, k: string) => {
             m[k] = mappedSkillIds;
             return m;
           },
           {}
         );
-      } else {
-        objectives[a.partId] = mappedSkillIds;
-      }
+      });
     } else {
-      console.log(
-        `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
-      );
+      let activity = byActivityId[a.resourceId + '-' + a.questionId];
+      if (activity === undefined) {
+        // Could not find directly, see if we can find it by strictly the question id
+        activity = Object.values(byActivityId).find((ac: TorusResource) =>
+          ac.id.endsWith('-' + a.questionId)
+        );
+      }
+      if (activity !== undefined) {
+        const objectives = activity.objectives;
+
+        const mappedSkillIds = a.skillIds.map((id) => {
+          if (bySkillId[id] !== undefined) {
+            return bySkillId[id].id;
+          }
+          console.log(
+            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+              id
+          );
+          return null;
+        });
+
+        // If no partId specified, apply the skills to all parts present in the activity
+        if (a.partId === null) {
+          activity.objectives = Object.keys(objectives).reduce(
+            (m: any, k: string) => {
+              m[k] = mappedSkillIds;
+              return m;
+            },
+            {}
+          );
+        } else {
+          objectives[a.partId] = mappedSkillIds;
+        }
+      } else {
+        console.log(
+          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
+        );
+      }
     }
   });
 
@@ -187,10 +217,15 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     const objective = byObjectiveId[a.id];
     if (objective !== undefined) {
       const mappedSkillIds = a.skillIds.map((id) => {
-        return bySkillId[id].id;
+        if (bySkillId[id] !== undefined) {
+          return bySkillId[id].id;
+        }
+        return null;
       });
 
-      objective.objectives = [...objective.objectives, ...mappedSkillIds];
+      const withoutNulls = mappedSkillIds.filter((id) => id !== null);
+
+      objective.objectives = [...objective.objectives, ...withoutNulls];
     }
   });
 
@@ -550,6 +585,16 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
   });
 
   return [...items, ...Object.keys(tags).map((k) => tags[k])];
+}
+
+// For every page, enable the discussion.
+export function enableDiscussions(resources: TorusResource[]): TorusResource[] {
+  return resources.map((r) => {
+    if (r.type === 'Page') {
+      (r as Page).collabSpace.status = 'enabled';
+    }
+    return r;
+  });
 }
 
 const getPoolCount = (resources: TorusResource[], tag: string): number =>

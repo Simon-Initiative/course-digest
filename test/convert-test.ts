@@ -32,6 +32,7 @@ it('should convert example course to valid course digest', async () => {
     quiet: false,
     mergePathA: '',
     mergePathB: '',
+    discussionsOn: false,
     webContentBundle: '',
   });
 
@@ -99,6 +100,7 @@ it('should convert content with purpose to groups', async () => {
     quiet: false,
     mergePathA: '',
     mergePathB: '',
+    discussionsOn: false,
     webContentBundle: '',
   });
 
