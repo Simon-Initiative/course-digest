@@ -26,10 +26,21 @@ export class Pool extends Resource {
     const xml = $.html();
     return new Promise((resolve, _reject) => {
       XML.toJSON(xml, projectSummary, {
+        // use same list as formative
         p: true,
         em: true,
         li: true,
         td: true,
+        choice: true,
+        stem: true,
+        hint: true,
+        feedback: true,
+        explanation: true,
+        material: true,
+        anchor: true,
+        translation: true,
+        dt: true,
+        dd: true,
       }).then((r: any) => {
         const items: any = [];
 
