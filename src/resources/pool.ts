@@ -6,6 +6,8 @@ import * as Summative from './summative';
 import * as XML from 'src/utils/xml';
 import { processCodeblock, processVariables } from './common';
 import { ProjectSummary } from 'src/project';
+import * as cheerio from 'cheerio';
+import * as DOM from 'src/utils/dom';
 
 export class Pool extends Resource {
   restructurePreservingWhitespace($: any): any {
@@ -16,6 +18,48 @@ export class Pool extends Resource {
   restructure($: any): any {
     Summative.convertToFormative($);
     Formative.performRestructure($);
+
+    this.reportDroppedSpaceBug($);
+  }
+
+  // log cases where prior bug would have dropped spaces around styled text
+  reportDroppedSpaceBug($: any) {
+    ['feedback', 'hint', 'explanation', 'stem'].forEach((type: string) =>
+      $(type).each((i: any, item: any) => this.checkForSpaceBug($, item, type))
+    );
+  }
+
+  checkForSpaceBug($: any, item: any, type: string) {
+    const itemXML = $.html(item);
+    // get temp DOM subtree so we can easily remove elements
+    const itemDOM = cheerio.load(
+      itemXML,
+      Object.assign(
+        {},
+        {
+          normalizeWhitespace: false,
+          xmlMode: true,
+          selfClosingTags: false,
+        },
+        {}
+      )
+    );
+    // whitespace was being preserved within these elements; delete them to ignore
+    DOM.remove(itemDOM, 'p');
+    DOM.remove(itemDOM, 'td');
+    DOM.remove(itemDOM, 'li');
+
+    // check remaining inner html, ignoring initial or final spaces which won't matter
+    const h = itemDOM(type).html()?.trim();
+    if (h && (h.includes(' <em>') || h.includes('</em> '))) {
+      console.log(
+        `*** ${this.file.slice(
+          this.file.lastIndexOf('/') + 1,
+          this.file.lastIndexOf('.')
+        )} ${type}`
+      );
+      console.log(h);
+    }
   }
 
   translate(
