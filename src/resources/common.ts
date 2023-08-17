@@ -269,7 +269,7 @@ export function standardContentManipulations($: any) {
     $(item).prepend(`<em>${typeHeader}...</em>`);
   });
   DOM.rename($, 'pullout title', 'p');
-  DOM.rename($, 'pullout', 'group');
+  DOM.rename($, 'pullout', 'callout');
 
   $('example').each((i: any, item: any) => {
     $(item).attr('purpose', 'example');
