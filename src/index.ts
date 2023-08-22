@@ -46,7 +46,7 @@ const optionDefinitions = [
   { name: 'mediaUrlPrefix', type: String, alias: 'p' },
   { name: 'spreadsheetPath', type: String, alias: 's' },
   { name: 'svnRoot', type: String },
-  { name: 'downloadRemote', type: Boolean },
+  { name: 'downloadRemote', type: Boolean, alias: 'r' },
   { name: 'quiet', type: Boolean, alias: 'q' },
   { name: 'mergePathA', type: String, alias: 'a' },
   { name: 'mergePathB', type: String, alias: 'b' },

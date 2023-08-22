@@ -10,14 +10,19 @@ export const upload = (
   // Read content from the file
   const fileContent = fs.readFileSync(file);
 
-  // Get the s3 path by removing the host (and leading slash returned by pathname) from the url
-  // assumes the url string given is a valid url
-  const s3Path = new URL(url).pathname.slice(1);
+  // Get the s3 path after host in URL of form https://host.com/foo/bar
+  const s3Path = url.split('/').slice(3).join('/');
+
+  // S3 keys are officially just arbitrary strings of UTF-8 characters. URLs that come here have been
+  // URL encoded, but must pass NON-URL-encoded s3 Key to AWS API to avoid mismatch with expected url.
+  // Otherwise, e.g. if file "foo bar.jpg" uploaded w/key "foo%20bar.jpg" it would require URL
+  // https://.../foo%2520bar.jpg to access.
+  const s3PathKey = decodeURIComponent(s3Path);
 
   // Setting up S3 upload parameters
   const params: AWS.S3.PutObjectRequest = {
     Bucket: bucketName,
-    Key: s3Path,
+    Key: s3PathKey,
     Body: fileContent,
     ContentType: mimeType,
   };
