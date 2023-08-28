@@ -2,7 +2,6 @@ import * as Common from './common';
 import * as cheerio from 'cheerio';
 import * as DOM from '../../utils/dom';
 import { replaceAll } from '../../utils/common';
-import { listenerCount } from 'events';
 
 export type CustomTagDetails = {
   question: any;
