@@ -2,6 +2,7 @@ import * as Common from './common';
 import * as cheerio from 'cheerio';
 import * as DOM from '../../utils/dom';
 import { replaceAll } from '../../utils/common';
+import { listenerCount } from 'events';
 
 export type CustomTagDetails = {
   question: any;
@@ -69,7 +70,6 @@ function processLayout(
     layoutStylesTrimmed,
     baseDir + customTag.layoutFile
   );
-
   let stylesToUse = layoutStylesTrimmed;
   // if no custom styles in tag, include standard stylesheet
   if (stylesToUse.trim().length == 0) stylesToUse = TABLE_DND_CSS;
@@ -92,7 +92,7 @@ function processLayout(
   const updated = Object.assign({}, question, {
     height,
     width,
-    layoutStyles: stylesToUse,
+    layoutStyles: fixStyles(stylesToUse, targetArea),
     targetArea: targetArea,
     initiators: initiators,
   });
@@ -193,6 +193,25 @@ function cleanHtml(targetArea: any) {
       )
     )
     .html();
+}
+
+// Legacy DNDs in one family of courses used element-id-qualified styles of the form
+//    #dpch01_lbd08 .target { ... }
+// These ids are not used in the torus implementation so these will not work as is.
+// Rather than force authors to edit them all, we detect and strip ids.
+// Note: match relies on presence of underscore to avoid matching color specs of
+// form #ffe. This naming convention followed in instances we are dealing with.
+function fixStyles(styles: string, targetHtml: string): string {
+  // collect set of unique id tags of form #foo_lbd01 in stylesheet
+  const regex = /#[A-Za-z0-9]+_[A-za-z0-9]+/g;
+  return (
+    Array.from(new Set(styles.match(regex)))
+      // leave ids used as element ids in the target html
+      .filter((id) => !targetHtml.includes(`id="${id.substr(1)}`))
+      .reduce((acc, id) => (acc = replaceAll(acc, id, '')), styles)
+      // also remove the "all: initial" style since it causes problems
+      .replace('all: initial;', '')
+  );
 }
 
 export function replaceImageReferences(
