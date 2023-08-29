@@ -118,6 +118,7 @@ export interface Page extends TorusResource {
 export type NonDirectImageReference = {
   originalReference: string;
   assetReference: string;
+  location: 'styles' | 'initiators';
 };
 
 export interface Activity extends TorusResource {

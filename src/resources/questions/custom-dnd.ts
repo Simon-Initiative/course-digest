@@ -2,6 +2,7 @@ import * as Common from './common';
 import * as cheerio from 'cheerio';
 import * as DOM from '../../utils/dom';
 import { replaceAll } from '../../utils/common';
+import { NonDirectImageReference } from '../resource';
 
 export type CustomTagDetails = {
   question: any;
@@ -15,7 +16,7 @@ export type LayoutFile = {
   layoutStyles: string;
   initiators: string;
   targetArea: string;
-  imageReferences: string[];
+  imageReferences: NonDirectImageReference[];
 };
 
 export function findCustomTag(
@@ -65,10 +66,6 @@ function processLayout(
   const layoutStyles = $('layoutStyles').first().html();
 
   const layoutStylesTrimmed = cutCDATA(cutStyleTags(layoutStyles as string));
-  const imageReferences = locateImageReferences(
-    layoutStylesTrimmed,
-    baseDir + customTag.layoutFile
-  );
 
   let stylesToUse = layoutStylesTrimmed;
   // if no custom styles in tag, include standard stylesheet
@@ -97,7 +94,21 @@ function processLayout(
     initiators: initiators,
   });
 
-  return [updated, imageReferences];
+  const imageReferences =
+    locateImageReferences(
+      layoutStylesTrimmed,
+      baseDir + customTag.layoutFile
+    ) || [];
+  if (imageReferences.length > 0)
+    console.log(
+      'style image refs: ' + JSON.stringify(imageReferences, null, 2)
+    );
+  const imageReferences2 = locateInitiatorImages(
+    initiators,
+    baseDir + customTag.layoutFile
+  );
+
+  return [updated, imageReferences.concat(imageReferences2)];
 }
 
 function cutStyleTags(layout: string) {
@@ -196,19 +207,19 @@ function cleanHtml(targetArea: any) {
 }
 
 export function replaceImageReferences(
-  layout: string,
+  styles: string,
   originalRef: string,
   url: string
 ) {
   return replaceAll(
-    layout,
+    styles,
     'url\\("' + originalRef + '"\\)',
     'url(' + url + ')'
   );
 }
 
-export function locateImageReferences(layout: string, layoutFilePath: string) {
-  const styleLines = layout.split('\n');
+export function locateImageReferences(styles: string, layoutFilePath: string) {
+  const styleLines = styles.split('\n');
   const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
   const re = /url\(\"(.*)\"\)?/;
   return styleLines
@@ -221,12 +232,42 @@ export function locateImageReferences(layout: string, layoutFilePath: string) {
         return {
           originalReference: result[1],
           assetReference: base + result[1],
+          location: 'styles',
         };
       } else {
         return null;
       }
     })
     .filter((s) => s !== null);
+}
+
+function locateInitiatorImages(initiatorHtml: string, layoutFilePath: string) {
+  const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
+  const $ = cheerio.load(initiatorHtml);
+
+  const refs: NonDirectImageReference[] = [];
+  $('image,img').each((i: number, elem: cheerio.Element) => {
+    const src = $(elem).attr('src');
+    if (
+      src !== undefined &&
+      !(src.startsWith('https://') || src.startsWith('http://'))
+    )
+      refs.push({
+        originalReference: src,
+        assetReference: base + src,
+        location: 'initiators',
+      });
+  });
+
+  return refs;
+}
+
+export function replaceInitiatorImages(
+  initiators: string,
+  originalRef: string,
+  url: string
+) {
+  return replaceAll(initiators, `src="${originalRef}"`, `src="${url}"`);
 }
 
 function stripCustomTag(question: any) {
