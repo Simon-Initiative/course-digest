@@ -8,8 +8,8 @@ import * as tmp from 'tmp';
 const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import {
-  replaceImageReferences,
-  replaceInitiatorImages,
+  replaceImageRefsInStyles,
+  replaceImageRefsInInitiators,
 } from './resources/questions/custom-dnd';
 import { pathToBundleUrl } from './resources/webcontent';
 
@@ -323,14 +323,17 @@ export function transformToFlatDirectoryURLReferences(
     // Update the URL in the XML DOM
     if (url !== null) {
       if (location === 'styles')
-        styles = replaceImageReferences(styles, originalReference, url);
+        styles = replaceImageRefsInStyles(styles, originalReference, url);
       else if (location === 'initiators') {
-        initiators = replaceInitiatorImages(initiators, originalReference, url);
+        initiators = replaceImageRefsInInitiators(
+          initiators,
+          originalReference,
+          url
+        );
       }
     }
   });
-  if (initiators !== activity.content.initiators)
-    console.log('replaced initiators: ' + initiators);
+
   activity.content.layoutStyles = styles;
   activity.content.initiators = initiators;
 }

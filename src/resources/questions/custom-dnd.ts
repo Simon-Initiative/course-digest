@@ -94,21 +94,16 @@ function processLayout(
     initiators: initiators,
   });
 
-  const imageReferences =
-    locateImageReferences(
+  const imageReferences = (
+    findImageRefsInStyles(
       layoutStylesTrimmed,
       baseDir + customTag.layoutFile
-    ) || [];
-  if (imageReferences.length > 0)
-    console.log(
-      'style image refs: ' + JSON.stringify(imageReferences, null, 2)
-    );
-  const imageReferences2 = locateInitiatorImages(
-    initiators,
-    baseDir + customTag.layoutFile
+    ) || []
+  ).concat(
+    findImageRefsInInitiators(initiators, baseDir + customTag.layoutFile)
   );
 
-  return [updated, imageReferences.concat(imageReferences2)];
+  return [updated, imageReferences];
 }
 
 function cutStyleTags(layout: string) {
@@ -206,7 +201,7 @@ function cleanHtml(targetArea: any) {
     .html();
 }
 
-export function replaceImageReferences(
+export function replaceImageRefsInStyles(
   styles: string,
   originalRef: string,
   url: string
@@ -218,7 +213,7 @@ export function replaceImageReferences(
   );
 }
 
-export function locateImageReferences(styles: string, layoutFilePath: string) {
+export function findImageRefsInStyles(styles: string, layoutFilePath: string) {
   const styleLines = styles.split('\n');
   const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
   const re = /url\(\"(.*)\"\)?/;
@@ -241,7 +236,10 @@ export function locateImageReferences(styles: string, layoutFilePath: string) {
     .filter((s) => s !== null);
 }
 
-function locateInitiatorImages(initiatorHtml: string, layoutFilePath: string) {
+function findImageRefsInInitiators(
+  initiatorHtml: string,
+  layoutFilePath: string
+) {
   const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
   const $ = cheerio.load(initiatorHtml);
 
@@ -262,7 +260,7 @@ function locateInitiatorImages(initiatorHtml: string, layoutFilePath: string) {
   return refs;
 }
 
-export function replaceInitiatorImages(
+export function replaceImageRefsInInitiators(
   initiators: string,
   originalRef: string,
   url: string
