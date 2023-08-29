@@ -262,7 +262,6 @@ function findImageRefsInLayoutElement(
   const refs: NonDirectImageReference[] = [];
   $('image,img').each((i: number, elem: cheerio.Element) => {
     const src = $(elem).attr('src');
-    console.log(`image in layout ${location}: ${src}`);
     if (
       src !== undefined &&
       !(src.startsWith('https://') || src.startsWith('http://'))
