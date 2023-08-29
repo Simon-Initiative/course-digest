@@ -63,8 +63,8 @@ function processLayout(
   const $ = DOM.read(baseDir + customTag.layoutFile, {
     normalizeWhitespace: false,
   });
-  const layoutStyles = $('layoutStyles').first().html();
 
+  const layoutStyles = $('layoutStyles').first().html();
   const layoutStylesTrimmed = cutCDATA(cutStyleTags(layoutStyles as string));
   let stylesToUse = layoutStylesTrimmed;
   // if no custom styles in tag, include standard stylesheet
@@ -89,17 +89,15 @@ function processLayout(
     height,
     width,
     layoutStyles: fixStyles(stylesToUse, targetArea),
-    targetArea: targetArea,
-    initiators: initiators,
+    targetArea: fixImages(targetArea),
+    initiators: fixImages(initiators),
   });
 
-  const imageReferences = (
-    findImageRefsInStyles(
-      layoutStylesTrimmed,
-      baseDir + customTag.layoutFile
-    ) || []
-  ).concat(
-    findImageRefsInInitiators(initiators, baseDir + customTag.layoutFile)
+  const imageReferences = findImageRefs(
+    layoutStylesTrimmed,
+    initiators,
+    targetArea,
+    baseDir + customTag.layoutFile
   );
 
   return [updated, imageReferences];
@@ -254,16 +252,17 @@ export function findImageRefsInStyles(styles: string, layoutFilePath: string) {
     .filter((s) => s !== null);
 }
 
-function findImageRefsInInitiators(
-  initiatorHtml: string,
+function findImageRefsInLayoutElement(
+  location: 'initiators' | 'targetArea',
+  elementHtml: string,
   layoutFilePath: string
 ) {
   const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
-  const $ = cheerio.load(initiatorHtml);
-
+  const $ = cheerio.load(elementHtml);
   const refs: NonDirectImageReference[] = [];
   $('image,img').each((i: number, elem: cheerio.Element) => {
     const src = $(elem).attr('src');
+    console.log(`image in layout ${location}: ${src}`);
     if (
       src !== undefined &&
       !(src.startsWith('https://') || src.startsWith('http://'))
@@ -271,19 +270,42 @@ function findImageRefsInInitiators(
       refs.push({
         originalReference: src,
         assetReference: base + src,
-        location: 'initiators',
+        location: location,
       });
   });
 
   return refs;
 }
 
-export function replaceImageRefsInInitiators(
+// Ensure any images within layout elements are non-draggable. For image initiators, this is
+// needed to prevent click-drag of image from pre-empting drag of containing div with id we need.
+// Also desirable UI to block attempts to drag static images in target table, though not crucial.
+function fixImages(elementHtml: string): string {
+  const $ = cheerio.load(elementHtml);
+  $('image,img').each((i: number, elem: cheerio.Element) => {
+    $(elem).attr('draggable', 'false');
+  });
+  return $.html();
+}
+
+function findImageRefs(
+  styles: string,
   initiators: string,
+  targetArea: string,
+  layoutFilePath: string
+) {
+  return (findImageRefsInStyles(styles, layoutFilePath) || []).concat(
+    findImageRefsInLayoutElement('targetArea', targetArea, layoutFilePath),
+    findImageRefsInLayoutElement('initiators', initiators, layoutFilePath)
+  );
+}
+
+export function replaceImageRefsInLayoutElement(
+  elementHtml: string,
   originalRef: string,
   url: string
 ) {
-  return replaceAll(initiators, `src="${originalRef}"`, `src="${url}"`);
+  return replaceAll(elementHtml, `src="${originalRef}"`, `src="${url}"`);
 }
 
 function stripCustomTag(question: any) {

@@ -9,7 +9,8 @@ const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
 import {
   replaceImageRefsInStyles,
-  replaceImageRefsInInitiators,
+  replaceImageRefsInLayoutElement,
+  LayoutFile,
 } from './resources/questions/custom-dnd';
 import { pathToBundleUrl } from './resources/webcontent';
 
@@ -312,8 +313,10 @@ export function transformToFlatDirectoryURLReferences(
   activity: Activity,
   summary: MediaSummary
 ) {
-  let styles = activity.content.layoutStyles as string;
-  let initiators = activity.content.initiators as string;
+  const content = activity.content as LayoutFile;
+  let styles = content.layoutStyles;
+  let initiators = content.initiators;
+  let targetArea = content.targetArea;
   assetReferences.forEach((item: any) => {
     // Flatten this file reference into our single, virtual directory
     const { assetReference, originalReference, location } = item;
@@ -325,8 +328,14 @@ export function transformToFlatDirectoryURLReferences(
       if (location === 'styles')
         styles = replaceImageRefsInStyles(styles, originalReference, url);
       else if (location === 'initiators') {
-        initiators = replaceImageRefsInInitiators(
+        initiators = replaceImageRefsInLayoutElement(
           initiators,
+          originalReference,
+          url
+        );
+      } else if (location === 'targetArea') {
+        targetArea = replaceImageRefsInLayoutElement(
+          targetArea,
           originalReference,
           url
         );
@@ -336,6 +345,7 @@ export function transformToFlatDirectoryURLReferences(
 
   activity.content.layoutStyles = styles;
   activity.content.initiators = initiators;
+  activity.content.targetArea = targetArea;
 }
 
 // Take one in the collection of media item references and derive reference to
