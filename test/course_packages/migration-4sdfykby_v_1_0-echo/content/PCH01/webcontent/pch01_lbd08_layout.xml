@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dragdrop>
+    <layoutStyles>
+        <![CDATA[
+		<style type="text/css">
+            
+			#dpch01_lbd08 table, #dpch01_lbd08 th, #dpch01_lbd08 td {
+        		border: 1px solid black;
+        		text-align:center;
+        		vertical-align:middle;
+        	}
+			
+			#dpch01_lbd08 .target
+			{
+				min-height: 40px;
+				min-width: 40px;
+				background: #628394;
+				margin: 5px;
+				padding: 2px;
+			}
+			
+			#dpch01_lbd08 .initiator
+			{
+                 all: initial;
+				display: inline-block;
+				min-height: 40px;
+				min-width: 40px;
+				background: #ffc;
+				text-align: center;
+				padding: 5px;
+				cursor: move;
+				border-style: solid;
+    			border-width: 1px;
+    			border-color: black;
+			}
+			
+			#dpch01_lbd08 .dragdropspacer
+			{
+				height: 50px;
+			}
+			
+		</style>
+		]]>
+    </layoutStyles>
+    <targetArea>
+        <![CDATA[
+			<table cellspacing="4" border="0" width="100%">
+				<tr>
+					<td style="width:50%">
+						<em>Connector</em>
+					</td>
+					<td style="width:50%">
+						<em>Port</em>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div input_ref="db15" class="target"></div>
+					</td>
+					<td>
+						<image src="../webcontent/PCH01/image23.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/>
+					</td>
+					
+				</tr>
+				<tr>
+					<td>
+						<div input_ref="usb" class="target"></div>
+					</td>
+					<td>
+						<image src="../webcontent/PCH01/image25.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div input_ref="ethernet" class="target"></div>
+					</td>
+					<td>
+						<image src="../webcontent/PCH01/image27.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div input_ref="ps2" class="target"></div>
+					</td>
+					<td>
+						<image src="../webcontent/PCH01/image29.png" alt="Photo used under CC-BY-NC-SA license from Rodrigo Justi (https://www.flickr.com/photos/14491537@N06/)"/>
+					</td>
+					
+				</tr>
+				<tr>
+					<td>
+						<div input_ref="parallel" class="target"></div>
+					</td>
+					<td>
+						<image src="../webcontent/PCH01/image31.png" alt="Photo used under CC-BY license from Ryan Franklin (https://flic.kr/p/dkztR)."/>
+					</td>
+					
+				</tr>
+			</table>
+			<p></p>
+		]]>
+    </targetArea>
+    
+    <initiators>
+        <![CDATA[			
+            <div input_val="E" class="initiator"><image src="../webcontent/PCH01/image30.png" alt="Photo used under CC-BY-ND license from Don Lockton (https://flic.kr/p/cgeek)"/></div>
+            <div input_val="C" class="initiator"><image src="../webcontent/PCH01/image26.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/></div>
+			<div input_val="A" class="initiator"><image src="../webcontent/PCH01/image22.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/></div>
+            <div input_val="D" class="initiator"><image src="../webcontent/PCH01/image28.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/></div>
+            <div input_val="B" class="initiator"><image src="../webcontent/PCH01/image24.png" alt="Photo used under CC-BY license from National STEM Consortium (http://www.nationalstem.org)."/></div>
+		]]>
+    </initiators>
+    
+</dragdrop>
+
