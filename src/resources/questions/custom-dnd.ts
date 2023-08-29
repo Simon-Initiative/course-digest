@@ -207,7 +207,7 @@ function fixStyles(styles: string, targetHtml: string): string {
     Array.from(new Set(styles.match(regex)))
       // leave ids used as element ids in the target html
       .filter((id) => !targetHtml.includes(`id="${id.substr(1)}`))
-      .reduce((acc, id) => (acc = replaceAll(acc, id, '')), styles)
+      .reduce((acc, id) => replaceAll(acc, id, ''), styles)
       // also remove the "all: initial" style since it causes problems
       .replace('all: initial;', '')
   );
