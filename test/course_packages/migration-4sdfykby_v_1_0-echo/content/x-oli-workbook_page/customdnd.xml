@@ -15,7 +15,9 @@
 		<inline idref="dynadrophtml" />
 		<p>The following uses an XML (Flash) format table layout file</p>
 		<inline idref="simplifyinged910f36bd6f4ded910db99c90244fd3" />
-		<p>The following uses a custom stylesheete</p>
+		<p>The following uses a custom stylesheet</p>
 		<inline idref="states_dnd_question" />
+		<p>The following uses images in both the initiators and target</p>
+		<inline idref="pch01_lbd08" />
 	</body>
 </workbook_page>

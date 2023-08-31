@@ -2,6 +2,7 @@ import * as Common from './common';
 import * as cheerio from 'cheerio';
 import * as DOM from '../../utils/dom';
 import { replaceAll } from '../../utils/common';
+import { NonDirectImageReference } from '../resource';
 
 export type CustomTagDetails = {
   question: any;
@@ -15,7 +16,7 @@ export type LayoutFile = {
   layoutStyles: string;
   initiators: string;
   targetArea: string;
-  imageReferences: string[];
+  imageReferences: NonDirectImageReference[];
 };
 
 export function findCustomTag(
@@ -62,14 +63,9 @@ function processLayout(
   const $ = DOM.read(baseDir + customTag.layoutFile, {
     normalizeWhitespace: false,
   });
+
   const layoutStyles = $('layoutStyles').first().html();
-
   const layoutStylesTrimmed = cutCDATA(cutStyleTags(layoutStyles as string));
-  const imageReferences = locateImageReferences(
-    layoutStylesTrimmed,
-    baseDir + customTag.layoutFile
-  );
-
   let stylesToUse = layoutStylesTrimmed;
   // if no custom styles in tag, include standard stylesheet
   if (stylesToUse.trim().length == 0) stylesToUse = TABLE_DND_CSS;
@@ -92,10 +88,17 @@ function processLayout(
   const updated = Object.assign({}, question, {
     height,
     width,
-    layoutStyles: stylesToUse,
-    targetArea: targetArea,
-    initiators: initiators,
+    layoutStyles: fixStyles(stylesToUse, targetArea),
+    targetArea: fixImages(targetArea),
+    initiators: fixImages(initiators),
   });
+
+  const imageReferences = findImageRefs(
+    layoutStylesTrimmed,
+    initiators,
+    targetArea,
+    baseDir + customTag.layoutFile
+  );
 
   return [updated, imageReferences];
 }
@@ -195,20 +198,39 @@ function cleanHtml(targetArea: any) {
     .html();
 }
 
-export function replaceImageReferences(
-  layout: string,
+// Legacy DNDs in one family of courses used element-id-qualified styles of the form
+//    #dpch01_lbd08 .target { ... }
+// These ids are not used in the torus implementation so these will not work as is.
+// Rather than force authors to edit them all, we detect and strip ids.
+// Note: match relies on presence of underscore to avoid matching color specs of
+// form #ffe. This naming convention followed in instances we are dealing with.
+function fixStyles(styles: string, targetHtml: string): string {
+  // collect set of unique id tags of form #foo_lbd01 in stylesheet
+  const regex = /#[A-Za-z0-9]+_[A-za-z0-9]+/g;
+  return (
+    Array.from(new Set(styles.match(regex)))
+      // leave ids used as element ids in the target html
+      .filter((id) => !targetHtml.includes(`id="${id.substr(1)}`))
+      .reduce((acc, id) => replaceAll(acc, id, ''), styles)
+      // also remove the "all: initial" style since it causes problems
+      .replace('all: initial;', '')
+  );
+}
+
+export function replaceImageRefsInStyles(
+  styles: string,
   originalRef: string,
   url: string
 ) {
   return replaceAll(
-    layout,
+    styles,
     'url\\("' + originalRef + '"\\)',
     'url(' + url + ')'
   );
 }
 
-export function locateImageReferences(layout: string, layoutFilePath: string) {
-  const styleLines = layout.split('\n');
+export function findImageRefsInStyles(styles: string, layoutFilePath: string) {
+  const styleLines = styles.split('\n');
   const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
   const re = /url\(\"(.*)\"\)?/;
   return styleLines
@@ -221,12 +243,68 @@ export function locateImageReferences(layout: string, layoutFilePath: string) {
         return {
           originalReference: result[1],
           assetReference: base + result[1],
+          location: 'styles',
         };
       } else {
         return null;
       }
     })
     .filter((s) => s !== null);
+}
+
+function findImageRefsInLayoutElement(
+  location: 'initiators' | 'targetArea',
+  elementHtml: string,
+  layoutFilePath: string
+) {
+  const base = layoutFilePath.slice(0, layoutFilePath.lastIndexOf('/') + 1);
+  const $ = cheerio.load(elementHtml);
+  const refs: NonDirectImageReference[] = [];
+  $('image,img').each((i: number, elem: cheerio.Element) => {
+    const src = $(elem).attr('src');
+    if (
+      src !== undefined &&
+      !(src.startsWith('https://') || src.startsWith('http://'))
+    )
+      refs.push({
+        originalReference: src,
+        assetReference: base + src,
+        location: location,
+      });
+  });
+
+  return refs;
+}
+
+// Ensure any images within layout elements are non-draggable. For image initiators, this is
+// needed to prevent click-drag of image from pre-empting drag of containing div with id we need.
+// Also desirable UI to block attempts to drag static images in target table, though not crucial.
+function fixImages(elementHtml: string): string {
+  const $ = cheerio.load(elementHtml);
+  $('image,img').each((i: number, elem: cheerio.Element) => {
+    $(elem).attr('draggable', 'false');
+  });
+  return $.html();
+}
+
+function findImageRefs(
+  styles: string,
+  initiators: string,
+  targetArea: string,
+  layoutFilePath: string
+) {
+  return (findImageRefsInStyles(styles, layoutFilePath) || []).concat(
+    findImageRefsInLayoutElement('targetArea', targetArea, layoutFilePath),
+    findImageRefsInLayoutElement('initiators', initiators, layoutFilePath)
+  );
+}
+
+export function replaceImageRefsInLayoutElement(
+  elementHtml: string,
+  originalRef: string,
+  url: string
+) {
+  return replaceAll(elementHtml, `src="${originalRef}"`, `src="${url}"`);
 }
 
 function stripCustomTag(question: any) {

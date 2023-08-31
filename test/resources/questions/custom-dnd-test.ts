@@ -1,4 +1,4 @@
-import { locateImageReferences } from '../../../src/resources/questions/custom-dnd';
+import { findImageRefsInStyles } from '../../../src/resources/questions/custom-dnd';
 
 it('should locate two references', async () => {
   const layout = `
@@ -18,7 +18,7 @@ it('should locate two references', async () => {
   }
   `;
 
-  const r = locateImageReferences(layout, 'content/test/file/path/layout.xml');
+  const r = findImageRefsInStyles(layout, 'content/test/file/path/layout.xml');
   expect(r.length).toBe(1);
   expect((r[0] as any).assetReference).toBe(
     'content/test/file/path/liquid_flask.png'

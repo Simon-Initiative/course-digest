@@ -7,7 +7,11 @@ import * as tmp from 'tmp';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fetch = require('sync-fetch');
 import { Activity, NonDirectImageReference } from './resources/resource';
-import { replaceImageReferences } from './resources/questions/custom-dnd';
+import {
+  replaceImageRefsInStyles,
+  replaceImageRefsInLayoutElement,
+  LayoutFile,
+} from './resources/questions/custom-dnd';
 import { pathToBundleUrl } from './resources/webcontent';
 
 export interface MediaSummary {
@@ -309,19 +313,39 @@ export function transformToFlatDirectoryURLReferences(
   activity: Activity,
   summary: MediaSummary
 ) {
-  let layout = activity.content.layoutStyles as string;
+  const content = activity.content as LayoutFile;
+  let styles = content.layoutStyles;
+  let initiators = content.initiators;
+  let targetArea = content.targetArea;
   assetReferences.forEach((item: any) => {
     // Flatten this file reference into our single, virtual directory
-    const { assetReference, originalReference } = item;
+    const { assetReference, originalReference, location } = item;
     const ref = { filePath: activity.legacyPath, assetReference };
     const url = flatten(ref, summary);
 
     // Update the URL in the XML DOM
     if (url !== null) {
-      layout = replaceImageReferences(layout, originalReference, url);
+      if (location === 'styles')
+        styles = replaceImageRefsInStyles(styles, originalReference, url);
+      else if (location === 'initiators') {
+        initiators = replaceImageRefsInLayoutElement(
+          initiators,
+          originalReference,
+          url
+        );
+      } else if (location === 'targetArea') {
+        targetArea = replaceImageRefsInLayoutElement(
+          targetArea,
+          originalReference,
+          url
+        );
+      }
     }
   });
-  activity.content.layoutStyles = layout;
+
+  activity.content.layoutStyles = styles;
+  activity.content.initiators = initiators;
+  activity.content.targetArea = targetArea;
 }
 
 // Take one in the collection of media item references and derive reference to
