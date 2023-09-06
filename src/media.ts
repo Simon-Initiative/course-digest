@@ -360,7 +360,7 @@ export function flatten(
   const absolutePath = resolve(ref);
   const decodedPath = decodeURIComponent(absolutePath);
 
-  if (fs.existsSync(decodedPath)) {
+  if (fs.existsSync(decodedPath) && !fs.lstatSync(decodedPath).isDirectory()) {
     const md5 = md5File.sync(decodedPath);
 
     const getName = (file: string) => file.substr(file.lastIndexOf('/') + 1);
@@ -574,10 +574,7 @@ function findFromDOM(
   });
 
   $('asset').each((i: any, elem: any) => {
-    if (
-      $(elem).text().includes('webcontent') &&
-      $(elem).attr('name') !== 'basepath'
-    ) {
+    if ($(elem).text().includes('webcontent')) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
     }
   });
