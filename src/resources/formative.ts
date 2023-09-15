@@ -758,6 +758,11 @@ export function processAssessmentModel(
       return a;
     }
     if (item.type === 'selection') {
+      if (item.scope === 'section') {
+        console.warn(
+          'Unsupported feature: section (question group) selection. Migrated assessment will not work.'
+        );
+      }
       if (item.children.length > 0) {
         // track the reference for the tag that will power this selection in Torus
         let tagId: any = null;
