@@ -676,18 +676,15 @@ export class Formative extends Resource {
         dd: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
-        // AW: Summative processing generates a Page resource with content model.
-        // But for formatives, we pick up list of contained resource "items" only,
+        // Summative processing generates a Page resource with content model, but
+        // for formatives, we return list of contained resource "items" only,
         // ignoring any content model returned from processAssessmentModel, and
-        // do not generate a containing resource page. But pool selection instructions
-        // are effectively pieces of content in the model. Set flag here to get
-        // get special handling returning selection specs in TemporaryContent items
-        // Also needed to get poolId treated as unresolved reference
+        // do not create a containing page resource. Post-processing of resource
+        // set will replace placeholder on referencing pages with these items.
         const { items } = processAssessmentModel(
           legacyId,
           r.children[0].children,
-          this.file,
-          true
+          this.file
         );
 
         resolve(items);
@@ -724,8 +721,7 @@ export class Formative extends Resource {
 export function processAssessmentModel(
   legacyId: string,
   children: any[],
-  baseFileName: string,
-  formative = false
+  baseFileName: string
 ) {
   const items: any = [];
   const unresolvedReferences: any = [];
@@ -829,20 +825,18 @@ export function processAssessmentModel(
           a.page = pageId;
         }
 
-        // For formatives only, must include selection as a found resource "item" so
-        // post-processing can batch it into referencing wb page. Works to package it
-        // as TemporaryContent. Include pool id as unresolved reference to ensure pool
-        // gets added to recursive resource processing.
-        if (formative) {
-          items.push({
-            type: 'TemporaryContent',
-            subType: 'selection',
-            legacyId,
-            content: a,
-            unresolvedReferences: [tagId],
-            tags: [],
-          });
-        }
+        // For formatives (inlines), must include selection as a found resource "item" so
+        // post-processing can batch it into referencing wb page when replacing placeholder.
+        // Works to package it as TemporaryContent. Include pool id as unresolved reference
+        // to ensure pool gets added to recursive resource processing.
+        items.push({
+          type: 'TemporaryContent',
+          subType: 'selection',
+          legacyId,
+          content: a,
+          unresolvedReferences: [tagId],
+          tags: [],
+        });
 
         return a;
       }
