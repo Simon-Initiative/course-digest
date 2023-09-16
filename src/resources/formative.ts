@@ -676,10 +676,19 @@ export class Formative extends Resource {
         dd: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
+        // AW: formative picks up "items" only, ignores model in return tuple
+        // But selection elements currently returned in model, not as items
+        // For summative, model set into containing page model so OK.
+        // Also: need to get pool processed as unresolved resource
         const { items } = processAssessmentModel(
           legacyId,
           r.children[0].children,
-          this.file
+          this.file,
+          true
+        );
+        console.log(
+          'Formative.translate: processAssessmentModel returned items:' +
+            JSON.stringify(items, null, 2)
         );
 
         resolve(items);
@@ -716,7 +725,8 @@ export class Formative extends Resource {
 export function processAssessmentModel(
   legacyId: string,
   children: any[],
-  baseFileName: string
+  baseFileName: string,
+  formative: boolean = false
 ) {
   const items: any = [];
   const unresolvedReferences: any = [];
@@ -818,6 +828,23 @@ export function processAssessmentModel(
         // If this activity reference is within a specific page, track that.
         if (pageId !== null) {
           a.page = pageId;
+        }
+
+        // For formatives only, must include selection as a found resource "item" so
+        // post-processing can batch it into referencing wb page. Here package
+        // in Activity interface so it looks like one to post-processing code,
+        // unwrapping when batching into page. Since no resource is generated for
+        // formatives themselves, include pool id as unresolved reference to ensure
+        // pool gets added to recursive resource processing.
+        if (formative) {
+          items.push({
+            type: 'Activity',
+            subType: 'selection',
+            legacyId,
+            content: a,
+            unresolvedReferences: [tagId],
+            tags: [],
+          });
         }
 
         return a;

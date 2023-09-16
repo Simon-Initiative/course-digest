@@ -25,6 +25,7 @@ import { filesize } from 'filesize';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
+import { Activity } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -268,10 +269,19 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           orgReferences,
           resourceMap
         ).then((converted: Resources.TorusResource[]) => {
+          console.log(
+            'Converted resources before postprocessing:' +
+              JSON.stringify(converted, null, 2)
+          );
+
+          const isTemporaryContent = (u: any) =>
+            u.type == 'TemporaryContent' ||
+            u.type === 'Break' ||
+            // includes pseudo-Activity wrapping selection statement
+            (u.type === 'Activity' && u.subType === 'selection');
+
           const filterOutTemporaryContent = (updated: any) =>
-            updated.filter(
-              (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
-            );
+            updated.filter((u: any) => !isTemporaryContent(u));
 
           let updated = converted;
 
