@@ -676,19 +676,18 @@ export class Formative extends Resource {
         dd: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
-        // AW: formative picks up "items" only, ignores model in return tuple
-        // But selection elements currently returned in model, not as items
-        // For summative, model set into containing page model so OK.
-        // Also: need to get pool processed as unresolved resource
+        // AW: Summative processing generates a Page resource with content model.
+        // But for formatives, we pick up list of contained resource "items" only,
+        // ignoring any content model returned from processAssessmentModel, and
+        // do not generate a containing resource page. But pool selection instructions
+        // are effectively pieces of content in the model. Set flag here to get
+        // get special handling returning selection specs in TemporaryContent items
+        // Also needed to get poolId treated as unresolved reference
         const { items } = processAssessmentModel(
           legacyId,
           r.children[0].children,
           this.file,
           true
-        );
-        console.log(
-          'Formative.translate: processAssessmentModel returned items:' +
-            JSON.stringify(items, null, 2)
         );
 
         resolve(items);
@@ -726,7 +725,7 @@ export function processAssessmentModel(
   legacyId: string,
   children: any[],
   baseFileName: string,
-  formative: boolean = false
+  formative = false
 ) {
   const items: any = [];
   const unresolvedReferences: any = [];
@@ -831,11 +830,9 @@ export function processAssessmentModel(
         }
 
         // For formatives only, must include selection as a found resource "item" so
-        // post-processing can batch it into referencing wb page. Here package
-        // in TemporaryContent so it looks like one to post-processing code,
-        // unwrapping when batching into page. Since no resource is generated for
-        // formatives themselves, include pool id as unresolved reference to ensure
-        // pool gets added to recursive resource processing.
+        // post-processing can batch it into referencing wb page. Works to package it
+        // as TemporaryContent. Include pool id as unresolved reference to ensure pool
+        // gets added to recursive resource processing.
         if (formative) {
           items.push({
             type: 'TemporaryContent',

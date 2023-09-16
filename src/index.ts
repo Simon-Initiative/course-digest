@@ -25,7 +25,6 @@ import { filesize } from 'filesize';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
-import { Activity } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -273,10 +272,6 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
             updated.filter(
               (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
             );
-          console.log(
-            'Converted resources before postprocessing:' +
-              JSON.stringify(converted, null, 2)
-          );
 
           let updated = converted;
 

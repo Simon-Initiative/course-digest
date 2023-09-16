@@ -426,8 +426,6 @@ function handleOnePlaceholder(
   legacyMyResponseFeedbackIds: Record<string, boolean>
 ) {
   const derived = byLegacyId[m.idref];
-  console.log('handling placeholder ' + m.idref);
-  console.log('derived :' + JSON.stringify(derived, null, 2));
 
   if (derived !== undefined) {
     return [
