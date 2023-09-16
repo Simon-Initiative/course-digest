@@ -366,7 +366,6 @@ function bucketByLegacyId(resources: TorusResource[]): DerivedResourceMap {
       r.type === 'Break'
     ) {
       const activity = r as Activity;
-      console.log('bucketing ' + JSON.stringify(activity, null, 2));
       if (activity.legacyId !== undefined && activity.legacyId !== null) {
         if (m[activity.legacyId] === undefined) {
           m[activity.legacyId] = [r];
@@ -436,10 +435,6 @@ function handleOnePlaceholder(
       wrapContentInSurveyOrGroup(
         derived.map((d) => {
           if (d.type === 'Activity') {
-            // special case pseudo-Activity packages a selection instruction
-            if ((d as Activity).subType === 'selection')
-              return (d as Activity).content;
-
             return {
               type: 'activity-reference',
               activity_id: d.id,

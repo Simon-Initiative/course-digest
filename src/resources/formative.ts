@@ -832,13 +832,13 @@ export function processAssessmentModel(
 
         // For formatives only, must include selection as a found resource "item" so
         // post-processing can batch it into referencing wb page. Here package
-        // in Activity interface so it looks like one to post-processing code,
+        // in TemporaryContent so it looks like one to post-processing code,
         // unwrapping when batching into page. Since no resource is generated for
         // formatives themselves, include pool id as unresolved reference to ensure
         // pool gets added to recursive resource processing.
         if (formative) {
           items.push({
-            type: 'Activity',
+            type: 'TemporaryContent',
             subType: 'selection',
             legacyId,
             content: a,

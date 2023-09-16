@@ -269,19 +269,14 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           orgReferences,
           resourceMap
         ).then((converted: Resources.TorusResource[]) => {
+          const filterOutTemporaryContent = (updated: any) =>
+            updated.filter(
+              (u: any) => u.type !== 'TemporaryContent' && u.type !== 'Break'
+            );
           console.log(
             'Converted resources before postprocessing:' +
               JSON.stringify(converted, null, 2)
           );
-
-          const isTemporaryContent = (u: any) =>
-            u.type == 'TemporaryContent' ||
-            u.type === 'Break' ||
-            // includes pseudo-Activity wrapping selection statement
-            (u.type === 'Activity' && u.subType === 'selection');
-
-          const filterOutTemporaryContent = (updated: any) =>
-            updated.filter((u: any) => !isTemporaryContent(u));
 
           let updated = converted;
 
