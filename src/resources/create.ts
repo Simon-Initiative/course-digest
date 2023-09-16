@@ -41,7 +41,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     }
     if (
       tag.indexOf('DTD Assessment Pool') !== -1 ||
-      tag.indexOf(' pool ') !== -1
+      tag.indexOf('pool') !== -1
     ) {
       return 'Pool';
     }
