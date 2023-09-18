@@ -676,6 +676,11 @@ export class Formative extends Resource {
         dd: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
+        // Summative processing generates a Page resource with content model, but
+        // for formatives, we return list of contained resource "items" only,
+        // ignoring any content model returned from processAssessmentModel, and
+        // do not create a containing page resource. Post-processing of resource
+        // set will replace placeholder on referencing pages with these items.
         const { items } = processAssessmentModel(
           legacyId,
           r.children[0].children,
@@ -824,6 +829,19 @@ export function processAssessmentModel(
         if (pageId !== null) {
           a.page = pageId;
         }
+
+        // For formatives (inlines), must include selection as a found resource "item" so
+        // post-processing can batch it into referencing wb page when replacing placeholder.
+        // Works to package it as TemporaryContent. Include pool id as unresolved reference
+        // to ensure pool gets added to recursive resource processing.
+        items.push({
+          type: 'TemporaryContent',
+          subType: 'selection',
+          legacyId,
+          content: a,
+          unresolvedReferences: [tagId],
+          tags: [],
+        });
 
         return a;
       }
