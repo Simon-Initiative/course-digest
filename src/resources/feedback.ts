@@ -92,7 +92,7 @@ export function convertToFormative($: cheerio.Root) {
   DOM.rename($, 'questions', 'page');
   $('page').attr('id', guid());
 
-  DOM.remove($, 'feedback description');
+  DOM.rename($, 'feedback description', 'introduction');
   DOM.rename($, 'feedback', 'assessment');
 }
 
