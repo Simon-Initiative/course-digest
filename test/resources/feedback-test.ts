@@ -194,10 +194,10 @@ describe('convert feedback', () => {
     const items = await convert(projectSummary, file, false);
 
     const page = items[0];
-    const activity2_likert = items[2];
-    const activity3_likert = items[3];
-    const activity4_single_response = items[4];
-    const activity5_multiple_choice = items[5];
+    const activity2_likert = items[3];
+    const activity3_likert = items[4];
+    const activity4_single_response = items[5];
+    const activity5_multiple_choice = items[6];
 
     expect(page).toEqual(
       expect.objectContaining({
@@ -215,6 +215,20 @@ describe('convert feedback', () => {
               type: 'survey',
               id: expect.any(String),
               children: [
+                {
+                  type: 'content',
+                  id: expect.any(String),
+                  children: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: ' ',
+                        },
+                      ],
+                    },
+                  ],
+                },
                 {
                   type: 'activity-reference',
                   activity_id: expect.stringContaining(
