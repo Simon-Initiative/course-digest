@@ -11,7 +11,8 @@ import * as DOM from 'src/utils/dom';
 export type ResourceMap = { [index: string]: string };
 export function mapResources(directory: string): Promise<ResourceMap> {
   return new Promise((resolve, _reject) => {
-    glob(`${directory}/**/*.xml`, {}, (_err: any, files: any) => {
+    // AW: ignore organization resources. Filenames generally != ids for orgs
+    glob(`${directory}/content/**/*.xml`, {}, (_err: any, files: any) => {
       const result = files.reduce((p: any, c: string) => {
         const filename = c.substr(c.lastIndexOf('/') + 1);
         const id = filename.substr(0, filename.lastIndexOf('.xml'));
@@ -53,8 +54,9 @@ export function collectOrgItemReferences(
   packageDirectory: string,
   specificOrg: string
 ) {
-  const files = glob.sync(`${packageDirectory}/**/*.xml`, {});
-  const id = determineOrgId(packageDirectory, specificOrg);
+  // // AW: ignore organization resources. Filenames generally != ids for orgs
+  const files = glob.sync(`${packageDirectory}/content/**/*.xml`, {});
+  const orgId = determineOrgId(packageDirectory, specificOrg);
 
   const filesById = files.reduce((m: any, f) => {
     const lastPart = f.substring(f.lastIndexOf('/') + 1);
@@ -82,7 +84,7 @@ export function collectOrgItemReferences(
           r.found().forEach((i) => {
             // If this is the first time we have encountered this resource
             if (seenReferences[i.id] === undefined) {
-              if (id === '' || id === r.id) {
+              if (orgId === '' || orgId === r.id) {
                 seenReferences[i.id] = true;
                 references.push(i.id);
               } else {

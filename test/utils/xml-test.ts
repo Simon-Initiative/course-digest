@@ -29,7 +29,9 @@ describe('xml visiting', () => {
       expectedTags.pop();
     };
 
-    expect(visit('./test/sample/11.xml', visitor)).resolves.toEqual(true);
+    expect(visit('./test/sample/content/11.xml', visitor)).resolves.toEqual(
+      true
+    );
   });
 });
 
