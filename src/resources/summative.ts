@@ -62,7 +62,9 @@ export function convertToFormative($: any) {
   );
   $('text').each((i: any, item: any) => $(item).attr('originalType', 'text'));
 
-  DOM.rename($, 'multiple_choice', 'question');
+  // AW: this restructuring gets used on pool items which may have multiple_choice in formative
+  // form, w/no input level element, so only rename if has input element now renamed to mc_temp
+  DOM.rename($, 'multiple_choice:has(mc_temp)', 'question');
   DOM.rename($, 'ordering', 'question');
   DOM.rename($, 'short_answer', 'question');
   DOM.rename($, 'fill_in_the_blank', 'question');
