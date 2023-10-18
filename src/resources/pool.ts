@@ -65,7 +65,6 @@ export class Pool extends Resource {
             let poolQuestionNumber = 1;
             item.children.forEach((c: any) => {
               if (c.type !== 'title' && c.type !== 'content') {
-                // console.log('Pool item: ' + JSON.stringify(c, null, 2));
                 const subType = Formative.determineSubType(c);
                 const pooledActivity = Formative.toActivity(
                   c,
