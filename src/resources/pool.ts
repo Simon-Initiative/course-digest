@@ -7,14 +7,27 @@ import * as XML from 'src/utils/xml';
 import { processCodeblock, processVariables } from './common';
 import { ProjectSummary } from 'src/project';
 
+export type PoolFormat = 'Summative' | 'Formative';
+
 export class Pool extends Resource {
+  poolFormat: PoolFormat = 'Summative';
+
+  constructor(
+    file: string,
+    navigable: boolean,
+    format: PoolFormat = 'Summative'
+  ) {
+    super(file, navigable);
+    this.poolFormat = format;
+  }
+
   restructurePreservingWhitespace($: any): any {
     processCodeblock($);
     processVariables($);
   }
 
   restructure($: any): any {
-    Summative.convertToFormative($);
+    if (this.poolFormat === 'Summative') Summative.convertToFormative($);
     Formative.performRestructure($);
   }
 
@@ -52,6 +65,7 @@ export class Pool extends Resource {
             let poolQuestionNumber = 1;
             item.children.forEach((c: any) => {
               if (c.type !== 'title' && c.type !== 'content') {
+                // console.log('Pool item: ' + JSON.stringify(c, null, 2));
                 const subType = Formative.determineSubType(c);
                 const pooledActivity = Formative.toActivity(
                   c,

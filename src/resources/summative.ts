@@ -52,19 +52,15 @@ export function convertToFormative($: any) {
   DOM.rename($, 'essay input', 'e_temp');
   DOM.rename($, 'image_hotspot input', 'i_temp');
 
-  // For these three types, add an attr to preserve their original types, as there can
-  // be cases where will not have a input level element
-  $('fill_in_the_blank').each((i: any, item: any) =>
-    $(item).attr('originalType', 'fill_in_the_blank')
-  );
+  // For these types, input element is optional. Add attribute recording input type,
+  // so inputs of this type can be synthesized in later processing if needed.
+  // Note fill_in_the_blank must have input to contain choices
   $('numeric').each((i: any, item: any) =>
     $(item).attr('originalType', 'numeric')
   );
   $('text').each((i: any, item: any) => $(item).attr('originalType', 'text'));
 
-  // AW: this restructuring gets used on pool items which may have multiple_choice in formative
-  // form, w/no input level element, so only rename if has input element now renamed to mc_temp
-  DOM.rename($, 'multiple_choice:has(mc_temp)', 'question');
+  DOM.rename($, 'multiple_choice', 'question');
   DOM.rename($, 'ordering', 'question');
   DOM.rename($, 'short_answer', 'question');
   DOM.rename($, 'fill_in_the_blank', 'question');
