@@ -487,7 +487,7 @@ function handleInquiry($: any) {
 }
 
 function sideBySideMaterials($: any) {
-  $('materials material').each((i: any, item: any) => {
+  $('materials > material').each((i: any, item: any) => {
     item.tagName = 'td';
   });
   $('materials').each((i: any, item: any) => {
