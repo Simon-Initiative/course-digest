@@ -52,11 +52,9 @@ export function convertToFormative($: any) {
   DOM.rename($, 'essay input', 'e_temp');
   DOM.rename($, 'image_hotspot input', 'i_temp');
 
-  // For these three types, add an attr to preserve their original types, as there can
-  // be cases where will not have a input level element
-  $('fill_in_the_blank').each((i: any, item: any) =>
-    $(item).attr('originalType', 'fill_in_the_blank')
-  );
+  // For these types, input element is optional. Add attribute recording input type,
+  // so inputs of this type can be synthesized in later processing if needed.
+  // Note fill_in_the_blank must have input to contain choices
   $('numeric').each((i: any, item: any) =>
     $(item).attr('originalType', 'numeric')
   );

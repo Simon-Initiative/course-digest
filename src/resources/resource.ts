@@ -19,6 +19,7 @@ export type ResourceType =
   | 'Organization'
   | 'Objectives'
   | 'Pool'
+  | 'FormativePool'
   | 'Formative'
   | 'Summative'
   | 'Discussion'

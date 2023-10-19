@@ -39,11 +39,9 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     if (tag.indexOf('oli_skills_model') !== -1) {
       return 'Skills';
     }
-    if (
-      tag.indexOf('DTD Assessment Pool') !== -1 ||
-      tag.indexOf('pool') !== -1
-    ) {
-      return 'Pool';
+    if (tag.indexOf('pool') !== -1) {
+      // pools may use either summative or formative (inline) assessment DTD
+      return tag.includes('Inline') ? 'FormativePool' : 'Pool';
     }
     if (tag.indexOf('organization') !== -1) {
       return 'Organization';
@@ -106,7 +104,10 @@ export function create(
     return new Superactivity.Superactivity(file, navigable);
   }
   if (t === 'Pool') {
-    return new Pool.Pool(file, navigable);
+    return new Pool.Pool(file, navigable, 'Summative');
+  }
+  if (t === 'FormativePool') {
+    return new Pool.Pool(file, navigable, 'Formative');
   }
   if (t === 'Skills') {
     return new Skills.Skills(file, navigable);

@@ -25,7 +25,8 @@ export function buildMulti(
         items[i],
         parts[i],
         i,
-        ignorePartId
+        ignorePartId,
+        question.id
       );
       choices.forEach((c: any) => allChoices.push(c));
       targeted.forEach((c: any) => allTargeted.push(c));
@@ -149,7 +150,8 @@ function produceTorusEquivalents(
   item: any,
   p: any,
   i: number,
-  ignorePartId: boolean
+  ignorePartId: boolean,
+  questionId: string
 ) {
   const input: any = {};
   let part: any = {};
@@ -186,7 +188,7 @@ function produceTorusEquivalents(
   if (item.id) {
     input.id = item.id;
   } else if (item.type === 'text' || item.type === 'numeric') {
-    if (item.children.length === 1) {
+    if (item.children && item.children.length === 1) {
       /*
         Sometimes, we run into a multi-question that the item does not have an id, but there is an
         input ref that points at the choice value.  In this case, we can use the choice value as the
@@ -221,9 +223,10 @@ function produceTorusEquivalents(
       input.id = choice.value;
     }
   }
-
+  // can apparently have minimal question w/implied input but no input id used anywhere
   if (!input.id) {
-    console.warn('No input id found for item: ', item);
+    console.warn(`${questionId} part ${i + 1} ${item.type}: no input id found`);
+    input.id = `${questionId}-${i + 1}`;
   }
 
   input.partId = part.id;
