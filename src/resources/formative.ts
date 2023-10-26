@@ -555,6 +555,16 @@ export function determineSubType(question: any): ItemTypes {
     if (mcq.select && mcq.select === 'multiple') {
       return 'oli_check_all_that_apply';
     }
+    if (Common.getChildren(question.children, 'part').length > 1) {
+      console.warn(
+        question.id +
+          ' Multi-part multiple choice unsupported; converting to dropdown choices '
+      );
+      Common.getChildren(question.children, 'multiple_choice').forEach(
+        (input: any) => (input.type = 'fill_in_the_blank')
+      );
+      return 'oli_multi_input';
+    }
     return 'oli_multiple_choice';
   }
 
