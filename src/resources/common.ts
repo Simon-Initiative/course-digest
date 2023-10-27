@@ -105,10 +105,6 @@ export function failIfHasValue(
 }
 
 export function standardContentManipulations($: any) {
-  $('extra').each((i: any, elem: any) => {
-    console.log('extra: ' + $(elem).html());
-  });
-
   failIfPresent($, ['ipa', 'bdo']);
 
   handleCommandButtons($);

@@ -262,7 +262,6 @@ export function toJSON(
 
       const elevatePopoverContent = () => {
         if (tag === 'popup') {
-          console.log('popup: ' + JSON.stringify(top(), null, 2));
           const anchor = getOneOfType(top().children, 'anchor');
           const meaning = getOneOfType(top().children, 'meaning');
           const pronunciation = getOneOfType(top().children, 'pronunciation');
