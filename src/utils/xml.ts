@@ -266,7 +266,7 @@ export function toJSON(
           const meaning = getOneOfType(top().children, 'meaning');
           const pronunciation = getOneOfType(top().children, 'pronunciation');
           const translation = getOneOfType(top().children, 'translation');
-          // element may content popup content w/no semantic subelement wrapper used
+          // element may contain popup content w/no semantic subelement wrapper used
           const elementContent = top().children.filter(
             (e: any) =>
               !['anchor', 'meaning', 'translation', 'pronunciation'].includes(
