@@ -227,28 +227,29 @@ export function standardContentManipulations($: any) {
   stripNonDefaultMediaSizing($, 'iframe');
   stripMediaSizing($, 'youtube');
 
-  DOM.stripElement($, 'p ol');
-  DOM.stripElement($, 'p ul');
-  DOM.stripElement($, 'p li');
-  DOM.stripElement($, 'p ol');
-  DOM.stripElement($, 'p ul');
-  DOM.stripElement($, 'p li');
-  DOM.stripElement($, 'p ol');
-  DOM.stripElement($, 'p ul');
-  DOM.stripElement($, 'p li');
-  DOM.stripElement($, 'p p');
-  DOM.stripElement($, 'p p');
+  DOM.stripElement($, 'p>ol');
+  DOM.stripElement($, 'p>ul');
+  DOM.stripElement($, 'p>li');
+  DOM.stripElement($, 'p>ol');
+  DOM.stripElement($, 'p>ul');
+  DOM.stripElement($, 'p>li');
+  DOM.stripElement($, 'p>ol');
+  DOM.stripElement($, 'p>ul');
+  DOM.stripElement($, 'p>li');
+
+  DOM.stripElement($, 'p>p');
+  DOM.stripElement($, 'p>p');
 
   // Change to allow block elements within list items
   // DOM.stripElement($, 'li p');
   // DOM.rename($, 'li img', 'img_inline');
 
-  DOM.stripElement($, 'p quote');
+  DOM.stripElement($, 'p>quote');
 
-  $('p table').remove();
-  $('p title').remove();
-  $('ol title').remove();
-  $('ul title').remove();
+  $('p>table').remove();
+  $('p>title').remove();
+  $('ol>title').remove();
+  $('ul>title').remove();
 
   DOM.rename($, 'quote', 'blockquote');
   DOM.rename($, 'composite_activity title', 'p');

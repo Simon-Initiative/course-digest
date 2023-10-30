@@ -266,6 +266,13 @@ export function toJSON(
           const meaning = getOneOfType(top().children, 'meaning');
           const pronunciation = getOneOfType(top().children, 'pronunciation');
           const translation = getOneOfType(top().children, 'translation');
+          // element may contain popup content w/no semantic subelement wrapper used
+          const elementContent = top().children.filter(
+            (e: any) =>
+              !['anchor', 'meaning', 'translation', 'pronunciation'].includes(
+                e.type
+              )
+          );
 
           if (anchor !== null) {
             top().children = anchor.children;
@@ -281,6 +288,8 @@ export function toJSON(
               top().content = material.children;
             } else if (translation !== null) {
               top().content = translation.children;
+            } else if (elementContent.length > 0) {
+              top().content = elementContent;
             } else {
               top().content = [{ type: 'text', text: ' ' }];
             }
