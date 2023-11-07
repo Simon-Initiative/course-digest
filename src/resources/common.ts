@@ -114,7 +114,7 @@ export function standardContentManipulations($: any) {
   DOM.unwrapInlinedMedia($, 'youtube');
   DOM.unwrapInlinedMedia($, 'iframe');
 
-  DOM.rename($, 'definition term', 'definition-term');
+  DOM.rename($, 'definition>term', 'definition-term');
 
   // Change sub within sub to distinct doublesub mark. Will remove the
   // regular sub style from doublesub text when collecting styles in toJSON
