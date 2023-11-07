@@ -473,8 +473,6 @@ function handleDefinitions($: any) {
     const term = $(elem).children('definition-term').text();
     $(elem).children().remove('definition-term');
     $(elem).attr('term', term);
-    console.log('Definition out :');
-    console.log($.html(elem));
   });
 }
 
