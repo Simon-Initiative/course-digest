@@ -248,8 +248,9 @@ export function standardContentManipulations($: any) {
 
   $('p>table').remove();
   $('p>title').remove();
-  $('ol>title').remove();
-  $('ul>title').remove();
+  // handle titles of lists
+  DOM.handleLabelledContent($, 'ol');
+  DOM.handleLabelledContent($, 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
   DOM.rename($, 'composite_activity title', 'p');
