@@ -311,6 +311,9 @@ export function standardContentManipulations($: any) {
   handleConjugations($);
   handleAlternatives($);
 
+  // preference-conditional inclusion not supported. Include to avoid error; let reviewers handle
+  DOM.stripElement($, 'pref\\:if');
+
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
 }
