@@ -217,7 +217,7 @@ function mergeElement($: any, selector: string, element: string) {
   });
 }
 
-function handleLabelledContent($: any, selector: string) {
+export function handleLabelledContent($: any, selector: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
