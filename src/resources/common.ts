@@ -170,7 +170,11 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'a img', 'img_inline');
 
   $('img').each((i: any, item: any) => {
-    if (DOM.isInlineElement($, item)) {
+    const style = $(item).attr('style');
+    if (
+      style === 'inline' ||
+      (DOM.isInlineElement($, item) && style !== 'block')
+    ) {
       item.tagName = 'img_inline';
     }
   });
