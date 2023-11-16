@@ -66,6 +66,8 @@ function inlineAttrName(attrs: Record<string, unknown>) {
     return 'doublesub';
   } else if (attrs['style'] === 'deemphasis') {
     return 'deemphasis';
+  } else if (attrs['style'] === 'term') {
+    return 'term';
   } else {
     return 'strong';
   }
