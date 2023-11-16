@@ -56,6 +56,8 @@ function inlineAttrName(attrs: Record<string, unknown>) {
   }
   if (attrs['style'] === 'code') {
     return 'code';
+  } else if (attrs['style'] === 'highlight') {
+    return 'mark';
   } else if (attrs['style'] === 'sub') {
     return 'sub';
   } else if (attrs['style'] === 'sup') {
