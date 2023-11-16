@@ -132,12 +132,16 @@ export function standardContentManipulations($: any) {
   $('deemphasis').each((i: any, item: any) =>
     $(item).attr('style', 'deemphasis')
   );
+  $('highlight').each((i: any, item: any) =>
+    $(item).attr('style', 'highlight')
+  );
   DOM.rename($, 'var', 'em');
   DOM.rename($, 'term', 'em');
   DOM.rename($, 'sub', 'em');
   DOM.rename($, 'sup', 'em');
   DOM.rename($, 'doublesub', 'em');
   DOM.rename($, 'deemphasis', 'em');
+  DOM.rename($, 'highlight', 'em');
 
   // <code> is a mixed element, we only want to translate the inline <code>
   // instances to <em> elements.  The block level <code> will get converted
