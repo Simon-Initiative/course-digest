@@ -227,6 +227,9 @@ export function standardContentManipulations($: any) {
   stripNonDefaultMediaSizing($, 'iframe');
   stripMediaSizing($, 'youtube');
 
+  // videos with size parameters have layout issue (not centered), so strip
+  stripMediaSizing($, 'video');
+
   DOM.stripElement($, 'p>ol');
   DOM.stripElement($, 'p>ul');
   DOM.stripElement($, 'p>li');
