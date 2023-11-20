@@ -605,7 +605,6 @@ export function handleFormulaMathML($: any) {
 
   $('formula').each((i: any, item: any) => {
     const subtype = determineFormulaType(item);
-    const tag = item.tagName;
 
     if (subtype === 'mathml') {
       $(item).attr('src', getFirstMathML($, item));
