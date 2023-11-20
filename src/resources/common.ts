@@ -595,8 +595,18 @@ export function handleTheorems($: any) {
 }
 
 export function handleFormulaMathML($: any) {
+  // Flag MathML formulas w/display=block as block rendered even if inline
+  $('formula:has(m\\:math[display="block"])').each((i: any, item: any) => {
+    $(item).attr('legacyBlockRendered', true);
+  });
+  $('formula:has(math[display="block"])').each((i: any, item: any) => {
+    $(item).attr('legacyBlockRendered', true);
+  });
+
   $('formula').each((i: any, item: any) => {
     const subtype = determineFormulaType(item);
+    const tag = item.tagName;
+
     if (subtype === 'mathml') {
       $(item).attr('src', getFirstMathML($, item));
       item.children = [];
@@ -613,8 +623,8 @@ export function handleFormulaMathML($: any) {
   });
 
   // For formula inside of paragraphs, we know they are of the inline variety
-  DOM.rename($, 'p formula', 'formula_inline');
-  DOM.rename($, 'p callout', 'callout_inline');
+  DOM.rename($, 'p > formula', 'formula_inline');
+  DOM.rename($, 'p > callout', 'callout_inline');
 
   // All others, we must inspect their context to determine whether they are
   // inline or block
@@ -623,6 +633,7 @@ export function handleFormulaMathML($: any) {
       item.tagName = 'formula_inline';
     }
   });
+
   $('callout').each((i: any, item: any) => {
     if (DOM.isInlineElement($, item)) {
       item.tagName = 'callout_inline';
