@@ -232,6 +232,7 @@ export function handleLabelledContent($: any, selector: string) {
 
 export function removeSelfClosing($: any) {
   $('caption').removeAttr('___selfClosing___');
+  $('title').removeAttr('___selfClosing___');
   $('image').removeAttr('___selfClosing___');
   $('th').removeAttr('___selfClosing___');
   $('td').removeAttr('___selfClosing___');
