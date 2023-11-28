@@ -116,8 +116,8 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'definition>term', 'definition-term');
 
-  // Torus figures require a title element. Do this
-  // early in case any further title processing below
+  // Torus figures require a title, so add one if missing. Do this
+  // early to ensure gets any further title processing below
   $('figure:not(:has(title))').each((i: any, elem: any) => {
     $(elem).prepend('<title></title>');
   });
