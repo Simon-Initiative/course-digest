@@ -47,7 +47,7 @@ export function guid() {
 export function decodeEntities(encodedString: string) {
   const translate_re = /&(nbsp|amp|quot|lt|gt);/g;
   const translate = {
-    nbsp: ' ',
+    nbsp: '\xA0', // unicode nbsp 160
     amp: '&',
     quot: '"',
     lt: '<',
