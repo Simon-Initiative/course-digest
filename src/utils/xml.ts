@@ -68,7 +68,10 @@ function inlineAttrName(attrs: Record<string, unknown>) {
     return 'deemphasis';
   } else if (attrs['style'] === 'term') {
     return 'term';
+  } else if (attrs['style'] === 'line-through') {
+    return 'strikethrough';
   } else {
+    if (attrs['style']) console.log('unknown inline style: ' + attrs['style']);
     return 'strong';
   }
 }
