@@ -180,6 +180,7 @@ export class WorkbookPage extends Resource {
     xml = convertBibliographyEntries($, bibEntries);
 
     const bibrefs: number[] = [];
+
     $('cite').each((i: any, elem: any) => {
       const entry = $(elem).attr('entry');
       const bibRef = bibEntries.get(entry);
@@ -193,6 +194,11 @@ export class WorkbookPage extends Resource {
       } else {
         $(elem).remove();
       }
+    });
+    // Also include any uncited refs. Handles case we've seen of references
+    // listed but only cited in text as Smith (1984) w/o citation links
+    bibEntries.forEach((bibEntry) => {
+      if (!bibrefs.includes(bibEntry.id)) bibrefs.push(bibEntry.id);
     });
 
     const objectives: TorusResource[] = [];

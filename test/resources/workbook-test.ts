@@ -112,7 +112,7 @@ describe('convert workbook', () => {
               ],
             },
           ],
-          bibrefs: [expect.any(String)],
+          bibrefs: [expect.any(String), expect.any(String), expect.any(String)],
         },
         isGraded: false,
         isSurvey: false,
