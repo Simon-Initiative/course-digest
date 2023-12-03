@@ -178,8 +178,10 @@ export function standardContentManipulations($: any) {
   $('img').each((i: any, item: any) => {
     const style = $(item).attr('style');
     if (
-      style === 'inline' ||
-      (DOM.isInlineElement($, item) && style !== 'block')
+      // don't inline if captioned no matter what style specified
+      isUnCaptioned($, item) &&
+      (style === 'inline' ||
+        (DOM.isInlineElement($, item) && style !== 'block'))
     ) {
       item.tagName = 'img_inline';
     }
@@ -377,6 +379,14 @@ function stripEmptyCaptions($: any, selector: string) {
       }
     }
   });
+}
+
+function isUnCaptioned($: any, item: any) {
+  const caption = $(item).find('caption');
+  return (
+    caption === undefined ||
+    (caption.text().trim() === '' && caption.children().length === 0)
+  );
 }
 
 // Strip any sizing that's not the default 800x450 that iframes use
