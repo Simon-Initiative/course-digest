@@ -333,7 +333,8 @@ export function toJSON(
       const unescapeFormulaSrc = () => {
         if (
           (tag === 'formula' || tag === 'formula_inline') &&
-          top().subtype !== 'richtext'
+          top().subtype !== 'richtext' &&
+          top().subtype !== 'mathml' // src is XML, leave entities encoded
         ) {
           top().src = decodeEntities(top().src);
         }
