@@ -116,6 +116,12 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'definition>term', 'definition-term');
 
+  // Torus figures require a title, so add one if missing. Do this
+  // early to ensure gets any further title processing below
+  $('figure:not(:has(title))').each((i: any, elem: any) => {
+    $(elem).prepend('<title></title>');
+  });
+
   // Change sub within sub to distinct doublesub mark. Will remove the
   // regular sub style from doublesub text when collecting styles in toJSON
   DOM.rename($, 'sub sub', 'doublesub');

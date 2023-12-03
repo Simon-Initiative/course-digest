@@ -310,6 +310,15 @@ export function toJSON(
         }
       };
 
+      const elevateTitle = (parent: string) => {
+        if (tag === 'title' && stack[stack.length - 2].type === parent) {
+          if (stack.length > 1) {
+            stack[stack.length - 2].title = top().children;
+            stack[stack.length - 2].children = [{ type: 'text', text: ' ' }];
+          }
+        }
+      };
+
       const elevateTableCaption = () => {
         if (tag === 'caption' && stack[stack.length - 2].type === 'table') {
           if (stack.length > 1) {
@@ -572,6 +581,7 @@ export function toJSON(
         elevateCaption('youtube');
         elevateTableCaption();
         elevateCaption('audio');
+        elevateTitle('figure');
         elevatePopoverContent();
         unescapeFormulaSrc();
         unescapeVariableData();
