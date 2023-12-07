@@ -225,7 +225,7 @@ export function handleLabelledContent($: any, selector: string) {
     $(elem).children().remove('title');
 
     if (title) {
-      $('<h5>' + title + '</h5>').insertBefore($(elem));
+      $('<h6><em>' + title + '</em></h6>').insertBefore($(elem));
     }
   });
 }
