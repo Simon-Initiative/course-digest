@@ -111,6 +111,73 @@ describe('convert workbook', () => {
                 },
               ],
             },
+            {
+              type: 'group',
+              id: expect.any(String),
+              layout: 'vertical',
+              purpose: 'none',
+              children: [
+                {
+                  type: 'content',
+                  children: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'References',
+                          strong: true,
+                        },
+                      ],
+                    },
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: expect.any(String),
+                        },
+                      ],
+                    },
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: '"The amygdala and the emotions." In Anatomy of the Mind (chap. 9) ',
+                        },
+                        {
+                          type: 'cite',
+                          children: [
+                            {
+                              text: '[citation]',
+                            },
+                          ],
+                          id: expect.any(String),
+                          bibref: expect.any(String),
+                        },
+                      ],
+                    },
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'Long-term potentiation in the amygdala: A cellular mechanism of fear learning and memory ',
+                        },
+                        {
+                          type: 'cite',
+                          children: [
+                            {
+                              text: '[citation]',
+                            },
+                          ],
+                          id: expect.any(String),
+                          bibref: expect.any(String),
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+              audience: 'instructor',
+            },
           ],
           bibrefs: [expect.any(String), expect.any(String), expect.any(String)],
         },

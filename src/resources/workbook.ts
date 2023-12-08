@@ -207,9 +207,9 @@ export class WorkbookPage extends Resource {
         the reference list so the text used here is not significant.</p>`;
       uncitedRefs.forEach((bibRef) => {
         citedRefs.push(bibRef.id);
-        refHtml += `<p>${
-          bibRef.content.data[0].title
-        } <cite id="${guid()}" bibref="${bibRef.id}">[citation]</cite></p>`;
+        refHtml += `<p>${bibRef.title} <cite id="${guid()}" bibref="${
+          bibRef.id
+        }">[citation]</cite></p>`;
       });
       refHtml += '</references>';
       $('body').append(refHtml);
