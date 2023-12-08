@@ -129,7 +129,7 @@ describe('dom mutations', () => {
 
   test('should mergeCaptions with title', () => {
     const content =
-      '<a><youtube id="d74862fd549747f6b7bf366768378591" src="9ixG0YbDSSw?showinfo=0;" height="500" width="1000" controls="true"><title><p>A Wonderful Title</p></title></youtube></a>';
+      '<a><youtube id="d74862fd549747f6b7bf366768378591" src="9ixG0YbDSSw?showinfo=0;" height="500" width="1000" controls="true"><title>A Wonderful Title</title></youtube></a>';
 
     const $ = cheerio.load(content, {
       normalizeWhitespace: true,
@@ -138,7 +138,7 @@ describe('dom mutations', () => {
 
     mergeCaptions($);
 
-    expect($.xml()).toContain('<h5><p>A Wonderful Title</p></h5>');
+    expect($.xml()).toContain('<h6><em>A Wonderful Title</em></h6>');
   });
 
   test('should mergeCaptions without title', () => {
