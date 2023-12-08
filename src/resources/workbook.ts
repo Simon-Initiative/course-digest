@@ -179,17 +179,15 @@ export class WorkbookPage extends Resource {
     const bibEntries: Map<string, any> = new Map<string, any>();
     xml = convertBibliographyEntries($, bibEntries);
 
-    const bibrefs: number[] = [];
-
+    const citedRefs: string[] = [];
+    // rewrite cites to reference bibRef resources
     $('cite').each((i: any, elem: any) => {
-      const entry = $(elem).attr('entry');
-      const bibRef = bibEntries.get(entry);
+      const entryId = $(elem).attr('entry');
+      const bibRef = bibEntries.get(entryId);
       if (bibRef) {
-        bibrefs.push(bibRef.id);
+        citedRefs.push(bibRef.id); // duplicates allowed
         $(elem).replaceWith(
-          `<cite id="${entry}" bibref="${
-            bibEntries.get(entry).id
-          }">[citation]</cite>`
+          `<cite id="${entryId}" bibref="${bibRef.id}">[citation]</cite>`
         );
       } else {
         $(elem).remove();
@@ -197,9 +195,25 @@ export class WorkbookPage extends Resource {
     });
     // Also include any uncited refs. Handles case we've seen of references
     // listed but only cited in text as Smith (1984) w/o citation links
-    bibEntries.forEach((bibEntry) => {
-      if (!bibrefs.includes(bibEntry.id)) bibrefs.push(bibEntry.id);
-    });
+    const uncitedRefs = [...bibEntries.values()].filter(
+      (bibRef) => !citedRefs.includes(bibRef.id)
+    );
+    if (uncitedRefs.length > 0) {
+      // create <reference> block to be turned into instructor-only content group
+      let refHtml = `<references>
+        <p><em>References</em></p>
+        <p>Authors: Use this section to include citations for works to be included 
+        in the reference list generated for this page that are not already footnoted above. 
+        Students will not see any text here so any form may be used.</p>`;
+      uncitedRefs.forEach((bibRef) => {
+        citedRefs.push(bibRef.id);
+        refHtml += `<p>${
+          bibRef.content.data[0].title
+        } <cite id="${guid()}" bibref="${bibRef.id}">[citation]</cite></p>`;
+      });
+      refHtml += '</references>';
+      $('body').append(refHtml);
+    }
 
     const objectives: TorusResource[] = [];
     $('objectives objective').each((i: any, elem: any) => {
@@ -238,7 +252,7 @@ export class WorkbookPage extends Resource {
             (o: any) => o.idref
           );
         }
-        page.content = { model, bibrefs };
+        page.content = { model, bibrefs: citedRefs };
         page.title = r.children[0].title;
 
         resolve([
@@ -374,6 +388,15 @@ export function introduceStructuredContent(content: Element[]): Element[] {
           'example'
         ),
       ];
+    }
+
+    if (e.type === 'references') {
+      const refGroup = wrapContentInGroup([
+        { type: 'content', children: e.children },
+      ]);
+      (refGroup as any).audience = 'instructor';
+
+      return [...u, refGroup];
     }
 
     if (isResourceGroup(e)) {
