@@ -199,12 +199,12 @@ export class WorkbookPage extends Resource {
       (bibRef) => !citedRefs.includes(bibRef.id)
     );
     if (uncitedRefs.length > 0) {
-      // create <reference> block to be turned into instructor-only content group
+      // create <references> block to be turned into instructor-only content group
       let refHtml = `<references>
         <p><em>References</em></p>
-        <p>Authors: Use this section to include citations for works to be included 
-        in the reference list generated for this page that are not already footnoted above. 
-        Students will not see any text here so any form may be used.</p>`;
+        <p>Authors: Use this instructor-only section to include citations for works to be added
+        to the reference list generated for this page. Students will only see
+        the reference list so the text used here is not significant.</p>`;
       uncitedRefs.forEach((bibRef) => {
         citedRefs.push(bibRef.id);
         refHtml += `<p>${
