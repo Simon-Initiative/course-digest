@@ -36,13 +36,14 @@ export function convert(
     let $ = DOM.read(file, { normalizeWhitespace: false });
     item.restructurePreservingWhitespace($);
 
-    // One course included Unicode nbsp chars in xml source escaped as &#160; These chars might be included as
-    // &#xA0 or directly embedded as utf8 chars as well. Cheerio decodes escapes but its whitespace normalization
-    // erroneously treats nbsp chars as spaces, collapsing successive nbsp chars into a single normal space so
-    // they get lost. Here we work around this cheerio bug by ensuring these are encoded as &nbsp; before next
-    // (normalizing) parse. Note we are not relying on cheerio to decode &nbsp; this works only because toJSON
-    // applies our own nbsp-aware decoding to text, allowing for cheerio encoding of ampersands.
-    // Code relies on observed fact that first pass output html always encodes nbsp chars as &#xA0.
+    // One course included Unicode nbsp chars in xml source escaped as &#160; NBSP chars might be included as
+    // &#xA0 or directly embedded as utf8 chars as well. Our version of Cheerio handles these, but its
+    // whitespace normalization erroneously treats nbsp chars as spaces in xmlMode, collapsing successive nbsp
+    // chars into a single normal space so they get lost. Work around this cheerio bug by ensuring these are
+    // encoded as &nbsp; before next (whitespace normalizing) parse. Note we are not relying on cheerio to
+    // decode &nbsp; (nbsp is not automatically defined in XML). This works only because toJSON applies our
+    // own nbsp-aware decoding to text items after allowing for cheerio encoding of ampersands.
+    // Code also relies on observed fact that first pass output html always encodes nbsp chars as &#xA0.
     const fixedHtml = replaceAll($.html(), '&#xA0;', '&nbsp;');
 
     const tmpobj = tmp.fileSync();
