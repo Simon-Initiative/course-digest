@@ -20,7 +20,7 @@ import {
   process as processCustomDnd,
 } from './questions/custom-dnd';
 import { cata } from './questions/cata';
-import { buildMulti } from './questions/multi';
+import { buildMulti, buildResponseMulti } from './questions/multi';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
@@ -414,6 +414,9 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_multi_input') {
     return [buildMulti(question), []];
   }
+  if (subType === 'oli_response_multi') {
+    return [buildResponseMulti(question), []];
+  }
   if (subType === 'oli_custom_dnd') {
     const multipart = buildMulti(question, true, true);
     return processCustomDnd(multipart, baseFileName);
@@ -452,10 +455,6 @@ export function toActivity(
   activity.id = legacyId + '-' + question.id;
   // provisional title, may be adjusted by caller w/more context
   activity.title = activity.id;
-
-  const result = Common.getDescendants(question.children, 'response_mult');
-  if (result.length > 0)
-    console.log(question.id + ' unsupported element: response_mult ');
 
   const [content, imageReferences] = buildModel(
     subType,
@@ -545,6 +544,7 @@ type ItemTypes =
   | 'oli_short_answer'
   | 'oli_ordering'
   | 'oli_multi_input'
+  | 'oli_response_multi'
   | 'oli_likert'
   | 'oli_image_hotspot';
 
@@ -583,7 +583,8 @@ export function determineSubType(question: any): ItemTypes {
       return 'oli_custom_dnd';
     }
 
-    return 'oli_multi_input';
+    const mults = Common.getDescendants(question.children, 'response_mult');
+    return mults.length > 0 ? 'oli_response_multi' : 'oli_multi_input';
   }
 
   const likert_scale = Common.getChild(question.children, 'likert_scale');

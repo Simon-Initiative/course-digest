@@ -1,10 +1,8 @@
-// Assemble the Torus representation of a multi-input activity from
-
 import { guid, replaceAll } from 'src/utils/common';
-
 import * as Common from './common';
 import { convertCatchAll } from './common';
 
+// Assemble the Torus representation of a multi-input activity from
 // a JSON representation of the Formative Legacy model of this question type
 export function buildMulti(
   question: any,
@@ -292,7 +290,7 @@ function buildDropdownPart(part: any, i: number, ignorePartId: boolean) {
 
   // May be undefined if parts implicitly aligned w/inputs by ordinal position
   const firstResponseInputValue = responses[0]?.input;
-  const id =
+  const partId =
     part.id !== undefined && part.id !== null && !ignorePartId
       ? part.id
       : // take part id from input attr if exists, else generate one
@@ -301,13 +299,14 @@ function buildDropdownPart(part: any, i: number, ignorePartId: boolean) {
       : 'part' + (i + 1);
 
   return {
-    id,
+    id: partId,
     responses: responses.map((r: any) => {
-      const m = replaceAll(r.match, '\\*', '.*');
+      const m = convertCatchAll(r.match);
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: m === '.*' ? `input like {${m}}` : `input like {${id + '_' + m}}`,
+        rule:
+          m === '.*' ? `input like {.*}` : `input like {${partId + '_' + m}}`,
         legacyMatch: m,
         feedback: {
           id: guid(),
@@ -352,13 +351,17 @@ const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
 // legacy match value for text input is either special wildcard *
 // a literal string to be matched; or, rarely, /regexp/
 // convert to torus rule, handling case_sensitive setting from input
-export function matchToRule(match: string, input: any, type: any) {
+export function inputMatchToRule(
+  match: string,
+  case_sensitive: string,
+  type: any
+) {
   let m = match;
 
   // convert * to standard regexp
   if (match === '*') {
     m = '/.*/';
-  } else if (isRegExp(m) && input.case_sensitive === 'false') {
+  } else if (isRegExp(m) && case_sensitive === 'false') {
     // if it matters, modify regexp match to be case insensitive
     if (hasCasedChars(m)) m = `/(?i)${getRegExp(m)}/`;
   }
@@ -367,7 +370,7 @@ export function matchToRule(match: string, input: any, type: any) {
   let operator;
   if (isRegExp(m)) operator = 'like';
   else if (type === 'numeric') operator = '=';
-  else if (input.case_sensitive === 'false') operator = 'iequals';
+  else if (case_sensitive === 'false') operator = 'iequals';
   else operator = 'equals';
 
   return `input ${operator} {${escapeInput(matchArg)}}`;
@@ -390,7 +393,7 @@ export function buildInputPart(
       const item: any = {
         id: guid(),
         score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: matchToRule(r.match, input, type),
+        rule: inputMatchToRule(r.match, input.case_sensitive, type),
         legacyMatch: cleanedMatch,
         feedback: {
           id: guid(),
@@ -414,3 +417,205 @@ export function buildInputPart(
     explanation: Common.maybeBuildPartExplanation(responses),
   };
 }
+
+// Build a response_multi question. Similar to multi-input, but each part subsumes a *set* of
+// inputs, using response_mult response rules which match sets of responses over those targets.
+export function buildResponseMulti(question: any) {
+  // collect list of legacy input items
+  const items = question.children.filter((c: any) =>
+    ['fill_in_the_blank', 'text', 'numeric'].includes(c.type)
+  );
+
+  // ensure all parts have ids and target id lists
+  const parts = Common.getChildren(question.children, 'part');
+  parts.forEach((p: any, i: number) => {
+    if (!p.id) p.id = 'part' + (i + 1);
+    // single part covering all inputs can omit target id list
+    if (!p.targets) {
+      if (parts.length != 1)
+        console.log(`response_mult missing targets list on part ${p.id}`);
+      else p.targets = items.map((i: any) => i.id).join(',');
+    }
+  });
+
+  // build torus inputs from legacy items, collecting associated torus choices
+  const inputs: any[] = [];
+  const choices: any[] = [];
+  items.forEach((item: any) => {
+    const [input, inputChoices] = toResponseMultiInput(item, parts);
+    inputs.push(input);
+    if (inputChoices) inputChoices.forEach((c: any) => choices.push(c));
+  });
+
+  // buildStem handles input ref replacement in question stem
+  const stem = buildStem(question, inputs, true);
+
+  // walk the parts, building torus parts with multi response rules
+  const torusParts = parts.map((p: any) =>
+    toResponseMultiPart(p, items, choices)
+  );
+
+  // set transformations particularly shuffle
+  const transformationElement = Common.getChild(
+    question.children,
+    'transformation'
+  );
+  const transformations = transformationElement ? [transformationElement] : [];
+  // Torus can only shuffle per-part, not per input, so only apply if ALL dropdown part inputs shuffled
+  const findInput = (id: string) => inputs.find((inp: any) => inp.id === id);
+  torusParts.forEach((p: any) => {
+    const partDropdowns = p.targets
+      .map(findInput)
+      .filter((inp: any) => inp && inp.type === 'dropdown');
+    if (partDropdowns.every((inp: any) => inp.shuffle))
+      transformations.push(Common.shufflePartTransformation(p.id));
+  });
+
+  return {
+    stem,
+    choices,
+    inputs,
+    multiInputsPerPart: true,
+    submitPerPart: true,
+    authoring: {
+      targeted: [],
+      parts: torusParts,
+      transformations: transformations,
+      previewText: '',
+    },
+  };
+}
+
+// create torus input w/any associated choices from a legacy response_mult input item
+const toResponseMultiInput = (item: any, parts: any[]) => {
+  // find the part containing this input. targets is comma-delimited string listing ids
+  let part = parts.find((p: any) => p.targets.split(',').includes(item.id));
+  if (part === undefined) {
+    console.log(`part not found for ${item.type} item: ${item.id}`);
+    part = { id: 'unknown' };
+  }
+
+  const inputType = item.type === 'fill_in_the_blank' ? 'dropdown' : item.type;
+  const input: any = { id: item.id, partId: part.id, inputType };
+  let choices;
+  if (item.type === 'fill_in_the_blank') {
+    input.shuffle = item.shuffle;
+    // torus dropdowns reference choices by id from a list of all choices in activity.
+    // Regular multi-inputs prepend partID_ as prefix to _choiceID to ensure choiceIDs
+    // unique within activity. Because response_multi can have multiple inputs per part,
+    // we use inputID for that purpose on assumption inputIds must be unique over question.
+    // Note must rewrite dropdown matching rules to use same qualified choice ids.
+    choices = buildChoices(
+      { children: [item] }, // question structure used by buildChoices
+      input.id,
+      'fill_in_the_blank'
+    );
+    input.choiceIds = choices.map((c: any) => c.id);
+  } else input.size = item.size;
+
+  return [input, choices];
+};
+
+// create torus part from a legacy response_mult part
+const toResponseMultiPart = (part: any, items: any[], choices: any[]) => {
+  // A single-input part may have regular responses, not response_mults
+  const responses = [
+    ...Common.getChildren(part.children, 'response_mult'),
+    ...Common.getChildren(part.children, 'response'),
+  ];
+  const hints = Common.getChildren(part.children, 'hint');
+  const skillrefs = Common.getChildren(part.children, 'skillref');
+
+  return {
+    id: part.id,
+    targets: part.targets.split(','),
+    responses: responses.map((r: any) =>
+      toResponseMultiResponse(r, items, choices)
+    ),
+    hints: Common.ensureThree(
+      hints.map((r: any) => ({
+        id: guid(),
+        content: Common.ensureParagraphs(r.children),
+      }))
+    ),
+    objectives: skillrefs.map((s: any) => s.idref),
+    scoringStrategy: 'average',
+    explanation: Common.maybeBuildPartExplanation(responses),
+  };
+};
+
+// r is a single response element, normally
+//    <response_mult>
+//      <match match=""..." input="..."/>
+///     <match ... />
+// But for a single-input part we may get regular response element
+//    <response match=".." input="...>
+// We build a response mult style rule even for single response
+const toResponseMultiResponse = (r: any, items: any[], choices: any[]) => {
+  const matches =
+    r.type === 'response_mult' ? Common.getChildren(r.children, 'match') : [r];
+  const matchStyle = r.type === 'response_mult' ? r.match_style : 'all';
+
+  const rule = compoundRule(matchStyle, matches, items);
+
+  const response: any = {
+    id: guid(),
+    score: r.score === undefined ? 0 : parseFloat(r.score),
+    rule,
+    matchStyle: r.match_style,
+    // list only input refs used in rule, as we may have pruned wildcards
+    inputRefs: getRuleInputs(rule),
+    legacyMatch: 'response_mult',
+    feedback: {
+      id: guid(),
+      content: Common.getFeedbackModel(r),
+    },
+  };
+  const showPage = Common.getBranchingTarget(r);
+  if (showPage !== undefined) {
+    response.showPage = showPage;
+  }
+  return response;
+};
+
+// Build a compound rule from style and list of response_mult match elements
+// Each match element has a match string and input id to apply it to
+const compoundRule = (match_style: string, matches: any, items: any[]) => {
+  const dropdownMatchToRule = (matchStr: string, inputId: string) =>
+    // map legacy choice id in match string to torus input-qualified choice id
+    matchStr === '*'
+      ? `input like {.*}`
+      : `input like {${inputId + '_' + matchStr}}`;
+
+  const inputRules = matches.map((m: any) => {
+    const item = items.find((item: any) => item.id === m.input);
+    const inputRule =
+      item.type === 'fill_in_the_blank'
+        ? dropdownMatchToRule(m.match, m.input)
+        : inputMatchToRule(m.match, item.case_sensitive, item.type);
+    // must change 'input op {foo}' to 'input_ref_ID op {foo}'
+    return inputRule.replace('input ', `input_ref_${m.input} `);
+  });
+
+  // Wildcard input rules often included in multi-item rulesets for completeness,
+  // e.g input1=A input2=B input3=*, This is usually equivalent to leaving wildcard out, and
+  // torus interface doesn't handle wildcard rule well, so optimize by removing them.
+  // Assumes no conflicting rules for same input like (input1=A || input1=*)
+  // !!! Not equivalent if wildcard match requires SOME input while input may be left unfilled.
+  // Have seen 3-item questions where input3 is optional: correct response leaves out input3 ,
+  // and wildcard match on 3 used to detect error of including any response to 3.
+  const nonCatchAllRules = inputRules.filter((r: string) => !r.includes('.*'));
+  const cleanedRules =
+    nonCatchAllRules.length > 0 && match_style != 'none'
+      ? nonCatchAllRules
+      : inputRules;
+
+  // combine the base rules into compound torus rule
+  const joined = cleanedRules.join(match_style === 'all' ? ' && ' : ' || ');
+  return match_style === 'none' ? `!(${joined})` : joined;
+};
+
+const getRuleInputs = (r: string) => [
+  // an "any" rule might include multiple rules for same input, so use Set to remove duplicates
+  ...new Set(r.match(/(?<=input_ref_)[^ ]+/g)),
+];
