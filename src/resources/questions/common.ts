@@ -259,10 +259,16 @@ const getParts = (question: any): any[] =>
   question.children.filter((c: any) => c.type === 'part');
 
 export function getFeedbackModel(response: any) {
-  const feedback =
+  let feedback =
     response.children !== undefined
       ? getChild(response.children, 'feedback')
       : undefined;
+
+  // odd case seen on responses generated for mcq's on surveys: feedback
+  // content is direct child of response, not wrapped in <feedback> element
+  if (feedback === undefined && response.children.length > 0)
+    feedback = response.children[0];
+
   if (feedback === undefined) {
     return [
       {
