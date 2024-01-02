@@ -1,4 +1,4 @@
-import { guid, replaceAll } from 'src/utils/common';
+import { guid } from 'src/utils/common';
 import * as Common from './common';
 import { convertCatchAll } from './common';
 
@@ -451,9 +451,7 @@ export function buildResponseMulti(question: any) {
   const stem = buildStem(question, inputs, true);
 
   // walk the parts, building torus parts with multi response rules
-  const torusParts = parts.map((p: any) =>
-    toResponseMultiPart(p, items, choices)
-  );
+  const torusParts = parts.map((p: any) => toResponseMultiPart(p, items));
 
   // set transformations particularly shuffle
   const transformationElement = Common.getChild(
@@ -517,7 +515,7 @@ const toResponseMultiInput = (item: any, parts: any[]) => {
 };
 
 // create torus part from a legacy response_mult part
-const toResponseMultiPart = (part: any, items: any[], choices: any[]) => {
+const toResponseMultiPart = (part: any, items: any[]) => {
   // A single-input part may have regular responses, not response_mults
   const responses = [
     ...Common.getChildren(part.children, 'response_mult'),
@@ -529,9 +527,7 @@ const toResponseMultiPart = (part: any, items: any[], choices: any[]) => {
   return {
     id: part.id,
     targets: part.targets.split(','),
-    responses: responses.map((r: any) =>
-      toResponseMultiResponse(r, items, choices)
-    ),
+    responses: responses.map((r: any) => toResponseMultiResponse(r, items)),
     hints: Common.ensureThree(
       hints.map((r: any) => ({
         id: guid(),
@@ -551,7 +547,7 @@ const toResponseMultiPart = (part: any, items: any[], choices: any[]) => {
 // But for a single-input part we may get regular response element
 //    <response match=".." input="...>
 // We build a response mult style rule even for single response
-const toResponseMultiResponse = (r: any, items: any[], choices: any[]) => {
+const toResponseMultiResponse = (r: any, items: any[]) => {
   const matches =
     r.type === 'response_mult' ? Common.getChildren(r.children, 'match') : [r];
   const matchStyle = r.type === 'response_mult' ? r.match_style : 'all';
