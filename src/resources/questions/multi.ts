@@ -1,6 +1,7 @@
 import { guid } from 'src/utils/common';
 import * as Common from './common';
 import { convertCatchAll } from './common';
+import { andRules, orRules } from './rules';
 
 // Assemble the Torus representation of a multi-input activity from
 // a JSON representation of the Formative Legacy model of this question type
@@ -608,7 +609,10 @@ const compoundRule = (match_style: string, matches: any, items: any[]) => {
       : inputRules;
 
   // combine the base rules into compound torus rule
-  const joined = cleanedRules.join(match_style === 'all' ? ' && ' : ' || ');
+  const joined =
+    match_style === 'all'
+      ? andRules(...cleanedRules)
+      : orRules(...cleanedRules);
   return match_style === 'none' ? `!(${joined})` : joined;
 };
 
