@@ -660,7 +660,7 @@ export class Formative extends Resource {
     $: any,
     projectSummary: ProjectSummary
   ): Promise<(TorusResource | string)[]> {
-    failIfPresent($, ['response_mult', 'grading_criteria']);
+    failIfPresent($, ['grading_criteria']);
 
     failIfHasValue($, 'content', 'available', 'instructor_only');
     failIfHasValue($, 'content', 'available', 'feedback_only');
