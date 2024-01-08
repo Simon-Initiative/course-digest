@@ -474,7 +474,7 @@ export function buildResponseMulti(question: any) {
     stem,
     choices,
     inputs,
-    multiInputsPerPart: true,
+    multInputsPerPart: true,
     submitPerPart: true,
     authoring: {
       targeted: [],
@@ -602,7 +602,9 @@ const compoundRule = (match_style: string, matches: any, items: any[]) => {
   // Have seen 3-item questions where input3 is optional: correct response leaves out input3 ,
   // and wildcard match on 3 used to detect error of including any response to 3. But torus
   // does not support this use of wildcards, so such questions will have to change in any case.
-  const nonCatchAllRules = inputRules.filter((r: string) => !r.includes('.*'));
+  const nonCatchAllRules = inputRules.filter(
+    (r: string) => !r.endsWith(' {.*}')
+  );
   const cleanedRules =
     nonCatchAllRules.length > 0 && match_style != 'none'
       ? nonCatchAllRules
