@@ -126,10 +126,27 @@ export function buildChoices(
   const choices = Common.getChild(question.children, from).children;
 
   return choices.map((c: any) => ({
-    content: c.children,
+    content: fixChoiceContent(c.children),
     id: partId + '_' + c.value,
   }));
 }
+
+// some legacy choices use mathML as dropdown choice content, though only text gets rendered by browser
+const fixChoiceContent = (elements: any[]): any[] => {
+  return elements
+    .map((e) =>
+      e.type === 'formula_inline' && e.subtype === 'mathml'
+        ? // return plain text piece with tags stripped
+          {
+            text: e.src
+              .trim()
+              .replace(/>\s+</gi, '><') // strip white space between tags
+              .replace(/(<([^>]+)>)/gi, ''),
+          }
+        : e
+    )
+    .filter((e) => !Common.isBlankText(e));
+};
 
 function ensureAtLeastOneCorrectResponse(part: any) {
   const responses = part.responses;
