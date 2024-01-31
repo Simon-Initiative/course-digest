@@ -6,6 +6,7 @@ import { decode } from 'html-entities';
 import { parseMathJaxFormulas } from './mathjax-parser';
 import { ProjectSummary } from 'src/project';
 import { unescapeWhiteSpace } from 'src/resources/common';
+import * as cheerio from 'cheerio';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -333,14 +334,37 @@ export function toJSON(
         }
       };
 
+      const fixSelfClosing = (xml: string): string => {
+        return cheerio
+          .load(
+            xml,
+            Object.assign(
+              {},
+              {
+                normalizeWhitespace: false,
+                xmlMode: true,
+                selfClosingTags: false,
+                // avoid re-encoding Unicode symbols as numeric escapes:
+                decodeEntities: false,
+              },
+              {}
+            )
+          )
+          .html();
+      };
+
       const unescapeFormulaSrc = () => {
         if (
           (tag === 'formula' || tag === 'formula_inline') &&
-          top().subtype !== 'richtext' &&
-          top().subtype !== 'mathml' // src is XML, leave entities encoded
-        ) {
-          top().src = decodeEntities(top().src);
-        }
+          top().subtype !== 'richtext'
+        )
+          if (top().subtype === 'mathml') {
+            // src is XML, leave entities encoded
+            // but clean self-closing tags which can cause problems
+            top().src = fixSelfClosing(top().src);
+          } else {
+            top().src = decodeEntities(top().src);
+          }
       };
 
       const unescapeVariableData = () => {
