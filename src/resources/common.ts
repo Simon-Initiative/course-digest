@@ -157,6 +157,9 @@ export function standardContentManipulations($: any) {
     DOM.rename($, `${e} code`, 'em');
   });
 
+  // One course wrapped mathML in code for style; won't work in torus block code box
+  DOM.rename($, 'code:has(m\\:math)', 'p');
+
   // Certain constructs have to be converted into an alternate
   // representation for how Torus supports them
   DOM.flattenNestedSections($);
