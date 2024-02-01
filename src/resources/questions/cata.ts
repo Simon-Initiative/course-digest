@@ -164,13 +164,13 @@ const updateResponseRules = (model: any) => {
 };
 
 export function buildCATAPart(question: any) {
-  const responses = Common.getChild(question.children, 'part').children.filter(
+  const responses = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'response'
   );
-  const hints = Common.getChild(question.children, 'part').children.filter(
+  const hints = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'hint'
   );
-  const skillrefs = Common.getChild(question.children, 'part').children.filter(
+  const skillrefs = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'skillref'
   );
 
@@ -216,10 +216,7 @@ export function buildCATAPart(question: any) {
 export function cata(question: any, from = 'multiple_choice') {
   const choices = Common.buildChoices(question, from);
   const choiceIds = choices.map((c: any) => c.id);
-  const transformationElement = Common.getChild(
-    question.children,
-    'transformation'
-  );
+  const transformationElement = Common.getChild(question, 'transformation');
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
   const model = {

@@ -3,16 +3,12 @@ import { guid } from 'src/utils/common';
 import * as XML from '../../utils/xml';
 import { isInlineTag } from 'src/utils/dom';
 
-export function getChild(collection: any, named: string) {
-  const items = collection.filter((e: any) => named == e.type);
-  if (items.length > 0) {
-    return items[0];
-  }
-  return undefined;
+export function getChild(parent: any, named: string) {
+  return parent.children.find((e: any) => named == e.type);
 }
 
-export function getChildren(collection: any, named: string) {
-  return collection.filter((e: any) => named == e.type);
+export function getChildren(parent: any, named: string) {
+  return parent.children.filter((e: any) => named == e.type);
 }
 
 export function getDescendants(collection: any[], named: string): any[] {
@@ -188,7 +184,7 @@ export function ensureNoEmptyChildren(children: any) {
 }
 
 export function buildStem(question: any) {
-  const stem = getChild(question.children, 'stem');
+  const stem = getChild(question, 'stem');
   return {
     content: wrapLooseText(ensureParagraphs(stem.children)),
   };
@@ -219,7 +215,7 @@ export function shufflePartTransformation(partId: string) {
 }
 
 export function buildChoices(question: any, from = 'multiple_choice') {
-  const choices = getChild(question.children, from).children as any[];
+  const choices = getChild(question, from).children as any[];
 
   return choices.map((c: any) => ({
     content: ensureParagraphs(c.children),
@@ -243,8 +239,8 @@ const hasShortAnswer = (question: any) =>
 
 const shortAnswerExplanationOrDefaultModel = (question: any) => {
   if (hasShortAnswer(question)) {
-    const firstPart = getChild(question.children, 'part');
-    const explanation = getChild(firstPart.children, 'explanation');
+    const firstPart = getChild(question, 'part');
+    const explanation = getChild(firstPart, 'explanation');
 
     if (explanation !== undefined) {
       return wrapInlinesWithParagraphs(explanation.children);
@@ -261,7 +257,7 @@ const getParts = (question: any): any[] =>
 export function getFeedbackModel(response: any) {
   let feedback =
     response.children !== undefined
-      ? getChild(response.children, 'feedback')
+      ? getChild(response, 'feedback')
       : undefined;
 
   // odd case seen on responses generated for mcq's on surveys: feedback
@@ -310,7 +306,7 @@ export const maybeBuildPartExplanation = (responses: any[]) => {
 };
 
 export function getPartIds(question: any): string[] {
-  return getChildren(question.children, 'part').map((p: any) =>
+  return getChildren(question, 'part').map((p: any) =>
     p.id === undefined ? guid() : p.id
   );
 }
@@ -327,7 +323,7 @@ function getGradingApproach(question: any) {
 }
 
 export function buildTextPart(id: string, question: any) {
-  const part = getChild(question.children, 'part');
+  const part = getChild(question, 'part');
   const responses = part.children.filter((p: any) => p.type === 'response');
   const hints = part.children.filter((p: any) => p.type === 'hint');
   const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
