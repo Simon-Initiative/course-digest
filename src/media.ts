@@ -13,6 +13,7 @@ import {
   LayoutFile,
 } from './resources/questions/custom-dnd';
 import { pathToBundleUrl } from './resources/webcontent';
+import { replaceAll } from './utils/common';
 
 export interface MediaSummary {
   mediaItems: { [k: string]: MediaItem };
@@ -145,6 +146,18 @@ export function transformToFlatDirectory(
           );
         } else if ($(elem)[0].name === 'link') {
           $(elem).attr('href', url);
+        } else if (
+          $(elem).attr('style') &&
+          $(elem).attr('style').includes(`url('${assetReference}')`)
+        ) {
+          $(elem).attr(
+            'style',
+            replaceAll(
+              $(elem).attr('style'),
+              escapeRegex(`url('${assetReference}')`),
+              `url('${url}')`
+            )
+          );
         } else {
           $(elem).attr('src', url);
         }
@@ -154,6 +167,8 @@ export function transformToFlatDirectory(
   });
   return modified;
 }
+
+const escapeRegex = (s: string) => s.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 
 /* Replaced by webBundle mechanism
 
@@ -588,6 +603,17 @@ function findFromDOM(
   $('dataset').each((i: any, elem: any) => {
     if ($(elem).text().includes('webcontent')) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+    }
+  });
+
+  // mathML elements can have image refs in inline style sheets
+  $('m\\:math *[style]').each((i: any, elem: any) => {
+    const urlMatch = $(elem)
+      .attr('style')
+      .match(/url\('([^']+)'\)/);
+    if (urlMatch !== null && isRelativeUrl(urlMatch[1])) {
+      const url = urlMatch[1];
+      paths[url] = [elem, ...$(paths[url])];
     }
   });
 
