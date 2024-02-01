@@ -233,7 +233,7 @@ export function toJSON(
       const ensureDefaultText = (e: string, text: string) => {
         if (tag === e) {
           if (top() && top().children.length === 0) {
-            top().children.push({ type: 'text', text });
+            top().children.push({ text });
           }
         }
       };
@@ -241,7 +241,7 @@ export function toJSON(
       const ensureNotEmpty = (e: string) => {
         if (tag === e) {
           if (top() && top().children.length === 0) {
-            top().children.push({ type: 'text', text: ' ' });
+            top().children.push({ text: ' ' });
           }
         }
       };
@@ -298,7 +298,7 @@ export function toJSON(
             } else if (elementContent.length > 0) {
               top().content = elementContent;
             } else {
-              top().content = [{ type: 'text', text: ' ' }];
+              top().content = [{ text: ' ' }];
             }
           }
         }
@@ -308,7 +308,7 @@ export function toJSON(
         if (tag === 'caption' && stack[stack.length - 2].type === parent) {
           if (stack.length > 1) {
             stack[stack.length - 2].caption = top().children;
-            stack[stack.length - 2].children = [{ type: 'text', text: ' ' }];
+            stack[stack.length - 2].children = [{ text: ' ' }];
           }
         }
       };
@@ -317,7 +317,7 @@ export function toJSON(
         if (tag === 'title' && stack[stack.length - 2].type === parent) {
           if (stack.length > 1) {
             stack[stack.length - 2].title = top().children;
-            stack[stack.length - 2].children = [{ type: 'text', text: ' ' }];
+            stack[stack.length - 2].children = [{ text: ' ' }];
           }
         }
       };

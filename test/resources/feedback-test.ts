@@ -604,7 +604,7 @@ describe('convert feedback', () => {
                 },
                 {
                   type: 'p',
-                  children: [{ type: 'text', text: ' ' }],
+                  children: [{ text: ' ' }],
                   id: expect.any(String),
                 },
               ],
