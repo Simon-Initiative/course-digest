@@ -37,7 +37,7 @@ export function buildMulti(
     }
   }
 
-  const transformation = Common.getChild(question.children, 'transformation');
+  const transformation = Common.getChild(question, 'transformation');
   if (transformation !== undefined) transformations.push(transformation);
 
   torusParts.reduce((seen, part) => {
@@ -92,7 +92,7 @@ export function buildStem(
   inputs: any[],
   skipInputRefValidation: boolean
 ) {
-  const stem = Common.getChild(question.children, 'stem');
+  const stem = Common.getChild(question, 'stem');
   const model = Common.wrapLooseText(Common.ensureParagraphs(stem.children));
   const foundInputs: any = {};
   const updated = updateInputRefs(model, foundInputs);
@@ -123,7 +123,7 @@ export function buildChoices(
   partId: string,
   from = 'fill_in_the_blank'
 ) {
-  const choices = Common.getChild(question.children, from).children;
+  const choices = Common.getChild(question, from).children;
 
   return choices.map((c: any) => ({
     content: fixChoiceContent(c.children),
@@ -446,7 +446,7 @@ export function buildResponseMulti(question: any) {
   );
 
   // ensure all parts have ids and target id lists
-  const parts = Common.getChildren(question.children, 'part');
+  const parts = Common.getChildren(question, 'part');
   parts.forEach((p: any, i: number) => {
     if (!p.id) p.id = 'part' + (i + 1);
     // single part covering all inputs can omit target id list
@@ -473,10 +473,7 @@ export function buildResponseMulti(question: any) {
   const torusParts = parts.map((p: any) => toResponseMultiPart(p, items));
 
   // set transformations particularly shuffle
-  const transformationElement = Common.getChild(
-    question.children,
-    'transformation'
-  );
+  const transformationElement = Common.getChild(question, 'transformation');
   const transformations = transformationElement ? [transformationElement] : [];
   // Torus can only shuffle per-part, not per input, so only apply if ALL dropdown part inputs shuffled
   const findInput = (id: string) => inputs.find((inp: any) => inp.id === id);
@@ -537,11 +534,11 @@ const toResponseMultiInput = (item: any, parts: any[]) => {
 const toResponseMultiPart = (part: any, items: any[]) => {
   // A single-input part may have regular responses, not response_mults
   const responses = [
-    ...Common.getChildren(part.children, 'response_mult'),
-    ...Common.getChildren(part.children, 'response'),
+    ...Common.getChildren(part, 'response_mult'),
+    ...Common.getChildren(part, 'response'),
   ];
-  const hints = Common.getChildren(part.children, 'hint');
-  const skillrefs = Common.getChildren(part.children, 'skillref');
+  const hints = Common.getChildren(part, 'hint');
+  const skillrefs = Common.getChildren(part, 'skillref');
 
   return {
     id: part.id,
@@ -568,7 +565,7 @@ const toResponseMultiPart = (part: any, items: any[]) => {
 // We build a response mult style rule even for single response
 const toResponseMultiResponse = (r: any, items: any[]) => {
   const matches =
-    r.type === 'response_mult' ? Common.getChildren(r.children, 'match') : [r];
+    r.type === 'response_mult' ? Common.getChildren(r, 'match') : [r];
   const matchStyle = r.type === 'response_mult' ? r.match_style : 'all';
 
   const rule = compoundRule(matchStyle, matches, items);

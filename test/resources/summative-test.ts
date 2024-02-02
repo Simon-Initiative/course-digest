@@ -305,7 +305,7 @@ describe('convert summative', () => {
                       content: [
                         {
                           type: 'p',
-                          children: [{ type: 'text', text: ' ' }],
+                          children: [{ text: ' ' }],
                           id: 'c9d611862b9f4d7f9fa7d554373bf9aa',
                         },
                       ],
@@ -321,7 +321,7 @@ describe('convert summative', () => {
                       content: [
                         {
                           type: 'p',
-                          children: [{ type: 'text', text: ' ' }],
+                          children: [{ text: ' ' }],
                           id: 'e047a90c8651468bb8c09e6b99f8d681',
                         },
                       ],

@@ -36,13 +36,13 @@ function shouldUseSimpleModel(responses: any[]) {
 }
 
 function buildMCQPart(question: any) {
-  const responses = Common.getChild(question.children, 'part').children.filter(
+  const responses = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'response'
   );
-  const hints = Common.getChild(question.children, 'part').children.filter(
+  const hints = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'hint'
   );
-  const skillrefs = Common.getChild(question.children, 'part').children.filter(
+  const skillrefs = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'skillref'
   );
 
@@ -121,13 +121,13 @@ function buildMCQPart(question: any) {
 }
 
 function buildOrderingPart(question: any) {
-  const responses = Common.getChild(question.children, 'part').children.filter(
+  const responses = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'response'
   );
-  const hints = Common.getChild(question.children, 'part').children.filter(
+  const hints = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'hint'
   );
-  const skillrefs = Common.getChild(question.children, 'part').children.filter(
+  const skillrefs = Common.getChild(question, 'part').children.filter(
     (p: any) => p.type === 'skillref'
   );
 
@@ -178,7 +178,7 @@ function buildLikertSeriesItems(question: any) {
 }
 
 function buildLikertItems(question: any) {
-  const stem = Common.getChild(question.children, 'stem');
+  const stem = Common.getChild(question, 'stem');
 
   return [
     {
@@ -218,12 +218,9 @@ function buildLikertParts(question: any, items: any[]) {
 
 function mcq(question: any, type = 'multiple_choice') {
   const part = buildMCQPart(question);
-  const shuffle = Common.getChild(question.children, type).shuffle;
-  const transformationElement = Common.getChild(
-    question.children,
-    'transformation'
-  );
-  const mc = Common.getChild(question.children, type);
+  const shuffle = Common.getChild(question, type).shuffle;
+  const transformationElement = Common.getChild(question, 'transformation');
+  const mc = Common.getChild(question, type);
   const mcqId = mc.id;
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
@@ -253,7 +250,7 @@ function mcq(question: any, type = 'multiple_choice') {
 }
 
 function processImageHotspot(question: any) {
-  const imageHotspot = Common.getChild(question.children, 'image_hotspot');
+  const imageHotspot = Common.getChild(question, 'image_hotspot');
   // uses MCQ model for single selection, CATA model for multiple. Restructuring
   // <hotspot> to <choice> allows leveraging model-building code for those types
   const multiple = imageHotspot.select === 'multiple';
@@ -279,7 +276,7 @@ function processImageHotspot(question: any) {
 }
 
 function getHotspots(imageHotspot: any) {
-  return Common.getChildren(imageHotspot.children, 'choice').map((hs: any) => {
+  return Common.getChildren(imageHotspot, 'choice').map((hs: any) => {
     const hotspot: any = {
       id: hs.value,
       coords: hs.coords.split(',').map(Number),
@@ -292,11 +289,8 @@ function getHotspots(imageHotspot: any) {
 }
 
 function ordering(question: any) {
-  const shuffle = Common.getChild(question.children, 'ordering').shuffle;
-  const transformationElement = Common.getChild(
-    question.children,
-    'transformation'
-  );
+  const shuffle = Common.getChild(question, 'ordering').shuffle;
+  const transformationElement = Common.getChild(question, 'transformation');
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
 
@@ -318,7 +312,7 @@ function ordering(question: any) {
 
   // ordering choices may specify a custom color. Collect any into choiceID=>colorName map
   const colorMap: Map<string, string> = new Map();
-  Common.getChild(question.children, 'ordering')
+  Common.getChild(question, 'ordering')
     .children.filter((c: any) => c.color !== undefined)
     .forEach((c: any) => colorMap.set(c.value, c.color));
   // Include optional map if custom color found, serialized as array of [id, color] pairs
@@ -338,9 +332,9 @@ function ordering(question: any) {
 }
 
 function single_response_text(question: any) {
-  const transformation = Common.getChild(question.children, 'transformation');
+  const transformation = Common.getChild(question, 'transformation');
 
-  const response = Common.getChild(question.children, 'short_answer');
+  const response = Common.getChild(question, 'short_answer');
   const id = response?.id;
 
   const stem = Common.buildStem(question);
@@ -549,18 +543,18 @@ type ItemTypes =
   | 'oli_image_hotspot';
 
 export function determineSubType(question: any): ItemTypes {
-  const mcq = Common.getChild(question.children, 'multiple_choice');
+  const mcq = Common.getChild(question, 'multiple_choice');
 
   if (mcq !== undefined) {
     if (mcq.select && mcq.select === 'multiple') {
       return 'oli_check_all_that_apply';
     }
-    if (Common.getChildren(question.children, 'part').length > 1) {
+    if (Common.getChildren(question, 'part').length > 1) {
       console.warn(
         question.id +
           ' Multi-part multiple choice unsupported; converting to dropdown choices '
       );
-      Common.getChildren(question.children, 'multiple_choice').forEach(
+      Common.getChildren(question, 'multiple_choice').forEach(
         (input: any) => (input.type = 'fill_in_the_blank')
       );
       return 'oli_multi_input';
@@ -568,15 +562,15 @@ export function determineSubType(question: any): ItemTypes {
     return 'oli_multiple_choice';
   }
 
-  const ordering = Common.getChild(question.children, 'ordering');
+  const ordering = Common.getChild(question, 'ordering');
   if (ordering !== undefined) {
     return 'oli_ordering';
   }
 
   if (
-    Common.getChild(question.children, 'numeric') !== undefined ||
-    Common.getChild(question.children, 'text') !== undefined ||
-    Common.getChild(question.children, 'fill_in_the_blank') !== undefined
+    Common.getChild(question, 'numeric') !== undefined ||
+    Common.getChild(question, 'text') !== undefined ||
+    Common.getChild(question, 'fill_in_the_blank') !== undefined
   ) {
     const customTag = findCustomTag(question);
     if (customTag !== undefined && customTag.type === 'custom') {
@@ -587,12 +581,12 @@ export function determineSubType(question: any): ItemTypes {
     return mults.length > 0 ? 'oli_response_multi' : 'oli_multi_input';
   }
 
-  const likert_scale = Common.getChild(question.children, 'likert_scale');
+  const likert_scale = Common.getChild(question, 'likert_scale');
   if (likert_scale !== undefined) {
     return 'oli_likert';
   }
 
-  if (Common.getChild(question.children, 'image_hotspot') !== undefined)
+  if (Common.getChild(question, 'image_hotspot') !== undefined)
     return 'oli_image_hotspot';
 
   // Handle the case where the original question was a multi-input type but it did not
@@ -600,14 +594,14 @@ export function determineSubType(question: any): ItemTypes {
   // create enough input elements (of the correct type) to allow it to convert correctly.
   if (
     question.originalType !== undefined &&
-    Common.getChild(question.children, 'numeric') === undefined &&
-    Common.getChild(question.children, 'text') === undefined
+    Common.getChild(question, 'numeric') === undefined &&
+    Common.getChild(question, 'text') === undefined
   ) {
-    const parts = Common.getChildren(question.children, 'part');
+    const parts = Common.getChildren(question, 'part');
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
-      const firstResponse = Common.getChild(part.children, 'response');
+      const firstResponse = Common.getChild(part, 'response');
       if (firstResponse !== undefined) {
         question.children.push({
           type: question.originalType,

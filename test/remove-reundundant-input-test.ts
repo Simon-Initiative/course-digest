@@ -24,12 +24,12 @@ describe('removeRedundantInputRefs', () => {
     const input = [
       { type: 'input_ref', input: 'redundantId' },
       { type: 'input_ref', input: 'otherId' },
-      { type: 'text', text: 'not an input_ref' },
+      { text: 'not an input_ref' },
     ];
     const result = removeRedundantInputRefs(input, 'redundantId');
     expect(result).toEqual([
       { type: 'input_ref', input: 'otherId' },
-      { type: 'text', text: 'not an input_ref' },
+      { text: 'not an input_ref' },
     ]);
   });
 
@@ -39,7 +39,7 @@ describe('removeRedundantInputRefs', () => {
         type: 'parent',
         children: [
           { type: 'input_ref', input: 'redundantId' },
-          { type: 'text', text: 'not an input_ref' },
+          { text: 'not an input_ref' },
         ],
       },
       { type: 'input_ref', input: 'otherId' },
@@ -48,7 +48,7 @@ describe('removeRedundantInputRefs', () => {
     expect(result).toEqual([
       {
         type: 'parent',
-        children: [{ type: 'text', text: 'not an input_ref' }],
+        children: [{ text: 'not an input_ref' }],
       },
       { type: 'input_ref', input: 'otherId' },
     ]);
