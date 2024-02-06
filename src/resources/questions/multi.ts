@@ -140,7 +140,8 @@ const fixChoiceContent = (elements: any[]): any[] => {
           {
             text: e.src
               .trim()
-              .replace(/>\s+</gi, '><') // strip white space between tags
+              // strip white space between tags, but leave nobreak sp
+              .replace(/>[\n\t\f ]+</gi, '><')
               .replace(/(<([^>]+)>)/gi, ''),
           }
         : e
