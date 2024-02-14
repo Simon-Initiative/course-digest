@@ -106,7 +106,11 @@ export function buildStem(
           type: 'p',
           id: guid(),
           children: [
-            { type: 'input_ref', id: input.id, children: [{ text: '' }] },
+            {
+              type: 'input_ref',
+              id: input.id,
+              children: [{ text: '' }],
+            },
           ],
         });
       }
