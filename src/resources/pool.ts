@@ -142,10 +142,14 @@ const isEmptyContent = (c: any) =>
     c.children[0].children.every(isBlankText));
 
 //
-// Convert a pool section into single merged multi input question
-// Can handle questions of type multi-input, mcq, or response_multi
+// Convert a pool section which may contain multiple questions into
+// a single merged multi-input or response_multi question w/original
+// questions as parts.
+// Can handle questions of type multi-input, mcq, or response_multi only
 //
 export const sectionToQuestion = (s: any): any => {
+  console.log(`converting pool section ${s.id} to question`);
+
   // first collect all the question models in this section
   const pieces: any[] = [];
   s.children.forEach((sc: any) => {
@@ -177,8 +181,7 @@ export const sectionToQuestion = (s: any): any => {
     var nPart = 1;
     qs.forEach((q: any) => {
       // if result is response_multi, convert any regular multi-inputs
-      if (multInputsPerPart && !q.multInputsPerPart)
-        toResponseMulti(q, multInputsPerPart);
+      if (multInputsPerPart && !q.multInputsPerPart) toResponseMulti(q);
 
       // redo each question's ids to ensure unique over whole merged question
       makeUniqueIds(q, nPart);
@@ -189,6 +192,7 @@ export const sectionToQuestion = (s: any): any => {
   // Now merge parts into one big question
   const concatLists = (objs: any[], fn: (obj: any) => any[] | undefined) =>
     objs.flatMap((o) => fn(o) || []);
+
   return {
     stem: { content: concatLists(pieces, (q) => q.stem?.content) },
     choices: concatLists(pieces, (q) => q.choices),
@@ -205,12 +209,13 @@ export const sectionToQuestion = (s: any): any => {
 };
 
 // convert regular multi-input model to response_multi model
-const toResponseMulti = (q: any, multi: boolean) => {
+const toResponseMulti = (q: any) => {
   // rewrite regular multi-input rules to response_multi form
   q.authoring.parts.forEach((part: any) => {
     const inputId = q.inputs.find((inp: any) => inp.partId === part.id)?.id;
-    part.responses.forEach((r: any) =>
-      replaceAll(r.rule, 'input ', `input_ref_${inputId} `)
+    part.responses.forEach(
+      (r: any) =>
+        (r.rule = replaceAll(r.rule, 'input ', `input_ref_${inputId} `))
     );
 
     // also set target list for this part
@@ -232,9 +237,7 @@ const makeUniqueIds = (q: any, nPart: number) => {
       .forEach((t: any) => (t.partId = part.id));
 
     // qualify ids of inputs in this part
-    if (!q.inputs) {
-      console.log('*** question with no inputs! ' + JSON.stringify(q, null, 2));
-    } else {
+    if (q.inputs) {
       q.inputs
         .filter((inp: any) => inp.partId == oldPartId)
         .forEach((inp: any) => {

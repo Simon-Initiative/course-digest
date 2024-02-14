@@ -457,14 +457,9 @@ export function toActivity(
   const [model, imageReferences] = buildModel(subType, question, baseFileName);
   // for pool sections, patch up subType now that we know what type was built
   if (subType === 'pool_section') {
-    console.log(
-      'patching pool_section activity type, model.mult =' +
-        model.multInputsPerPart
-    );
     activity.subType = model.multInputsPerPart
       ? 'oli_response_multi'
       : 'oli_multi_input';
-    console.log('activity subtype now ' + activity.subType);
   }
 
   // collect refs from any internal links in stem content
