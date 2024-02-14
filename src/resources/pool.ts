@@ -252,8 +252,10 @@ const makeUniqueIds = (q: any, nPart: number) => {
                 `input_ref_${idMap.get(oldInputId)} `
               );
             });
-            // replace inputIds in response_multi target input list for this part
-            part.targets = part.targets.map((id: string) => idMap.get(id));
+            // update inputId in part's target list
+            part.targets = part.targets.map((id: string) =>
+              id === oldInputId ? idMap.get(id) : id
+            );
           }
 
           // if dropdown handle dependent choice ids

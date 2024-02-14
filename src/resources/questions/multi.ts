@@ -579,8 +579,6 @@ const toResponseMultiResponse = (r: any, items: any[]) => {
     score: r.score === undefined ? 0 : parseFloat(r.score),
     rule,
     matchStyle: r.match_style,
-    // list only input refs used in rule, as we may have pruned wildcards
-    inputRefs: getRuleInputs(rule),
     legacyMatch: 'response_mult',
     feedback: {
       id: guid(),
@@ -636,8 +634,3 @@ const compoundRule = (match_style: string, matches: any, items: any[]) => {
       : orRules(...cleanedRules);
   return match_style === 'none' ? `!(${joined})` : joined;
 };
-
-const getRuleInputs = (r: string) => [
-  // an "any" rule might include multiple rules for same input, so use Set to remove duplicates
-  ...new Set(r.match(/(?<=input_ref_)[^ ]+/g)),
-];
