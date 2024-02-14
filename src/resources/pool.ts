@@ -178,7 +178,7 @@ export const sectionToQuestion = (s: any): any => {
   // if >1 questions, get them in shape to be merged:
   const qs = pieces.filter((p) => p.type !== 'content');
   if (qs.length > 1) {
-    var nPart = 1;
+    let nPart = 1;
     qs.forEach((q: any) => {
       // if result is response_multi, convert any regular multi-inputs
       if (multInputsPerPart && !q.multInputsPerPart) toResponseMulti(q);
