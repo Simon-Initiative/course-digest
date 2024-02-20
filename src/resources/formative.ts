@@ -26,6 +26,7 @@ import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
 import { ProjectSummary } from 'src/project';
 import { convertCatchAll } from './questions/common';
+import { sectionToQuestion } from './pool';
 
 function usesSimpleModel(responses: any[]) {
   return Common.hasCatchAll(responses) && responses.length <= 2;
@@ -421,6 +422,9 @@ function buildModel(subType: ItemTypes, question: any, baseFileName: string) {
   if (subType === 'oli_image_hotspot') {
     return [processImageHotspot(question)];
   }
+  if (subType === 'pool_section') {
+    return [sectionToQuestion(question), []];
+  }
 
   return [single_response_text(question), []];
 }
@@ -450,21 +454,23 @@ export function toActivity(
   // provisional title, may be adjusted by caller w/more context
   activity.title = activity.id;
 
-  const [content, imageReferences] = buildModel(
-    subType,
-    question,
-    baseFileName
-  );
+  const [model, imageReferences] = buildModel(subType, question, baseFileName);
+  // for pool sections, patch up subType now that we know what type was built
+  if (subType === 'pool_section') {
+    activity.subType = model.multInputsPerPart
+      ? 'oli_response_multi'
+      : 'oli_multi_input';
+  }
 
   // collect refs from any internal links in stem content
-  const links: any[] = Common.getDescendants(content.stem?.content, 'a');
+  const links: any[] = Common.getDescendants(model.stem?.content, 'a');
   links.forEach((a: any) => {
     if (a.idref !== undefined && a.idref !== null) {
       activity.unresolvedReferences.push(a.idref);
     }
   });
 
-  content.authoring.parts.forEach((p: any) => {
+  model.authoring.parts.forEach((p: any) => {
     p.responses = p.responses.map((r: any) => {
       if (r.showPage !== undefined) {
         const replacement = pageIdIndex.findIndex(
@@ -484,7 +490,7 @@ export function toActivity(
     });
   });
 
-  activity.content = content;
+  activity.content = model;
   activity.imageReferences = imageReferences;
   activity.objectives = constructObjectives(
     (activity.content as any).authoring.parts
@@ -540,9 +546,13 @@ type ItemTypes =
   | 'oli_multi_input'
   | 'oli_response_multi'
   | 'oli_likert'
-  | 'oli_image_hotspot';
+  | 'oli_image_hotspot'
+  | 'pool_section';
 
 export function determineSubType(question: any): ItemTypes {
+  // temp subytpe for pool sections to be converted to question
+  if (question.type === 'pool_section') return 'pool_section';
+
   const mcq = Common.getChild(question, 'multiple_choice');
 
   if (mcq !== undefined) {
@@ -626,6 +636,16 @@ export function performRestructure($: any) {
 
   // facilitates processing image hotspot questions:
   DOM.rename($, 'image_hotspot hotspot', 'choice');
+
+  // move any question title into stem
+  $('question title').each((i: any, title: any) =>
+    $(title)
+      .parent()
+      .find('stem')
+      .each((i: any, stem: any) =>
+        $(stem).prepend(`<p><em>${$(title).text().trim()}</em></p>`)
+      )
+  );
 
   migrateVariables($);
 }
@@ -767,11 +787,6 @@ export function processAssessmentModel(
       return a;
     }
     if (item.type === 'selection') {
-      if (item.scope === 'section') {
-        console.warn(
-          'Unsupported feature: section (question group) selection. Migrated assessment will not work.'
-        );
-      }
       if (item.children.length > 0) {
         // track the reference for the tag that will power this selection in Torus
         let tagId: any = null;

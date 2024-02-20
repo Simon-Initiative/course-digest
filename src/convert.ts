@@ -426,6 +426,28 @@ function createContentWithLink(title: string, idref: string) {
   return content;
 }
 
+/* 
+Check activity for input order mismatches and log w/page or pool title
+export const checkActivity = (activity: Activity, page: string) => {
+  if (activity.subType === 'oli_multi_input') {
+    const q: any = activity.content;
+    const inputIds = getDescendants(q.stem.content, 'input_ref').map(
+      (ir) => ir.id
+    );
+    if (
+      inputIds.length > 0 &&
+      q.inputs.some((inp: any, i: number) => inp.id !== inputIds[i])
+    ) {
+      console.log(
+        `mismatch;${page}; ${
+          activity.title
+        };refs: ${inputIds};parts: ${q.inputs.map((i: any) => i.id)}`
+      );
+    }
+  }
+};
+*/
+
 function handleOnePlaceholder(
   entries: any,
   m: any,
@@ -442,6 +464,7 @@ function handleOnePlaceholder(
       wrapContentInSurveyOrGroup(
         derived.map((d) => {
           if (d.type === 'Activity') {
+            // checkActivity(d as Activity, page.title);
             return {
               type: 'activity-reference',
               activity_id: d.id,
