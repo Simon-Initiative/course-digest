@@ -484,8 +484,11 @@ export function buildResponseMulti(question: any) {
   torusParts.forEach((p: any) => {
     const partDropdowns = p.targets
       .map(findInput)
-      .filter((inp: any) => inp && inp.type === 'dropdown');
-    if (partDropdowns.every((inp: any) => inp.shuffle))
+      .filter((inp: any) => inp && inp.inputType === 'dropdown');
+    if (
+      partDropdowns.length > 0 &&
+      partDropdowns.every((inp: any) => inp.shuffle === 'true')
+    )
       transformations.push(Common.shufflePartTransformation(p.id));
   });
 
