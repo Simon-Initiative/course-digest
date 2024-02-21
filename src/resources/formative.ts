@@ -107,7 +107,9 @@ function buildMCQPart(question: any) {
   }
 
   const targeted: any = [];
-  const correctId = r.find((r: any) => r.score > 0)?.id;
+  const correctId = r.find(
+    (r: any) => r.score !== undefined && r.score > 0
+  )?.id;
   r.forEach((r: any) => {
     if (r.legacyMatch !== '.*' && r.id !== correctId) {
       targeted.push([[r.legacyMatch], r.id]);
