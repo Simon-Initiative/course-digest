@@ -396,7 +396,7 @@ export function inputMatchToRule(
   case_sensitive: string,
   type: any
 ) {
-  let m = match;
+  let m = match.trim();
 
   // convert * to standard regexp
   if (match === '*') {
