@@ -426,8 +426,8 @@ function createContentWithLink(title: string, idref: string) {
   return content;
 }
 
-/* 
-Check activity for input order mismatches and log w/page or pool title
+/*
+// Check activity for input order mismatch. Log w/page title so authors can easily find
 export const checkActivity = (activity: Activity, page: string) => {
   if (activity.subType === 'oli_multi_input') {
     const q: any = activity.content;

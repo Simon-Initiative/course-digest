@@ -54,6 +54,23 @@ export function buildMulti(
 
   const stem = buildStem(question, inputs, skipInputRefValidation);
 
+  // list parts in order of input refs in stem (affects order of feedbacks)
+  const iRefToPart = (iRef: any) => {
+    const part = torusParts.find(
+      (p) => p.id === inputs.find((input: any) => input.id === iRef.id)?.partId
+    );
+    if (part === undefined)
+      console.log(
+        `${question.id}: part not found via inputs for input_ref ${iRef.id}`
+      );
+    return part;
+  };
+  const orderedParts = skipInputRefValidation
+    ? torusParts
+    : Common.getDescendants(stem.content, 'input_ref')
+        .map(iRefToPart)
+        .filter((p) => p !== undefined);
+
   return {
     stem,
     choices: allChoices,
@@ -61,7 +78,7 @@ export function buildMulti(
     submitPerPart: true,
     authoring: {
       targeted: allTargeted,
-      parts: torusParts,
+      parts: orderedParts,
       transformations: transformations,
       previewText: '',
     },
