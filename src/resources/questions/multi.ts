@@ -215,12 +215,16 @@ function produceTorusEquivalents(
     choices = buildChoices({ children: [item] }, part.id, 'fill_in_the_blank');
     input.choiceIds = choices.map((c: any) => c.id);
 
-    if (!(part.responses as Array<any>).some((r) => r.legacyMatch === '.*')) {
-      part.responses.forEach((r: any) => {
+    // omit correct response from targeted response mapping
+    const correctId = part.responses.find(
+      (r: any) => r.score !== undefined && r.score > 0
+    )?.id;
+    part.responses
+      .filter((r: any) => r.legacyMatch !== '.*' && r.id !== correctId)
+      .forEach((r: any) =>
         // must adjust to match part-qualified choiceIds we generate
-        targeted.push([[part.id + '_' + r.legacyMatch], r.id]);
-      });
-    }
+        targeted.push([[part.id + '_' + r.legacyMatch], r.id])
+      );
   }
 
   if (item.id) {
