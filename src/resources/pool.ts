@@ -282,11 +282,6 @@ const makeUniqueIds = (q: any, nPart: number) => {
               });
             // update input's list of choice idrefs
             inp.choiceIds = inp.choiceIds.map((cid: string) => idMap.get(cid));
-
-            // replace choiceIds in targeted feedback index key
-            q.authoring.targeted = q.authoring.targeted.map(
-              ([[choiceId], respId]: any) => [[idMap.get(choiceId)], respId]
-            );
           }
         });
     }
@@ -295,5 +290,10 @@ const makeUniqueIds = (q: any, nPart: number) => {
   // update all input_refs in stem
   getDescendants(q.stem.content, 'input_ref').forEach(
     (ref) => (ref.id = idMap.get(ref.id))
+  );
+
+  // replace all choiceIds in question-wide targeted feedback index keys
+  q.authoring.targeted = q.authoring.targeted.map(
+    ([[choiceId], respId]: any) => [[idMap.get(choiceId)], respId]
   );
 };
