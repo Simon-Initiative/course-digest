@@ -199,7 +199,8 @@ function produceTorusEquivalents(
   if (item.type === 'text') {
     part = buildInputPart('text', p, item);
     ensureAtLeastOneCorrectResponse(part);
-    input.inputType = 'text';
+    // text input with math keyboard set => torus math input
+    input.inputType = item.keyboard === 'math' ? 'math' : 'text';
     input.size = item.size;
   } else if (item.type === 'numeric') {
     part = buildInputPart('numeric', p, i);
