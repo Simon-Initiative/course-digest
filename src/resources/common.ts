@@ -613,6 +613,12 @@ export function handleTheorems($: any) {
   DOM.eliminateLevel($, 'theorem');
 }
 
+// Legacy formula element defines a content span expected to contain formula.
+// In typical case where it contains a single MathML or LaTex formula,
+// we convert it to a torus formula or formula-inline element. But if
+// it contains mixed text (multiple formulas, or rich text possibly intermixed
+// with one or more formulas), we convert to callout and let general content
+// translation find and convert delimited LaTex or MathML pieces.
 export function handleFormulaMathML($: any) {
   // Flag MathML formulas w/display=block as block rendered even if inline
   $('formula:has(m\\:math[display="block"])').each((i: any, item: any) => {
@@ -623,7 +629,7 @@ export function handleFormulaMathML($: any) {
   });
 
   $('formula').each((i: any, item: any) => {
-    const subtype = determineFormulaType(item);
+    const subtype = determineSingleFormulaType(item);
 
     if (subtype === 'mathml') {
       $(item).attr('src', getFirstMathML($, item));
@@ -701,26 +707,20 @@ function getFirstMathML($: any, item: any) {
   return text.substring(firstMath, firstMathEnd);
 }
 
-export function determineFormulaType(item: any) {
+export function determineSingleFormulaType(item: any) {
   if (
     item.children.length === 1 &&
     item.children[0].type === 'text' &&
-    isLatexString(item.children[0].data)
+    isSingleLatexString(item.children[0].data)
   ) {
     return 'latex';
   }
 
-  if (
-    item.children.some((c: any) => isMathTag(c)) &&
-    item.children.every((c: any) => isTextOrMathTag(c))
-  ) {
+  if (item.children.length === 1 && isMathTag(item.children[0])) {
     return 'mathml';
   }
-  return 'richtext';
-}
 
-function isTextOrMathTag(e: any) {
-  return e.type === 'text' || isMathTag(e);
+  return 'richtext';
 }
 
 function isMathTag(e: any) {
@@ -738,18 +738,16 @@ function wasBlockRendered(s: string): boolean {
   return delimiter === '$$' || delimiter === '\\[';
 }
 
-function isLatexString(s: string): boolean {
+function isSingleLatexString(s: string): boolean {
   const trimmed = s.trim();
-  if (trimmed.startsWith('$$') && trimmed.endsWith('$$')) {
-    return true;
-  }
-  if (trimmed.startsWith('\\(') && trimmed.endsWith('\\)')) {
-    return true;
-  }
-  if (trimmed.startsWith('\\[') && trimmed.endsWith('\\]')) {
-    return true;
-  }
-  return false;
+  return (
+    // make sure no internal closing delimiter as for multiple formula
+    (trimmed.startsWith('$$') &&
+      trimmed.indexOf('$$') === trimmed.length - 2) ||
+    (trimmed.startsWith('\\(') &&
+      trimmed.indexOf('\\)') === trimmed.length - 2) ||
+    (trimmed.startsWith('\\[') && trimmed.indexOf('\\]') === trimmed.length - 2)
+  );
 }
 
 function getPurpose(purpose?: string) {
