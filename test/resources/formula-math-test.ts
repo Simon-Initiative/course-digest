@@ -75,6 +75,7 @@ describe('formulas and mathml', () => {
 
   test('should properly identify and convert latex formulas', () => {
     let s = process('<body><formula>$$\\frac{2}{3}$$</formula></body>');
+    console.log(s);
     expect(s.indexOf('subtype="latex"')).toBeGreaterThan(-1);
     expect(s.indexOf('src="\\frac{2}{3}"')).toBeGreaterThan(-1);
 

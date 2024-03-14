@@ -743,10 +743,11 @@ function isSingleLatexString(s: string): boolean {
   return (
     // make sure no internal closing delimiter as for multiple formula
     (trimmed.startsWith('$$') &&
-      trimmed.indexOf('$$') === trimmed.length - 2) ||
+      trimmed.indexOf('$$', 2) === trimmed.length - 2) ||
     (trimmed.startsWith('\\(') &&
-      trimmed.indexOf('\\)') === trimmed.length - 2) ||
-    (trimmed.startsWith('\\[') && trimmed.indexOf('\\]') === trimmed.length - 2)
+      trimmed.indexOf('\\)', 2) === trimmed.length - 2) ||
+    (trimmed.startsWith('\\[') &&
+      trimmed.indexOf('\\]', 2) === trimmed.length - 2)
   );
 }
 
