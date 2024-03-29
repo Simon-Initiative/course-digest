@@ -3,7 +3,7 @@ import {
   eliminateLevel,
   stripElement,
   moveAttrToChildren,
-  mergeCaptions,
+  prependTitles,
   isInlineElement,
 } from 'src/utils/dom';
 import * as cheerio from 'cheerio';
@@ -136,7 +136,7 @@ describe('dom mutations', () => {
       xmlMode: true,
     });
 
-    mergeCaptions($);
+    prependTitles($);
 
     expect($.xml()).toContain('<h6><em>A Wonderful Title</em></h6>');
   });
@@ -150,7 +150,7 @@ describe('dom mutations', () => {
       xmlMode: true,
     });
 
-    mergeCaptions($);
+    prependTitles($);
 
     expect($.xml()).not.toContain('<h5>null</h5>');
   });

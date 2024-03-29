@@ -609,6 +609,7 @@ export function toJSON(
         elevateCaption('youtube');
         elevateTableCaption();
         elevateCaption('audio');
+        elevateCaption('video');
         elevateTitle('figure');
         elevatePopoverContent();
         unescapeFormulaSrc();

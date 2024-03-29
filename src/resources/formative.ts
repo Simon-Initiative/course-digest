@@ -284,6 +284,8 @@ function getHotspots(imageHotspot: any) {
       id: hs.value,
       coords: hs.coords.split(',').map(Number),
       // shape not needed, torus derives from number of coords
+      // includes dummy content to implement choice interface
+      content: [{ id: guid(), type: 'p', children: [{ text: ' ' }] }],
     };
     if (hs.title !== undefined) hotspot.title = hs.title;
 
