@@ -191,23 +191,24 @@ export function stripElement($: any, selector: string) {
 }
 
 export function mergeTitles($: any) {
-  mergeElement($, 'organization', 'title');
-  mergeElement($, 'sequence', 'title');
-  mergeElement($, 'unit', 'title');
-  mergeElement($, 'module', 'title');
-  mergeElement($, 'section', 'title');
+  mergeElementText($, 'organization', 'title');
+  mergeElementText($, 'sequence', 'title');
+  mergeElementText($, 'unit', 'title');
+  mergeElementText($, 'module', 'title');
+  mergeElementText($, 'section', 'title');
 }
 
-export function mergeCaptions($: any) {
-  handleLabelledContent($, 'table');
-  handleLabelledContent($, 'audio');
-  handleLabelledContent($, 'iframe');
-  handleLabelledContent($, 'youtube');
-  handleLabelledContent($, 'image');
-  handleLabelledContent($, 'video');
+export function prependTitles($: any) {
+  handleTitledContent($, 'table');
+  handleTitledContent($, 'audio');
+  handleTitledContent($, 'iframe');
+  handleTitledContent($, 'youtube');
+  handleTitledContent($, 'image');
+  handleTitledContent($, 'video');
 }
 
-function mergeElement($: any, selector: string, element: string) {
+// move text of child element to same-named attribute
+function mergeElementText($: any, selector: string, element: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
@@ -217,7 +218,8 @@ function mergeElement($: any, selector: string, element: string) {
   });
 }
 
-export function handleLabelledContent($: any, selector: string) {
+// prepend title content as header before element
+export function handleTitledContent($: any, selector: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
@@ -226,6 +228,19 @@ export function handleLabelledContent($: any, selector: string) {
 
     if (title) {
       $('<h6><em>' + title + '</em></h6>').insertBefore($(elem));
+    }
+  });
+}
+
+export function appendCaptions($: any, selector: string) {
+  const items = $(selector);
+
+  items.each((i: any, elem: any) => {
+    const captionHtml = $(elem).children('caption').html();
+    $(elem).children().remove('caption');
+
+    if (captionHtml) {
+      $(captionHtml).insertAfter($(elem));
     }
   });
 }

@@ -164,7 +164,7 @@ export function standardContentManipulations($: any) {
   // representation for how Torus supports them
   DOM.flattenNestedSections($);
   DOM.removeSelfClosing($);
-  DOM.mergeCaptions($);
+  DOM.prependTitles($);
   // Default to block images
   DOM.rename($, 'image', 'img');
   DOM.rename($, 'link', 'a');
@@ -203,6 +203,9 @@ export function standardContentManipulations($: any) {
       $(item).html(`<p>${$(item).html()}</p>`);
     }
   });
+
+  // torus video element has no caption, so add any caption content after
+  DOM.appendCaptions($, 'video');
 
   // Inline images should technically be valid in any Slate model element
   // that supports inline elements, but we're only explicitly handling
@@ -271,8 +274,8 @@ export function standardContentManipulations($: any) {
   $('p>table').remove();
   $('p>title').remove();
   // handle titles of lists
-  DOM.handleLabelledContent($, 'ol');
-  DOM.handleLabelledContent($, 'ul');
+  DOM.handleTitledContent($, 'ol');
+  DOM.handleTitledContent($, 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
   DOM.rename($, 'composite_activity title', 'p');
