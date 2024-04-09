@@ -12,6 +12,7 @@ import * as Objectives from './objectives';
 import * as Pool from './pool';
 import * as Skills from './skills';
 import * as Superactivity from './superactivity';
+import * as LogicLab from './logiclab';
 
 const minVersions: Record<string, string> = {
   oli_workbook_page: '3_5',
@@ -69,6 +70,9 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     ) {
       return 'Superactivity';
     }
+    if (tag.indexOf(' logiclab ') !== -1) {
+      return 'LogicLab';
+    }
     if (tag.indexOf('oli_discussion') !== -1) {
       return 'Discussion';
     }
@@ -114,6 +118,9 @@ export function create(
   }
   if (t === 'Discussion') {
     return new Discussion.Discussion(file, navigable);
+  }
+  if (t === 'LogicLab') {
+    return new LogicLab.LogicLab(file, navigable);
   }
   return new Other.Other(file, navigable);
 }
