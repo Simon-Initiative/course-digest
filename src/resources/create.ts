@@ -70,6 +70,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
     ) {
       return 'Superactivity';
     }
+    console.log('tag: ' + tag);
     if (tag.indexOf(' logiclab ') !== -1) {
       return 'LogicLab';
     }

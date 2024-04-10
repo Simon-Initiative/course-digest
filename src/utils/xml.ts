@@ -704,6 +704,6 @@ export function rootTag(file: string): Promise<string> {
     const content: string = fs.readFileSync(file, 'utf-8');
     const dtd = content.substr(content.indexOf('<!DOCTYPE'));
     // normalize whitespace for ease of pattern matching in case split over lines
-    resolve(dtd.substr(0, dtd.indexOf('>') + 1).replace(/\s+/, ' '));
+    resolve(dtd.substr(0, dtd.indexOf('>') + 1).replace(/\s+/g, ' '));
   });
 }
