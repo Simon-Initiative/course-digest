@@ -11,6 +11,8 @@ import {
 import * as XML from 'src/utils/xml';
 import { ProjectSummary } from 'src/project';
 import { visit } from 'src/utils/xml';
+import * as DOM from 'src/utils/dom';
+import { standardContentManipulations } from './common';
 import {
   getChild,
   getChildren,
@@ -49,7 +51,10 @@ export class LogicLab extends Resource {
     $: any,
     projectSummary: ProjectSummary
   ): Promise<(TorusResource | string)[]> {
-    // no restructuring, just go straight to JSON parse
+    // restructure to handle content elements in description as paragraph content
+    DOM.rename($, 'description', 'p');
+    standardContentManipulations($);
+
     return new Promise((resolve, _reject) => {
       XML.toJSON($.html(), projectSummary, {
         description: true,
@@ -105,12 +110,10 @@ export class LogicLab extends Resource {
         // model is list of content blocks and activity references
         const model: any[] = [];
 
-        // add paragraph with description text
-        const description = getChild(ps, 'description');
+        // insert initial paragraph with description content
+        const description = getChild(ps, 'p');
         if (description) {
-          const text = description.children[0].text;
-          const paragraph = { type: 'p', children: [{ text }] };
-          model.push({ type: 'content', children: [paragraph] });
+          model.push({ type: 'content', children: [description] });
         }
 
         // include each problem with title and activity ref
