@@ -27,7 +27,8 @@ export type ResourceType =
   | 'Superactivity'
   | 'Skills'
   | 'Other'
-  | 'TemporaryContent';
+  | 'TemporaryContent'
+  | 'LogicLab';
 
 export type TorusResourceType =
   | Hierarchy
