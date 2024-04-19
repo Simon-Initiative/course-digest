@@ -12,10 +12,13 @@ export interface HasHistogram {
   elementHistogram: Histogram.ElementHistogram;
 }
 
-// Escapes space, tab and backslash, but not newline, for use in code lines
+// Escapes space, tab and backslash, but not newline, for preservation in code lines
 // BACKSLASH TAB could get normalized to BACKSLASH SP, so uses BACKSLASH T instead
-export function escapeWhiteSpace(s: string) {
-  return s.replace(/[ \t\\]/g, (ch) => '\\' + (ch === '\t' ? 'T' : ch));
+// Strips trailing white space on assumption it is never needed
+export function escapeCodeWhiteSpace(s: string) {
+  return s
+    .trimEnd()
+    .replace(/[ \t\\]/g, (ch) => '\\' + (ch === '\t' ? 'T' : ch));
 }
 
 export function unescapeWhiteSpace(s: string) {
@@ -34,7 +37,7 @@ export function processCodeblock($: any) {
         .split('\n')
         .map(
           (r: any) =>
-            '<code_line><![CDATA[' + escapeWhiteSpace(r) + ']]></code_line>'
+            '<code_line><![CDATA[' + escapeCodeWhiteSpace(r) + ']]></code_line>'
         )
         .reduce((s: string, e: string) => s + e);
 
@@ -42,7 +45,9 @@ export function processCodeblock($: any) {
     } else {
       const html = h
         .split('\n')
-        .map((r: any) => '<code_line>' + escapeWhiteSpace(r) + '</code_line>')
+        .map(
+          (r: any) => '<code_line>' + escapeCodeWhiteSpace(r) + '</code_line>'
+        )
         .reduce((s: string, e: string) => s + e);
 
       $(item).html(html);
