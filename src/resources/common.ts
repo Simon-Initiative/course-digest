@@ -215,8 +215,15 @@ export function standardContentManipulations($: any) {
   // Inline images should technically be valid in any Slate model element
   // that supports inline elements, but we're only explicitly handling
   // converting images in paragraphs and links (anchors).
+
   DOM.rename($, 'codeblock', 'code');
   DOM.renameAttribute($, 'code', 'syntax', 'language');
+  // Torus code language value must be exact "pretty" name shown in dropdown
+  $('code').each((i: any, item: any) => {
+    const lang = $(item).attr('language');
+    if (lang)
+      $(item).attr('language', lang === 'cpp' ? 'C++' : capitalize(lang));
+  });
 
   // Certain elements are not currently (and some may never be) supported
   // in Torus, so we remove them.  In this respect, OLI course conversion
