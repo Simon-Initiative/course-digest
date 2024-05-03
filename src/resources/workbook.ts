@@ -150,8 +150,8 @@ export class WorkbookPage extends Resource {
       const idref = $(elem).attr('idref');
       const purpose = $(elem).attr('purpose');
       if (
-        purpose !== null &&
-        purpose !== undefined &&
+        purpose === null ||
+        purpose === undefined ||
         (validPurposes as any)[purpose] === undefined
       ) {
         $(elem).attr('purpose', 'none');

@@ -35,6 +35,8 @@ export function buildMulti(
         transformations.push(Common.shufflePartTransformation(part.id));
       }
     }
+  } else {
+    console.log(`Mismatch: ${items.length} inputs; ${parts.length} parts`);
   }
 
   const transformation = Common.getChild(question, 'transformation');
