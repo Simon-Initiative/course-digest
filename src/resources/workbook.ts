@@ -232,6 +232,7 @@ export class WorkbookPage extends Resource {
         em: true,
         li: true,
         td: true,
+        th: true,
         material: true,
         anchor: true,
         translation: true,

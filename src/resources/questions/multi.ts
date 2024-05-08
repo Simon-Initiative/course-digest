@@ -270,7 +270,6 @@ function produceTorusEquivalents(
   }
   // can apparently have minimal question w/implied input but no input id used anywhere
   if (!input.id) {
-    console.warn(`${questionId} part ${i + 1} ${item.type}: no input id found`);
     input.id = `${questionId}-${i + 1}`;
   }
 
