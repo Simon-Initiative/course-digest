@@ -161,6 +161,11 @@ export function standardContentManipulations($: any) {
     $(`${e} code`).each((i: any, item: any) => $(item).attr('style', 'code'));
     DOM.rename($, `${e} code`, 'em');
   });
+  // also convert code elements with explicit inline style
+  $('code[style="inline"]').each((i: any, item: any) => {
+    $(item).attr('style', 'code');
+    item.tagName = 'em';
+  });
 
   // One course wrapped mathML in code for style; won't work in torus block code box
   DOM.rename($, 'code:has(m\\:math)', 'p');

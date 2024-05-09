@@ -140,6 +140,7 @@ export class Summative extends Resource {
         em: true,
         li: true,
         td: true,
+        th: true,
       }).then((r: any) => {
         const legacyId = r.children[0].id;
 

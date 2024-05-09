@@ -599,6 +599,7 @@ export function toJSON(
         ensureNotEmpty('formula_inline');
         ensureNotEmpty('callout_inline');
         ensureTextDoesNotSurroundBlockElement('td');
+        ensureTextDoesNotSurroundBlockElement('th');
         ensureTextDoesNotSurroundBlockElement('dd');
         ensureTextDoesNotSurroundBlockElement('dt');
         ensureTextDoesNotSurroundBlockElement('li');

@@ -692,6 +692,7 @@ export class Formative extends Resource {
         em: true,
         li: true,
         td: true,
+        th: true,
         choice: true,
         stem: true,
         hint: true,
