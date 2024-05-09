@@ -157,14 +157,14 @@ export function standardContentManipulations($: any) {
   // <code> is a mixed element, we only want to translate the inline <code>
   // instances to <em> elements.  The block level <code> will get converted
   // to Torus code model elements.
-  ['p', 'li', 'td', 'th', 'choice', 'hint', 'feedback'].forEach((e) => {
+  ['p', 'li', 'td', 'choice', 'hint', 'feedback'].forEach((e) => {
     $(`${e} code`).each((i: any, item: any) => $(item).attr('style', 'code'));
     DOM.rename($, `${e} code`, 'em');
   });
-  // can also be code with explicit inline style
+  // also convert code elements with explicit inline style
   $('code[style="inline"]').each((i: any, item: any) => {
     $(item).attr('style', 'code');
-    $(item).name = 'em';
+    item.tagName = 'em';
   });
 
   // One course wrapped mathML in code for style; won't work in torus block code box
