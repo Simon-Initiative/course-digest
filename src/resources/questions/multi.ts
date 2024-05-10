@@ -73,11 +73,14 @@ export function buildMulti(
         .map(iRefToPart)
         .filter((p) => p !== undefined);
 
+  // set unless a part uses math keyboard, which doesn't work w/that option
+  const submitPerPart = !inputs.some((i) => i.inputType === 'math');
+
   return {
     stem,
     choices: allChoices,
     inputs,
-    submitPerPart: true,
+    submitPerPart,
     authoring: {
       targeted: allTargeted,
       parts: orderedParts,
