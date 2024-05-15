@@ -324,13 +324,21 @@ function getGradingApproach(question: any) {
 
 export function buildTextPart(id: string, question: any) {
   const part = getChild(question, 'part');
-  const responses = part.children.filter((p: any) => p.type === 'response');
-  const hints = part.children.filter((p: any) => p.type === 'hint');
-  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
+  const hints = getChildren(part, 'hint');
+  const skillrefs = getChildren(part, 'skillref');
+  let responses = getChildren(part, 'response');
+  if (responses.length === 0) {
+    console.log(`${id}: no response rules. Treating all responses as correct.`);
+    responses = [{ match: '*', score: '1', children: [] }];
+  }
 
   return {
     id: part.id || id,
     responses: responses.map((r: any) => {
+      if (r.match === undefined) {
+        console.log('response with no match. Treating as *');
+        r.match = '*';
+      }
       const cleanedMatch = convertCatchAll(r.match.trim());
       const item: any = {
         id: guid(),
