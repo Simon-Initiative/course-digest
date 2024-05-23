@@ -66,7 +66,8 @@ export function determineResourceType(file: string): Promise<ResourceType> {
       tag.indexOf('oli-embed-activity') !== -1 ||
       tag.indexOf('oli-linked-activity') !== -1 ||
       tag.indexOf('cmu-ctat-tutor') !== -1 ||
-      tag.indexOf(' ctat ') !== -1
+      tag.indexOf(' ctat ') !== -1 ||
+      tag.indexOf('bio_sim')
     ) {
       return 'Superactivity';
     }
