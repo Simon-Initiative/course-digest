@@ -440,7 +440,7 @@ export const checkActivity = (activity: Activity, page: string) => {
   }
 };
 
-// returns entries + m as replaced (which can have multiple)
+// returns entries + m as replaced, which may add multiple items
 function handleOnePlaceholder(
   entries: any,
   m: any,
@@ -506,8 +506,6 @@ function updateParentReference(
 ): TorusResource {
   if (parent.type === 'Page') {
     const page = parent as Page;
-    // console.log('updateParentReference: page.content.model IN =');
-    // console.log(JSON.stringify(page.content.model, null, 2));
     (page.content as any).model = (page.content as any).model.reduce(
       (entries: any, m: any) => {
         if (m.type === 'activity_placeholder') {
@@ -546,8 +544,6 @@ function updateParentReference(
       },
       []
     );
-    // console.log('updateParentReference: page.content.model OUT =');
-    // console.log(JSON.stringify(page.content.model, null, 2));
     return page;
   }
 
