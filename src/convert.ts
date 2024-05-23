@@ -426,28 +426,21 @@ function createContentWithLink(title: string, idref: string) {
   return content;
 }
 
-/*
-// Check activity for input order mismatch. Log w/page title so authors can easily find
+// Use this to check activities for issues of interest at a point where
+// can log w/containing page title so authors can easily find
 export const checkActivity = (activity: Activity, page: string) => {
-  if (activity.subType === 'oli_multi_input') {
-    const q: any = activity.content;
-    const inputIds = getDescendants(q.stem.content, 'input_ref').map(
-      (ir) => ir.id
+  // report superactivity source scripts used per page
+  if (activity.subType === 'oli_embedded') {
+    const xml = activity.content.modelXml as string;
+    const source = xml.substring(
+      xml.indexOf('<source>') + 8,
+      xml.indexOf('</source>')
     );
-    if (
-      inputIds.length > 0 &&
-      q.inputs.some((inp: any, i: number) => inp.id !== inputIds[i])
-    ) {
-      console.log(
-        `mismatch;${page}; ${
-          activity.title
-        };refs: ${inputIds};parts: ${q.inputs.map((i: any) => i.id)}`
-      );
-    }
+    console.log(`Script ${source}\t${page}`);
   }
 };
-*/
 
+// returns entries + m as replaced, which may add multiple items
 function handleOnePlaceholder(
   entries: any,
   m: any,
@@ -527,20 +520,22 @@ function updateParentReference(
         } else if (m.type === 'group') {
           const group = Object.assign({}, m, {
             purpose: valueOr(m.purpose, 'none'),
-            children: m.children.map((c: any) => {
-              if (c.type === 'activity_placeholder') {
-                return handleOnePlaceholder(
-                  [],
-                  c,
-                  byLegacyId,
-                  pageMap,
-                  page,
-                  legacyMyResponseFeedbackIds
-                )[0];
-              } else {
-                return c;
-              }
-            }),
+            children: m.children
+              .map((c: any) => {
+                if (c.type === 'activity_placeholder') {
+                  return handleOnePlaceholder(
+                    [],
+                    c,
+                    byLegacyId,
+                    pageMap,
+                    page,
+                    legacyMyResponseFeedbackIds
+                  )[0];
+                } else {
+                  return c;
+                }
+              })
+              .filter((e: any) => e != null),
           });
           return [...entries, group];
         }
@@ -549,7 +544,6 @@ function updateParentReference(
       },
       []
     );
-
     return page;
   }
 
