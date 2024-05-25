@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+    xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/"
+    xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="likert_behaviour_report">
+    <head>
+        <title>Study Behavior Inventory Debriefing</title>
+        <objref idref="f5dae9b74c9545cb8610b0e7cf0a47da" />
+    </head>
+    <body>
+        <section id="b4b9148ab745458fb5671af192c42e03">
+            <title>Study Strategies Background:</title>
+            <body>
+                <p id="daf722699d7a49d087213f05f424b721">As you recall, students report using many
+                    kinds of strategies for studying course material. You have just completed your
+                    post-Student Cognition Toolbox course Study Behavior Inventory. This current
+                    inventory measured the kinds of strategies you reported planning to use when
+                    preparing for future exams. As you know by now, not all study strategies work as
+                    effectively as others to promote meaningful learning, and cognitive science
+                    informs us that certain kinds of study strategies are better than others in
+                    helping students to learn. Laboratory experiments and studies of students in
+                    academic courses, just like the ones you’re taking, have uncovered the kinds of
+                    strategies that are associated with better learning. These strategies promote
+                    deep processing of material. </p>
+            </body>
+        </section>
+        <section id="c34fe10b65f8493ab8d2b02dc1714b08">
+            <title>Your Personalized Report:</title>
+            <body>
+                <p id="a4098eef0958417cb65b263c4a8f037a">
+                    <em>If you do not see your personalized
+                        report here (as a bar chart), then return to the previous page to complete
+                        the Study Behavior Inventory AGAIN.</em>
+                </p>
+            </body>
+        </section>
+        <section id="c32da3d1cf7848b6878291a0c3523c2b">
+            <title> </title>
+            <body>
+                <activity_report id="da91766a9c3e4cdabd85cad3838974ef"
+                    idref="likert_behaviour_study" type="likert_bar" />
+            </body>
+        </section>
+        <section id="f7f04e8f8b704892a98a82a527b39d0d">
+            <title>Putting it all Together:</title>
+            <body>
+                <p id="f65bef9d8ad245fc8341d80ba3f05e2d">Your personalized report on how you
+                    responded to items on the Study Behavior Inventory reflects your planned use of
+                    particular study strategies. The bar graph illustrates your agreement with each
+                    statement on a scale from “1” (not true of you) to “6” (very true of you). The
+                    bars on the left (items 1-8 on the survey) are those study strategies that are
+                    known to be associated with deeper cognitive processing and better learning. The
+                    bars on the right (items 9-16 on the survey) are those that are known to be
+                    associated with shallower cognitive processing and do not promote the most
+                    effective learning, and can sometimes interfere with learning. For example, for
+                    prompt 9, you should first try working through challenging material on your own
+                    before asking others (e.g., a classmate, TA or course instructor) for help. </p>
+                <p id="d511bd3e1ee6401a83c1c797ae4ffb26">The bar graph provides a visual
+                    representation to help you understand how you have managed your studying until
+                    now. The goal is for you to elevate the bars on the left (those associated with
+                    deep cognitive processing) and to decrease the bars on the right (those
+                    associated with shallow cognitive processing). </p>
+                <p id="b2e565884ff24f009d456f0b51f924dc">
+                    <em>Parts of the SBI adapted from Gurung,
+                        Weidert, and Jeske (2010). </em>
+                </p>
+                <p id="abaf55118995544f1a6579b1de49d7414">Gurung, R.A.R., Weidert, J., Jeske, J.
+                    (2010). <em style="italic">Journal of the Scholarship of Teaching and Learning,
+                    10,</em> 28-35.</p>
+            </body>
+        </section>
+        <section id="b28f8a2aa0a348c9aba8309660bf543e">
+            <title>Reflecting on the Study Behavior Inventory:</title>
+            <body>
+                <p id="ab76a4643163d451c98a1af48c7e3fc9e">Now that you have completed the Study
+                    Strategy Modules, you have the tools you need to help you engage in study
+                    strategies that promote deep processing. There will be many opportunities to use
+                    your newly acquired study strategies and it is important that you take advantage
+                    of those opportunities to improve your academic performance.</p>
+            </body>
+        </section>
+
+    </body>
+</workbook_page>

@@ -161,6 +161,12 @@
           <item id="bca2e8dcf45e4ca5836d20" scoring_mode="default">
             <resourceref idref="histogram1" />
           </item>
+          <item id="bca288dcf45e4ca5836d70" scoring_mode="default">
+            <resourceref idref="likert_behaviour_page" />
+          </item>
+          <item id="bca288dcf45e4ca5836d20" scoring_mode="default">
+            <resourceref idref="likert_behaviour_report" />
+          </item>
         </module>
         <module id="bugfixes">
           <title>

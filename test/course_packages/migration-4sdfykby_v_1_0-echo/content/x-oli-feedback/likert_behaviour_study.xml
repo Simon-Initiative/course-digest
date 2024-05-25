@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE feedback PUBLIC "-//Carnegie Mellon University//DTD Feedback 1.2//EN" "http://oli.web.cmu.edu/dtd/oli_feedback_1_2.dtd">
+<feedback id="likert_behaviour_study">
+    <title>Study Behavior Inventory</title>
+    <description>
+        <p id="afe80d78206624de1abbd8e7726a892be"/>
+    </description>
+    <questions>
+        <likert_series>
+            <prompt><p id="ae528138370c94fc08c3cde1bf57c388c">Instructions: For the following
+                    statements, please indicate on a scale from 1- “Not at all true of me” to 6-
+                    “Very true of me,” the extent to which you <em style="italic">plan</em> to use
+                    the exam preparation strategy in preparing for an exam.</p><p
+                    id="c62ae421972445e7ab41acf210327d3f"><em>When you have completed this survey,
+                        submit your response by clicking the button at the bottom of the
+                        survey.</em></p></prompt>
+            <likert_scale size="6" center="3">
+                <label value="1">1: Not at all true of me</label>
+                <label value="2">2</label>
+                <label value="3">3</label>
+                <label value="4">4</label>
+                <label value="5">5</label>
+                <label value="6">6: Very true of me</label>
+            </likert_scale>
+            <item id="fecadc471498487094863c340e719f93" required="true" group="Deep">
+                <prompt><p id="adb39f6f786eb4038b7516b6fc16d5b45">I space out my study sessions in
+                        the time leading up to the exam.</p></prompt>
+            </item>
+            <item id="a59eab25295a4725afdc6b1ff6a3714b" required="true" group="Deep">
+                <prompt><p id="af112826146974f51ba98a22542911973">I relate what I am currently
+                        learning to what I already know.</p></prompt>
+            </item>
+            <item id="a44f44e97cea4a45bd71ff4e1a8308fc" required="true" group="Deep">
+                <prompt><p id="abd1a93bdd19740c591c236c2b5b1e542">I test myself on course materials
+                        without referring to my course materials or notes.</p></prompt>
+            </item>
+            <item id="e7d1fc3384d44e239c6283fab1600a84" required="true" group="Deep">
+                <prompt><p id="acc270d0cd1ea4316acf32668461f7af9">I plan effectively for study time
+                        between classes.</p></prompt>
+            </item>
+            <item id="cc756dcf53854a3593cc8a838bd46c55" required="true" group="Deep">
+                <prompt><p id="adde884106d2e4ef5b8c00a77effb2600">I summarize in my own words
+                        information I learn from my study.</p></prompt>
+            </item>
+            <item id="b45799c99e354d6e9e50823e1dd3183a" required="true" group="Deep">
+                <prompt><p id="ab7510408e8984c5db28a38fc3828bb47">I explain concepts to myself
+                        and/or a classmate/friend.</p></prompt>
+            </item>
+            <item id="ec1b402239ff45abb116ad507f255bfe" required="true" group="Deep">
+                <prompt><p id="aa29f232debf2406e8a421aa2c4908cd5">I create outlines, charts,
+                        diagrams, or tables, etc., to organize and help me see patterns in course
+                        information.</p></prompt>
+            </item>
+            <item id="ac5c4926f99b4f9cb6b36ddedaac3fa9" required="true" group="Deep">
+                <prompt><p id="b1f72db941a544b7b8516b9b325848ad">When I am learning to solve new
+                        problems, I review examples of solved problems that explain each step along
+                        the way. </p></prompt>
+            </item>
+            <item id="e187b668edb9431f93ba1f4991587a27" required="true" group="Shallow">
+                <prompt><p id="acee5e1f65123406fa333cbb1a944434b">If I have difficulty learning
+                        course material right away, I ask another person (classmate, TA or
+                        professor).</p></prompt>
+            </item>
+            <item id="e33aa62179ff4bc38339bd0d263132a9" required="true" group="Shallow">
+                <prompt><p id="aeebc09f6c4c941a098e4480efa362241">I focus most of my studying to the
+                        time just prior to an exam.</p></prompt>
+            </item>
+            <item id="d9bb581c270646b68d002ff449e27f80" required="true" group="Shallow">
+                <prompt><p id="d7384ddb1cc84ed0aa894ab3aeff9dc8">I copy my lecture notes to study
+                        for exams.</p></prompt>
+            </item>
+            <item id="c1212cda5753493db73754a5704a9fab" required="true" group="Shallow">
+                <prompt><p id="ad85a56024bbf4862a3e29b98f19253e2">I read the required course
+                        materials more than once.</p></prompt>
+            </item>
+            <item id="fc1223aacf1d431a88f9517a61eda4ab" required="true" group="Shallow">
+                <prompt><p id="ab0b57a742fa4422ca837873475adc459">I highlight and/or underline the
+                        most important information in my reading.</p></prompt>
+            </item>
+            <item id="f621c4112a494096a57ba2c473fb1c7e" required="true" group="Shallow">
+                <prompt><p id="ae35d3c8bb43b492aa94786729e6a29eb">I take care to organize my lecture
+                        notes.</p></prompt>
+            </item>
+            <item id="ed4d60c20e854b8f83c5e563af50e88f" required="true" group="Shallow">
+                <prompt><p id="aeacf60df97e3486c91df9035ba5bfbd6">I try to learn the more difficult
+                        material first, when time is limited prior to the exam.</p></prompt>
+            </item>
+            <item id="f3e75cf98ecf413dbed027fc92475360" required="true" group="Shallow">
+                <prompt><p id="f28aa62858ae4d42b9df9665a28bdef9">I rehearse course material so that
+                        I can memorize information for exams. </p></prompt>
+            </item>
+        </likert_series>
+    </questions>
+</feedback>
