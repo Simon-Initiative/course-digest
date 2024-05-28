@@ -196,7 +196,7 @@ function determineActivityDefaults(
     case 'bio_sim':
       return {
         subType: 'oli_embedded',
-        base: 'embedded',
+        base: 'bio_simulator',
         src: 'simulator.html',
       };
     case 'repl':
