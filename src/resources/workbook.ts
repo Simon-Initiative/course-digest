@@ -163,6 +163,7 @@ export class WorkbookPage extends Resource {
 
     $('activity_report').each((i: any, elem: any) => {
       const idref = $(elem).attr('idref');
+      $(elem).attr('reportType', $(elem).attr('type'));
       $(elem).attr('type', 'report');
       $(elem).attr('activityId', idref);
       $(elem).removeAttr('idref');
