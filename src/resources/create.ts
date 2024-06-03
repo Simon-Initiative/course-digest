@@ -67,7 +67,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
       tag.indexOf('oli-linked-activity') !== -1 ||
       tag.indexOf('cmu-ctat-tutor') !== -1 ||
       tag.indexOf(' ctat ') !== -1 ||
-      tag.indexOf('bio_sim')
+      tag.indexOf('bio_sim') !== -1
     ) {
       return 'Superactivity';
     }
@@ -78,6 +78,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
       return 'Discussion';
     }
 
+    console.log('Unrecognized resource type: ' + tag.split(' ')[1]);
     return 'Other';
   });
 }
