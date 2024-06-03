@@ -78,7 +78,6 @@ export function determineResourceType(file: string): Promise<ResourceType> {
       return 'Discussion';
     }
 
-    console.log('Unrecognized resource type: ' + tag.split(' ')[1]);
     return 'Other';
   });
 }
