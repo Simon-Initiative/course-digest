@@ -173,11 +173,17 @@ function buildOrderingPart(question: any) {
 function buildLikertSeriesItems(question: any) {
   const items = question.children.filter((p: any) => p.type === 'item');
 
-  return items.map((item: any) => ({
-    content: Common.ensureParagraphs(item.children),
-    id: item.id,
-    required: item.required,
-  }));
+  return items.map((item: any) => {
+    const i = {
+      content: Common.ensureParagraphs(item.children),
+      id: item.id,
+      required: item.required,
+    };
+    if (item.group) {
+      return { ...i, group: item.group };
+    }
+    return i;
+  });
 }
 
 function buildLikertItems(question: any) {
