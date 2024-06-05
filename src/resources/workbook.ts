@@ -161,6 +161,17 @@ export class WorkbookPage extends Resource {
 
     DOM.rename($, 'activity', 'page_link');
 
+    $('activity_report').each((i: any, elem: any) => {
+      const idref = $(elem).attr('idref');
+      $(elem).attr('reportType', $(elem).attr('type'));
+      $(elem).attr('type', 'report');
+      $(elem).attr('activityId', idref);
+      $(elem).removeAttr('idref');
+      page.unresolvedReferences.push(idref);
+    });
+
+    DOM.rename($, 'activity_report', 'report');
+
     $('objref').each((i: any, elem: any) => {
       page.objectives.push($(elem).attr('idref'));
     });
@@ -345,6 +356,7 @@ function isResourceGroup({ type }: Element) {
     case 'example':
     case 'alternatives':
     case 'alternative':
+    case 'report':
       return true;
     default:
       return false;
@@ -402,7 +414,8 @@ export function introduceStructuredContent(content: Element[]): Element[] {
 
     if (isResourceGroup(e)) {
       const withStructuredContent = Object.assign({}, e, {
-        children: introduceStructuredContent(e.children),
+        children:
+          e.type === 'report' ? [] : introduceStructuredContent(e.children),
       });
 
       return [...u, withStructuredContent];

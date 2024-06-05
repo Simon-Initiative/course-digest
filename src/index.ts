@@ -278,6 +278,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           updated = Convert.updateDerivativeReferences(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);
+          updated = Convert.fixActivityReports(updated);
           updated = filterOutTemporaryContent(updated);
           updated = Convert.updateNonDirectImageReferences(
             updated,

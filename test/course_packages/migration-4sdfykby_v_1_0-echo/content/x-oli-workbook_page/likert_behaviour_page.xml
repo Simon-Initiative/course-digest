@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workbook_page PUBLIC "-//Carnegie Mellon University//DTD Workbook Page MathML 3.8//EN" "http://oli.web.cmu.edu/dtd/oli_workbook_page_mathml_3_8.dtd">
+<workbook_page xmlns:bib="http://bibtexml.sf.net/"
+    xmlns:cmd="http://oli.web.cmu.edu/content/metadata/2.1/"
+    xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:pref="http://oli.web.cmu.edu/preferences/"
+    xmlns:theme="http://oli.web.cmu.edu/presentation/"
+    xmlns:wb="http://oli.web.cmu.edu/activity/workbook/" id="likert_behaviour_page">
+    <head>
+        <title>Complete Study Behavior Inventory AGAIN</title>
+        <objref idref="f5dae9b74c9545cb8610b0e7cf0a47da" />
+    </head>
+    <body>
+        <p id="c765a44d59734ce3bff6c491c84e925f">
+            <em>Click on Study Behavior Inventory below under
+                the My Response banner to answer this survey. Be sure to respond to all of the
+                statements. </em>
+        </p>
+        <p id="a4eaa8ea380a420ca72fcfa8b974bf48">
+            <em>
+                <em style="highlight">When you click on the
+                    survey, it will open in a new tab. Do not close this current tab while you are
+                    completing the survey. Once you complete the survey, you should return to this
+                    tab to continue with the remainder of this Module. </em>
+            </em>
+        </p>
+
+        <activity idref="likert_behaviour_study" purpose="myresponse" />
+        <p id="ade743f49298c4d989888ab9ecb3ddbb3">Parts of the SBI adapted from Gurung, Weidert, and
+            Jeske (2010). </p>
+        <p id="ac0c6c6f2e781428e932561755426ef4a">Gurung, R.A.R., Weidert, J., Jeske, J. (2010). <em
+                style="italic">Journal of the Scholarship of Teaching and Learning, 10</em>, 28-35.</p>
+        <p id="bdf3e9e365384b4c965217002a406638">OLI developed and deployed the Survey Tool used for
+            the Study Behavior Inventory (which is now also available to any course developer using
+            OLI).</p>
+    </body>
+</workbook_page>

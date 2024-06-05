@@ -595,6 +595,7 @@ export function toJSON(
         ensureNotEmpty('youtube');
         ensureNotEmpty('audio');
         ensureNotEmpty('page_link');
+        ensureNotEmpty('report');
         ensureNotEmpty('li');
         ensureNotEmpty('formula');
         ensureNotEmpty('callout');

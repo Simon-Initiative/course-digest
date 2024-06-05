@@ -641,6 +641,30 @@ export function fixWildcardSelections(resources: TorusResource[]) {
   return resources;
 }
 
+function fixReportActivityid(resources: TorusResource[], selection: any) {
+  resources
+    .filter((r) => r.type === 'Page' && r.id === selection.activityId)
+    .forEach((page) => {
+      const found = getDescendants(
+        (page as Page).content.model as any[],
+        'activity-reference'
+      ).find(Boolean);
+      if (found) selection.activityId = found.activity_id;
+    });
+}
+
+export function fixActivityReports(resources: TorusResource[]) {
+  resources
+    .filter((r) => r.type === 'Page')
+    .forEach((page) => {
+      getDescendants((page as Page).content.model as any[], 'report').forEach(
+        (sel: any) => fixReportActivityid(resources, sel)
+      );
+    });
+
+  return resources;
+}
+
 // For every group that contained a branching assessment, set the paginationMode attr
 // to 'automatedReveal'
 export function setGroupPaginationModes(
