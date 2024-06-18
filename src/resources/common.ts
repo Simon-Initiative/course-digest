@@ -311,7 +311,6 @@ export function standardContentManipulations($: any) {
     const typeHeader = typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId);
     $(item).prepend(`<em>${typeHeader}...</em>`);
   });
-  // DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'blockquote');
 
   $('example').each((i: any, item: any) => {
