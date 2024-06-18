@@ -199,12 +199,18 @@ export function mergeTitles($: any) {
 }
 
 export function prependTitles($: any) {
+  // These have title content inserted before element
   handleTitledContent($, 'table');
   handleTitledContent($, 'audio');
   handleTitledContent($, 'iframe');
   handleTitledContent($, 'youtube');
   handleTitledContent($, 'image');
   handleTitledContent($, 'video');
+  // For these, title content goes inside the element
+  replaceTitle($, 'example');
+  replaceTitle($, 'alternative');
+  replaceTitle($, 'composite_activity');
+  replaceTitle($, 'pullout');
 }
 
 // move text of child element to same-named attribute
@@ -218,7 +224,7 @@ function mergeElementText($: any, selector: string, element: string) {
   });
 }
 
-// prepend title content as header before element
+// insert title content as header before element
 export function handleTitledContent($: any, selector: string) {
   const items = $(selector);
 
@@ -226,9 +232,19 @@ export function handleTitledContent($: any, selector: string) {
     const title = $(elem).children('title').html();
     $(elem).children().remove('title');
 
-    if (title) {
+    if (title && title !== 'Title') {
       $('<h6><em>' + title + '</em></h6>').insertBefore($(elem));
     }
+  });
+}
+
+// replace title element with bold header to look like title
+export function replaceTitle($: any, selector: string) {
+  const items = $(`${selector}>title`);
+  items.each((i: any, elem: any) => {
+    const titleText = $(elem).text().trim();
+    if (titleText.toLowerCase() === 'title') $(elem).remove();
+    else $(elem).replaceWith(`<h6><em>${titleText}</em></h6>`);
   });
 }
 

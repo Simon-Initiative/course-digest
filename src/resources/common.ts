@@ -295,7 +295,6 @@ export function standardContentManipulations($: any) {
   DOM.handleTitledContent($, 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
-  DOM.rename($, 'composite_activity title', 'p');
 
   DOM.renameAttribute(
     $,
@@ -312,7 +311,7 @@ export function standardContentManipulations($: any) {
     const typeHeader = typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId);
     $(item).prepend(`<em>${typeHeader}...</em>`);
   });
-  DOM.rename($, 'pullout title', 'p');
+  // DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'blockquote');
 
   $('example').each((i: any, item: any) => {
@@ -322,9 +321,7 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
-
   DOM.rename($, 'example', 'group');
-  DOM.rename($, 'group title', 'p');
 
   $('group').each((i: any, item: any) => {
     $(item).attr('layout', 'vertical');
