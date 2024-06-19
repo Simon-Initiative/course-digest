@@ -68,8 +68,8 @@ describe('convert workbook', () => {
                   },
                   children: [
                     {
-                      children: [{ text: 'Example Title' }],
-                      type: 'p',
+                      children: [{ strong: true, text: 'Example Title' }],
+                      type: 'h6',
                     },
                     {
                       type: 'p',
