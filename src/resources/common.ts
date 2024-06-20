@@ -303,6 +303,9 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'composite_activity', 'group');
 
+  // Strip pullout level if it contains alternatives, won't work.
+  DOM.eliminateLevel($, 'pullout:has(alternatives)');
+
   DOM.renameAttribute($, 'pullout', 'type', 'pullouttype');
   $('pullout[pullouttype]').each((i: number, item: any) => {
     const typeId = $(item).attr('pullouttype');
@@ -454,13 +457,14 @@ function handleConjugations($: any) {
 }
 
 function handleAlternatives($: cheerio.Root) {
+  // move default element into attribute for convenience
+  DOM.mergeElementText($, 'alternatives', 'default');
+
   $('alternatives').each((i, alternatives) => {
     $(alternatives).attr('strategy', 'user_section_preference');
 
-    // get default alternative value and remove default child element
-    const defaultValue = $('default', alternatives).text();
-    $(alternatives).children('default').remove();
-
+    // handle default alternative value
+    const defaultValue = $(alternatives).attr('default');
     if (defaultValue) {
       // the default alternative in torus is just the first one in the list
       // so move the default item to first position
