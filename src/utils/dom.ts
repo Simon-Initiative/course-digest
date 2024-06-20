@@ -198,21 +198,6 @@ export function mergeTitles($: any) {
   mergeElementText($, 'section', 'title');
 }
 
-export function prependTitles($: any) {
-  // These have title content inserted before element
-  handleTitledContent($, 'table');
-  handleTitledContent($, 'audio');
-  handleTitledContent($, 'iframe');
-  handleTitledContent($, 'youtube');
-  handleTitledContent($, 'image');
-  handleTitledContent($, 'video');
-  // For these, title content goes inside the element
-  replaceTitle($, 'example');
-  replaceTitle($, 'alternative');
-  replaceTitle($, 'composite_activity');
-  replaceTitle($, 'pullout');
-}
-
 // move text of child element to same-named attribute
 function mergeElementText($: any, selector: string, element: string) {
   const items = $(selector);
@@ -222,6 +207,25 @@ function mergeElementText($: any, selector: string, element: string) {
     $(elem).attr(element, text);
     $(elem).children().remove(element);
   });
+}
+
+export function titlesToContent($: any) {
+  // These have title content inserted before element
+  handleTitledContent($, 'table');
+  handleTitledContent($, 'audio');
+  handleTitledContent($, 'iframe');
+  handleTitledContent($, 'youtube');
+  handleTitledContent($, 'image');
+  handleTitledContent($, 'video');
+  // legacy allowed titles on lists
+  handleTitledContent($, 'ol');
+  handleTitledContent($, 'ul');
+
+  // For these, title content remains inside the element
+  replaceTitle($, 'example');
+  replaceTitle($, 'alternative');
+  replaceTitle($, 'composite_activity');
+  replaceTitle($, 'pullout');
 }
 
 // insert title content as header before element

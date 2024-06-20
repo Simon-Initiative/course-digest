@@ -174,7 +174,8 @@ export function standardContentManipulations($: any) {
   // representation for how Torus supports them
   DOM.flattenNestedSections($);
   DOM.removeSelfClosing($);
-  DOM.prependTitles($);
+  DOM.titlesToContent($);
+
   // Default to block images
   DOM.rename($, 'image', 'img');
   DOM.rename($, 'link', 'a');
@@ -290,9 +291,6 @@ export function standardContentManipulations($: any) {
 
   $('p>table').remove();
   $('p>title').remove();
-  // handle titles of lists
-  DOM.handleTitledContent($, 'ol');
-  DOM.handleTitledContent($, 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
 
@@ -335,7 +333,6 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
   DOM.renameAttribute($, 'video', 'type', 'contenttype');
-
   DOM.renameAttribute($, 'audio', 'type', 'audioType');
 
   DOM.rename($, 'extra', 'popup');
