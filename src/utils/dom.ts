@@ -244,7 +244,7 @@ export function handleTitledContent($: any, selector: string) {
 }
 
 // replace title element with bold header to look like title
-export function replaceTitle($: any, selector: string, prefix: string = '') {
+export function replaceTitle($: any, selector: string, prefix = '') {
   const items = $(`${selector}>title`);
   items.each((i: any, elem: any) => {
     const titleText = $(elem).text().trim();
