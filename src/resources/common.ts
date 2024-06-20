@@ -174,7 +174,8 @@ export function standardContentManipulations($: any) {
   // representation for how Torus supports them
   DOM.flattenNestedSections($);
   DOM.removeSelfClosing($);
-  DOM.prependTitles($);
+  DOM.titlesToContent($);
+
   // Default to block images
   DOM.rename($, 'image', 'img');
   DOM.rename($, 'link', 'a');
@@ -290,12 +291,8 @@ export function standardContentManipulations($: any) {
 
   $('p>table').remove();
   $('p>title').remove();
-  // handle titles of lists
-  DOM.handleTitledContent($, 'ol');
-  DOM.handleTitledContent($, 'ul');
 
   DOM.rename($, 'quote', 'blockquote');
-  DOM.rename($, 'composite_activity title', 'p');
 
   DOM.renameAttribute(
     $,
@@ -312,7 +309,6 @@ export function standardContentManipulations($: any) {
     const typeHeader = typeId === 'tosumup' ? 'To Sum Up' : capitalize(typeId);
     $(item).prepend(`<em>${typeHeader}...</em>`);
   });
-  DOM.rename($, 'pullout title', 'p');
   DOM.rename($, 'pullout', 'blockquote');
 
   $('example').each((i: any, item: any) => {
@@ -322,9 +318,7 @@ export function standardContentManipulations($: any) {
       $(item).attr('id') === undefined ? guid() : $(item).attr('id')
     );
   });
-
   DOM.rename($, 'example', 'group');
-  DOM.rename($, 'group title', 'p');
 
   $('group').each((i: any, item: any) => {
     $(item).attr('layout', 'vertical');
@@ -339,7 +333,6 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
   DOM.renameAttribute($, 'video', 'type', 'contenttype');
-
   DOM.renameAttribute($, 'audio', 'type', 'audioType');
 
   DOM.rename($, 'extra', 'popup');
@@ -531,14 +524,14 @@ function handleDefinitions($: any) {
 }
 
 function handleInquiry($: any) {
-  DOM.rename($, 'inquiry title', 'p');
+  // Title already handled
   // Insert "Question" and "Answer" headers
-  $('inquiry question').before('<h4><em>Question</em></h4>');
+  $('inquiry question').before('<h5><em>Question</em></h5>');
   $('inquiry answer').before('<h5><em>Answer</em></h5>');
   DOM.rename($, 'inquiry question', 'p');
   DOM.rename($, 'inquiry answer', 'p');
 
-  DOM.stripElement($, 'inquiry');
+  DOM.rename($, 'inquiry', 'group');
 }
 
 function sideBySideMaterials($: any) {
