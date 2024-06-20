@@ -198,17 +198,6 @@ export function mergeTitles($: any) {
   mergeElementText($, 'section', 'title');
 }
 
-// move text of child element to same-named attribute
-function mergeElementText($: any, selector: string, element: string) {
-  const items = $(selector);
-
-  items.each((i: any, elem: any) => {
-    const text = $(elem).children(element).text();
-    $(elem).attr(element, text);
-    $(elem).children().remove(element);
-  });
-}
-
 export function titlesToContent($: any) {
   // These have title content inserted before element
   handleTitledContent($, 'table');
@@ -226,6 +215,18 @@ export function titlesToContent($: any) {
   replaceTitle($, 'alternative');
   replaceTitle($, 'composite_activity');
   replaceTitle($, 'pullout');
+  replaceTitle($, 'inquiry', 'INQUIRY: ');
+}
+
+// move text of child element to same-named attribute
+function mergeElementText($: any, selector: string, element: string) {
+  const items = $(selector);
+
+  items.each((i: any, elem: any) => {
+    const text = $(elem).children(element).text();
+    $(elem).attr(element, text);
+    $(elem).children().remove(element);
+  });
 }
 
 // insert title content as header before element
@@ -243,12 +244,12 @@ export function handleTitledContent($: any, selector: string) {
 }
 
 // replace title element with bold header to look like title
-export function replaceTitle($: any, selector: string) {
+export function replaceTitle($: any, selector: string, prefix: string = '') {
   const items = $(`${selector}>title`);
   items.each((i: any, elem: any) => {
     const titleText = $(elem).text().trim();
     if (titleText.toLowerCase() === 'title') $(elem).remove();
-    else $(elem).replaceWith(`<h6><em>${titleText}</em></h6>`);
+    else $(elem).replaceWith(`<h6><em>${prefix}${titleText}</em></h6>`);
   });
 }
 
