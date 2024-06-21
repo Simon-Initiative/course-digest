@@ -457,14 +457,13 @@ function handleConjugations($: any) {
 }
 
 function handleAlternatives($: cheerio.Root) {
-  // move default element into attribute for convenience
-  DOM.mergeElementText($, 'alternatives', 'default');
-
   $('alternatives').each((i, alternatives) => {
     $(alternatives).attr('strategy', 'user_section_preference');
 
-    // handle default alternative value
-    const defaultValue = $(alternatives).attr('default');
+    // get default alternative value and remove default child element
+    const defaultValue = $('default', alternatives).text();
+    $(alternatives).children('default').remove();
+
     if (defaultValue) {
       // the default alternative in torus is just the first one in the list
       // so move the default item to first position
