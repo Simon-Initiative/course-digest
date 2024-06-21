@@ -219,7 +219,7 @@ export function titlesToContent($: any) {
 }
 
 // move text of child element to same-named attribute
-export function mergeElementText($: any, selector: string, element: string) {
+function mergeElementText($: any, selector: string, element: string) {
   const items = $(selector);
 
   items.each((i: any, elem: any) => {
