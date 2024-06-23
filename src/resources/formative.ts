@@ -472,6 +472,9 @@ export function toActivity(
       : 'oli_multi_input';
   }
 
+  // add optional custom scoring attributes to model if needed
+  setCustomScoringFlags(model, activity.subType);
+
   // collect refs from any internal links in stem content
   const links: any[] = Common.getDescendants(model.stem?.content, 'a');
   links.forEach((a: any) => {
@@ -537,6 +540,20 @@ export function titleActivity(
   if (itemPart.startsWith(pagePart)) return itemPart;
 
   return pagePart + '-' + itemPart;
+}
+
+export function setCustomScoringFlags(model: any, subType: string) {
+  const parts = model.authoring.parts;
+  if (
+    parts.some((p: any) => p.responses.some((r: any) => r.score && r.score > 1))
+  ) {
+    parts.forEach(
+      (p: any) => (p.outOf = Math.max(p.responses.map((r: any) => r.score)))
+    );
+    // multi-inputs also use an activity-wide flag
+    if (['oli_multi_input', 'oli_response_multi'].includes(subType))
+      model.customScoring = true;
+  }
 }
 
 function constructObjectives(parts: any): any {
