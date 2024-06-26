@@ -186,7 +186,7 @@ export function buildCATAPart(question: any) {
         // legacy match pattern to be translated later on
         rule: cleanedMatch,
         legacyMatch: cleanedMatch,
-        name: r.name,
+        namremoveSetOpse: r.name,
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
