@@ -342,7 +342,6 @@ export function buildTextPart(id: string, question: any) {
       console.log('response with no match. Treating as *');
       r.match = '*';
     }
-    const cleanedMatch = convertCatchAll(r.match.trim());
     const item: any = {
       id: guid(),
       score: r.score === undefined ? 0 : parseFloat(r.score),
