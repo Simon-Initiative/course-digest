@@ -390,3 +390,7 @@ export function ensureThree(hints?: any[]) {
   }
   return hints;
 }
+
+export function getOutOfPoints(part: any) {
+  return Math.max(...part.responses.map((r: any) => r?.score ?? 0));
+}

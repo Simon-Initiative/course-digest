@@ -542,17 +542,19 @@ export function titleActivity(
   return pagePart + '-' + itemPart;
 }
 
+// add optional attributes to flag custom scoring to torus authoring
 export function setCustomScoringFlags(model: any, subType: string) {
-  const parts = model.authoring.parts;
-  if (
-    parts.some((p: any) => p.responses.some((r: any) => r.score && r.score > 1))
-  ) {
-    parts.forEach(
-      (p: any) => (p.outOf = Math.max(p.responses.map((r: any) => r.score)))
-    );
-    // multi-inputs also use an activity-wide flag
+  const hasCustomPoints = model.authoring.parts.some(
+    (p: any) => Common.getOutOfPoints(p) > 1
+  );
+  if (hasCustomPoints) {
+    // For multi-part questions, authoring detects custom by activity-wide flag
     if (['oli_multi_input', 'oli_response_multi'].includes(subType))
       model.customScoring = true;
+    // set outOf points, which suffices to signal custom for all others
+    model.authoring.parts.forEach(
+      (p: any) => (p.outOf = Common.getOutOfPoints(p))
+    );
   }
 }
 
