@@ -278,14 +278,8 @@ export function getFeedbackModel(response: any) {
   return ensureParagraphs(feedback.children);
 }
 
-const getResponseFeedbacks = (r: any) => {
-  try {
-    return r.children.filter((c: any) => c.type === 'feedback');
-  } catch (e) {
-    console.log('getResponseFeedbacks error ' + JSON.stringify(r, null, 2));
-    return [];
-  }
-};
+const getResponseFeedbacks = (r: any) =>
+  r.children.filter((c: any) => c.type === 'feedback');
 
 export const maybeBuildPartExplanation = (responses: any[]) => {
   // explanation will be built from the first response that contains multiple feedbacks
