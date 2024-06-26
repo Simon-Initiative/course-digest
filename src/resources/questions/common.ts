@@ -347,7 +347,6 @@ export function buildTextPart(id: string, question: any) {
       id: guid(),
       score: r.score === undefined ? 0 : parseFloat(r.score),
       rule: inputMatchToRule(r.match, 'false', 'text'),
-      legacyMatch: cleanedMatch,
       feedback: {
         id: guid(),
         content: maybe(r.children[0]).caseOf({
