@@ -2,6 +2,7 @@ import { maybe } from 'tsmonad';
 import { guid } from 'src/utils/common';
 import * as XML from '../../utils/xml';
 import { isInlineTag } from 'src/utils/dom';
+import { inputMatchToRule } from './multi';
 
 export function getChild(parent: any, named: string) {
   return parent.children.find((e: any) => named == e.type);
@@ -277,8 +278,14 @@ export function getFeedbackModel(response: any) {
   return ensureParagraphs(feedback.children);
 }
 
-const getResponseFeedbacks = (r: any) =>
-  r.children.filter((c: any) => c.type === 'feedback');
+const getResponseFeedbacks = (r: any) => {
+  try {
+    return r.children.filter((c: any) => c.type === 'feedback');
+  } catch (e) {
+    console.log('getResponseFeedbacks error ' + JSON.stringify(r, null, 2));
+    return [];
+  }
+};
 
 export const maybeBuildPartExplanation = (responses: any[]) => {
   // explanation will be built from the first response that contains multiple feedbacks
@@ -326,38 +333,45 @@ export function buildTextPart(id: string, question: any) {
   const part = getChild(question, 'part');
   const hints = getChildren(part, 'hint');
   const skillrefs = getChildren(part, 'skillref');
-  let responses = getChildren(part, 'response');
-  if (responses.length === 0) {
-    console.log(`${id}: no response rules. Treating all responses as correct.`);
-    responses = [{ match: '*', score: '1', children: [] }];
+  let legacyResponses = getChildren(part, 'response');
+
+  if (isSubmitAndCompare(question)) {
+    legacyResponses = adjustSubmitCompareResponses(legacyResponses);
   }
+
+  if (legacyResponses.length === 0) {
+    console.log(`${id}: no response rules. Treating all responses as correct.`);
+    legacyResponses = [{ match: '*', score: '1', children: [] }];
+  }
+  const responses = legacyResponses.map((r: any) => {
+    if (r.match === undefined) {
+      console.log('response with no match. Treating as *');
+      r.match = '*';
+    }
+    const cleanedMatch = convertCatchAll(r.match.trim());
+    const item: any = {
+      id: guid(),
+      score: r.score === undefined ? 0 : parseFloat(r.score),
+      rule: inputMatchToRule(r.match, 'false', 'text'),
+      legacyMatch: cleanedMatch,
+      feedback: {
+        id: guid(),
+        content: maybe(r.children[0]).caseOf({
+          just: (feedback: any) => ensureParagraphs(feedback.children),
+          nothing: () => shortAnswerExplanationOrDefaultModel(question),
+        }),
+      },
+    };
+    const showPage = getBranchingTarget(r);
+    if (showPage !== undefined) {
+      item.showPage = showPage;
+    }
+    return item;
+  });
 
   return {
     id: part.id || id,
-    responses: responses.map((r: any) => {
-      if (r.match === undefined) {
-        console.log('response with no match. Treating as *');
-        r.match = '*';
-      }
-      const cleanedMatch = convertCatchAll(r.match.trim());
-      const item: any = {
-        id: guid(),
-        score: r.score === undefined ? 0 : parseFloat(r.score),
-        rule: `input like {${cleanedMatch}}`,
-        feedback: {
-          id: guid(),
-          content: maybe(r.children[0]).caseOf({
-            just: (feedback: any) => ensureParagraphs(feedback.children),
-            nothing: () => shortAnswerExplanationOrDefaultModel(question),
-          }),
-        },
-      };
-      const showPage = getBranchingTarget(r);
-      if (showPage !== undefined) {
-        item.showPage = showPage;
-      }
-      return item;
-    }),
+    responses,
     hints: ensureThree(
       hints.map((r: any) => ({
         id: guid(),
@@ -366,7 +380,7 @@ export function buildTextPart(id: string, question: any) {
     ),
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
-    explanation: maybeBuildPartExplanation(responses),
+    explanation: maybeBuildPartExplanation(legacyResponses),
     gradingApproach: getGradingApproach(question),
   };
 }
@@ -389,4 +403,25 @@ export function ensureThree(hints?: any[]) {
     return [...hints, hint()];
   }
   return hints;
+}
+
+// modify responses for submit and compare question to require non-blank answer
+// returns JSON-form legacy response list to be converted to torus form
+export function adjustSubmitCompareResponses(origResponses: any[]) {
+  // normally only has one wildcard response treated as correct
+  const correct = origResponses.find((r: any) => r.match === '*');
+  // change match to require input. .+ OK because torus trims whitespace
+  correct.match = '/.+/';
+  if (correct.score === undefined) correct.score = 1;
+
+  // include a catchAll incorrect response for case of empty input
+  const catchAll = {
+    match: '*',
+    score: '0',
+    children: [
+      { type: 'feedback', children: [{ text: 'Please enter a response' }] },
+    ],
+  };
+
+  return [correct, catchAll];
 }
