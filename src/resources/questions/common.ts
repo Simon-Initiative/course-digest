@@ -397,6 +397,7 @@ export function ensureThree(hints?: any[]) {
   return hints;
 }
 
+
 // modify responses for submit and compare question to require non-blank answer
 // returns JSON-form legacy response list to be converted to torus form
 export function adjustSubmitCompareResponses(origResponses: any[]) {
@@ -416,4 +417,9 @@ export function adjustSubmitCompareResponses(origResponses: any[]) {
   };
 
   return [correct, catchAll];
+}
+
+export function getOutOfPoints(part: any) {
+  return Math.max(...part.responses.map((r: any) => r?.score ?? 0));
+
 }

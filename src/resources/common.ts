@@ -303,6 +303,9 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'composite_activity', 'group');
 
+  // Strip pullout level if it contains alternatives, won't work.
+  DOM.eliminateLevel($, 'pullout:has(alternatives)');
+
   DOM.renameAttribute($, 'pullout', 'type', 'pullouttype');
   $('pullout[pullouttype]').each((i: number, item: any) => {
     const typeId = $(item).attr('pullouttype');

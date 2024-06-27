@@ -472,6 +472,9 @@ export function toActivity(
       : 'oli_multi_input';
   }
 
+  // add optional custom scoring attributes to model if needed
+  setCustomScoringFlags(model, activity.subType);
+
   // collect refs from any internal links in stem content
   const links: any[] = Common.getDescendants(model.stem?.content, 'a');
   links.forEach((a: any) => {
@@ -537,6 +540,22 @@ export function titleActivity(
   if (itemPart.startsWith(pagePart)) return itemPart;
 
   return pagePart + '-' + itemPart;
+}
+
+// add optional attributes to flag custom scoring to torus authoring
+export function setCustomScoringFlags(model: any, subType: string) {
+  const hasCustomPoints = model.authoring.parts.some(
+    (p: any) => Common.getOutOfPoints(p) > 1
+  );
+  if (hasCustomPoints) {
+    // For multi-part questions, authoring detects custom by activity-wide flag
+    if (['oli_multi_input', 'oli_response_multi'].includes(subType))
+      model.customScoring = true;
+    // set outOf points, which suffices to signal custom for all others
+    model.authoring.parts.forEach(
+      (p: any) => (p.outOf = Common.getOutOfPoints(p))
+    );
+  }
 }
 
 function constructObjectives(parts: any): any {
