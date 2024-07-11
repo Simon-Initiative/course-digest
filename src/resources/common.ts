@@ -303,6 +303,13 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'composite_activity', 'group');
 
+  // Strip alternatives within feedback/explanation, won't work.
+  // Shows all possible content, OK if they are titled as in cases we have
+  DOM.eliminateLevel($, 'feedback alternatives');
+  DOM.eliminateLevel($, 'feedback alternative');
+  DOM.eliminateLevel($, 'explanation alternatives');
+  DOM.eliminateLevel($, 'explanation alternative');
+
   // Strip pullout level if it contains alternatives, won't work.
   DOM.eliminateLevel($, 'pullout:has(alternatives)');
 

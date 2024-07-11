@@ -329,14 +329,15 @@ export function buildTextPart(id: string, question: any) {
   const skillrefs = getChildren(part, 'skillref');
   let legacyResponses = getChildren(part, 'response');
 
-  if (isSubmitAndCompare(question)) {
-    legacyResponses = adjustSubmitCompareResponses(legacyResponses);
-  }
-
   if (legacyResponses.length === 0) {
     console.log(`${id}: no response rules. Treating all responses as correct.`);
     legacyResponses = [{ match: '*', score: '1', children: [] }];
   }
+
+  if (isSubmitAndCompare(question)) {
+    legacyResponses = adjustSubmitCompareResponses(legacyResponses);
+  }
+
   const responses = legacyResponses.map((r: any) => {
     if (r.match === undefined) {
       console.log('response with no match. Treating as *');
