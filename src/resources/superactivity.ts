@@ -44,6 +44,7 @@ export class Superactivity extends Resource {
           if (
             file.includes('x-oli-embed-activity-highstakes') ||
             file.includes('x-cmu-ctat-tutor2') ||
+            file.includes('x-cmu-ctattutors') ||
             navigable
           ) {
             const activity = toActivity(
