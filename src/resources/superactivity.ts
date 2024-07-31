@@ -183,6 +183,13 @@ function determineActivityDefaults(
           src: 'tutor.html',
         };
       }
+      if (file.indexOf('x-cmu-ctattutors') !== -1) {
+        return {
+          subType: 'oli_embedded',
+          base: 'ctattutors',
+          src: 'tutor.html',
+        };
+      }
       return {
         subType: 'oli_embedded',
         base: 'ctat',
