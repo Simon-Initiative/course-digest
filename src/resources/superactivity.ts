@@ -10,12 +10,7 @@ import { guid } from 'src/utils/common';
 import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
 import { ProjectSummary } from 'src/project';
-import {
-  getWebBundleUrl,
-  MediaSummary,
-  resolve,
-  transformToFlatDirectory,
-} from 'src/media';
+import { getWebBundleUrl } from 'src/media';
 import * as DOM from 'src/utils/dom';
 import * as fs from 'fs';
 
