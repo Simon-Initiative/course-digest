@@ -96,7 +96,7 @@ export function transformToFlatDirectory(
   const paths = findFromDOM($, filePath);
 
   const isWebBundleElement = (e: any) =>
-    ['link', 'iframe', 'asset'].includes($(e)[0].name) ||
+    ['link', 'iframe', 'asset', 'interface'].includes($(e)[0].name) ||
     ($(e)[0].name === 'source' && $(e).parent()[0].name === 'embed_activity');
 
   Object.keys(paths).forEach((assetReference: any) => {
@@ -464,16 +464,19 @@ function generateNewName(
   }
 }
 
-// Turns a media asset reference that is relative to a particular course
-// XML document, into a reference that is relative to the root directory
-// of the project
+// Turns a media asset reference that may be relative to a particular course
+// XML document into a full path to file in project directory
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
 
+  // Ref of form 'webcontent/foo/bar' denotes file within top-level
+  // webcontent directory so is relative to project content directory
   if (reference.assetReference.startsWith('webcontent')) {
+    // Heuristic for finding path to project content directory assumes
+    // no 'content' directory anywhere else within content tree
     dir =
-      reference.filePath.slice(0, reference.filePath.lastIndexOf('content')) +
-      'content/';
+      reference.filePath.slice(0, reference.filePath.lastIndexOf('/content/')) +
+      '/content/';
   }
 
   const assetRef = removeQueryParams(reference.assetReference);
