@@ -10,7 +10,7 @@ export function buildMulti(
   skipInputRefValidation = false,
   ignorePartId = false
 ) {
-  // Pair up the inputs and the parts
+  // Pair up the input items and the parts
   const { items, parts } = collectItemsParts(question);
   const allChoices: any[] = [];
   const inputs: any[] = [];
@@ -18,7 +18,7 @@ export function buildMulti(
   const torusParts: any[] = [];
   const transformations: any[] = [];
 
-  if (items.length === parts.length && items.length > 0) {
+  if (items.length === parts.length) {
     for (let i = 0; i < items.length; i++) {
       const { input, part, choices, targeted } = produceTorusEquivalents(
         items[i],
@@ -176,9 +176,26 @@ const fixChoiceContent = (elements: any[]): any[] => {
 };
 
 function ensureAtLeastOneCorrectResponse(part: any) {
-  const responses = part.responses;
+  // Instructor graded text questions may have no defined responses, but torus authoring requires some
+  if (part.responses == undefined || part.responses.length === 0) {
+    part.responses = [
+      {
+        id: guid(),
+        score: 1,
+        rule: 'input like {.+}',
+        feedback: Common.makeFeedback('Correct'),
+      },
+      {
+        id: guid(),
+        score: 0,
+        rule: 'input like {.*}',
+        feedback: Common.makeFeedback('Inorrect'),
+      },
+    ];
+  }
 
-  if (!responses.some((r: any) => r.score > 0) && responses.length > 0) {
+  const responses = part.responses;
+  if (!responses.some((r: any) => r.score > 0)) {
     // Find the first that isn't the * and set it to be correct
     const withoutStar = responses.filter((r: any) => r.legacyMatch !== '.*');
     if (withoutStar.length > 0) {
@@ -283,12 +300,14 @@ function produceTorusEquivalents(
   return { input, part, choices, targeted };
 }
 
-// It is terribly unfortunate that we have to write code like this, but the issue is that
-// the legacy system has a really odd way of allowing inputs and parts to be misaligned, that is
-// to say, allowing them to exist at different indices within their respective arrays. It
-// relies on the "input" attribute from the reponse to indicate which input that part pertains to, but
-// that attribute is not required.  When it is absent we have to assume that the items and parts
-// are aligned.  So we try first to align with 'input', if that fails we fall back in aligned.
+// A nuisance is that legacy parts may be associated with inputs in multiple ways, either
+// - Explicitly by id match, in which case order of parts is irrelevant, by one of
+//   1. part responses containing "input" attribute matching input id
+//   2. part targets attribute matching input ref (for manually graded qs w/o responses)
+//   3. part id matching input id
+// or
+// - Implicitly, by parallel order to input order
+// This returns items and parts aligned in parallel order
 function collectItemsParts(question: any) {
   const items = question.children.filter((c: any) => {
     return (
@@ -298,35 +317,19 @@ function collectItemsParts(question: any) {
     );
   });
 
-  const originalParts = question.children.filter((c: any) => {
-    return c.type === 'part';
-  });
-
-  const partsByFirstReponseInput = originalParts.reduce((m: any, p: any) => {
-    const responses = p.children.filter((p: any) => p.type === 'response');
-
-    if (responses.length > 0) {
-      m[responses[0].input] = p;
-      return m;
-    }
-    return m;
-  }, {});
-
-  const partsByPartId = originalParts.reduce((m: any, p: any) => {
-    m[p.id] = p;
-    return m;
-  }, {});
-
+  const legacyParts = Common.getChildren(question, 'part');
   const parts = items.map((item: any) => {
-    if (partsByFirstReponseInput[item.id] !== undefined) {
-      return partsByFirstReponseInput[item.id];
-    } else {
-      return partsByPartId[item.id];
-    }
+    return (
+      legacyParts.find(
+        (p: any) => Common.getChildren(p, 'response')[0]?.input === item.id
+      ) ||
+      legacyParts.find((p: any) => p.targets === item.id) ||
+      legacyParts.find((p: any) => p.id === item.id)
+    );
   });
 
   if (parts.some((p: any) => p === undefined)) {
-    return { items, parts: originalParts };
+    return { items, parts: legacyParts };
   }
 
   return { items, parts };
@@ -430,9 +433,9 @@ export function buildInputPart(
   part: any,
   input: any
 ) {
-  const responses = part.children.filter((p: any) => p.type === 'response');
-  const hints = part.children.filter((p: any) => p.type === 'hint');
-  const skillrefs = part.children.filter((p: any) => p.type === 'skillref');
+  const responses = Common.getChildren(part, 'response');
+  const hints = Common.getChildren(part, 'hint');
+  const skillrefs = Common.getChildren(part, 'skillref');
   const id = part.id !== undefined && part.id !== null ? part.id + '' : guid();
 
   return {
@@ -464,6 +467,7 @@ export function buildInputPart(
     objectives: skillrefs.map((s: any) => s.idref),
     scoringStrategy: 'average',
     explanation: Common.maybeBuildPartExplanation(responses),
+    gradingApproach: Common.getGradingApproach(input),
   };
 }
 

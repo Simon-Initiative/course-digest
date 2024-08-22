@@ -319,7 +319,7 @@ export function getBranchingTarget(response: any) {
   return response.children[0]['xml:lang'];
 }
 
-function getGradingApproach(question: any) {
+export function getGradingApproach(question: any) {
   return question.grading === 'instructor' ? 'manual' : 'automatic';
 }
 
@@ -329,7 +329,10 @@ export function buildTextPart(id: string, question: any) {
   const skillrefs = getChildren(part, 'skillref');
   let legacyResponses = getChildren(part, 'response');
 
-  if (legacyResponses.length === 0) {
+  if (
+    legacyResponses.length === 0 &&
+    getGradingApproach(question) !== 'manual'
+  ) {
     console.log(`${id}: no response rules. Treating all responses as correct.`);
     legacyResponses = [{ match: '*', score: '1', children: [] }];
   }
@@ -402,7 +405,9 @@ export function ensureThree(hints?: any[]) {
 // returns JSON-form legacy response list to be converted to torus form
 export function adjustSubmitCompareResponses(origResponses: any[]) {
   // normally only has one wildcard response treated as correct
-  const correct = origResponses.find((r: any) => r.match === '*');
+  const correct =
+    origResponses.find((r: any) => r.match === '*') ||
+    origResponses.find((r: any) => r.score > 0);
   // change match to require input. .+ OK because torus trims whitespace
   correct.match = '/.+/';
   if (correct.score === undefined) correct.score = 1;
