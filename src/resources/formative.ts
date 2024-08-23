@@ -637,16 +637,20 @@ export function determineSubType(question: any): ItemTypes {
     Common.getChild(question, 'text') === undefined
   ) {
     const parts = Common.getChildren(question, 'part');
-
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       const firstResponse = Common.getChild(part, 'response');
-      if (firstResponse !== undefined) {
-        question.children.push({
-          type: question.originalType,
-          id: firstResponse.input,
-        });
-      }
+      // try to find the input id for this part
+      const inputId =
+        firstResponse?.input ||
+        // some instructor-graded questions associate by targets attr on part
+        part.targets ||
+        part.id;
+      const input: any = { type: question.originalType, id: inputId };
+      // need to attach question grading flag if set
+      if (question.grading) input.grading = question.grading;
+
+      question.children.push(input);
     }
 
     return 'oli_multi_input';
