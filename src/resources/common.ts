@@ -87,8 +87,8 @@ export function addWarning(
 export function failIfPresent($: cheerio.Root, items: string[]) {
   items.forEach((e: string) => {
     $(e).each((_i: any, _item: any) => {
-      console.log(`unsupported element [${e}] detected, exiting`);
-      process.exit(1);
+      console.log(`unsupported element [${e}] detected, will not migrate`);
+      $(e).replaceWith(`<p>[Unmigrated legacy element: ${e}]</p>`);
     });
   });
 }
