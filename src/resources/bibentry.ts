@@ -46,7 +46,7 @@ export function convertBibliographyEntries(
     });
 
     // Use citation-js to convert bibTeX to CSL-JSON
-    console.log('Converting reference. bibTex = ' + bibtexVal);
+
     // citation-js parser treats $ (used in some titles) as math delimiter, so escape it.
     const data = new Cite(bibtexVal.replaceAll('$', '\\$'));
     const cslData = data.get({
@@ -65,7 +65,6 @@ export function convertBibliographyEntries(
           validate.errors
       );
     }
-    console.log(JSON.stringify(cslJson, null, 2));
 
     const b = {
       type: 'Bibentry',
