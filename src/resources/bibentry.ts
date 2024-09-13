@@ -16,6 +16,18 @@ export function convertBibliographyEntries(
   $: any,
   found: Map<string, any>
 ): string {
+  // Legacy rendered author fields as is, rather than treating as names to be parsed and rendered
+  // in FamilyName, FirstInitial format. This allows for institutional authors like "Dept of Labor",
+  // requring true proper names entered in format for bibliography. In bibTeX, the way to indicate
+  // this is with double brackets, e.g. author={{Dept of Labor}}. To suppress name parsing in the
+  // citation-js conversion to CSL-JSON, we add one pair of brackets here, relying on the conversion
+  // to bibTex to wrap contents in another pair, so citation-js gets bibTex input as desired.
+  $('bib\\:author, bib\\:editor').each((i: any, item: any) => {
+    const author = $(item).text();
+    $(item).text('{' + author + '}');
+  });
+
+  // Use XSL transformation to convert XML bibTeXML to textual bibTeX
   $('bib\\:entry').each((i: any, item: any) => {
     const id = $(item).attr('id');
     const content = `<bibtex:file xmlns:bibtex="http://bibtexml.sf.net/"><bibtex:entry id="${id}">${$(
@@ -33,6 +45,8 @@ export function convertBibliographyEntries(
       method: 'text',
     });
 
+    // Use citation-js to convert bibTeX to CSL-JSON
+
     // citation-js parser treats $ (used in some titles) as math delimiter, so escape it.
     const data = new Cite(bibtexVal.replaceAll('$', '\\$'));
     const cslData = data.get({
@@ -41,9 +55,7 @@ export function convertBibliographyEntries(
       style: 'csl',
       lang: 'en-US',
     });
-
     const cslJson: any[] = JSON.parse(cslData);
-
     const valid = validate(cslJson);
     if (!valid) {
       throw new Error(
@@ -54,14 +66,12 @@ export function convertBibliographyEntries(
       );
     }
 
-    const title = cslJson[0].title;
-
     const b = {
       type: 'Bibentry',
       id: guid(),
       legacyPath: '',
       legacyId: '',
-      title,
+      title: cslJson[0].title,
       tags: [],
       unresolvedReferences: [],
       children: [],
@@ -71,7 +81,6 @@ export function convertBibliographyEntries(
     } as TorusResource;
 
     found.set(cslJson[0].id, b);
-    // found.push(b);
   });
 
   return $.html();
