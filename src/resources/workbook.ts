@@ -412,6 +412,15 @@ export function introduceStructuredContent(content: Element[]): Element[] {
       return [...u, refGroup];
     }
 
+    if (e.type === 'content' && e.available == 'instructor_only') {
+      const group = wrapContentInGroup([
+        { type: 'content', id: e.id || guid(), children: e.children },
+      ]);
+      (group as any).audience = 'instructor';
+
+      return [...u, group];
+    }
+
     if (isResourceGroup(e)) {
       const withStructuredContent = Object.assign({}, e, {
         children:

@@ -14,6 +14,7 @@ import {
   processVariables,
   failIfPresent,
   failIfHasValue,
+  wrapContentInGroup,
 } from './common';
 import {
   findCustomTag,
@@ -903,11 +904,15 @@ export function processAssessmentModel(
       item.type === 'conclusion' ||
       item.type === 'content'
     ) {
-      const content: any = Object.assign(
-        {},
-        { type: 'content', id: guid() },
-        { children: item.children }
-      );
+      // allow for instructor-only blocks in summative content
+      const content1 = { type: 'content', id: guid(), children: item.children };
+      const content: any =
+        item.available === 'instructor_only'
+          ? Object.assign(wrapContentInGroup([content1]), {
+              audience: 'instructor',
+            })
+          : content1;
+
       if (pageId !== null) {
         content.page = pageId;
       }
