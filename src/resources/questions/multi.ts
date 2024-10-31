@@ -224,6 +224,7 @@ function produceTorusEquivalents(
     // text input with math keyboard set => torus math input
     input.inputType = item.keyboard === 'math' ? 'math' : 'text';
     input.size = item.size;
+    if (input.inputType === 'math') fixMathRules(part);
   } else if (item.type === 'numeric') {
     part = buildInputPart('numeric', p, i);
     ensureAtLeastOneCorrectResponse(part);
@@ -298,6 +299,23 @@ function produceTorusEquivalents(
   Common.ensureCatchAllResponse(part.responses);
 
   return { input, part, choices, targeted };
+}
+
+// Special case processing for math keyboard questions with answers in scientific
+// notation: Echo version of keyboard could generate LaTeX of form "4\times 10^3"
+// or "3.2\times 10{-3}"" while torus version needs "4\times10^3" w/o space
+function fixMathRules(part: any) {
+  part.responses.forEach((r: any) => {
+    const latex = ruleArg(r.rule);
+    const newLatex = latex.replace(
+      /([\d.]+)\\times 10\^({?-?\d+}?)/,
+      '$1\\times10^$2'
+    );
+
+    const prefix = r.rule.substring(0, r.rule.indexOf('{'));
+    r.rule = prefix + `{${escapeInput(newLatex)}}`;
+    return r;
+  });
 }
 
 // A nuisance is that legacy parts may be associated with inputs in multiple ways, either
@@ -399,6 +417,11 @@ export function hasCasedChars(s: string) {
 
 // This escapes argument for the match rule notation
 const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
+const unescapeInput = (s: string) =>
+  s.replace(/\\[\\{}]/g, (i) => i.substring(1));
+
+const ruleArg = (r: string) =>
+  unescapeInput(r.substring(r.indexOf('{') + 1, r.lastIndexOf('}')));
 
 // legacy match value for text input is either special wildcard *
 // a literal string to be matched; or, rarely, /regexp/
