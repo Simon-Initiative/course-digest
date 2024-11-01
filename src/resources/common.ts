@@ -301,6 +301,9 @@ export function standardContentManipulations($: any) {
     'innerpurpose'
   );
 
+  // Strip composite-activity if only one child
+  DOM.eliminateLevel($, 'composite_activity:not(:has(> *:nth-child(2)))');
+
   DOM.rename($, 'composite_activity', 'group');
 
   // Strip alternatives within feedback/explanation, won't work.
