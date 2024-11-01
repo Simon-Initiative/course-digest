@@ -121,6 +121,9 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'definition>term', 'definition-term');
 
+  // torus figures don't have captions. strip to leave image w/caption & maybe title
+  DOM.eliminateLevel($, 'figure:has(caption)');
+
   // Torus figures require a title, so add one if missing. Do this
   // early to ensure gets any further title processing below
   $('figure:not(:has(title))').each((i: any, elem: any) => {
@@ -302,7 +305,7 @@ export function standardContentManipulations($: any) {
   );
 
   // Strip composite-activity if only one child
-  DOM.eliminateLevel($, 'composite_activity:not(:has(> *:nth-child(2)))');
+  DOM.eliminateLevel($, 'composite_activity:has(> :only-child)');
 
   DOM.rename($, 'composite_activity', 'group');
 
