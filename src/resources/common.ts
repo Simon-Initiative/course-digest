@@ -304,6 +304,12 @@ export function standardContentManipulations($: any) {
     'innerpurpose'
   );
 
+  // Strip side-by-side materials structure if contains inline activities
+  DOM.rename($, 'materials:has(wb\\:inline)', 'mtemp');
+  DOM.eliminateLevel($, 'mtemp>material:has(wb\\:inline)');
+  DOM.rename($, 'mtemp>material', 'p');
+  DOM.eliminateLevel($, 'mtemp');
+
   // Strip composite-activity if only one child
   DOM.eliminateLevel($, 'composite_activity:has(> :only-child)');
 
