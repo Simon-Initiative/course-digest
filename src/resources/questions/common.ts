@@ -404,13 +404,17 @@ export function ensureThree(hints?: any[]) {
 // modify responses for submit and compare question to require non-blank answer
 // returns JSON-form legacy response list to be converted to torus form
 export function adjustSubmitCompareResponses(origResponses: any[]) {
+  // In legacy response, score is string attribute value, not number
+  const scoreVal = (s: string) => (s === undefined ? 0 : parseInt(s));
+
   // normally only has one wildcard response treated as correct
   const correct =
     origResponses.find((r: any) => r.match === '*') ||
-    origResponses.find((r: any) => r.score > 0);
+    origResponses.find((r: any) => scoreVal(r.score) > 0);
   // change match to require input. .+ OK because torus trims whitespace
   correct.match = '/.+/';
-  if (correct.score === undefined) correct.score = 1;
+  // ensure this has score value identifying as correct
+  if (!(scoreVal(correct.score) > 0)) correct.score = '1';
 
   // include a catchAll incorrect response for case of empty input
   const catchAll = {
