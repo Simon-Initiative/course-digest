@@ -92,6 +92,9 @@ export function transformToFlatDirectory(
 ): boolean {
   let modified = false;
 
+  // bit of restructuring before processing link urls
+  removeLinkScript($);
+
   // paths maps from reference string to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
 
@@ -140,15 +143,24 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      } else
-        console.log(
-          'Referenced file not found: ' + assetReference + ' from ' + filePath
-        );
+      } else console.log('Referenced file not found: ' + assetReference);
     });
     modified = true;
   });
   return modified;
 }
+
+// Some legacy courses used this script-loaded form of image link
+// This converts to plain link to referenced image
+const removeLinkScript = ($: any) => {
+  $('link[href^="javascript\\:loadImage"]').each((i: any, item: any) => {
+    const href = $(item).attr('href');
+    const arg = href.match(/javascript:loadImage\(['"](.+)['"]\)/)[1];
+    // found have to strip one level of ../ in our cases
+    const imageRef = arg.startsWith('../') ? arg.substr(3) : arg;
+    $(item).attr('href', imageRef);
+  });
+};
 
 const escapeRegex = (s: string) => s.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 
