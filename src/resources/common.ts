@@ -183,6 +183,13 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'image', 'img');
   DOM.rename($, 'link', 'a');
 
+  // change javascript:loadImage form of image link to direct image link
+  $('a[href^="javascript\\:loadImage"]').each((i: any, item: any) => {
+    const href = $(item).attr('href');
+    const imageRef = href.match(/javascript:loadImage\(['"](.+)['"]\)/)[1];
+    $(item).attr('href', imageRef);
+  });
+
   // Images "nested" inside paragraphs and links become inline images.
   // Block images are wrapped inside figures in Torus, so even if an
   // image in a legacy course is intended as a block semantically, with
