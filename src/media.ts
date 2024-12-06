@@ -573,28 +573,14 @@ function findFromDOM(
     }
   });
 
-  $('asset').each((i: any, elem: any) => {
-    if ($(elem).text().includes('webcontent')) {
-      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-    }
-  });
-
-  $('interface').each((i: any, elem: any) => {
+  // element types used for superactivity assets
+  $('asset, interface, dataset').each((i: any, elem: any) => {
     if (
       $(elem).text().includes('webcontent') ||
       $(elem).text().includes('..')
     ) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
     }
-  });
-
-  $('dataset').each((i: any, elem: any) => {
-    if (
-      $(elem).text().includes('webcontent') ||
-      $(elem).text().includes('..')
-    ) {
-      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-    } else console.log('dataset not translated: ' + $(elem).text());
   });
 
   // mathML elements can have image refs in inline style sheets
