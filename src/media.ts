@@ -96,14 +96,16 @@ export function transformToFlatDirectory(
   const paths = findFromDOM($, filePath);
 
   const isWebBundleElement = (e: any) =>
-    ['link', 'iframe', 'asset', 'interface'].includes($(e)[0].name) ||
+    ['link', 'iframe', 'asset', 'interface', 'dataset'].includes(
+      $(e)[0].name
+    ) ||
     ($(e)[0].name === 'source' && $(e).parent()[0].name === 'embed_activity');
 
   Object.keys(paths).forEach((assetReference: any) => {
     const ref = { filePath, assetReference };
 
     // Update the URL in the XML DOM
-    paths[assetReference].forEach((elem) => {
+    paths[assetReference].forEach((elem: cheerio.Element) => {
       const url =
         // For link, iframe and superactivity source and webcontent assets, use a
         // webBundle URL rather than a flattened media library URL when webBundle requested.
@@ -114,36 +116,13 @@ export function transformToFlatDirectory(
       // URL-generating functions should return null url if file doesn't exist
       if (url !== null) {
         if (
-          $(elem)[0].name === 'source' &&
-          $(elem).parent()[0].name !== 'video'
+          ['asset', 'interface', 'dataset'].includes($(elem)[0].name) ||
+          ($(elem)[0].name === 'source' && $(elem).parent()[0].name !== 'video')
         ) {
-          $(elem).replaceWith(
-            `<source>${url.slice(url.lastIndexOf('media/') + 6)}</source>`
-          );
-        } else if ($(elem)[0].name === 'asset') {
-          const name = $(elem).attr('name');
-          if (name) {
-            $(elem).replaceWith(
-              `<asset name="${name}">${url.slice(
-                url.lastIndexOf('media/') + 6
-              )}</asset>`
-            );
-          } else {
-            $(elem).replaceWith(
-              `<asset>${url.slice(url.lastIndexOf('media/') + 6)}</asset>`
-            );
-          }
-        } else if ($(elem)[0].name === 'interface') {
-          $(elem).replaceWith(
-            `<interface>${url.slice(url.lastIndexOf('media/') + 6)}</interface>`
-          );
-        } else if ($(elem)[0].name === 'dataset') {
-          const pkg = $(elem).attr('package');
-          $(elem).replaceWith(
-            `<dataset package="${pkg}">${url.slice(
-              url.lastIndexOf('media/') + 6
-            )}</dataset>`
-          );
+          // superactivity assets take paths relative to the media base url
+          const superMediaPath = url.slice(url.lastIndexOf('media/') + 6);
+          const query = $(elem).text().split('?')[1];
+          $(elem).text(superMediaPath + (query ? `?${query}` : ''));
         } else if ($(elem)[0].name === 'link') {
           $(elem).attr('href', url);
         } else if (
@@ -161,7 +140,10 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      }
+      } else
+        console.log(
+          'Referenced file not found: ' + assetReference + ' from ' + filePath
+        );
     });
     modified = true;
   });
@@ -524,7 +506,7 @@ function findFromDOM(
   $: any,
   filePath: string,
   remote = false
-): Record<string, Array<string>> {
+): Record<string, Array<cheerio.Element>> {
   // result to be returned
   const paths: any = {};
 
@@ -591,20 +573,12 @@ function findFromDOM(
     }
   });
 
-  $('asset').each((i: any, elem: any) => {
-    if ($(elem).text().includes('webcontent')) {
-      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-    }
-  });
-
-  $('interface').each((i: any, elem: any) => {
-    if ($(elem).text().includes('webcontent')) {
-      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-    }
-  });
-
-  $('dataset').each((i: any, elem: any) => {
-    if ($(elem).text().includes('webcontent')) {
+  // element types used for superactivity assets
+  $('asset, interface, dataset').each((i: any, elem: any) => {
+    if (
+      $(elem).text().includes('webcontent') ||
+      $(elem).text().includes('..')
+    ) {
       paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
     }
   });
