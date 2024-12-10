@@ -92,8 +92,8 @@ export function transformToFlatDirectory(
 ): boolean {
   let modified = false;
 
-  // bit of restructuring before processing link urls
-  removeLinkScript($);
+  // bit of restructuring that must happen *before* translating link urls
+  handleScriptedImageLinks($);
 
   // paths maps from reference string to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
@@ -150,15 +150,18 @@ export function transformToFlatDirectory(
   return modified;
 }
 
-// Some legacy courses used this script-loaded form of image link
-// This converts to plain link to referenced image
-const removeLinkScript = ($: any) => {
+// At least one legacy course used this script-loaded form of image link
+// This converts to popup showing referenced image
+const handleScriptedImageLinks = ($: any) => {
   $('link[href^="javascript\\:loadImage"]').each((i: any, item: any) => {
     const href = $(item).attr('href');
     const arg = href.match(/javascript:loadImage\(['"](.+)['"]\)/)[1];
-    // found have to strip one level of ../ in our cases
-    const imageRef = arg.startsWith('../') ? arg.substr(3) : arg;
-    $(item).attr('href', imageRef);
+    // found this needed in our cases. maybe fixing user error, but works.
+    const imageRef = arg.startsWith('../..') ? arg.substr(3) : arg;
+    const text = $(item).text();
+    $(item).replaceWith(
+      `<extra><anchor>${text}</anchor><image src="${imageRef}"></image></extra>`
+    );
   });
 };
 
