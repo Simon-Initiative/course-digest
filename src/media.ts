@@ -92,6 +92,9 @@ export function transformToFlatDirectory(
 ): boolean {
   let modified = false;
 
+  // bit of restructuring that must happen *before* translating link urls
+  handleScriptedImageLinks($);
+
   // paths maps from reference string to list of DOM elements containing it
   const paths = findFromDOM($, filePath);
 
@@ -140,15 +143,27 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      } else
-        console.log(
-          'Referenced file not found: ' + assetReference + ' from ' + filePath
-        );
+      } else console.log('Referenced file not found: ' + assetReference);
     });
     modified = true;
   });
   return modified;
 }
+
+// At least one legacy course used this script-loaded form of image link
+// This converts to popup showing referenced image
+const handleScriptedImageLinks = ($: any) => {
+  $('link[href^="javascript\\:loadImage"]').each((i: any, item: any) => {
+    const href = $(item).attr('href');
+    const arg = href.match(/javascript:loadImage\(['"](.+)['"]\)/)[1];
+    // found this needed in our cases. maybe fixing user error, but works.
+    const imageRef = arg.startsWith('../..') ? arg.substr(3) : arg;
+    const text = $(item).text();
+    $(item).replaceWith(
+      `<extra><anchor>${text}</anchor><image src="${imageRef}"></image></extra>`
+    );
+  });
+};
 
 const escapeRegex = (s: string) => s.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 
