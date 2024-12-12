@@ -31,6 +31,7 @@ export class Organization extends Resource {
     // failIfHasValue($, 'sequence', 'audience', 'instructor');
     failIfPresent($, ['include', 'unordered', 'supplement']);
 
+    $('description').remove();
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
     removeSequences($);
