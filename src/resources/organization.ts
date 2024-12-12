@@ -26,12 +26,18 @@ function flattenOrganization($: any) {
   });
 }
 
+function removeContainerDescriptions($: any) {
+  $('unit > description').remove();
+  $('module > description').remove();
+  $('section > description').remove();
+}
+
 export class Organization extends Resource {
   restructure($: any): any {
     // failIfHasValue($, 'sequence', 'audience', 'instructor');
     failIfPresent($, ['include', 'unordered', 'supplement']);
 
-    $('description').remove();
+    removeContainerDescriptions($);
     DOM.flattenResourceRefs($);
     DOM.mergeTitles($);
     removeSequences($);
