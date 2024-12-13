@@ -111,7 +111,9 @@ function validateArgs(options: CmdOptions) {
     if (options.inputDir) {
       // ensure absolute file system path, some path resolution steps require this
       options.inputDir = path.resolve(options.inputDir);
-      return [options.inputDir].every(fs.existsSync);
+      const ok = [options.inputDir].every(fs.existsSync);
+      if (!ok) console.log('inputDir not found: ' + options.inputDir);
+      return ok;
     }
   } else if (options.operation === 'summarize') {
     if (options.inputDir && options.outputDir) {
