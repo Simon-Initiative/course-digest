@@ -26,13 +26,13 @@ export function getDescendants(collection: any[], named: string): any[] {
 
 export function convertAutoGenResponses(model: any) {
   const autoGens = model.authoring.parts[0].responses.filter(
-    (r: any) => r.name !== undefined && r.name.indexOf('AUTOGEN') > -1
+    (r: any) => r.name !== undefined && r.name.includes('AUTOGEN')
   );
 
   if (autoGens.length > 0) {
     model.authoring.parts[0].responses =
       model.authoring.parts[0].responses.filter(
-        (r: any) => r.name === undefined || r.name.indexOf('AUTOGEN') === -1
+        (r: any) => r.name === undefined || !r.name.includes('AUTOGEN')
       );
 
     const catchAll = autoGens[0];

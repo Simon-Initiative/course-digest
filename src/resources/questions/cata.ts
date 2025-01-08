@@ -186,7 +186,7 @@ export function buildCATAPart(question: any) {
         // legacy match pattern to be translated later on
         rule: cleanedMatch,
         legacyMatch: cleanedMatch,
-        namremoveSetOpse: r.name,
+        name: r.name, // used to filter AUTOGEN responses
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
@@ -238,11 +238,11 @@ export function cata(question: any, from = 'multiple_choice') {
       incorrect: [],
     },
   };
-  const responseList = model.authoring.parts[0].responses;
 
   // Replaces any auto-generated incorrect responses with single catchall.
   Common.convertAutoGenResponses(model);
 
+  const responseList = model.authoring.parts[0].responses;
   let correctResponse = responseList.find(
     (r: any) => r.score !== undefined && r.score !== 0
   );
