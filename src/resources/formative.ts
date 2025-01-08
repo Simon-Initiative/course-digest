@@ -21,7 +21,7 @@ import {
   process as processCustomDnd,
 } from './questions/custom-dnd';
 import { cata } from './questions/cata';
-import { buildMulti, buildResponseMulti } from './questions/multi';
+import { buildMulti, buildResponseMulti, ruleArg } from './questions/multi';
 import * as DOM from 'src/utils/dom';
 import * as XML from 'src/utils/xml';
 import * as Common from './questions/common';
@@ -125,15 +125,10 @@ function buildMCQPart(question: any) {
 }
 
 function buildOrderingPart(question: any) {
-  const responses = Common.getChild(question, 'part').children.filter(
-    (p: any) => p.type === 'response'
-  );
-  const hints = Common.getChild(question, 'part').children.filter(
-    (p: any) => p.type === 'hint'
-  );
-  const skillrefs = Common.getChild(question, 'part').children.filter(
-    (p: any) => p.type === 'skillref'
-  );
+  const part = Common.getChild(question, 'part');
+  const responses = Common.getChildren(part, 'response');
+  const hints = Common.getChildren(part, 'hint');
+  const skillrefs = Common.getChildren(part, 'skillrefs');
 
   return {
     id: Common.getPartIds(question)[0],
@@ -148,6 +143,7 @@ function buildOrderingPart(question: any) {
 
         rule: `input like {${torusMatch}}`,
         legacyMatch: cleanedMatch,
+        name: r.name, // used to filter AUTOGEN responses
         feedback: {
           id: guid(),
           content: Common.getFeedbackModel(r),
@@ -330,15 +326,28 @@ function ordering(question: any) {
   // Include optional map if custom color found, serialized as array of [id, color] pairs
   if (colorMap.size > 0) model.choiceColors = [...colorMap];
 
-  const correctResponse = model.authoring.parts[0].responses.filter(
+  // Replaces any auto-generated incorrect responses with single catchall.
+  Common.convertAutoGenResponses(model);
+
+  // register the correct answer as assoc of choice list and response id
+  const responseList = model.authoring.parts[0].responses;
+  const correctResponse = responseList.filter(
     (r: any) => r.score !== undefined && r.score !== 0
   )[0];
-
   const correctIds = correctResponse.legacyMatch.split(/\s*,\s*/);
   (model.authoring.correct as any).push(correctIds);
   (model.authoring.correct as any).push(correctResponse.id);
 
-  Common.ensureCatchAllResponse(model.authoring.parts[0].responses);
+  // fill in targeted feedback mapping from choice ID lists to responses
+  const targeted = responseList.filter(
+    (r: any) => r !== correctResponse && !r.rule.endsWith(' {.*}')
+  );
+  const ruleIds = (r: string) => ruleArg(r).split(' ');
+  model.authoring.parts[0].targeted = targeted.map((r: any) => {
+    return [ruleIds(r.rule), r.id];
+  });
+
+  Common.ensureCatchAllResponse(responseList);
 
   return model;
 }

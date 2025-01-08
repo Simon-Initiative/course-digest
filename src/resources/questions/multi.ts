@@ -420,7 +420,7 @@ const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
 const unescapeInput = (s: string) =>
   s.replace(/\\[\\{}]/g, (i) => i.substring(1));
 
-const ruleArg = (r: string) =>
+export const ruleArg = (r: string) =>
   unescapeInput(r.substring(r.indexOf('{') + 1, r.lastIndexOf('}')));
 
 // legacy match value for text input is either special wildcard *
