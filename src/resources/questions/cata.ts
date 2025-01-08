@@ -156,13 +156,6 @@ const updateResponseRules = (model: any) => {
   // translate rules in targeted feedback responses, checking for set-theoretic match rules
   model.authoring.targeted.forEach((assoc: any) => {
     const r = findResponse(model, getResponseId(assoc));
-    if (!r) {
-      console.log(
-        'cata/updateResponseRules: targeted response not found id=' +
-          getResponseId(assoc)
-      );
-      console.log(JSON.stringify(model.authoring.parts[0].responses, null, 2));
-    }
     const setOpMatch = r.rule.match(/^([!<=>]+)\{/);
     r.rule = setOpMatch
       ? convertSetRule(setOpMatch[1], getChoiceIds(assoc), allChoices)
