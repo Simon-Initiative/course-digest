@@ -149,7 +149,7 @@ export function removeRedundantInputRefs(
 ) {
   if (!Array.isArray(children)) return children;
   return children
-    .filter((c) => !(c.type === 'input_ref' && c.input === redundantInputId))
+    .filter((c) => !(c.type === 'input_ref' && c.id === redundantInputId))
     .map((child) => {
       if (child.children) {
         child.children = removeRedundantInputRefs(

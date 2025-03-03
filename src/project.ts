@@ -16,6 +16,8 @@ export class ProjectSummary {
   svnRoot: string;
   mediaSummary: MediaSummary;
   alternativeGroups: Record<string, Set<string>>;
+  // for QTI conversion
+  manifest?: { title: string; description: string };
 
   constructor(
     packageDirectory: string,

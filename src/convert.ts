@@ -436,7 +436,7 @@ export const checkActivity = (activity: Activity, page: string) => {
       xml.indexOf('<source>') + 8,
       xml.indexOf('</source>')
     );
-    console.log(`Script ${source}\t${page}`);
+    console.log(`Script ${source}\t${page}\t${activity.title}`);
   }
 };
 
@@ -457,7 +457,7 @@ function handleOnePlaceholder(
       wrapContentInSurveyOrGroup(
         derived.map((d) => {
           if (d.type === 'Activity') {
-            // checkActivity(d as Activity, page.title);
+            checkActivity(d as Activity, page.title);
             return {
               type: 'activity-reference',
               activity_id: d.id,
@@ -587,7 +587,10 @@ export function relativizeLegacyPaths(
   });
 }
 
-export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
+export function generatePoolTags(
+  resources: TorusResource[],
+  prefix = 'Legacy Pool'
+): TorusResource[] {
   const tags: any = {};
 
   const items = resources.filter((r) => {
@@ -599,7 +602,7 @@ export function generatePoolTags(resources: TorusResource[]): TorusResource[] {
             legacyPath: null,
             legacyId: t,
             id: t,
-            title: `Legacy Pool: ${t}`,
+            title: `${prefix}: ${t}`,
             tags: [],
             unresolvedReferences: [],
             content: {},
@@ -777,10 +780,15 @@ async function wipeAndCreateOutput({ outputDirectory }: ProjectSummary) {
 
 function outputManifest(projectSummary: ProjectSummary) {
   const { packageDirectory, outputDirectory, svnRoot } = projectSummary;
-  const $ = DOM.read(`${packageDirectory}/content/package.xml`);
-  const title = $('package title').text();
-  const description = $('package description').text();
-
+  let title: string, description: string;
+  if (projectSummary.manifest) {
+    title = projectSummary.manifest.title;
+    description = projectSummary.manifest.description;
+  } else {
+    const $ = DOM.read(`${packageDirectory}/content/package.xml`);
+    title = $('package title').text();
+    description = $('package description').text();
+  }
   const manifest = {
     title,
     description,
