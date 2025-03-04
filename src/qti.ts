@@ -54,26 +54,35 @@ export function processQtiFolder(
 
 // resolves to list of activity resources, [] if none
 async function processManifestResource(
-  $: cheerio.Root,
+  $manifest: cheerio.Root,
   resource: cheerio.TagElement,
   dir: string
 ): Promise<Activity[]> {
   return new Promise((resolve, _reject) => {
     //  Blackboard has file path in bb:file attr; Canvas in <file href="..."" /> child
     const file =
-      $(resource).attr('bb:file') || $(resource).find('file').attr('href');
+      $manifest(resource).attr('bb:file') ||
+      $manifest(resource).find('file').attr('href');
     if (!file) resolve([]);
 
-    // Detect files we want by sniffing root element
-    const doc = DOM.read(`${dir}/${file}`);
-    const rootTag = doc(':root').prop('tagName').toLowerCase();
-    if (rootTag !== 'questestinterop') resolve([]);
+    // Detect files we can convert by looking for root element of questtestinterop
+    const $ = DOM.read(`${dir}/${file}`);
+    const rootTag = $(':root').prop('tagName').toLowerCase();
+    if (rootTag !== 'questestinterop') {
+      // check for QTI version 2.x tags which are entirely different
+      if ($('assessmentItem, responseDeclaration').length) {
+        console.log(
+          'QTI 2.x is not yet supported. Handles QTI 1.2 as exported by Canvas or equivalent.'
+        );
+      }
+      resolve([]);
+    }
 
-    // else a questtestinterop file
-    const title = doc('assessment').attr('title') || file;
+    // else have a questtestinterop file
+    const title = $('assessment').attr('title') || file;
 
-    const itemProcessors = doc('item')
-      .map((i, item) => () => processQtiItem(doc, item, title!, i))
+    const itemProcessors = $('item')
+      .map((i, item) => () => processQtiItem($, item, title!, i))
       .get();
     resolve(executeSerially(itemProcessors));
   });
@@ -607,7 +616,7 @@ async function htmlToContentModel(html: string) {
   // Canvas output wraps content in div, not p
   DOM.eliminateLevel($, 'div:has(>p)');
   DOM.rename($, 'div', 'p');
-  // Output can wrap text in junk spans with app-specific classes, e.g. <span class="prompt">
+  // Output can wrap text in spans with app-specific classes, e.g. <span class="prompt">
   $('span').each(function () {
     $(this).replaceWith($(this).text());
   });
