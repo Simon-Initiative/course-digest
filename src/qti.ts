@@ -80,10 +80,10 @@ async function processManifestResource(
     }
 
     // else have a questtestinterop file
-    const title = $('assessment').attr('title') || file;
+    const title = $('assessment').attr('title') || file || 'quiz';
 
     const itemProcessors = $('item')
-      .map((i, item) => () => processQtiItem($, item, title!, i))
+      .map((i, item) => () => processQtiItem($, item, title, i))
       .get();
     resolve(executeSerially(itemProcessors));
   });
@@ -112,7 +112,7 @@ async function processQtiItem(
   const type =
     $(bbType).length > 0 ? $(bbType).text() : getFieldValue('question_type');
 
-  var q, subType: any;
+  let q, subType: any;
   switch (type) {
     case 'multiple_choice_question':
     case 'true_false_question':
@@ -178,7 +178,7 @@ async function build_multiple_choice($: cheerio.Root, item: any) {
   };
 }
 
-function mcq_part($: cheerio.Root, item: any, response_id: string = '') {
+function mcq_part($: cheerio.Root, item: any, response_id = '') {
   const correctResp = findCorrectRespCondition($, item, response_id);
   const correctId = $(correctResp).find('varequal').text().trim();
   const correctResponse = {
@@ -198,18 +198,14 @@ function mcq_part($: cheerio.Root, item: any, response_id: string = '') {
   };
 }
 
-function getShuffle($: cheerio.Root, item: any, respident: string = '') {
+function getShuffle($: cheerio.Root, item: any, respident = '') {
   // use optional respident to qualify selection on multi-part questions
   const choiceSelector =
     respident === '' ? 'render_choice' : `response_lid[ident="{respident}"]`;
   return $(item).find(choiceSelector).attr('shuffle') === 'Yes';
 }
 
-function findCorrectRespCondition(
-  $: cheerio.Root,
-  item: any,
-  respident: string = ''
-) {
+function findCorrectRespCondition($: cheerio.Root, item: any, respident = '') {
   // Search respconditions with containing a child var operator (varequal, vargt, varlt etc)
   // using respident of part. respident of '' means single part so any child will do
   const childSelector = respident === '' ? '*' : `*[respident="${respident}"]`;
@@ -302,7 +298,7 @@ async function build_multi_dropdown($: cheerio.Root, item: any) {
   // within the response_lid element. Canvase also seems to generate response idents of form
   // response_a, response_b. We rely on latter convention to match responses to input ids.
   const responses = $(item).find('response_lid').get();
-  for (let response of responses) {
+  for (const response of responses) {
     const response_id = $(response).attr('ident') || 'missing_response_id';
     const response_input_id = response_id?.includes('_')
       ? response_id.split('_')[1]
@@ -574,7 +570,7 @@ async function getChoices($: cheerio.Root, item: any) {
   return await executeSerially(choiceGetters);
 }
 
-async function getStem($: cheerio.Root, item: any, replace: string = '') {
+async function getStem($: cheerio.Root, item: any, replace = '') {
   const presentation = $(item).find('presentation').first();
   let content = await getContent($, presentation, replace);
   // have to fix up input refs post conversion
@@ -583,7 +579,7 @@ async function getStem($: cheerio.Root, item: any, replace: string = '') {
   return { content: Common.ensureParagraphs(content as any[]) };
 }
 
-async function getContent($: cheerio.Root, elem: any, replace: string = '') {
+async function getContent($: cheerio.Root, elem: any, replace = '') {
   // Blackboard may use mat_formattedtext extension
   const mattext = $(elem).find('mattext, mat_formattedtext').first();
   const rawtext = $(mattext).text();

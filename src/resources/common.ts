@@ -722,7 +722,6 @@ export function handleFormulaMathML($: any) {
   $('math').wrap(formula_inline);
   $('formula_inline_temp').each((i: any, item: any) => {
     item.tagName = 'formula_inline';
-    const mathML = getFirstMathML($, item);
     $(item).attr('src', getFirstMathML($, item));
     item.children = [];
   });
