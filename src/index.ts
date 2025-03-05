@@ -474,7 +474,7 @@ async function qtiAction(options: CmdOptions): Promise<any> {
 
   const zips = glob.sync(`${options.inputDir}/*.zip`);
 
-  const zipProcessors = zips.map((file, i) => async () => {
+  const zipProcessors = zips.map((file) => async () => {
     const dir = file.replace('.zip', '');
     if (!fs.existsSync(dir)) await extract(file, { dir });
     return QTI.processQtiFolder(dir, projectSummary);
