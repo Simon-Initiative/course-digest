@@ -22,8 +22,9 @@ import { updateInputRefs } from './resources/questions/multi';
 
 // Note: because we rely the existing Promise-valued routine XML.toJSON at leaves of call tree to convert bits of content
 // (stem, choices, feedback) where needed to our content model, essentially every function becomes async. However,
-// serial processing it is very desireable to ensure trace and debugging messages come out in an intelligible
+// serial processing is very desireable to ensure trace and debugging messages come out in an intelligible
 // order. Therefore care is taken to ensure serial processing via executeSerially, though this adds some complexity.
+
 export function processQtiFolder(
   dir: string,
   _projectSummary: ProjectSummary
@@ -149,7 +150,7 @@ async function processQtiItem(
     type: 'Activity',
     subType,
     id: guid(),
-    title: `${title}-q${i}`,
+    title: `${title}-q${i + 1}`,
     content: q,
     scope: 'banked',
     tags: [title],
@@ -178,7 +179,7 @@ async function build_multiple_choice($: cheerio.Root, item: any) {
 }
 
 function mcq_part($: cheerio.Root, item: any, response_id: string = '') {
-  const correctResp = findCorrectResp($, item, response_id);
+  const correctResp = findCorrectRespCondition($, item, response_id);
   const correctId = $(correctResp).find('varequal').first().text();
   const correctResponse = {
     id: guid(),
@@ -204,23 +205,31 @@ function getShuffle($: cheerio.Root, item: any, respident: string = '') {
   return $(item).find(choiceSelector).attr('shuffle') === 'Yes';
 }
 
-function findCorrectResp($: cheerio.Root, item: any, respident: string = '') {
-  // use optional respident to qualify selection on multi-part questions
-  const varequalSelector =
-    respident === '' ? 'varequal' : `varequal[respident="${respident}"]`;
-  let correct: any;
+function findCorrectRespCondition(
+  $: cheerio.Root,
+  item: any,
+  respident: string = ''
+) {
+  // Search respconditions with containing a child var operator (varequal, vargt, varlt etc)
+  // using respident of part. respident of '' means single part so any child will do
+  const childSelector = respident === '' ? '*' : `*[respident="${respident}"]`;
+  let correct: any = null;
   $(item)
-    .find(`respcondition:has(${varequalSelector})`)
+    .find(`respcondition:has(${childSelector})`)
     .each((i: number, resp: any) => {
       if (
         $(resp).attr('title') === 'correct' ||
         $(resp).find('setvar:contains("SCORE.max")').length == 1 ||
         // Canvas seems to always set correct score of 100, presumably percentage
         $(resp).find('setvar:contains("100")').length === 1
-        // Otherwise should check for max declared value of outcome variable
-      )
+        // should check for max declared value of outcome variable
+      ) {
         correct = resp;
+        return false; // do not continue loop
+      }
     });
+
+  if (correct === null) console.log('correct response condition not found');
   return correct;
 }
 
@@ -244,7 +253,7 @@ async function build_cata($: cheerio.Root, item: any) {
 }
 
 function cata_part($: cheerio.Root, item: any, choices: any[]) {
-  const correctResp = findCorrectResp($, item);
+  const correctResp = findCorrectRespCondition($, item);
   const allIds = choices.map((choice: any) => choice.id);
   const incorrectIds = $(correctResp)
     .find('not>varequal')
@@ -356,7 +365,7 @@ async function build_short_answer(
 }
 
 function short_answer_part($: cheerio.Root, item: any, inputType: string) {
-  const correctResp = findCorrectResp($, item);
+  const correctResp = findCorrectRespCondition($, item);
   let rule = eqRule('1'); // dummy
   if (inputType === 'numeric') {
     const varequal = $(correctResp).find('varequal')[0];
