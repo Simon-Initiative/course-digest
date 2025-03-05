@@ -457,7 +457,7 @@ function handleOnePlaceholder(
       wrapContentInSurveyOrGroup(
         derived.map((d) => {
           if (d.type === 'Activity') {
-            checkActivity(d as Activity, page.title);
+            // checkActivity(d as Activity, page.title);
             return {
               type: 'activity-reference',
               activity_id: d.id,
