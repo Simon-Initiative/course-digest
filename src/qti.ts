@@ -180,7 +180,7 @@ async function build_multiple_choice($: cheerio.Root, item: any) {
 
 function mcq_part($: cheerio.Root, item: any, response_id: string = '') {
   const correctResp = findCorrectRespCondition($, item, response_id);
-  const correctId = $(correctResp).find('varequal').first().text();
+  const correctId = $(correctResp).find('varequal').text().trim();
   const correctResponse = {
     id: guid(),
     score: 1,
@@ -257,7 +257,7 @@ function cata_part($: cheerio.Root, item: any, choices: any[]) {
   const allIds = choices.map((choice: any) => choice.id);
   const incorrectIds = $(correctResp)
     .find('not>varequal')
-    .map((i: number, vareq: any) => $(vareq).text())
+    .map((i: number, vareq: any) => $(vareq).text().trim())
     .get();
   const correctIds = setDifference(allIds, incorrectIds);
   const correctResponse = {
