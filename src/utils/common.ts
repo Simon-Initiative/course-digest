@@ -14,7 +14,8 @@ export function replaceAll(s: string, t: string, w: string) {
 
 // Take an array of functions that return promises and
 // execute them serially, resolving an array of their
-// resolutions
+// resolutions. Note: results formed by successive concatenation, so if
+// individual function result is array, its contents are spliced in
 export const executeSerially = (funcs: any) =>
   funcs.reduce(
     (promise: any, func: any) =>

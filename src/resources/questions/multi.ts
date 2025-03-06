@@ -90,11 +90,11 @@ export function buildMulti(
   };
 }
 
-function updateInputRefs(model: any, foundInputs: any): any {
+export function updateInputRefs(model: any, foundInputs: any): any {
   if (model.type === 'input_ref') {
-    foundInputs[model.input] = true;
+    foundInputs[model.id] = true;
+    // add empty text child, required by slate editor on block elements
     return Object.assign({}, model, {
-      id: model.input,
       children: [{ text: '' }],
     });
   }

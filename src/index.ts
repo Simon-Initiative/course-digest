@@ -25,6 +25,10 @@ import { filesize } from 'filesize';
 import * as archiver from 'archiver';
 import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
+import { glob } from 'glob';
+import extract = require('extract-zip');
+import * as QTI from './qti';
+import { Activity } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -47,14 +51,17 @@ const optionDefinitions = [
   { name: 'spreadsheetPath', type: String, alias: 's' },
   { name: 'svnRoot', type: String },
   { name: 'downloadRemote', type: Boolean, alias: 'r' },
-  { name: 'quiet', type: Boolean, alias: 'q' },
   { name: 'mergePathA', type: String, alias: 'a' },
   { name: 'mergePathB', type: String, alias: 'b' },
   { name: 'discussionsOn', type: Boolean, alias: 'd' },
+  // answers to convert prompts
+  { name: 'no', type: Boolean, alias: 'n' },
+  { name: 'yes', type: Boolean, alias: 'y' },
+  { name: 'zipOnly', type: Boolean, alias: 'z' },
 ];
 
 interface CmdOptions extends commandLineArgs.CommandLineOptions {
-  operation: 'summarize' | 'convert' | 'upload' | 'merge';
+  operation: 'summarize' | 'convert' | 'upload' | 'merge' | 'qti';
   mediaManifest: string;
   outputDir: string;
   inputDir: string;
@@ -62,11 +69,13 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   downloadRemote: boolean;
   specificOrg: string;
   mediaUrlPrefix: string;
-  quiet: boolean;
   mergePathA: string;
   mergePathB: string;
   discussionsOn: boolean;
   webContentBundle: string;
+  no?: boolean;
+  yes?: boolean;
+  zipOnly?: boolean;
 }
 
 interface ConvertedResults {
@@ -78,7 +87,7 @@ interface ConvertedResults {
 }
 
 function validateArgs(options: CmdOptions) {
-  if (options.operation === 'convert') {
+  if (options.operation === 'convert' || options.operation === 'qti') {
     if (options.mediaUrlPrefix === undefined) {
       options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
     } else {
@@ -111,14 +120,17 @@ function validateArgs(options: CmdOptions) {
     if (options.inputDir) {
       // ensure absolute file system path, some path resolution steps require this
       options.inputDir = path.resolve(options.inputDir);
-      const ok = [options.inputDir].every(fs.existsSync);
-      if (!ok) console.log('inputDir not found: ' + options.inputDir);
-      return ok;
+      if (![options.inputDir].every(fs.existsSync)) {
+        console.log('inputDir not found: ' + options.inputDir);
+        return false;
+      }
     }
+    // Just always zip when doing qti conversions
+    if (options.operation === 'qti') options.zipOnly = true;
+
+    return true;
   } else if (options.operation === 'summarize') {
-    if (options.inputDir && options.outputDir) {
-      return [options.inputDir].every(fs.existsSync);
-    }
+    return options.inputDir && options.outputDir;
   } else if (options.operation === 'upload') {
     return options.mediaManifest && fs.existsSync(options.mediaManifest);
   } else if (options.operation === 'merge') {
@@ -359,7 +371,8 @@ function suggestUploadAction(options: CmdOptions) {
   const manifest = readMediaManifest(options);
 
   return new Promise<string>((res) => {
-    if (options.quiet) res('n');
+    if (options.no || options.zipOnly) res('n');
+    else if (options.yes) res('y');
     else {
       const { mediaItems, mediaItemsSize } = manifest;
 
@@ -431,7 +444,8 @@ function zipAction(options: CmdOptions) {
 
 function suggestZipAction(options: CmdOptions) {
   return new Promise<string>((res) => {
-    if (options.quiet) res('n');
+    if (options.no) res('n');
+    else if (options.yes || options.zipOnly) res('y');
     else rl.question('Do you want to create a zip archive? [Y/n] ', res);
   }).then((answer: string) => {
     if (anyOf(answer || 'y', 'y', 'yes')) {
@@ -441,6 +455,53 @@ function suggestZipAction(options: CmdOptions) {
     console.log('Skipping zip archive.');
     return;
   });
+}
+
+// Handle input directory containing QTI package zips
+async function qtiAction(options: CmdOptions): Promise<any> {
+  const projectSummary = new ProjectSummary(
+    options.inputDir,
+    options.outputDir,
+    '',
+    {
+      mediaItems: {},
+      missing: [],
+      urlPrefix: options.mediaUrlPrefix,
+      downloadRemote: false,
+      flattenedNames: {},
+    }
+  );
+
+  const zips = glob.sync(`${options.inputDir}/*.zip`);
+
+  const zipProcessors = zips.map((file) => async () => {
+    const dir = file.replace('.zip', '');
+    if (!fs.existsSync(dir)) await extract(file, { dir });
+    return QTI.processQtiFolder(dir, projectSummary);
+  });
+
+  const activities: Activity[] = await executeSerially(zipProcessors);
+  console.log(`Got ${activities.length} activities`);
+
+  // have to generate Tags for the activities
+  const resources = Convert.generatePoolTags(activities, 'QTI');
+
+  // include empty hierarchy
+  const hierarchy: Resources.Hierarchy = {
+    type: 'Hierarchy',
+    id: '',
+    legacyPath: '',
+    legacyId: '',
+    title: '',
+    tags: [],
+    unresolvedReferences: [],
+    children: [],
+    warnings: [],
+  };
+  // create some sort of manifest
+  projectSummary.manifest = { title: 'QTI Import', description: '' };
+
+  await Convert.output(projectSummary, hierarchy, resources, []);
 }
 
 function helpAction() {
@@ -488,6 +549,10 @@ function main() {
         options.outputDir
       );
       exit();
+    } else if (options.operation === 'qti') {
+      qtiAction(options)
+        .then(() => suggestZipAction(options))
+        .then(exit);
     } else {
       helpAction();
       exit();

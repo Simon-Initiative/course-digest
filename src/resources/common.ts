@@ -373,6 +373,9 @@ export function standardContentManipulations($: any) {
 
   DOM.rename($, 'li formula', 'formula_inline');
   DOM.rename($, 'li callback', 'callback_inline');
+
+  // Torus input_ref's use id attribute
+  DOM.renameAttribute($, 'input_ref', 'input', 'id');
 }
 
 function handleCommandButtons($: any) {

@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+  <assessment ident="g3e9bef852d702d51e2f7d73269ed2023" title="Module 2 Reading Quiz">
+    <qtimetadata>
+      <qtimetadatafield>
+        <fieldlabel>cc_maxattempts</fieldlabel>
+        <fieldentry>1</fieldentry>
+      </qtimetadatafield>
+    </qtimetadata>
+    <section ident="root_section">
+      <item ident="gc30987271c568fa979b38bbd3872af72" title="Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>20.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>9950,82371,73989,17052</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>g23f4dfcb23f37e28a561d54fe6d66820</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;1.000 mm =&amp;nbsp;________&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="9950">
+                <material>
+                  <mattext texttype="text/plain">1,000. m</mattext>
+                </material>
+              </response_label>
+              <response_label ident="82371">
+                <material>
+                  <mattext texttype="text/plain">0.001000 m</mattext>
+                </material>
+              </response_label>
+              <response_label ident="73989">
+                <material>
+                  <mattext texttype="text/plain">0.01000 m</mattext>
+                </material>
+              </response_label>
+              <response_label ident="17052">
+                <material>
+                  <mattext texttype="text/plain">100.0 m</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">82371</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="ge06a8fd91cf36624085db35832137c60" title="Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>20.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>30311,27580,42060,538</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>g13ea19571b4ac031a2dde0b39ecfbf58</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Which of the following numbers are exact numbers?&amp;nbsp;Select as many that apply.&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="30311">
+                <material>
+                  <mattext texttype="text/plain">40,589 tickets were sold at a baseball game</mattext>
+                </material>
+              </response_label>
+              <response_label ident="27580">
+                <material>
+                  <mattext texttype="text/plain">15 g of sucrose (sugar) were weighed out to bake a cake</mattext>
+                </material>
+              </response_label>
+              <response_label ident="42060">
+                <material>
+                  <mattext texttype="text/plain">2 L of water on average are consumed by humans each day</mattext>
+                </material>
+              </response_label>
+              <response_label ident="538">
+                <material>
+                  <mattext texttype="text/plain">10 eggs were used to prepare breakfast</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">30311</varequal>
+                <not>
+                  <varequal respident="response1">27580</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">42060</varequal>
+                </not>
+                <varequal respident="response1">538</varequal>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="gc37a8185305cb60a22fafc9c8058e85b" title="Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>calculated_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>20.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>e3e4b001340d467c98b693b810d85eb4,0fe044bb1e8d4b588a7a322b53d31de0,6a61c1c8ede64e50b2352a8ae4457b7f,9df1da01620742b9adf743f501f3cac6,82bfd75de2b845e6a597540bc2fef36a,94f8c7c61e2e401ebbf50a9359418561,2571f7d529cc4e45bdaa341fdf84f697,831e00309ac4431297876349df1f496c,20c5fa603b3c4a44970e2bf0593dae0c,bcb616130e4c4850915e3d9908c02fd5,ef1aad654f8c48c19a4f70b280b9cffa,e302a548e68b446eb7dd7e4e59f9897a,04b9a86c558c4b6092dd413e3ca4c4a2,f4f660ae59b74d3cae978160db515730,01037e6b2dbc4e359d5fa4ae25e4e535,0e7ffcb9f63c43c2bd8dcd944e12e0ba,d09b643d79034228980865b8ba0af197,cdfe28890bf44443aadafa04c5dd9ab7,7e1dbe2e01684bdd8278f008e0a087e5,77ac566aaacc4809a95d2c00181dda52,a2bded68afc448e38e9e0fd05702cd17,53c2a83995ea40f2bb5abcdc88712d57,fa944a21187645069259fb41963ae391,4f9976b8e8f444a599e943739365a482,b053cb211c71425aaf4abd0a5ef9ed0b,6d4e376694ed48c8a33067513fbb2b96,6c00484b442d4f6e816a2e4daaafdb9b,9e2f7f2a92944371a3b426c47e84681c,03978a9ae5ce44499c8a045eccf1852a,acf4fc33bfcd4a54889ffcb08e553302</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>g52365a8f3a23327e128ebad9720c2ba6</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;What is the density (g/cm&lt;sup&gt;3&lt;/sup&gt;) of an object that has a volume of [x]&amp;nbsp;cm&lt;sup&gt;3&lt;/sup&gt; and a mass of [y]&amp;nbsp;g? Do not include units.&amp;nbsp;Report your answer to the correct number of significant figures.&lt;/div&gt;</mattext>
+          </material>
+          <response_str ident="response1" rcardinality="Single">
+            <render_fib fibtype="Decimal">
+              <response_label ident="answer1" />
+            </render_fib>
+          </response_str>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
+          </outcomes>
+          <respcondition title="correct">
+            <conditionvar>
+              <other />
+            </conditionvar>
+            <setvar varname="SCORE" action="Set">100</setvar>
+          </respcondition>
+          <respcondition title="incorrect">
+            <conditionvar>
+              <not>
+                <other />
+              </not>
+            </conditionvar>
+            <setvar varname="SCORE" action="Set">0</setvar>
+          </respcondition>
+        </resprocessing>
+        <itemproc_extension>
+          <calculated>
+            <answer_tolerance>1.0</answer_tolerance>
+            <formulas decimal_places="">
+              <formula>&amp;lt;math xmlns="http://www.w3.org/1998/Math/MathML"&amp;gt;&amp;lt;mi
+          mathvariant="normal"&amp;gt;y&amp;lt;/mi&amp;gt;&amp;lt;mo&amp;gt;&amp;amp;#xF7;&amp;lt;/mo&amp;gt;&amp;lt;mi
+          mathvariant="normal"&amp;gt;x&amp;lt;/mi&amp;gt;&amp;lt;/math&amp;gt;</formula>
+            </formulas>
+            <vars>
+              <var name="x" scale="1">
+                <min>30.0</min>
+                <max>40.0</max>
+              </var>
+              <var name="y" scale="1">
+                <min>15.0</min>
+                <max>25.0</max>
+              </var>
+            </vars>
+            <var_sets>
+              <var_set ident="e3e4b001340d467c98b693b810d85eb4">
+                <var name="x">37.9</var>
+                <var name="y">22.5</var>
+                <answer>0.594</answer>
+              </var_set>
+              <var_set ident="0fe044bb1e8d4b588a7a322b53d31de0">
+                <var name="x">38.5</var>
+                <var name="y">21.8</var>
+                <answer>0.566</answer>
+              </var_set>
+              <var_set ident="6a61c1c8ede64e50b2352a8ae4457b7f">
+                <var name="x">37.9</var>
+                <var name="y">21.3</var>
+                <answer>0.562</answer>
+              </var_set>
+              <var_set ident="9df1da01620742b9adf743f501f3cac6">
+                <var name="x">33.7</var>
+                <var name="y">16.8</var>
+                <answer>0.499</answer>
+              </var_set>
+              <var_set ident="82bfd75de2b845e6a597540bc2fef36a">
+                <var name="x">34.1</var>
+                <var name="y">16.1</var>
+                <answer>0.472</answer>
+              </var_set>
+              <var_set ident="94f8c7c61e2e401ebbf50a9359418561">
+                <var name="x">30.7</var>
+                <var name="y">16.4</var>
+                <answer>0.534</answer>
+              </var_set>
+              <var_set ident="2571f7d529cc4e45bdaa341fdf84f697">
+                <var name="x">30.8</var>
+                <var name="y">24.3</var>
+                <answer>0.789</answer>
+              </var_set>
+              <var_set ident="831e00309ac4431297876349df1f496c">
+                <var name="x">38.2</var>
+                <var name="y">23.5</var>
+                <answer>0.615</answer>
+              </var_set>
+              <var_set ident="20c5fa603b3c4a44970e2bf0593dae0c">
+                <var name="x">30.5</var>
+                <var name="y">20.6</var>
+                <answer>0.675</answer>
+              </var_set>
+              <var_set ident="bcb616130e4c4850915e3d9908c02fd5">
+                <var name="x">36.6</var>
+                <var name="y">19.2</var>
+                <answer>0.525</answer>
+              </var_set>
+              <var_set ident="ef1aad654f8c48c19a4f70b280b9cffa">
+                <var name="x">39.2</var>
+                <var name="y">21.3</var>
+                <answer>0.543</answer>
+              </var_set>
+              <var_set ident="e302a548e68b446eb7dd7e4e59f9897a">
+                <var name="x">38.9</var>
+                <var name="y">17.6</var>
+                <answer>0.452</answer>
+              </var_set>
+              <var_set ident="04b9a86c558c4b6092dd413e3ca4c4a2">
+                <var name="x">38.8</var>
+                <var name="y">19.2</var>
+                <answer>0.495</answer>
+              </var_set>
+              <var_set ident="f4f660ae59b74d3cae978160db515730">
+                <var name="x">37.4</var>
+                <var name="y">17.8</var>
+                <answer>0.476</answer>
+              </var_set>
+              <var_set ident="01037e6b2dbc4e359d5fa4ae25e4e535">
+                <var name="x">30.8</var>
+                <var name="y">24.3</var>
+                <answer>0.789</answer>
+              </var_set>
+              <var_set ident="0e7ffcb9f63c43c2bd8dcd944e12e0ba">
+                <var name="x">35.1</var>
+                <var name="y">22.9</var>
+                <answer>0.652</answer>
+              </var_set>
+              <var_set ident="d09b643d79034228980865b8ba0af197">
+                <var name="x">38.4</var>
+                <var name="y">15.5</var>
+                <answer>0.404</answer>
+              </var_set>
+              <var_set ident="cdfe28890bf44443aadafa04c5dd9ab7">
+                <var name="x">39.3</var>
+                <var name="y">21.1</var>
+                <answer>0.537</answer>
+              </var_set>
+              <var_set ident="7e1dbe2e01684bdd8278f008e0a087e5">
+                <var name="x">34.4</var>
+                <var name="y">24.3</var>
+                <answer>0.706</answer>
+              </var_set>
+              <var_set ident="77ac566aaacc4809a95d2c00181dda52">
+                <var name="x">33.2</var>
+                <var name="y">16.3</var>
+                <answer>0.491</answer>
+              </var_set>
+              <var_set ident="a2bded68afc448e38e9e0fd05702cd17">
+                <var name="x">36.6</var>
+                <var name="y">22.2</var>
+                <answer>0.607</answer>
+              </var_set>
+              <var_set ident="53c2a83995ea40f2bb5abcdc88712d57">
+                <var name="x">33.4</var>
+                <var name="y">17.9</var>
+                <answer>0.536</answer>
+              </var_set>
+              <var_set ident="fa944a21187645069259fb41963ae391">
+                <var name="x">37.5</var>
+                <var name="y">21.6</var>
+                <answer>0.576</answer>
+              </var_set>
+              <var_set ident="4f9976b8e8f444a599e943739365a482">
+                <var name="x">36.6</var>
+                <var name="y">19.3</var>
+                <answer>0.527</answer>
+              </var_set>
+              <var_set ident="b053cb211c71425aaf4abd0a5ef9ed0b">
+                <var name="x">39.1</var>
+                <var name="y">18.8</var>
+                <answer>0.481</answer>
+              </var_set>
+              <var_set ident="6d4e376694ed48c8a33067513fbb2b96">
+                <var name="x">38.9</var>
+                <var name="y">18.1</var>
+                <answer>0.465</answer>
+              </var_set>
+              <var_set ident="6c00484b442d4f6e816a2e4daaafdb9b">
+                <var name="x">38.6</var>
+                <var name="y">17.2</var>
+                <answer>0.446</answer>
+              </var_set>
+              <var_set ident="9e2f7f2a92944371a3b426c47e84681c">
+                <var name="x">39.9</var>
+                <var name="y">24.8</var>
+                <answer>0.622</answer>
+              </var_set>
+              <var_set ident="03978a9ae5ce44499c8a045eccf1852a">
+                <var name="x">34.7</var>
+                <var name="y">19.8</var>
+                <answer>0.571</answer>
+              </var_set>
+              <var_set ident="acf4fc33bfcd4a54889ffcb08e553302">
+                <var name="x">38.4</var>
+                <var name="y">22.2</var>
+                <answer>0.578</answer>
+              </var_set>
+            </var_sets>
+          </calculated>
+        </itemproc_extension>
+      </item>
+      <section ident="g8e10aa11516738e3d511ac22395832cf" title="Question Group">
+        <selection_ordering>
+          <selection>
+            <selection_number>1</selection_number>
+            <selection_extension>
+              <points_per_item>1.0</points_per_item>
+            </selection_extension>
+          </selection>
+        </selection_ordering>
+        <item ident="g0a3bfd4bae58efe0d2fc45f06b32ebce" title="Question">
+          <itemmetadata>
+            <qtimetadata>
+              <qtimetadatafield>
+                <fieldlabel>question_type</fieldlabel>
+                <fieldentry>multiple_dropdowns_question</fieldentry>
+              </qtimetadatafield>
+              <qtimetadatafield>
+                <fieldlabel>points_possible</fieldlabel>
+                <fieldentry>0.0</fieldentry>
+              </qtimetadatafield>
+              <qtimetadatafield>
+                <fieldlabel>original_answer_ids</fieldlabel>
+                <fieldentry>62759,21608,6152,10359,46387,97981,62342,73866,17436,90834,4998</fieldentry>
+              </qtimetadatafield>
+              <qtimetadatafield>
+                <fieldlabel>assessment_question_identifierref</fieldlabel>
+                <fieldentry>g218c23f74018e13076918a43ef7d2a10</fieldentry>
+              </qtimetadatafield>
+            </qtimetadata>
+          </itemmetadata>
+          <presentation>
+            <material>
+              <mattext texttype="text/html">&lt;div&gt;There are [a] significant figures in the measurement 0.004870 L.&lt;/div&gt;</mattext>
+            </material>
+            <response_lid ident="response_a">
+              <material>
+                <mattext>a</mattext>
+              </material>
+              <render_choice>
+                <response_label ident="62759">
+                  <material>
+                    <mattext texttype="text/plain">choose one</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="21608">
+                  <material>
+                    <mattext texttype="text/plain">0</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="6152">
+                  <material>
+                    <mattext texttype="text/plain">1</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="10359">
+                  <material>
+                    <mattext texttype="text/plain">2</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="46387">
+                  <material>
+                    <mattext texttype="text/plain">3</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="97981">
+                  <material>
+                    <mattext texttype="text/plain">4</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="62342">
+                  <material>
+                    <mattext texttype="text/plain">5</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="73866">
+                  <material>
+                    <mattext texttype="text/plain">6</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="17436">
+                  <material>
+                    <mattext texttype="text/plain">7</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="90834">
+                  <material>
+                    <mattext texttype="text/plain">8</mattext>
+                  </material>
+                </response_label>
+                <response_label ident="4998">
+                  <material>
+                    <mattext texttype="text/plain">9</mattext>
+                  </material>
+                </response_label>
+              </render_choice>
+            </response_lid>
+          </presentation>
+          <resprocessing>
+            <outcomes>
+              <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
+            </outcomes>
+            <respcondition>
+              <conditionvar>
+                <varequal respident="response_a">97981</varequal>
+              </conditionvar>
+              <setvar varname="SCORE" action="Add">100.00</setvar>
+            </respcondition>
+          </resprocessing>
+        </item>
+      </section>
+      <item ident="g8a6161026794a8a31da5ac38e22c370b" title="Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>numerical_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>20.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>87992</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>g0e20eee49399d91e9dcaa33aae033676</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;&lt;p&gt;Yeast converts glucose to ethanol and carbon dioxide as depicted in the simplified chemical equation here: &lt;span id="MathJax-Span-429"&gt;&lt;span id="MathJax-Span-430"&gt;&lt;span id="MathJax-Span-431"&gt;&lt;span id="MathJax-Span-432"&gt;&lt;span id="MathJax-Span-433"&gt;&lt;span id="MathJax-Span-434"&gt;glucose &lt;/span&gt;&lt;span id="MathJax-Span-435"&gt;&lt;/span&gt;&lt;span id="MathJax-Span-436"&gt;⟶ &lt;/span&gt;&lt;span id="MathJax-Span-437"&gt;&lt;/span&gt;&lt;span id="MathJax-Span-438"&gt;ethanol &lt;/span&gt;&lt;span id="MathJax-Span-439"&gt;+ &lt;/span&gt;&lt;span id="MathJax-Span-440"&gt;carbon dioxide.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt; 
+&lt;p&gt;&lt;span&gt;If 500 g of glucose is fully converted, what will be the total mass of products ethanol and carbon dioxide produced? Report your answer to the ones place and do not include units.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;</mattext>
+          </material>
+          <response_str ident="response1" rcardinality="Single">
+            <render_fib fibtype="Decimal">
+              <response_label ident="answer1" />
+            </render_fib>
+          </response_str>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal" />
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <vargte respident="response1">500.0</vargte>
+              <varlte respident="response1">500.0</varlte>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+    </section>
+  </assessment>
+</questestinterop>

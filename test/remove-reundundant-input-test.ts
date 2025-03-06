@@ -22,13 +22,13 @@ describe('removeRedundantInputRefs', () => {
 
   it('should remove inputRefs with the specified input ID', () => {
     const input = [
-      { type: 'input_ref', input: 'redundantId' },
-      { type: 'input_ref', input: 'otherId' },
+      { type: 'input_ref', id: 'redundantId' },
+      { type: 'input_ref', id: 'otherId' },
       { text: 'not an input_ref' },
     ];
     const result = removeRedundantInputRefs(input, 'redundantId');
     expect(result).toEqual([
-      { type: 'input_ref', input: 'otherId' },
+      { type: 'input_ref', id: 'otherId' },
       { text: 'not an input_ref' },
     ]);
   });
@@ -38,11 +38,11 @@ describe('removeRedundantInputRefs', () => {
       {
         type: 'parent',
         children: [
-          { type: 'input_ref', input: 'redundantId' },
+          { type: 'input_ref', id: 'redundantId' },
           { text: 'not an input_ref' },
         ],
       },
-      { type: 'input_ref', input: 'otherId' },
+      { type: 'input_ref', id: 'otherId' },
     ];
     const result = removeRedundantInputRefs(input, 'redundantId');
     expect(result).toEqual([
@@ -50,7 +50,7 @@ describe('removeRedundantInputRefs', () => {
         type: 'parent',
         children: [{ text: 'not an input_ref' }],
       },
-      { type: 'input_ref', input: 'otherId' },
+      { type: 'input_ref', id: 'otherId' },
     ]);
   });
 
@@ -108,7 +108,7 @@ describe('removeRedundantInputRefs', () => {
 
         expect(
           stem.content[2].children.find(
-            (c: any) => c.type === 'input_ref' && c.input === 'A'
+            (c: any) => c.type === 'input_ref' && c.id === 'A'
           )
         ).toBeDefined(); // Make sure it kept that input_ref
 
