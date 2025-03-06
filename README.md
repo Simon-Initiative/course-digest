@@ -21,3 +21,5 @@ npm start -- --operation convert --inputDir <course input dir> --outputDir ./out
 
 Before uploading media assets, you will need to configure AWS credentials and a bucket name.
 See detailed instructions in the [Wiki](https://github.com/Simon-Initiative/course-digest/wiki).
+
+The tool can also be used to [convert questions exported in QTI format](https://github.com/Simon-Initiative/course-digest/wiki/QTI-Conversion-mode).
