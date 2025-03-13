@@ -40,13 +40,17 @@ export function processQtiFolder(
     }
     const $ = DOM.read(manifest);
 
-    // process each resource element in turn
-    const fileProcessors = $('resource')
-      .map(
-        (i: number, resource: any) => () =>
-          processManifestResource($, resource, dir)
-      )
-      .get();
+    // collect file paths from resource elements
+    // Canvas has resource's file(s) in href attr of file sub-element(s)
+    // Some Blackboard exports have filepaths in bb:file attribute
+    const bbResources = $('resource[bb\\:file]');
+    const files = bbResources.length
+      ? $(bbResources).map((i, elem) => $(elem).attr('bb:file'))
+      : $('resource file').map((i, elem) => $(elem).attr('href'));
+
+    const fileProcessors = files
+      .get()
+      .map((file) => () => processResourceFile(`${dir}/${file}`));
 
     // result is concatenated list of activities from each resource file
     resolve(executeSerially(fileProcessors));
@@ -54,20 +58,10 @@ export function processQtiFolder(
 }
 
 // resolves to list of activity resources, [] if none
-async function processManifestResource(
-  $manifest: cheerio.Root,
-  resource: cheerio.TagElement,
-  dir: string
-): Promise<Activity[]> {
+async function processResourceFile(file: string): Promise<Activity[]> {
   return new Promise((resolve, _reject) => {
-    //  Blackboard has file path in bb:file attr; Canvas in <file href="..."" /> child
-    const file =
-      $manifest(resource).attr('bb:file') ||
-      $manifest(resource).find('file').attr('href');
-    if (!file) resolve([]);
-
     // Detect files we can convert by looking for root element of questtestinterop
-    const $ = DOM.read(`${dir}/${file}`);
+    const $ = DOM.read(file);
     const rootTag = $(':root').prop('tagName').toLowerCase();
     if (rootTag !== 'questestinterop') {
       // check for QTI version 2.x tags which are entirely different
@@ -80,7 +74,7 @@ async function processManifestResource(
     }
 
     // else have a questtestinterop file
-    const title = $('assessment').attr('title') || file || 'quiz';
+    const title = $('assessment').attr('title') || 'Untitled';
 
     const itemProcessors = $('item')
       .map((i, item) => () => processQtiItem($, item, title, i))
@@ -201,12 +195,14 @@ function mcq_part($: cheerio.Root, item: any, response_id = '') {
 function getShuffle($: cheerio.Root, item: any, respident = '') {
   // use optional respident to qualify selection on multi-part questions
   const choiceSelector =
-    respident === '' ? 'render_choice' : `response_lid[ident="{respident}"]`;
+    respident === ''
+      ? 'render_choice'
+      : `response_lid[ident="{respident}"] render_choice`;
   return $(item).find(choiceSelector).attr('shuffle') === 'Yes';
 }
 
 function findCorrectRespCondition($: cheerio.Root, item: any, respident = '') {
-  // Search respconditions with containing a child var operator (varequal, vargt, varlt etc)
+  // Search respconditions containing a child var operator (varequal, vargt, varlt etc)
   // using respident of part. respident of '' means single part so any child will do
   const childSelector = respident === '' ? '*' : `*[respident="${respident}"]`;
   let correct: any = null;
