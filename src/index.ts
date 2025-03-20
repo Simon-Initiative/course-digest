@@ -240,11 +240,14 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 
     const orgPaths = [...results[1].organizationPaths];
 
+    // A quirk of executeSerially is that elements of list-valued functions get *spliced*
+    // into the collective result. So while results[0] and [1] are objects, rest of results
+    // list consists of learning objective resource ids followed by skill resource ids.
+    // Therefore results.slice(2) includes all of them in the list of references to process.
     const references = [
       ...orgReferences,
       ...orgReferencesOthers,
       ...results.slice(2),
-      ...results.slice(3),
     ];
 
     const mediaSummary: Media.MediaSummary = {
