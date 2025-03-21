@@ -324,7 +324,7 @@ export function globalizeObjectiveReferences(
   resources: TorusResource[]
 ): TorusResource[] {
   // Make a map of the local to global.  The global id is of the form:
-  // local|suffix, where local is the id of the objective, and suffix is the
+  // local-suffix, where local is the id of the objective, and suffix is the
   // id of the parent <objectives> element
   const localToGlobal = resources.reduce((m: any, r: TorusResource) => {
     if (r.type === 'Objective') {

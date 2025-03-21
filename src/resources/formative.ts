@@ -690,6 +690,16 @@ export function performRestructure($: any) {
       )
   );
 
+  // Found some single-part questions listing skillrefs at question level.
+  // Insert copies into question's parts where processing expects them
+  $('question').each((_i: any, q: any) =>
+    $(q)
+      .find('>skillref')
+      .each((_i: any, skillref: any) =>
+        $(q).find('part').prepend($.html(skillref))
+      )
+  );
+
   migrateVariables($);
 }
 
