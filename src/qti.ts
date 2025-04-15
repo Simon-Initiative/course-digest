@@ -22,7 +22,7 @@ import {
 import { decode } from 'html-entities';
 import { updateInputRefs } from './resources/questions/multi';
 import * as path from 'path';
-import { flatten, flattenPath } from './media';
+import { flattenPath } from './media';
 
 // Convert QTI 1.2 format archives as exported from Canvas or Blackboard into archive of banked questions
 // Blackboard QTI exports include non-standard Blackboard extensions and has slight differences.

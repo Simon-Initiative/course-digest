@@ -507,10 +507,9 @@ async function qtiAction(options: CmdOptions): Promise<any> {
   const dirName = options.inputDir.split('/').pop();
   projectSummary.manifest = { title: 'QTI Import ' + dirName, description: '' };
 
+  // mediaItems maps file paths to data; output function takes list of values
   const mediaSummary = projectSummary.mediaSummary;
-  const mediaItems = Object.keys(mediaSummary.mediaItems).map(
-    (k: string) => mediaSummary.mediaItems[k]
-  );
+  const mediaItems = Object.values(mediaSummary.mediaItems);
 
   await Convert.output(projectSummary, hierarchy, resources, mediaItems);
 }
