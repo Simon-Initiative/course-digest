@@ -789,7 +789,7 @@ export function addAssessments(activities: Activity[]): TorusResource[] {
 
   const assessments = tagIds.map((tagId) => {
     const nItems = activities.filter((a) => a.tags.includes(tagId)).length;
-    console.log(`tag ${tagId}: ${nItems} items`);
+    console.log(`${tagId}: ${nItems} items`);
 
     // page content model contains one selection of all items with tag
     const model: any[] = [];
@@ -821,14 +821,14 @@ export function addAssessments(activities: Activity[]): TorusResource[] {
       tags: [],
       unresolvedReferences: [],
       content: { model },
-      isGraded: false,
+      isGraded: true,
       isSurvey: false,
       objectives: [],
       warnings: [],
       collabSpace: defaultCollabSpaceDefinition(),
     };
   });
-  console.log(`created ${assessments.length} pages`);
+  console.log(`created ${assessments.length} quiz pages`);
 
   return [...activities, ...assessments];
 }
