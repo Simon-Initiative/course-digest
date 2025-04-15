@@ -370,6 +370,14 @@ export function flatten(
 ): string | null {
   // console.log('flatten: ref=' + ref.assetReference + ' from ' + ref.filePath);
   const absolutePath = resolve(ref);
+  return flattenPath(absolutePath, summary, ref);
+}
+
+export function flattenPath(
+  absolutePath: string,
+  summary: MediaSummary,
+  ref: MediaItemReference
+) {
   const decodedPath = decodeURIComponent(absolutePath);
 
   if (fs.existsSync(decodedPath) && !fs.lstatSync(decodedPath).isDirectory()) {

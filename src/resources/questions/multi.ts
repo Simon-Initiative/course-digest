@@ -416,7 +416,7 @@ export function hasCasedChars(s: string) {
 }
 
 // This escapes argument for the match rule notation
-const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
+export const escapeInput = (s: string) => s.replace(/[\\{}]/g, (i) => `\\${i}`);
 const unescapeInput = (s: string) =>
   s.replace(/\\[\\{}]/g, (i) => i.substring(1));
 

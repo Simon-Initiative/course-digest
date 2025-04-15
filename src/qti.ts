@@ -3,6 +3,8 @@ import { ProjectSummary } from './project';
 import * as Common from './resources/questions/common';
 import {
   eqRule,
+  equalsRule,
+  iequalsRule,
   matchListRule,
   matchRule,
   setDifference,
@@ -12,9 +14,15 @@ import * as DOM from './utils/dom';
 import * as fs from 'fs';
 import { standardContentManipulations } from './resources/common';
 import * as XML from 'src/utils/xml';
-import { Activity } from './resources/resource';
+import {
+  Activity,
+  defaultCollabSpaceDefinition,
+  TorusResource,
+} from './resources/resource';
 import { decode } from 'html-entities';
 import { updateInputRefs } from './resources/questions/multi';
+import * as path from 'path';
+import { flatten, flattenPath } from './media';
 
 // Convert QTI 1.2 format archives as exported from Canvas or Blackboard into archive of banked questions
 // Blackboard QTI exports include non-standard Blackboard extensions and has slight differences.
@@ -27,9 +35,9 @@ import { updateInputRefs } from './resources/questions/multi';
 
 export function processQtiFolder(
   dir: string,
-  _projectSummary: ProjectSummary
+  projectSummary: ProjectSummary
 ): Promise<Activity[]> {
-  return new Promise((resolve, _reject) => {
+  return new Promise(async (resolve, _reject) => {
     console.log('Processing QTI package ' + dir);
 
     // load manifest
@@ -53,7 +61,12 @@ export function processQtiFolder(
       .map((file) => () => processResourceFile(`${dir}/${file}`));
 
     // result is concatenated list of activities from each resource file
-    resolve(executeSerially(fileProcessors));
+    const activities = await executeSerially(fileProcessors);
+
+    // post-process to fix up image refs, recording in media summary
+    activities.forEach((a: Activity) => fixImageRefs(a, dir, projectSummary));
+
+    resolve(activities);
   });
 }
 
@@ -74,20 +87,34 @@ async function processResourceFile(file: string): Promise<Activity[]> {
     }
 
     // else have a questtestinterop file
-    const title = $('assessment').attr('title') || 'Untitled';
+
+    // tag is the containing zip file name, i.e parent directory of this file
+    const tag = path.basename(path.dirname(file));
+    // title is used to label individual activities
+    const title = fixBBTitle($('assessment').attr('title') || 'Untitled');
 
     const itemProcessors = $('item')
-      .map((i, item) => () => processQtiItem($, item, title, i))
+      .map((i, item) => () => processQtiItem($, item, title, i, tag))
       .get();
     resolve(executeSerially(itemProcessors));
   });
 }
 
+// Blackboard-exported titles include long unneded prefix. Also break assessments into
+// multiple resource files appending a,b,c,... suffix which we will strip
+const fixBBTitle = (s: string) =>
+  s.startsWith('single.qti.export')
+    ? s
+        .replace('single.qti.export.referenced.canvas.name.prefix ', '')
+        .slice(0, -1)
+    : s;
+
 async function processQtiItem(
   $: cheerio.Root,
   item: any,
   title: string,
-  i: number
+  i: number,
+  tag: string
 ) {
   // get value from named item metadata field
   const getFieldValue = (fieldlabel: string) =>
@@ -105,12 +132,17 @@ async function processQtiItem(
   const bbType = $(item).find('bbmd_questiontype').first();
   const type =
     $(bbType).length > 0 ? $(bbType).text() : getFieldValue('question_type');
+  console.log(`Question type ${type}`);
 
   let q, subType: any;
   switch (type) {
     case 'multiple_choice_question':
-    case 'true_false_question':
     case 'Multiple Choice':
+    // true/false question just special case of multiple choice
+    case 'true_false_question':
+    case 'True/False':
+    // BB Either/Or is just a general two-choice multiple choice
+    case 'Either/Or':
       subType = 'oli_multiple_choice';
       q = await build_multiple_choice($, item);
       break;
@@ -129,6 +161,10 @@ async function processQtiItem(
       subType = 'oli_short_answer';
       q = await build_short_answer($, item, 'numeric');
       break;
+    case 'Fill in the Blank':
+      subType = 'oli_short_answer';
+      q = await build_short_answer($, item, 'text');
+      break;
     case 'calculated_question':
     case 'Calculated':
       subType = 'oli_short_answer';
@@ -139,7 +175,6 @@ async function processQtiItem(
       return [];
   }
 
-  console.log(`Question type ${type}`);
   return {
     type: 'Activity',
     subType,
@@ -147,7 +182,7 @@ async function processQtiItem(
     title: `${title}-q${i + 1}`,
     content: q,
     scope: 'banked',
-    tags: [title],
+    tags: [tag],
     unresolvedReferences: [],
     objectives: [],
     legacyPath: '',
@@ -172,20 +207,33 @@ async function build_multiple_choice($: cheerio.Root, item: any) {
   };
 }
 
-function mcq_part($: cheerio.Root, item: any, response_id = '') {
-  const correctResp = findCorrectRespCondition($, item, response_id);
-  const correctId = $(correctResp).find('varequal').text().trim();
+// Used for both single part multiple choice (respident === '')
+// and potentially multi-part dropdown question parts (respident set)
+function mcq_part($: cheerio.Root, item: any, respident = '') {
+  const correctResp = getCorrectRespConditions($, item, respident);
+  // Found BB multi-part dropdowns with a single correct response condition of form
+  // <and>
+  //   <varequal respident="a"> correctChoicePartA</varequal>
+  //   <varequal respident="b"> correctChoicePartB</varequal>
+  // </and>
+  // Selecting the varequal by respident handles this
+  const varSelector =
+    respident === '' ? 'varequal' : `varequal[respident="${respident}"]`;
+  const correctId = $(correctResp).find(varSelector).text().trim();
+  if (correctId === '') console.log('correct choice not found!');
+  // must use part-qualified choice id in multi-part items
+  const torusId = respident === '' ? correctId : `${respident}_${correctId}`;
   const correctResponse = {
     id: guid(),
     score: 1,
-    rule: matchRule(correctId),
+    rule: matchRule(torusId),
     feedback: {
       id: guid(),
       content: Common.buildContentModelFromText('Correct'),
     },
   };
   return {
-    id: response_id === '' ? '1' : response_id,
+    id: respident === '' ? '1' : respident,
     responses: [correctResponse, Common.makeCatchAllResponse()],
     hints: Common.ensureThree(),
     scoringStrategy: 'average',
@@ -201,11 +249,11 @@ function getShuffle($: cheerio.Root, item: any, respident = '') {
   return $(item).find(choiceSelector).attr('shuffle') === 'Yes';
 }
 
-function findCorrectRespCondition($: cheerio.Root, item: any, respident = '') {
+function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
   // Search respconditions containing a child var operator (varequal, vargt, varlt etc)
   // using respident of part. respident of '' means single part so any child will do
   const childSelector = respident === '' ? '*' : `*[respident="${respident}"]`;
-  let correct: any = null;
+  const correct: any[] = [];
   $(item)
     .find(`respcondition:has(${childSelector})`)
     .each((i: number, resp: any) => {
@@ -213,15 +261,16 @@ function findCorrectRespCondition($: cheerio.Root, item: any, respident = '') {
         $(resp).attr('title') === 'correct' ||
         $(resp).find('setvar:contains("SCORE.max")').length == 1 ||
         // Canvas seems to always set correct score of 100, presumably percentage
-        $(resp).find('setvar:contains("100")').length === 1
-        // should check for max declared value of outcome variable
+        $(resp).find('setvar:contains("100")').length === 1 ||
+        // seen in BB exports: no score set, but shows feedback named "correct"
+        $(resp).find('displayfeedback[linkrefid="correct"]').length === 1
+        // could also check for score set to declared max value of outcome variable
       ) {
-        correct = resp;
-        return false; // do not continue loop
+        correct.push(resp);
       }
     });
 
-  if (correct === null) console.log('correct response condition not found');
+  if (correct.length === 0) console.log('correct response condition not found');
   return correct;
 }
 
@@ -245,7 +294,7 @@ async function build_cata($: cheerio.Root, item: any) {
 }
 
 function cata_part($: cheerio.Root, item: any, choices: any[]) {
-  const correctResp = findCorrectRespCondition($, item);
+  const correctResp = getCorrectRespConditions($, item)[0];
   const allIds = choices.map((choice: any) => choice.id);
   const incorrectIds = $(correctResp)
     .find('not>varequal')
@@ -286,12 +335,12 @@ async function build_multi_dropdown($: cheerio.Root, item: any) {
   // In QTI, each input to fill in is a "response", corresponding to a torus part.
   // When answer type is a logical id ("lid") as for choices, QTI response is specified
   // by a response_lid element with id in "ident" attribute. Result processing rules are
-  // linked to part by matching "respid" attribute = response ident in the varequal element.
+  // linked to part by matching "respident" attribute = response ident in the varequal element.
   // Although this is NOT part of QTI 1.2 standard, Canvas,Blackboard apparently indicate
-  // dropdown locationsby associated input item id such as a, b embedded in stem as [a], [b].
+  // dropdown locations by associated input item id such as a, b embedded in stem as [a], [b].
   // Blackboard exports just use the input ids a and b as the response ident. Canvas uses
   // distinct response idents and includes the linked input id as piece of mattext content
-  // within the response_lid element. Canvase also seems to generate response idents of form
+  // within the response_lid element. Canvas also seems to generate response idents of form
   // response_a, response_b. We rely on latter convention to match responses to input ids.
   const responses = $(item).find('response_lid').get();
   for (const response of responses) {
@@ -300,13 +349,15 @@ async function build_multi_dropdown($: cheerio.Root, item: any) {
       ? response_id.split('_')[1]
       : response_id;
 
-    // get choices within current response,  ignoring the "choose one" choice
-    // for dropdown that gets included
+    // get choices within current response,  ignoring the "choose" or "choose one" choice
+    // for dropdown that apparently gets included
     const choicesTemp = await getChoices($, response);
     const responseChoices = choicesTemp.filter(
-      (c: any) => toPlainText(c.content) !== 'choose one'
+      (c: any) => !toPlainText(c.content).trim().startsWith('choose')
     );
-
+    // In QTI different parts may make use of same choice. Qualify by respident to make
+    // unique choice ids for each part. Will also have to be done when generating rules
+    responseChoices.forEach((c: any) => (c.id = `${response_id}_${c.id}`));
     choices.push(...responseChoices);
 
     inputs.push({
@@ -357,45 +408,62 @@ async function build_short_answer(
 }
 
 function short_answer_part($: cheerio.Root, item: any, inputType: string) {
-  const correctResp = findCorrectRespCondition($, item);
-  let rule = eqRule('1'); // dummy
-  if (inputType === 'numeric') {
-    const varequal = $(correctResp).find('varequal')[0];
-    if (varequal) {
-      rule = eqRule($(varequal).text());
-    } else {
-      const varlb = $(correctResp).find('varlte, varlt')[0];
-      const varub = $(correctResp).find('vargte, vargt')[0];
-      if (varlb && varub) {
-        // both upper and lower bound => range rule
-        // console.log('found upper and lower bound rules');
-        // but have seen this special case in canvas export:
-        if ($(varlb).text() === $(varub).text()) {
-          rule = eqRule($(varlb).text());
-        } else {
-          const lbchar = $(varlb).prop('tagName') === 'varlt' ? '(' : '[';
-          const rbchar = $(varub).prop('tagName') === 'vargt' ? ')' : ']';
-          rule = eqRule(
-            lbchar + $(varlb).text() + ',' + $(varub).text() + rbchar
-          );
+  // Allow for multiple correct answers, primarily for text input accepting multiple forms
+  const correctRespConds = getCorrectRespConditions($, item);
+
+  const condToRule = (respCond: any) => {
+    let rule = null;
+    if (inputType === 'numeric') {
+      const varequal = $(respCond).find('varequal')[0];
+      if (varequal) {
+        rule = eqRule($(varequal).text());
+      } else {
+        const varlb = $(respCond).find('varlte, varlt')[0];
+        const varub = $(respCond).find('vargte, vargt')[0];
+        if (varlb && varub) {
+          // both upper and lower bound => range rule
+          // console.log('found upper and lower bound rules');
+          // but have seen this special case in canvas export:
+          if ($(varlb).text() === $(varub).text()) {
+            rule = eqRule($(varlb).text());
+          } else {
+            const lbchar = $(varlb).prop('tagName') === 'varlt' ? '(' : '[';
+            const rbchar = $(varub).prop('tagName') === 'vargt' ? ')' : ']';
+            rule = eqRule(
+              lbchar + $(varlb).text() + ',' + $(varub).text() + rbchar
+            );
+          }
         }
+        // else could be pure lt or gt rule, rare in practice
       }
-      // else could be pure lt or gt rule, rare in practice
+    } else if (inputType === 'text') {
+      const varequal = $(respCond).find('varequal')[0];
+      if (varequal) {
+        rule =
+          $(varequal).attr('case') === 'Yes'
+            ? equalsRule($(varequal).text())
+            : iequalsRule($(varequal).text());
+      }
+      // varsubstring also possible, with case parameter
     }
-  }
-  // TODO: else handle string rule
-  const correctResponse = {
-    id: guid(),
-    score: 1,
-    rule,
-    feedback: {
-      id: guid(),
-      content: Common.buildContentModelFromText('Correct'),
-    },
+    return rule;
   };
+
+  const correctResponses = correctRespConds.map((respCond) => {
+    return {
+      id: guid(),
+      score: 1,
+      rule: condToRule(respCond),
+      feedback: {
+        id: guid(),
+        content: Common.buildContentModelFromText('Correct'),
+      },
+    };
+  });
+
   return {
     id: '1',
-    responses: [correctResponse, Common.makeCatchAllResponse()],
+    responses: [...correctResponses, Common.makeCatchAllResponse()],
     hints: Common.ensureThree(),
     scoringStrategy: 'average',
   };
@@ -547,7 +615,7 @@ function MathMlToJavascript(mathML: string) {
 
   const expression = translate($('math')[0]);
   const expr = expression.replace(/\s+/g, ' ').trim();
-  // console.log('MathML to Javascript: ', mathML, '\n', expr);
+  console.log('MathML to Javascript: ', mathML, '\n', expr);
   return expr;
 }
 
@@ -585,7 +653,7 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
     text = text.replace(/\[/g, '@@').replace(/\]/g, '@@');
   else if (replace === 'inputs') {
     // translate to unrestructured legacy input_ref tag form
-    text = text.replace('[', '<input_ref input="').replace(']', '"/>');
+    text = text.replace(/\[/g, '<input_ref input="').replace(/\]/g, '"/>');
   }
 
   if ($(mattext).attr('texttype') === 'text/plain')
@@ -594,8 +662,7 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
   // Else HTML as XML-encoded text content:  &lt;, &gt; around tags,
   // other ampersand-escaped items as e.g. &amp;nbsp;
   const html = decode(replaceAll(text, '&amp;', '&'), { level: 'html5' });
-  // console.log('html: ' + html);
-
+  if (html.includes('img')) console.log('html: ' + html);
   /*
   // just strips any html tags. Leaves white space around tags
   const plainText = html.replace(/(<([^>]+)>)/gi, '');
@@ -607,23 +674,40 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
 }
 
 async function htmlToContentModel(html: string) {
+  // Blackboard questions can embed img tags in paragraphs w/<br> tags before and/or after
+  // Strip all of these, torus doesn't use. Strip in source because unclosed tags not XML
+  const fixedHtml = html.replace(/\<br\>/g, '');
+
   // parse fragment as xml doc
-  const $ = Cheerio.load(`<html><body>${html}</body><html>`, { xmlMode: true });
+  const $ = Cheerio.load(`<html><body>${fixedHtml}</body><html>`, {
+    xmlMode: true,
+  });
 
   // restructure as we do for legacy XML content. Overkill, but adjusts some elements we want:
   // unwrapped mathML to formula-inline, inline styles like sup to em tag form handled by toJSON
   standardContentManipulations($);
-  // do some custom restructuring for our html.
-  // Canvas output wraps content in div, not p
-  DOM.eliminateLevel($, 'div:has(>p)');
-  DOM.rename($, 'div', 'p');
-  // Output can wrap text in spans with app-specific classes, e.g. <span class="prompt">
-  $('span').each(function () {
-    $(this).replaceWith($(this).text());
+
+  // do some ad hoc restructuring for problematic html we have encountered
+
+  // Canvas can wrap text in spans, some w/app-specific classes, e.g. <span class="prompt">
+  // Blackboard sometimes wraps image elements too. Strip, replacing with inner html.
+  $('span').each((_i, elem) => {
+    $(elem).replaceWith($(elem).html()!);
   });
 
+  // Now assume any images left within p's are standalone block images.
+  DOM.eliminateLevel($, 'p:has(>img)');
+
+  // torus tables don't use these wrappers
+  DOM.eliminateLevel($, 'thead');
+  DOM.eliminateLevel($, 'tbody');
+
+  // Canvas output wraps content in div, not p. Torus content model does not have divs at all
+  DOM.eliminateLevel($, 'div:has(>p)');
+  DOM.rename($, 'div', 'p');
+
   const xml = $.html();
-  // console.log('xml after restructure:' + xml);
+  if (html.includes('img')) console.log('xml after restructure:' + xml);
   const docJSON: any = await XML.toJSON(xml, {} as ProjectSummary, {
     p: true,
     em: true,
@@ -638,4 +722,113 @@ async function htmlToContentModel(html: string) {
   const content = Common.getDescendants(docJSON.children, 'body')[0].children;
   // console.log(`json: ${JSON.stringify(content, null, 2)}\n`);
   return content;
+}
+
+export function fixImageRefs(
+  a: Activity,
+  qtiFolder: string,
+  projectSummary: ProjectSummary
+) {
+  const stem = a.content.stem as { content: any[] };
+  const images = [
+    ...Common.getDescendants(stem.content, 'img'),
+    ...Common.getDescendants(stem.content, 'img-inline'),
+  ];
+
+  images.forEach((img) => {
+    const localPath = findImagePath(img.src, qtiFolder);
+    if (localPath) {
+      // flattenPath needs assetReference to record, but any dummy OK.
+      const ref = { filePath: localPath, assetReference: '' };
+      img.src = flattenPath(localPath, projectSummary.mediaSummary, ref);
+    }
+  });
+}
+
+function findImagePath(src: string, qtiFolder: string) {
+  console.log('finding image ' + src);
+  // Blackboard content-embedded images have magic srcs of form
+  // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1
+  // and store files within csfiles/home_dir as __xid-74789077_1.[jpg, png, ...?]
+  if (src.startsWith('@X@EmbeddedFile')) {
+    const basename = path.basename(src);
+    const root = qtiFolder + '/csfiles/home_dir';
+    const localPath =
+      findFile(root, `__${basename}.jpg`) ||
+      findFile(root, `__${basename}.png`);
+
+    return localPath;
+  }
+
+  // not clear how to handle this case yet
+  return qtiFolder + '/' + src;
+}
+
+// return path of given file within directory tree
+function findFile(dir: string, filename: string): string | null {
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    const stats = fs.statSync(filePath);
+
+    if (stats.isDirectory()) {
+      const foundFile = findFile(filePath, filename);
+      if (foundFile) return foundFile;
+    } else if (stats.isFile() && file === filename) {
+      return filePath;
+    }
+  }
+
+  return null;
+}
+
+// Note this has to happen *before* Tag resources are generated
+export function addAssessments(activities: Activity[]): TorusResource[] {
+  // get set of unique tags
+  const tagIds = [...new Set(activities.map((a) => a.tags[0]))];
+
+  const assessments = tagIds.map((tagId) => {
+    const nItems = activities.filter((a) => a.tags.includes(tagId)).length;
+    console.log(`tag ${tagId}: ${nItems} items`);
+
+    // page content model contains one selection of all items with tag
+    const model: any[] = [];
+    model.push({
+      type: 'selection',
+      logic: {
+        conditions: {
+          operator: 'all',
+          children: [
+            {
+              fact: 'tags',
+              operator: 'equals',
+              value: [tagId],
+            },
+          ],
+        },
+      },
+      count: nItems,
+      id: guid(),
+    });
+
+    // create the wrapper practice page
+    return {
+      type: 'Page',
+      id: guid(),
+      title: tagId,
+      legacyPath: '',
+      legacyId: '',
+      tags: [],
+      unresolvedReferences: [],
+      content: { model },
+      isGraded: false,
+      isSurvey: false,
+      objectives: [],
+      warnings: [],
+      collabSpace: defaultCollabSpaceDefinition(),
+    };
+  });
+  console.log(`created ${assessments.length} pages`);
+
+  return [...activities, ...assessments];
 }
