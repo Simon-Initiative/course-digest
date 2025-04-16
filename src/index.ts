@@ -144,9 +144,9 @@ function validateArgs(options: CmdOptions) {
 }
 
 // Helper to execute a function that returns a promise, and resolve it
-// as an element in an array that includes any number of other times. This
+// as an element in an array that includes any number of other elements. This
 // allows an easy way to 'pass along' some number of values through a
-// promise change to keep them in scope.
+// promise chain to keep them in scope.
 function alongWith(promiseFunc: any, ...along: any) {
   return promiseFunc().then((result: any) => [...along, result]);
 }
