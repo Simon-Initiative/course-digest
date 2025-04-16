@@ -50,6 +50,7 @@ export interface TorusResource {
 }
 
 export interface Container {
+  type: 'container';
   id: string;
   title: string;
   tags: string[];
@@ -57,7 +58,9 @@ export interface Container {
 }
 
 export interface PageReference {
+  type: 'item';
   id: string;
+  children: [];
 }
 
 export interface Objective {
@@ -71,7 +74,7 @@ export interface Objective {
 
 export interface Hierarchy extends TorusResource {
   type: 'Hierarchy';
-  children: TorusResource[];
+  children: any[];
 }
 
 export interface TemporaryContent extends TorusResource {

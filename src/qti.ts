@@ -145,6 +145,7 @@ async function processQtiItem(
     case 'Either/Or':
       subType = 'oli_multiple_choice';
       q = await build_multiple_choice($, item);
+      if (type === 'Either/Or') fixBBChoices(q);
       break;
     case 'multiple_answers_question':
     case 'Multiple Answer':
@@ -205,6 +206,16 @@ async function build_multiple_choice($: cheerio.Root, item: any) {
       previewText: '',
     },
   };
+}
+
+// Found BB Either/Or choice text came out true_false.true, true_false.false
+// Assuming this is some BB-specific convention for Either/Or type
+function fixBBChoices(q: { choices: any[] }) {
+  q.choices.forEach((c) => {
+    const text = toPlainText(c.content);
+    const newText = text.split('.')[1] || text;
+    c.content = Common.buildContentModelFromText(newText);
+  });
 }
 
 // Used for both single part multiple choice (respident === '')
@@ -662,14 +673,6 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
   // Else HTML as XML-encoded text content:  &lt;, &gt; around tags,
   // other ampersand-escaped items as e.g. &amp;nbsp;
   const html = decode(replaceAll(text, '&amp;', '&'), { level: 'html5' });
-  if (html.includes('img')) console.log('html: ' + html);
-  /*
-  // just strips any html tags. Leaves white space around tags
-  const plainText = html.replace(/(<([^>]+)>)/gi, '');
-  // console.log('plainText= ' + plainText);
-  return Common.buildContentModelFromText(plainText);
-*/
-
   return await htmlToContentModel(html);
 }
 
@@ -707,7 +710,6 @@ async function htmlToContentModel(html: string) {
   DOM.rename($, 'div', 'p');
 
   const xml = $.html();
-  if (html.includes('img')) console.log('xml after restructure:' + xml);
   const docJSON: any = await XML.toJSON(xml, {} as ProjectSummary, {
     p: true,
     em: true,
@@ -720,7 +722,7 @@ async function htmlToContentModel(html: string) {
 
   // desired content model = list of content elements in doc body
   const content = Common.getDescendants(docJSON.children, 'body')[0].children;
-  // console.log(`json: ${JSON.stringify(content, null, 2)}\n`);
+
   return content;
 }
 
@@ -746,7 +748,6 @@ export function fixImageRefs(
 }
 
 function findImagePath(src: string, qtiFolder: string) {
-  console.log('finding image ' + src);
   // Blackboard content-embedded images have magic srcs of form
   // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1
   // and store files within csfiles/home_dir as __xid-74789077_1.[jpg, png, ...?]
@@ -760,7 +761,7 @@ function findImagePath(src: string, qtiFolder: string) {
     return localPath;
   }
 
-  // not clear how to handle this case yet
+  // not clear how to handle not-Blackboard case yet
   return qtiFolder + '/' + src;
 }
 

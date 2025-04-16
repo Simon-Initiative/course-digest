@@ -28,7 +28,7 @@ import * as Merge from './merge';
 import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
-import { Activity } from './resources/resource';
+import { Activity, TorusResource } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -490,7 +490,11 @@ async function qtiAction(options: CmdOptions): Promise<any> {
   // add Tag resources for all tags used
   resources = Convert.generatePoolTags(resources, 'QTI');
 
-  // include empty hierarchy
+  // include hierarchy containing all pages
+  const toItem = (p: any) => {
+    return { type: 'item', idref: p.id, children: [] };
+  };
+  const pageItems = resources.filter((r) => r.type === 'Page').map(toItem);
   const hierarchy: Resources.Hierarchy = {
     type: 'Hierarchy',
     id: '',
@@ -499,7 +503,7 @@ async function qtiAction(options: CmdOptions): Promise<any> {
     title: '',
     tags: [],
     unresolvedReferences: [],
-    children: [],
+    children: pageItems,
     warnings: [],
   };
 
