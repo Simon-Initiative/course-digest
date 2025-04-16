@@ -28,7 +28,7 @@ import * as Merge from './merge';
 import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
-import { Activity, TorusResource } from './resources/resource';
+import { Activity } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
