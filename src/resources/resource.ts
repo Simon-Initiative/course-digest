@@ -120,6 +120,10 @@ export interface Page extends TorusResource {
   objectives: any[];
 }
 
+export function isPage(r: TorusResource): r is Page {
+  return r.type === 'Page';
+}
+
 export type NonDirectImageReference = {
   originalReference: string;
   assetReference: string;
@@ -134,6 +138,10 @@ export interface Activity extends TorusResource {
   subType: string;
   scope?: string;
   imageReferences?: NonDirectImageReference[];
+}
+
+export function isActivity(r: TorusResource): r is Activity {
+  return r.type === 'Activity';
 }
 
 export interface Objective extends TorusResource {

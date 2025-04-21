@@ -28,7 +28,7 @@ import * as Merge from './merge';
 import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
-import { Activity } from './resources/resource';
+import { isActivity, isPage, TorusResource } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -481,20 +481,24 @@ async function qtiAction(options: CmdOptions): Promise<any> {
     return QTI.processQtiFolder(dir, projectSummary);
   });
 
-  const activities: Activity[] = await executeSerially(zipProcessors);
+  let resources: TorusResource[] = await executeSerially(zipProcessors);
+  const activities = resources.filter(isActivity);
   console.log(`Got ${activities.length} activities`);
 
-  // add scored page resources for each of the quizzes (tags)
-  let resources = QTI.addAssessments(activities);
+  // add demo page resources for each of the quizzes (tags)
+  // resources = QTI.addPreviewPages(resources);
 
   // add Tag resources for all tags used
   resources = Convert.generatePoolTags(resources, 'QTI');
 
-  // include hierarchy containing all pages
+  // include hierarchy containing all quiz pages and preview pages
   const toItem = (p: any) => {
     return { type: 'item', idref: p.id, children: [] };
   };
-  const pageItems = resources.filter((r) => r.type === 'Page').map(toItem);
+
+  const pages = resources.filter(isPage);
+  const quizItems = pages.filter((p) => p.isGraded).map(toItem);
+  const previewItems = pages.filter((p) => !p.isGraded).map(toItem);
   const hierarchy: Resources.Hierarchy = {
     type: 'Hierarchy',
     id: '',
@@ -503,7 +507,11 @@ async function qtiAction(options: CmdOptions): Promise<any> {
     title: '',
     tags: [],
     unresolvedReferences: [],
-    children: pageItems,
+    children: [
+      { type: 'container', title: 'Quizzes', children: quizItems },
+      { type: 'container', title: 'Preview Pages', children: previewItems },
+    ],
+
     warnings: [],
   };
 

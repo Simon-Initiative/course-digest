@@ -17,6 +17,7 @@ import * as XML from 'src/utils/xml';
 import {
   Activity,
   defaultCollabSpaceDefinition,
+  isActivity,
   TorusResource,
 } from './resources/resource';
 import { decode } from 'html-entities';
@@ -36,7 +37,7 @@ import { flattenPath } from './media';
 export function processQtiFolder(
   dir: string,
   projectSummary: ProjectSummary
-): Promise<Activity[]> {
+): Promise<TorusResource[]> {
   return new Promise(async (resolve, _reject) => {
     console.log('Processing QTI package ' + dir);
 
@@ -50,29 +51,36 @@ export function processQtiFolder(
 
     // collect file paths from resource elements
     // Canvas has resource's file(s) in href attr of file sub-element(s)
-    // Some Blackboard exports have filepaths in bb:file attribute
+    // Blackboard exports have filepaths in bb:file attribute
     const bbResources = $('resource[bb\\:file]');
     const files = bbResources.length
       ? $(bbResources).map((i, elem) => $(elem).attr('bb:file'))
       : $('resource file').map((i, elem) => $(elem).attr('href'));
 
+    // rather than parse quirky manifest attributes, we just examine every
+    // resource file. Will ignore those that don't have question items
+    // leaves resources with list of torus resources from each qti resource file
+    const resources: TorusResource[] = [];
     const fileProcessors = files
       .get()
-      .map((file) => () => processResourceFile(`${dir}/${file}`));
-
-    // result is concatenated list of activities from each resource file
-    const activities = await executeSerially(fileProcessors);
+      .map((file) => () => processResourceFile(`${dir}/${file}`, resources));
+    await executeSerially(fileProcessors);
 
     // post-process to fix up image refs, recording in media summary
-    activities.forEach((a: Activity) => fixImageRefs(a, dir, projectSummary));
+    resources
+      .filter(isActivity)
+      .forEach((a) => fixImageRefs(a, dir, projectSummary));
 
-    resolve(activities);
+    resolve(resources);
   });
 }
 
-// resolves to list of activity resources, [] if none
-async function processResourceFile(file: string): Promise<Activity[]> {
-  return new Promise((resolve, _reject) => {
+// resolves to list of resources, [] if none
+async function processResourceFile(
+  file: string,
+  resources: TorusResource[]
+): Promise<TorusResource[]> {
+  return new Promise(async (resolve, _reject) => {
     // Detect files we can convert by looking for root element of questtestinterop
     const $ = DOM.read(file);
     const rootTag = $(':root').prop('tagName').toLowerCase();
@@ -83,39 +91,60 @@ async function processResourceFile(file: string): Promise<Activity[]> {
           'QTI 2.x is not yet supported. Handles QTI 1.2 as exported by Canvas or equivalent.'
         );
       }
-      resolve([]);
+      return resolve([]);
     }
 
     // else have a questtestinterop file
 
-    // tag is the containing zip file name, i.e parent directory of this file
-    const tag = path.basename(path.dirname(file));
-    // title is used to label individual activities
+    // Tag every item w/containing zip file name = parent directory of this file
+    // !!! not true for Canvas, it has subdirectories. Need parent of *manifest*
+    const fileTag = path.basename(path.dirname(file));
+    // assessment title is used to label individual activities
     const title = fixBBTitle($('assessment').attr('title') || 'Untitled');
+    console.log('file assessment title=' + title);
 
     const itemProcessors = $('item')
-      .map((i, item) => () => processQtiItem($, item, title, i, tag))
+      .map((i, item) => () => processQtiItem($, item, title, i, fileTag))
       .get();
-    resolve(executeSerially(itemProcessors));
+    // add to aggregated array of all resources we are carrying through. (Ugly)
+    const newActivities = await executeSerially(itemProcessors);
+    newActivities.forEach((r: TorusResource) => resources.push(r));
+
+    // In BB this may be pool for selection, in Canvas should be quiz.
+    // If quiz, translate it into scored page.
+    const bbType = $(
+      'assessment > assessmentmetadata > bbmd_assessmenttype'
+    ).text();
+    if (bbType === '' || bbType === 'Test') {
+      const quizzes = createQuiz(
+        $,
+        title,
+        resources.filter(isActivity) as Activity[]
+      );
+      quizzes.forEach((q) => resources.push(q));
+    }
+
+    resolve(resources);
   });
 }
 
-// Blackboard-exported titles include long unneded prefix. Also break assessments into
-// multiple resource files appending a,b,c,... suffix which we will strip
+// When a quiz makes a selection from multiple possibilities, Blackboard puts
+// the set of possible questions in a separate resource with title of from
+//    single.qti.export.referenced.canvas.name.prefix assessmentPrefix[a,b,c...]
+// where an a,b,c,... suffix is appended to the assessmentPrefix.
+// Looks like assessmentPrefix not necessarily the same as assessment title.
+// This extracts the underlying assessment prefix in this case.
 const fixBBTitle = (s: string) =>
-  s.startsWith('single.qti.export')
-    ? s
-        .replace('single.qti.export.referenced.canvas.name.prefix ', '')
-        .slice(0, -1)
-    : s;
+  // attempt to allow for other magic prefixes
+  s.includes('qti.export') ? s.split(' ').slice(1).join(' ') : s;
 
 async function processQtiItem(
   $: cheerio.Root,
   item: any,
-  title: string,
+  _title: string,
   i: number,
-  tag: string
-) {
+  fileTag: string
+): Promise<Activity[]> {
   // get value from named item metadata field
   const getFieldValue = (fieldlabel: string) =>
     $(item)
@@ -125,6 +154,9 @@ async function processQtiItem(
       .first()
       .text();
 
+  // Save id in legacyId we can use to find item in list when processing selections
+  const legacyId = getItemRefId($, item) || '';
+
   // QTI standard does not specify question type names, but it is convenient to have them. Canvas uses the QTI-standard
   // qtimetadata extension mechanism for "external vocabulary" to include a "question_type" field. Blackboard includes
   // its question type identifiers in a custom bbmd_questiontype field in its own custom metadata section.
@@ -132,7 +164,7 @@ async function processQtiItem(
   const bbType = $(item).find('bbmd_questiontype').first();
   const type =
     $(bbType).length > 0 ? $(bbType).text() : getFieldValue('question_type');
-  console.log(`Question type ${type}`);
+  console.log(`Question type ${type}: id=${legacyId}`);
 
   let q, subType: any;
   switch (type) {
@@ -141,7 +173,7 @@ async function processQtiItem(
     // true/false question just special case of multiple choice
     case 'true_false_question':
     case 'True/False':
-    // BB Either/Or is just a general two-choice multiple choice
+    // BB Either/Or is just an arbitrary two-choice multiple choice
     case 'Either/Or':
       subType = 'oli_multiple_choice';
       q = await build_multiple_choice($, item);
@@ -176,20 +208,30 @@ async function processQtiItem(
       return [];
   }
 
-  return {
-    type: 'Activity',
-    subType,
-    id: guid(),
-    title: `${title}-q${i + 1}`,
-    content: q,
-    scope: 'banked',
-    tags: [tag],
-    unresolvedReferences: [],
-    objectives: [],
-    legacyPath: '',
-    legacyId: '',
-    warnings: [],
-  };
+  return [
+    {
+      type: 'Activity',
+      subType,
+      id: guid(),
+      title: `${fileTag}-item${i + 1}`,
+      content: q,
+      scope: 'banked',
+      tags: [fileTag],
+      unresolvedReferences: [],
+      objectives: [],
+      legacyPath: '',
+      legacyId,
+      warnings: [],
+    },
+  ];
+}
+
+function getItemRefId($: cheerio.Root, item: any) {
+  // For Blackboard, get from bb-specific metadata. For canvas item ident property will do
+  const bbIdElem = $(item).find('itemmetadata > bbmd_asi_object_id');
+  // if ($(bbIdElem).length == 0) console.log('bbmd_asi_object_id not found!');
+  const bbId = $(bbIdElem).first().text();
+  return bbId ? bbId : $(item).attr('ident')?.trim();
 }
 
 async function build_multiple_choice($: cheerio.Root, item: any) {
@@ -499,8 +541,9 @@ async function build_calculated($: cheerio.Root, item: any) {
     level: 'html5',
   });
   const formulaJavascript = MathMlToJavascript(formulaMathML);
-  // hard to know where to get decimal places required in answer, does not seem explicit.
-  // Try to sniff from first sample answer.
+  // For decimal places required in answer, BB includes "answer_scale" element.
+  // Canvas puts  <formulas decimal_places=""> around <formula>, but attr value is empty
+  // string in all our samples. Can just sniff from first sample answer.
   const sampleAnswer = $(item).find('var_set>answer').first().text();
   const sampleDecimalPart = sampleAnswer.split('.')[1];
   const answerDecimals = sampleDecimalPart ? sampleDecimalPart.length : 0;
@@ -750,7 +793,7 @@ export function fixImageRefs(
 function findImagePath(src: string, qtiFolder: string) {
   // Blackboard content-embedded images have magic srcs of form
   // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1
-  // and store files within csfiles/home_dir as __xid-74789077_1.[jpg, png, ...?]
+  // and store files within csfiles/home_dir tree as __xid-74789077_1.[jpg, png, ...?]
   if (src.startsWith('@X@EmbeddedFile')) {
     const basename = path.basename(src);
     const root = qtiFolder + '/csfiles/home_dir';
@@ -783,53 +826,165 @@ function findFile(dir: string, filename: string): string | null {
   return null;
 }
 
-// Note this has to happen *before* Tag resources are generated
-export function addAssessments(activities: Activity[]): TorusResource[] {
-  // get set of unique tags
+function createQuiz(
+  $: cheerio.Root,
+  title: string,
+  activities: Activity[]
+): TorusResource[] {
+  console.log('creating quiz ' + title);
+
+  // page content model will consist of selections for each item
+  const model: any[] = [];
+  const previewModel: any[] = [];
+
+  // For BB we can simply select all items and selection_ordering blocks; selections contain
+  // BB-specific references to pool items we should have encountered earlier in the archive.
+  // Canvas uses canvas-specific Question Group sections containing a selection and items
+  // to choose from embedded within.  For that we only select items NOT within Question groups
+  // plus Question Group sections themselves. Have seen redundant empty Question Groups in
+  // canvas exports so also ensure the Question Group includes an item.
+  // Following works to select the relevant "nodes" in both cases.
+  const QG = 'section[title="Question Group"]';
+  const nodes = $(
+    `item:not(${QG} *), selection_ordering:not(${QG} *), ${QG}:has(item)`
+  );
+
+  $(nodes).each((i: number, node: any) => {
+    if (node.tagName === 'item') {
+      // node is a QTI item: find the activity we made for it
+      const itemRefId = getItemRefId($, node);
+      const act = activities.find((a) => a.legacyId === itemRefId);
+      if (!act) console.log('activity not found by id: ' + itemRefId);
+      else {
+        // add unique tag on just this item so it can be selected
+        const selectTag = `${title}-q${i + 1}`;
+        // act.tags.push(selectTag);
+        act.tags = [selectTag]; // !!! Temp: only one tag
+        // console.log(`quiz item ${itemRefId}: tags=${JSON.stringify(act.tags)}`);
+        // make selection of just this item
+        model.push(makeTagSelection(selectTag, 1));
+        previewModel.push(makeTagSelection(selectTag, 1));
+      }
+    } else if (['selection_ordering', 'section'].includes(node.tagName)) {
+      // selection from choice of questions
+      const count = parseInt($(node).find('selection_number').text());
+      console.log(`Selection at q${i + 1} n=` + count);
+
+      const ids: any[] =
+        node.tagName === 'selection_ordering'
+          ? // BB: Expect or_selector by unique item ids coded as follows
+            $(node)
+              .find('or_selection > selection_metadata[mdoperator="EQ"]')
+              .map((i, selector) => $(selector).text().trim())
+              .get()
+          : // Canvas Question Group w/embedded items: just get ids
+            $(node)
+              .find('item')
+              .get()
+              .map((item) => getItemRefId($, item));
+
+      const acts: Activity[] = [];
+      ids.forEach((id: string) => {
+        const a = activities.find((a) => a.legacyId === id);
+        if (!a) console.log('activity not found by id:' + id);
+        else acts.push(a);
+      });
+
+      const selectTag = `${title}-q${i + 1}-option`;
+      acts.forEach((act) => {
+        // act.tags.push(selectTag);
+        act.tags = [selectTag]; // !!! Temp: only one tag
+      });
+
+      model.push(makeTagSelection(selectTag, count));
+      previewModel.push(makeTagSelection(selectTag, acts.length));
+      // !!! increment question counter by count;
+    }
+  });
+
+  // create scored quiz page AND preview practice page with all possible questions
+  const quizPage = {
+    type: 'Page',
+    id: guid(),
+    title: title,
+    legacyPath: '',
+    legacyId: '',
+    tags: [],
+    unresolvedReferences: [],
+    content: { model },
+    isGraded: true,
+    isSurvey: false,
+    objectives: [],
+    warnings: [],
+    collabSpace: defaultCollabSpaceDefinition(),
+  };
+  const previewPage = {
+    type: 'Page',
+    id: guid(),
+    title: title + ' All Questions',
+    legacyPath: '',
+    legacyId: '',
+    tags: [],
+    unresolvedReferences: [],
+    content: { model: previewModel },
+    isGraded: false,
+    isSurvey: false,
+    objectives: [],
+    warnings: [],
+    collabSpace: defaultCollabSpaceDefinition(),
+  };
+
+  return [quizPage, previewPage];
+}
+
+function makeTagSelection(tagId: string, count: number) {
+  return {
+    type: 'selection',
+    id: guid(),
+    count,
+    logic: {
+      conditions: {
+        fact: 'tags',
+        // must use contains, not equals, when activity has multiple tags
+        operator: 'contains',
+        value: [tagId],
+      },
+    },
+  };
+}
+
+export function addPreviewPages(resources: TorusResource[]): TorusResource[] {
+  const activities = resources.filter(isActivity);
+  // get set of unique file tags = first tag in set
   const tagIds = [...new Set(activities.map((a) => a.tags[0]))];
 
   const assessments = tagIds.map((tagId) => {
-    const nItems = activities.filter((a) => a.tags.includes(tagId)).length;
+    const tagActivities = activities.filter((a) => a.tags.includes(tagId));
+    const nItems = tagActivities.length;
     console.log(`${tagId}: ${nItems} items`);
 
     // page content model contains one selection of all items with tag
     const model: any[] = [];
-    model.push({
-      type: 'selection',
-      logic: {
-        conditions: {
-          operator: 'all',
-          children: [
-            {
-              fact: 'tags',
-              operator: 'equals',
-              value: [tagId],
-            },
-          ],
-        },
-      },
-      count: nItems,
-      id: guid(),
-    });
+    model.push(makeTagSelection(tagId, nItems));
 
     // create the wrapper practice page
     return {
       type: 'Page',
       id: guid(),
-      title: tagId,
+      title: tagId + ' All Questions',
       legacyPath: '',
       legacyId: '',
       tags: [],
       unresolvedReferences: [],
       content: { model },
-      isGraded: true,
+      isGraded: false,
       isSurvey: false,
       objectives: [],
       warnings: [],
       collabSpace: defaultCollabSpaceDefinition(),
     };
   });
-  console.log(`created ${assessments.length} quiz pages`);
+  console.log(`created ${assessments.length} preview pages`);
 
-  return [...activities, ...assessments];
+  return [...resources, ...assessments];
 }
