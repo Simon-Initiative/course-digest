@@ -1,6 +1,7 @@
 import { ProjectSummary } from 'src/project';
 import { processQtiFolder } from 'src/qti';
 import { getDescendants } from 'src/resources/questions/common';
+import { isActivity } from 'src/resources/resource';
 import { toPlainText } from 'src/utils/common';
 
 // Test conversion of QTI package containing supported question types
@@ -8,10 +9,11 @@ import { toPlainText } from 'src/utils/common';
 it('should convert sample QTI folder to set of activities', async () => {
   // Test on already-unzipped QTI package folder containing one sample
   // assessment edited to contain one of each supported question type
-  const activities = await processQtiFolder(
+  const resources = await processQtiFolder(
     './test/qti/Mod2ReadingQuiz',
     {} as ProjectSummary
   );
+  const activities = resources.filter(isActivity);
 
   expect(activities.length).toEqual(5);
 
