@@ -49,6 +49,9 @@ export function processQtiFolder(
     }
     const $ = DOM.read(manifest);
 
+    // Will title every item w/containing zip file name
+    const fileTag = path.basename(dir);
+
     // collect file paths from resource elements
     // Canvas has resource's file(s) in href attr of file sub-element(s)
     // Blackboard exports have filepaths in bb:file attribute
@@ -63,10 +66,13 @@ export function processQtiFolder(
     const resources: TorusResource[] = [];
     const fileProcessors = files
       .get()
-      .map((file) => () => processResourceFile(`${dir}/${file}`, resources));
+      .map(
+        (file) => () =>
+          processResourceFile(`${dir}/${file}`, fileTag, resources)
+      );
     await executeSerially(fileProcessors);
 
-    // post-process to fix up image refs, recording in media summary
+    // post-process to fix up image refs, recording in media summary for upload
     resources
       .filter(isActivity)
       .forEach((a) => fixImageRefs(a, dir, projectSummary));
@@ -78,6 +84,7 @@ export function processQtiFolder(
 // resolves to list of resources, [] if none
 async function processResourceFile(
   file: string,
+  fileTag: string,
   resources: TorusResource[]
 ): Promise<TorusResource[]> {
   return new Promise(async (resolve, _reject) => {
@@ -96,9 +103,6 @@ async function processResourceFile(
 
     // else have a questtestinterop file
 
-    // Tag every item w/containing zip file name = parent directory of this file
-    // !!! not true for Canvas, it has subdirectories. Need parent of *manifest*
-    const fileTag = path.basename(path.dirname(file));
     // assessment title is used to label individual activities
     const title = fixBBTitle($('assessment').attr('title') || 'Untitled');
     console.log('file assessment title=' + title);
@@ -840,10 +844,10 @@ function createQuiz(
   // For BB we can simply select all items and selection_ordering blocks; selections contain
   // BB-specific references to pool items we should have encountered earlier in the archive.
   // Canvas uses canvas-specific Question Group sections containing a selection and items
-  // to choose from embedded within.  For that we only select items NOT within Question groups
+  // to choose from embedded within.  To handle that we only select items NOT within Question groups
   // plus Question Group sections themselves. Have seen redundant empty Question Groups in
-  // canvas exports so also ensure the Question Group includes an item.
-  // Following works to select the relevant "nodes" in both cases.
+  // canvas exports, so also ensure the Question Group includes an item.
+  // Following works to select the relevant "nodes" to process in both cases.
   const QG = 'section[title="Question Group"]';
   const nodes = $(
     `item:not(${QG} *), selection_ordering:not(${QG} *), ${QG}:has(item)`
@@ -860,7 +864,7 @@ function createQuiz(
         const selectTag = `${title}-q${i + 1}`;
         // act.tags.push(selectTag);
         act.tags = [selectTag]; // !!! Temp: only one tag
-        // console.log(`quiz item ${itemRefId}: tags=${JSON.stringify(act.tags)}`);
+
         // make selection of just this item
         model.push(makeTagSelection(selectTag, 1));
         previewModel.push(makeTagSelection(selectTag, 1));
@@ -868,7 +872,6 @@ function createQuiz(
     } else if (['selection_ordering', 'section'].includes(node.tagName)) {
       // selection from choice of questions
       const count = parseInt($(node).find('selection_number').text());
-      console.log(`Selection at q${i + 1} n=` + count);
 
       const ids: any[] =
         node.tagName === 'selection_ordering'
@@ -890,6 +893,7 @@ function createQuiz(
         else acts.push(a);
       });
 
+      // !!! should maintain question counter and increment by count in case >1
       const selectTag = `${title}-q${i + 1}-option`;
       acts.forEach((act) => {
         // act.tags.push(selectTag);
@@ -898,11 +902,10 @@ function createQuiz(
 
       model.push(makeTagSelection(selectTag, count));
       previewModel.push(makeTagSelection(selectTag, acts.length));
-      // !!! increment question counter by count;
     }
   });
 
-  // create scored quiz page AND preview practice page with all possible questions
+  // create scored quiz page AND a practice page to preview all possible questions
   const quizPage = {
     type: 'Page',
     id: guid(),
@@ -953,6 +956,8 @@ function makeTagSelection(tagId: string, count: number) {
   };
 }
 
+/* This now done at same time as creating quizzes, to use single tag only
+
 export function addPreviewPages(resources: TorusResource[]): TorusResource[] {
   const activities = resources.filter(isActivity);
   // get set of unique file tags = first tag in set
@@ -988,3 +993,5 @@ export function addPreviewPages(resources: TorusResource[]): TorusResource[] {
 
   return [...resources, ...assessments];
 }
+
+*/

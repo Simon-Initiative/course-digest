@@ -597,7 +597,6 @@ export function generatePoolTags(
     if (r.type === 'Activity') {
       r.tags.forEach((t) => {
         if (tags[t] === undefined) {
-          console.log('creating tag: ' + t);
           tags[t] = {
             type: 'Tag',
             legacyPath: null,
