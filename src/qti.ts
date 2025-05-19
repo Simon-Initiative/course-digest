@@ -842,7 +842,8 @@ function restructureHtml($: cheerio.Root) {
   // can wind up with empty paragraphs
   DOM.remove($, 'p:empty');
 
-  // Saw p's containing only breaks (now stripped) and inline image: just use block image
+  // Saw p's containing only breaks and inline image: just use block image
+  // !! this no longer works now that we are not stripping brs
   DOM.rename($, 'p > img-inline:only-child', 'img');
   DOM.eliminateLevel($, 'p:has(>img:only-child)');
   DOM.eliminateLevel($, 'p:has(>table:only-child)');
@@ -891,7 +892,11 @@ function adjustParagraphs(children: any) {
   if (successiveInline.length > 0) {
     result.push({ type: 'p', children: successiveInline });
   }
-  return result;
+
+  // like ensureParagraphs, add an empty p if no children at all.
+  return result.length === 0
+    ? [{ type: 'p', children: [{ text: ' ' }] }]
+    : result;
 }
 
 export function fixImageRefs(
