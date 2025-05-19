@@ -689,7 +689,6 @@ async function getChoices($: cheerio.Root, item: any) {
   const choiceGetters = $(item)
     .find('render_choice response_label')
     .map((_i: number, elem: any) => async () => {
-      console.log('getContent choice');
       const content = await getContent($, elem);
       return {
         id: $(elem).attr('ident'),
@@ -703,7 +702,6 @@ async function getChoices($: cheerio.Root, item: any) {
 
 async function getStem($: cheerio.Root, item: any, replace = '') {
   const presentation = $(item).find('presentation').first();
-  console.log('getContent stem');
   let content = await getContent($, presentation, replace);
   // have to fix up input refs post conversion
   if (replace === 'inputs') content = updateInputRefs(content, {});
@@ -720,8 +718,9 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
     if (replace === 'variables')
       text = text.replace(/\[/g, '@@').replace(/\]/g, '@@');
     else if (replace === 'inputs') {
-      // translate to unrestructured legacy input_ref tag form
-      text = text.replace(/\[/g, '<input_ref input="').replace(/\]/g, '"/>');
+      // translate to legacy input_ref tag form after restructure to use torus "id"
+      // Use closing tag because will be parsed as HTML
+      text = text.replace(/\[/g, '<input_ref id="').replace(/\]/g, '"/>');
     }
 
     if ($(mattext).attr('texttype') === 'text/plain')
@@ -758,7 +757,7 @@ async function htmlToContentModel(html: string) {
     recognizeCDATA: true,
   });
   // will write as XML for xmlToJSON
-  const toXml = ($: cheerio.Root) => $.html({ xmlMode: true });
+  const toXml = ($: cheerio.Root) => $.xml();
 
   // Canvas output may wrap content in div, not p. Torus content model does not have divs at all
   // DOM.eliminateLevel($, 'div:has(>p:only-child)');
