@@ -5,7 +5,6 @@ import { isActivity } from 'src/resources/resource';
 import { toPlainText } from 'src/utils/common';
 
 describe('QTI conversion', () => {
-
   // Test conversion of QTI package containing basic question types
   it('should convert sample QTI folder to set of activities', async () => {
     // Test on already-unzipped QTI package folder containing one sample
@@ -71,6 +70,4 @@ describe('QTI conversion', () => {
     //   handles special case: answer with equal upper and lower bounds
     expect(m5.authoring.parts[0].responses[0].rule).toEqual('input = {500.0}');
   });
-
-  
 });

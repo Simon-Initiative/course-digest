@@ -12,11 +12,7 @@ import {
 import { executeSerially, guid, replaceAll, toPlainText } from './utils/common';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
-import {
-  convertStyleTag,
-  handleFormulaMathML,
-  standardContentManipulations,
-} from './resources/common';
+import { convertStyleTag, handleFormulaMathML } from './resources/common';
 import * as XML from 'src/utils/xml';
 import {
   Activity,
@@ -751,15 +747,11 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
 
 async function htmlToContentModel(html: string) {
   console.log('html in: ' + html);
-  // Close HTML image tags so xml mode parse can handle as empty elements
-  let fixedHtml = html; // html.replace(/(\<br ?\/?\> *)/g, '<break></break>');
-  // ensure wrapped in p
-  // if (!fixedHtml.startsWith('<p')) fixedHtml = `<p>${fixedHtml}</p>`;
 
   // parse HTML fragment, which may not be wrapped in containing <p>. Wrap in
   // hint as one arbitrarily chosen parent recognized by isInlineElement test
-  const $ = Cheerio.load(`<hint>${fixedHtml}</hint>`, {
-    // parse as HTML to handle unlcsed <img>, <br> as void elements
+  const $ = Cheerio.load(`<hint>${html}</hint>`, {
+    // parse as HTML to handle unclosed <img>, <br> as void elements
     xmlMode: false,
     // but allow self-closing <br /> and cdata
     recognizeSelfClosing: true,
@@ -767,8 +759,6 @@ async function htmlToContentModel(html: string) {
   });
   // will write as XML for xmlToJSON
   const toXml = ($: cheerio.Root) => $.html({ xmlMode: true });
-
-  // while ($('br').length > 0) DOM.stripElement($, 'br');
 
   // Canvas output may wrap content in div, not p. Torus content model does not have divs at all
   // DOM.eliminateLevel($, 'div:has(>p:only-child)');
@@ -835,6 +825,8 @@ function restructureHtml($: cheerio.Root) {
   convertStyleTag($, 'strong');
 
   // see if images should be inline
+  DOM.rename($, 'img', 'img_inline');
+  /*
   DOM.rename($, 'p img', 'img_inline');
   DOM.rename($, 'a img', 'img_inline');
   $('img').each((i: any, item: any) => {
@@ -842,7 +834,7 @@ function restructureHtml($: cheerio.Root) {
       item.tagName = 'img_inline';
     }
   });
-
+*/
   handleFormulaMathML($);
 
   // do some ad hoc restructuring for problematic html we have encountered
@@ -851,6 +843,7 @@ function restructureHtml($: cheerio.Root) {
   DOM.remove($, 'p:empty');
 
   // Saw p's containing only breaks (now stripped) and inline image: just use block image
+  DOM.rename($, 'p > img-inline:only-child', 'img');
   DOM.eliminateLevel($, 'p:has(>img:only-child)');
   DOM.eliminateLevel($, 'p:has(>table:only-child)');
 
