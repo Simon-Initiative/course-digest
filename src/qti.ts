@@ -12,7 +12,11 @@ import {
 import { executeSerially, guid, replaceAll, toPlainText } from './utils/common';
 import * as DOM from './utils/dom';
 import * as fs from 'fs';
-import { standardContentManipulations } from './resources/common';
+import {
+  convertStyleTag,
+  handleFormulaMathML,
+  standardContentManipulations,
+} from './resources/common';
 import * as XML from 'src/utils/xml';
 import {
   Activity,
@@ -90,7 +94,8 @@ async function processResourceFile(
   return new Promise(async (resolve, _reject) => {
     // Detect files we can convert by looking for root element of questtestinterop
     const $ = DOM.read(file);
-    const rootTag = $(':root').prop('tagName').toLowerCase();
+    const rootTag =
+      $(':root').length > 0 ? $(':root').prop('tagName').toLowerCase() : '';
     if (rootTag !== 'questestinterop') {
       // check for QTI version 2.x tags which are entirely different
       if ($('assessmentItem, responseDeclaration').length) {
@@ -104,7 +109,7 @@ async function processResourceFile(
     // else have a questtestinterop file
 
     // assessment title is used to label individual activities
-    const title = fixBBTitle($('assessment').attr('title') || 'Untitled');
+    const title = fixBBTitle($('assessment').attr('title') || fileTag);
     console.log('file assessment title=' + title);
 
     const itemProcessors = $('item')
@@ -136,7 +141,7 @@ async function processResourceFile(
 // the set of possible questions in a separate resource with title of from
 //    single.qti.export.referenced.canvas.name.prefix assessmentPrefix[a,b,c...]
 // where an a,b,c,... suffix is appended to the assessmentPrefix.
-// Looks like assessmentPrefix not necessarily the same as assessment title.
+// assessmentPrefix may be same as assessmentTitle but could be abbreviation
 // This extracts the underlying assessment prefix in this case.
 const fixBBTitle = (s: string) =>
   // attempt to allow for other magic prefixes
@@ -145,7 +150,7 @@ const fixBBTitle = (s: string) =>
 async function processQtiItem(
   $: cheerio.Root,
   item: any,
-  _title: string,
+  title: string,
   i: number,
   fileTag: string
 ): Promise<Activity[]> {
@@ -166,14 +171,21 @@ async function processQtiItem(
   // its question type identifiers in a custom bbmd_questiontype field in its own custom metadata section.
   // Lower-case types below are from Canvas; mixed-case are Blackboard's
   const bbType = $(item).find('bbmd_questiontype').first();
+  // Have seen this in Canvas exports, presumably derived from Cognero assessments
+  const cogneroType = $(item).find('qticomment:contains("CogneroItemType: ")');
   const type =
-    $(bbType).length > 0 ? $(bbType).text() : getFieldValue('question_type');
+    $(bbType).length > 0
+      ? $(bbType).text()
+      : $(cogneroType).length > 0
+      ? $(cogneroType).text().replace('CogneroItemType: ', '')
+      : getFieldValue('question_type');
   console.log(`Question type ${type}: id=${legacyId}`);
 
   let q, subType: any;
   switch (type) {
     case 'multiple_choice_question':
     case 'Multiple Choice':
+    case 'Multiple_Choice':
     // true/false question just special case of multiple choice
     case 'true_false_question':
     case 'True/False':
@@ -220,7 +232,7 @@ async function processQtiItem(
       title: `${fileTag}-item${i + 1}`,
       content: q,
       scope: 'banked',
-      tags: [fileTag],
+      tags: [title],
       unresolvedReferences: [],
       objectives: [],
       legacyPath: '',
@@ -318,7 +330,7 @@ function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
         $(resp).attr('title') === 'correct' ||
         $(resp).find('setvar:contains("SCORE.max")').length == 1 ||
         // Canvas seems to always set correct score of 100, presumably percentage
-        $(resp).find('setvar:contains("100")').length === 1 ||
+        $(resp).find('setvar:contains("1")').length === 1 ||
         // seen in BB exports: no score set, but shows feedback named "correct"
         $(resp).find('displayfeedback[linkrefid="correct"]').length === 1
         // could also check for score set to declared max value of outcome variable
@@ -680,7 +692,8 @@ function MathMlToJavascript(mathML: string) {
 async function getChoices($: cheerio.Root, item: any) {
   const choiceGetters = $(item)
     .find('render_choice response_label')
-    .map((i: number, elem: any) => async () => {
+    .map((_i: number, elem: any) => async () => {
+      console.log('getContent choice');
       const content = await getContent($, elem);
       return {
         id: $(elem).attr('ident'),
@@ -694,6 +707,7 @@ async function getChoices($: cheerio.Root, item: any) {
 
 async function getStem($: cheerio.Root, item: any, replace = '') {
   const presentation = $(item).find('presentation').first();
+  console.log('getContent stem');
   let content = await getContent($, presentation, replace);
   // have to fix up input refs post conversion
   if (replace === 'inputs') content = updateInputRefs(content, {});
@@ -702,62 +716,89 @@ async function getStem($: cheerio.Root, item: any, replace = '') {
 }
 
 async function getContent($: cheerio.Root, elem: any, replace = '') {
+  // get from one content-containing element
+  const getContent1 = async (mattext: any) => {
+    const rawtext = $(mattext).text();
+
+    let text = rawtext;
+    if (replace === 'variables')
+      text = text.replace(/\[/g, '@@').replace(/\]/g, '@@');
+    else if (replace === 'inputs') {
+      // translate to unrestructured legacy input_ref tag form
+      text = text.replace(/\[/g, '<input_ref input="').replace(/\]/g, '"/>');
+    }
+
+    if ($(mattext).attr('texttype') === 'text/plain')
+      return Common.buildContentModelFromText(text);
+
+    // Else HTML as XML-encoded text content:  &lt;, &gt; around tags,
+    // other ampersand-escaped items as e.g. &amp;nbsp;
+    const html = decode(replaceAll(text, '&amp;', '&'), { level: 'html5' });
+    return await htmlToContentModel(html);
+  };
+
   // Blackboard may use mat_formattedtext extension
-  const mattext = $(elem).find('mattext, mat_formattedtext').first();
-  const rawtext = $(mattext).text();
-
-  let text = rawtext;
-  if (replace === 'variables')
-    text = text.replace(/\[/g, '@@').replace(/\]/g, '@@');
-  else if (replace === 'inputs') {
-    // translate to unrestructured legacy input_ref tag form
-    text = text.replace(/\[/g, '<input_ref input="').replace(/\]/g, '"/>');
-  }
-
-  if ($(mattext).attr('texttype') === 'text/plain')
-    return Common.buildContentModelFromText(text);
-
-  // Else HTML as XML-encoded text content:  &lt;, &gt; around tags,
-  // other ampersand-escaped items as e.g. &amp;nbsp;
-  const html = decode(replaceAll(text, '&amp;', '&'), { level: 'html5' });
-  return await htmlToContentModel(html);
+  // may be more than one so get each and concatenate results.
+  // make sure not to go into choice content presentation
+  const mat_texts = $(elem).find(
+    'mattext:not(render_choice *), mat_formattedtext:not(render_choice *)'
+  );
+  const contentGetters = $(mat_texts)
+    .get()
+    .map((e) => () => getContent1(e));
+  return executeSerially(contentGetters);
 }
 
 async function htmlToContentModel(html: string) {
-  // Blackboard questions can embed img tags in paragraphs w/<br> tags before and/or after
-  // Strip all of these, torus doesn't use. Strip in source because unclosed tags not XML
-  const fixedHtml = html.replace(/\<br\>/g, '');
+  console.log('html in: ' + html);
+  // Close HTML image tags so xml mode parse can handle as empty elements
+  let fixedHtml = html; // html.replace(/(\<br ?\/?\> *)/g, '<break></break>');
+  // ensure wrapped in p
+  // if (!fixedHtml.startsWith('<p')) fixedHtml = `<p>${fixedHtml}</p>`;
 
-  // parse fragment as xml doc
-  const $ = Cheerio.load(`<html><body>${fixedHtml}</body><html>`, {
-    xmlMode: true,
+  // parse HTML fragment, which may not be wrapped in containing <p>. Wrap in
+  // hint as one arbitrarily chosen parent recognized by isInlineElement test
+  const $ = Cheerio.load(`<hint>${fixedHtml}</hint>`, {
+    // parse as HTML to handle unlcsed <img>, <br> as void elements
+    xmlMode: false,
+    // but allow self-closing <br /> and cdata
+    recognizeSelfClosing: true,
+    recognizeCDATA: true,
   });
+  // will write as XML for xmlToJSON
+  const toXml = ($: cheerio.Root) => $.html({ xmlMode: true });
 
-  // restructure as we do for legacy XML content. Overkill, but adjusts some elements we want:
-  // unwrapped mathML to formula-inline, inline styles like sup to em tag form handled by toJSON
-  standardContentManipulations($);
+  // while ($('br').length > 0) DOM.stripElement($, 'br');
 
-  // do some ad hoc restructuring for problematic html we have encountered
+  // Canvas output may wrap content in div, not p. Torus content model does not have divs at all
+  // DOM.eliminateLevel($, 'div:has(>p:only-child)');
+  while ($('div').length > 0) DOM.stripElement($, 'div');
 
   // Canvas can wrap text in spans, some w/app-specific classes, e.g. <span class="prompt">
   // Blackboard sometimes wraps image elements too. Strip, replacing with inner html.
-  $('span').each((_i, elem) => {
-    $(elem).replaceWith($(elem).html()!);
-  });
+  // first undo hack in some chem content: Wingdings à used for right arrow character
+  $('span[style*="Wingdings"]').each((_i, elem: any) =>
+    $(elem).text($(elem).text().replace('à', '→'))
+  );
+  while ($('span').length > 0) DOM.stripElement($, 'span');
 
-  // Now assume any images left within p's are standalone block images.
-  DOM.eliminateLevel($, 'p:has(>img)');
+  // reduce noise by removing inline element styles
+  $(':not(em)').removeAttr('style');
+  // some cognero annotations for equation images
+  $('img').removeAttr('cogneroalgorithmdata');
+  $('img').removeAttr('data-mathml');
 
-  // torus tables don't use these wrappers
-  DOM.eliminateLevel($, 'thead');
-  DOM.eliminateLevel($, 'tbody');
+  console.log('stripped: ' + toXml($));
 
-  // Canvas output wraps content in div, not p. Torus content model does not have divs at all
-  DOM.eliminateLevel($, 'div:has(>p)');
-  DOM.rename($, 'div', 'p');
+  // restructure as we do for legacy XML content. Overkill, but adjusts some elements we want:
+  // unwrapped mathML to formula-inline, inline styles like sup to em tag form handled by toJSON
+  // standardContentManipulations($);
+  restructureHtml($);
 
-  const xml = $.html();
+  const xml = toXml($);
+  console.log('after restructure:\n' + xml + '\n');
   const docJSON: any = await XML.toJSON(xml, {} as ProjectSummary, {
+    hint: true, // because we wrapped in hint
     p: true,
     em: true,
     li: true,
@@ -767,10 +808,97 @@ async function htmlToContentModel(html: string) {
     dd: true,
   });
 
-  // desired content model = list of content elements in doc body
-  const content = Common.getDescendants(docJSON.children, 'body')[0].children;
+  // desired content model = list of content elements in hint element
+  const content = Common.getDescendants(docJSON.children, 'hint')[0].children;
 
-  return content;
+  const fixed_content = adjustParagraphs(content);
+  console.log(JSON.stringify(fixed_content, null, 2));
+
+  return fixed_content;
+}
+
+function restructureHtml($: cheerio.Root) {
+  // Saw <i><image ...></i>, maybe result of replacing odd char with an image
+  DOM.eliminateLevel($, 'i:has(>img:only-child)');
+
+  // following from standardContentManipulations relevant to HTML fragments:
+
+  // Change sub within sub to distinct doublesub mark. Will remove the
+  // regular sub style from doublesub text when collecting styles in toJSON
+  DOM.rename($, 'sub sub', 'doublesub');
+  // Normalize all inline markup elements to <em style="..."> tags for toJson
+  convertStyleTag($, 'sub');
+  convertStyleTag($, 'sup');
+  convertStyleTag($, 'doublesub');
+  convertStyleTag($, 'i', 'italic');
+  convertStyleTag($, 'b', 'bold');
+  convertStyleTag($, 'strong');
+
+  // see if images should be inline
+  DOM.rename($, 'p img', 'img_inline');
+  DOM.rename($, 'a img', 'img_inline');
+  $('img').each((i: any, item: any) => {
+    if (DOM.isInlineElement($, item)) {
+      item.tagName = 'img_inline';
+    }
+  });
+
+  handleFormulaMathML($);
+
+  // do some ad hoc restructuring for problematic html we have encountered
+
+  // can wind up with empty paragraphs
+  DOM.remove($, 'p:empty');
+
+  // Saw p's containing only breaks (now stripped) and inline image: just use block image
+  DOM.eliminateLevel($, 'p:has(>img:only-child)');
+  DOM.eliminateLevel($, 'p:has(>table:only-child)');
+
+  // torus tables don't use these wrappers
+  DOM.eliminateLevel($, 'thead');
+  DOM.eliminateLevel($, 'tbody');
+}
+
+/*
+ * Handle paragraphing for our converted html content fragments.
+ * 1. Looks through children and wraps any inline elements in paragraphs,
+ *    same as wrapInlinesInParagrphs, but also:
+ * 2. Splits paragraphs at <br> elements into multiple paragraphs
+ * 3. Descends into tables and applies 1 and 2 to td contents
+ *
+ * Takes a list of content elements, returns list of block elements
+ */
+function adjustParagraphs(children: any) {
+  const result = [];
+  let successiveInline: any[] = [];
+  children
+    .filter((c: any) => !Common.isBlankText(c))
+    .forEach((c: any) => {
+      if (c.text !== undefined || DOM.isInlineTag(c.type)) {
+        successiveInline.push(c);
+      } else {
+        // hit non-inline: finish any pending paragraph and reset
+        if (successiveInline.length > 0) {
+          result.push({ type: 'p', children: successiveInline });
+          successiveInline = [];
+        }
+        // on tables, descend fix up paragraphs in cells, mutating
+        if (c.type === 'table') {
+          const tds = Common.getDescendants(c.children, 'td') || [];
+          tds.forEach((td) => (td.children = adjustParagraphs(td.children)));
+        }
+
+        // existing paragraph: may have to split content into multiple at br's
+        if (c.type === 'p') result.push(...adjustParagraphs(c.children));
+        // use HTML <br> as paragraph ender, but don't include in content
+        else if (c.type !== 'br') result.push(c);
+      }
+    });
+  // finish any final pending paragraph
+  if (successiveInline.length > 0) {
+    result.push({ type: 'p', children: successiveInline });
+  }
+  return result;
 }
 
 export function fixImageRefs(
@@ -779,10 +907,13 @@ export function fixImageRefs(
   projectSummary: ProjectSummary
 ) {
   const stem = a.content.stem as { content: any[] };
-  const images = [
-    ...Common.getDescendants(stem.content, 'img'),
-    ...Common.getDescendants(stem.content, 'img-inline'),
-  ];
+  const choices = (a.content.choices as { content: any[] }[]) || [];
+  const images = [stem, ...choices].flatMap((e) => {
+    return [
+      ...Common.getDescendants(e.content, 'img'),
+      ...Common.getDescendants(e.content, 'img_inline'),
+    ];
+  });
 
   images.forEach((img) => {
     const localPath = findImagePath(img.src, qtiFolder);
@@ -795,9 +926,9 @@ export function fixImageRefs(
 }
 
 function findImagePath(src: string, qtiFolder: string) {
-  // Blackboard content-embedded images have magic srcs of form
-  // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1
-  // and store files within csfiles/home_dir tree as __xid-74789077_1.[jpg, png, ...?]
+  // Blackboard content-embedded images may have magic srcs of form
+  // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1 w/o extension
+  // files stored within csfiles/home_dir tree as __xid-74789077_1.[jpg, png, ...?]
   if (src.startsWith('@X@EmbeddedFile')) {
     const basename = path.basename(src);
     const root = qtiFolder + '/csfiles/home_dir';
@@ -805,11 +936,17 @@ function findImagePath(src: string, qtiFolder: string) {
       findFile(root, `__${basename}.jpg`) ||
       findFile(root, `__${basename}.png`);
 
+    if (!localPath) console.log('referenced image file not found: ' + basename);
     return localPath;
   }
 
-  // not clear how to handle not-Blackboard case yet
-  return qtiFolder + '/' + src;
+  // Canvas image urls may start with magic $IMS-CC-FILEBASE$/ and usually
+  // live within a 'media' folder though have seen web_resources/media
+  // We just search for local image file within archive by its base name w/extension
+  const filename = src.substring(src.lastIndexOf('/') + 1);
+  const localPath = findFile(qtiFolder, filename);
+  if (!localPath) console.log('referenced image file not found: ' + filename);
+  return localPath;
 }
 
 // return path of given file within directory tree
@@ -837,11 +974,17 @@ function createQuiz(
 ): TorusResource[] {
   console.log('creating quiz ' + title);
 
-  // page content model will consist of selections for each item
-  const model: any[] = [];
-  const previewModel: any[] = [];
+  // start page content model. Will append selections for relevant items
+  const header = (text: string) => {
+    return {
+      type: 'content',
+      children: [{ type: 'h6', children: [{ text }] }],
+    };
+  };
+  const model: any[] = [header(title)];
+  const previewModel: any[] = [header(title)];
 
-  // For BB we can simply select all items and selection_ordering blocks; selections contain
+  // For BB we can select all items and selection_ordering blocks; selections contain
   // BB-specific references to pool items we should have encountered earlier in the archive.
   // Canvas uses canvas-specific Question Group sections containing a selection and items
   // to choose from embedded within.  To handle that we only select items NOT within Question groups
@@ -853,57 +996,71 @@ function createQuiz(
     `item:not(${QG} *), selection_ordering:not(${QG} *), ${QG}:has(item)`
   );
 
-  $(nodes).each((i: number, node: any) => {
-    if (node.tagName === 'item') {
-      // node is a QTI item: find the activity we made for it
-      const itemRefId = getItemRefId($, node);
-      const act = activities.find((a) => a.legacyId === itemRefId);
-      if (!act) console.log('activity not found by id: ' + itemRefId);
-      else {
-        // add unique tag on just this item so it can be selected
-        const selectTag = `${title}-q${i + 1}`;
-        // act.tags.push(selectTag);
-        act.tags = [selectTag]; // !!! Temp: only one tag
+  /*
+  // if we have no random selections, can simply select all
+  // that were successfully converted (may not be all items in file)
+  // We don't add question-unique tags in this case.
+  if ($(nodes).find('selection_ordering').length === 0) {
+    model.push(makeTagSelection(title, activities.length));
+    previewModel.push(makeTagSelection(title, activities.length));
+  } else 
+   */
+  {
+    // handle quiz including random selections
+    $(nodes).each((i: number, node: any) => {
+      if (node.tagName === 'item') {
+        // node is a QTI item: find the activity we made for it
+        const itemRefId = getItemRefId($, node);
+        const act = activities.find((a) => a.legacyId === itemRefId);
+        if (!act) console.log('activity not found by id: ' + itemRefId);
+        else {
+          // add unique tag on just this item so it can be selected
+          const selectTag = `${title}-q${i + 1}`;
+          act.tags.push(selectTag);
 
-        // make selection of just this item
-        model.push(makeTagSelection(selectTag, 1));
-        previewModel.push(makeTagSelection(selectTag, 1));
+          // make selection of just this item
+          model.push(makeTagSelection(selectTag, 1));
+          previewModel.push(header(selectTag));
+          previewModel.push(makeTagSelection(selectTag, 1));
+        }
+      } else if (['selection_ordering', 'section'].includes(node.tagName)) {
+        // selection from choice of questions
+        const count = parseInt($(node).find('selection_number').text());
+
+        const ids: any[] =
+          node.tagName === 'selection_ordering'
+            ? // BB: Expect or_selector by unique item ids coded as follows
+              $(node)
+                .find('or_selection > selection_metadata[mdoperator="EQ"]')
+                .map((i, selector) => $(selector).text().trim())
+                .get()
+            : // Canvas Question Group w/embedded items: just get ids
+              $(node)
+                .find('item')
+                .get()
+                .map((item) => getItemRefId($, item));
+
+        const acts: Activity[] = [];
+        ids.forEach((id: string) => {
+          const a = activities.find((a) => a.legacyId === id);
+          if (!a) console.log('activity not found by id:' + id);
+          else acts.push(a);
+        });
+
+        // !!! shouled maintain question counter and increment by count in case >1
+        const selectTag = `${title}-q${i + 1}-option`;
+        acts.forEach((act) => {
+          act.tags.push(selectTag);
+          // for BB pool items: ensure tagged with assessment title (may be prefix)
+          if (!act.tags.includes(title)) act.tags.push(title);
+        });
+
+        model.push(makeTagSelection(selectTag, count));
+        previewModel.push(header(selectTag));
+        previewModel.push(makeTagSelection(selectTag, acts.length));
       }
-    } else if (['selection_ordering', 'section'].includes(node.tagName)) {
-      // selection from choice of questions
-      const count = parseInt($(node).find('selection_number').text());
-
-      const ids: any[] =
-        node.tagName === 'selection_ordering'
-          ? // BB: Expect or_selector by unique item ids coded as follows
-            $(node)
-              .find('or_selection > selection_metadata[mdoperator="EQ"]')
-              .map((i, selector) => $(selector).text().trim())
-              .get()
-          : // Canvas Question Group w/embedded items: just get ids
-            $(node)
-              .find('item')
-              .get()
-              .map((item) => getItemRefId($, item));
-
-      const acts: Activity[] = [];
-      ids.forEach((id: string) => {
-        const a = activities.find((a) => a.legacyId === id);
-        if (!a) console.log('activity not found by id:' + id);
-        else acts.push(a);
-      });
-
-      // !!! should maintain question counter and increment by count in case >1
-      const selectTag = `${title}-q${i + 1}-option`;
-      acts.forEach((act) => {
-        // act.tags.push(selectTag);
-        act.tags = [selectTag]; // !!! Temp: only one tag
-      });
-
-      model.push(makeTagSelection(selectTag, count));
-      previewModel.push(makeTagSelection(selectTag, acts.length));
-    }
-  });
+    });
+  }
 
   // create scored quiz page AND a practice page to preview all possible questions
   const quizPage = {

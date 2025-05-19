@@ -88,15 +88,16 @@ export function isInlineElement($: any, elem: any) {
       'choice',
       'feedback',
       'hint',
-      // AW: inlining in these contexts leads to undesired left-alignment:
+      // AW: found inlining in these contexts leads to undesired left-alignment:
       // 'stem',
-      // 'body',
+      'body',
     ])
   ) {
     if (parent[0].children.length === 1) {
       return false;
     }
 
+    // true if has some sibling that is inline
     return parent[0].children
       .filter(removeEmptyText)
       .some(
@@ -132,9 +133,7 @@ export function isInlineTag(tag: string) {
   return (inlineTags as any)[tag] === true;
 }
 
-export function isOneOf(item: string, items: Array<string>) {
-  return items.some((i: string) => i === item);
-}
+export const isOneOf = (item: string, items: string[]) => items.includes(item);
 
 export function moveAttrToChildren(
   $: any,

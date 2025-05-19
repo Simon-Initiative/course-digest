@@ -348,8 +348,7 @@ export function toJSON(
                 selfClosingTags: false,
                 // avoid re-encoding Unicode symbols as numeric escapes:
                 decodeEntities: false,
-              },
-              {}
+              }
             )
           )
           .html();

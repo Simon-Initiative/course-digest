@@ -78,6 +78,7 @@ export function determineResourceType(file: string): Promise<ResourceType> {
       return 'Discussion';
     }
 
+    console.log('unrecognized resource type: ' + dtdBase);
     return 'Other';
   });
 }
