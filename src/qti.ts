@@ -720,7 +720,9 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
     else if (replace === 'inputs') {
       // translate to legacy input_ref tag form after restructure to use torus "id"
       // Use closing tag because will be parsed as HTML
-      text = text.replace(/\[/g, '<input_ref id="').replace(/\]/g, '"/>');
+      text = text
+        .replace(/\[/g, '<input_ref id="')
+        .replace(/\]/g, '"></input_ref>');
     }
 
     if ($(mattext).attr('texttype') === 'text/plain')
