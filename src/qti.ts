@@ -315,26 +315,44 @@ function getShuffle($: cheerio.Root, item: any, respident = '') {
 }
 
 function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
+  // see if a max value for score variable is declared
+  let maxvalue: string | undefined = undefined;
+  const decvar = $(item).find('outcomes decvar[varname="SCORE"]');
+  if ($(decvar).length > 0 && $(decvar).attr('maxvalue')) {
+    maxvalue = $(decvar).attr('maxvalue'); // string value
+  }
+
   // Search respconditions containing a child var operator (varequal, vargt, varlt etc)
   // using respident of part. respident of '' means single part so any child will do
+  // assuming SCORE is only variable
   const childSelector = respident === '' ? '*' : `*[respident="${respident}"]`;
-  const correct: any[] = [];
-  $(item)
-    .find(`respcondition:has(${childSelector})`)
-    .each((i: number, resp: any) => {
-      if (
-        $(resp).attr('title') === 'correct' ||
-        $(resp).find('setvar:contains("SCORE.max")').length == 1 ||
-        // Canvas seems to always set correct score of 100, presumably percentage
-        $(resp).find('setvar:contains("1")').length === 1 ||
-        // seen in BB exports: no score set, but shows feedback named "correct"
-        $(resp).find('displayfeedback[linkrefid="correct"]').length === 1
-        // could also check for score set to declared max value of outcome variable
-      ) {
-        correct.push(resp);
-      }
-    });
+  const respconditions = $(item).find(`respcondition:has(${childSelector})`);
 
+  const correct: any[] = [];
+  $(respconditions).each((i: number, resp: any) => {
+    if (
+      $(resp).find('setvar:contains("SCORE.max")').length === 1 ||
+      // string contains works in our cases, but maybe dicey in general
+      (maxvalue &&
+        $(resp).find(`setvar:contains("${maxvalue}")`).length === 1) ||
+      // Canvas frequently uses correct score of 100, presumably percentage
+      // $(resp).find('setvar:contains("100")').length === 1
+      // have seen correct answers specified only by following magic
+      $(resp).attr('title') === 'correct' ||
+      // seen in BB exports: no score set, but shows feedback named "correct"
+      $(resp).find('displayfeedback[linkrefid="correct"]').length === 1
+    ) {
+      correct.push(resp);
+    }
+  });
+
+  if (correct.length === 0) {
+    // Didn't find a max score or magic respcondition.
+    // Have seen canvas exports w/no max & just one non-zero score set to 1
+    // Also multi-parts where each part correct is worth fraction of total points
+    // As heuristic, if there is just one condition, use it.
+    if ($(respconditions).length === 1) correct.push($(respconditions)[0]);
+  }
   if (correct.length === 0) console.log('correct response condition not found');
   return correct;
 }
@@ -738,7 +756,7 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
   // may be more than one so get each and concatenate results.
   // make sure not to go into choice content presentation
   const mat_texts = $(elem).find(
-    'mattext:not(render_choice *), mat_formattedtext:not(render_choice *)'
+    'mattext:not(response_lid *), mat_formattedtext:not(response_lid *)'
   );
   const contentGetters = $(mat_texts)
     .get()
@@ -747,7 +765,7 @@ async function getContent($: cheerio.Root, elem: any, replace = '') {
 }
 
 async function htmlToContentModel(html: string) {
-  console.log('html in: ' + html);
+  // console.log('html in: ' + html);
 
   // parse HTML fragment, which may not be wrapped in containing <p>. Wrap in
   // hint as one arbitrarily chosen parent recognized by isInlineElement test
@@ -758,8 +776,6 @@ async function htmlToContentModel(html: string) {
     recognizeSelfClosing: true,
     recognizeCDATA: true,
   });
-  // will write as XML for xmlToJSON
-  const toXml = ($: cheerio.Root) => $.xml();
 
   // Canvas output may wrap content in div, not p. Torus content model does not have divs at all
   // DOM.eliminateLevel($, 'div:has(>p:only-child)');
@@ -771,6 +787,10 @@ async function htmlToContentModel(html: string) {
   $('span[style*="Wingdings"]').each((_i, elem: any) =>
     $(elem).text($(elem).text().replace('à', '→'))
   );
+  // Also <span style="vertical-align: sub;"> used for sub/superscripts
+  DOM.rename($, 'span[style~="sub;"]', 'sub');
+  DOM.rename($, 'span[style~="super;"]', 'sup');
+  while ($('font').length > 0) DOM.stripElement($, 'font');
   while ($('span').length > 0) DOM.stripElement($, 'span');
 
   // reduce noise by removing inline element styles
@@ -779,15 +799,13 @@ async function htmlToContentModel(html: string) {
   $('img').removeAttr('cogneroalgorithmdata');
   $('img').removeAttr('data-mathml');
 
-  console.log('stripped: ' + toXml($));
+  // console.log('stripped: ' + $.xml());
 
-  // restructure as we do for legacy XML content. Overkill, but adjusts some elements we want:
-  // unwrapped mathML to formula-inline, inline styles like sup to em tag form handled by toJSON
-  // standardContentManipulations($);
+  // restructure as we do for legacy XML content.
   restructureHtml($);
 
-  const xml = toXml($);
-  console.log('after restructure:\n' + xml + '\n');
+  const xml = $.xml();
+  //console.log('after restructure:\n' + xml + '\n');
   const docJSON: any = await XML.toJSON(xml, {} as ProjectSummary, {
     hint: true, // because we wrapped in hint
     p: true,
@@ -803,7 +821,7 @@ async function htmlToContentModel(html: string) {
   const content = Common.getDescendants(docJSON.children, 'hint')[0].children;
 
   const fixed_content = adjustParagraphs(content);
-  console.log(JSON.stringify(fixed_content, null, 2));
+  // console.log(JSON.stringify(fixed_content, null, 2));
 
   return fixed_content;
 }
@@ -823,7 +841,8 @@ function restructureHtml($: cheerio.Root) {
   convertStyleTag($, 'doublesub');
   convertStyleTag($, 'i', 'italic');
   convertStyleTag($, 'b', 'bold');
-  convertStyleTag($, 'strong');
+  convertStyleTag($, 'strong', 'bold');
+  convertStyleTag($, 'u', 'underline');
 
   // see if images should be inline
   DOM.rename($, 'img', 'img_inline');
@@ -852,16 +871,17 @@ function restructureHtml($: cheerio.Root) {
   // torus tables don't use these wrappers
   DOM.eliminateLevel($, 'thead');
   DOM.eliminateLevel($, 'tbody');
+  DOM.remove($, 'colgroup');
 }
 
 /*
  * Handle paragraphing for our converted html content fragments.
- * 1. Looks through children and wraps any inline elements in paragraphs,
- *    same as wrapInlinesInParagrphs, but also:
- * 2. Splits paragraphs at <br> elements into multiple paragraphs
+ * 1. Runs through children and wraps any inline elements in paragraphs,
+ *    same as ensureParagraphs, but also:
+ * 2. Splits paragraphs at <br> elements into multiple paragraphs; and
  * 3. Descends into tables and applies 1 and 2 to td contents
  *
- * Takes a list of content elements, returns list of block elements
+ * Takes a list of possibly mixed content elements; returns list of block elements
  */
 function adjustParagraphs(children: any) {
   const result = [];
@@ -914,14 +934,16 @@ export function fixImageRefs(
     ];
   });
 
-  images.forEach((img) => {
-    const localPath = findImagePath(img.src, qtiFolder);
-    if (localPath) {
-      // flattenPath needs assetReference to record, but any dummy OK.
-      const ref = { filePath: localPath, assetReference: '' };
-      img.src = flattenPath(localPath, projectSummary.mediaSummary, ref);
-    }
-  });
+  images // leave external images alone
+    .filter((i) => !i.src.startsWith('http'))
+    .forEach((img) => {
+      const localPath = findImagePath(img.src, qtiFolder);
+      if (localPath) {
+        // flattenPath needs assetReference to record, but any dummy OK.
+        const ref = { filePath: localPath, assetReference: '' };
+        img.src = flattenPath(localPath, projectSummary.mediaSummary, ref);
+      }
+    });
 }
 
 function findImagePath(src: string, qtiFolder: string) {
@@ -1053,10 +1075,12 @@ function createQuiz(
           // for BB pool items: ensure tagged with assessment title (may be prefix)
           if (!act.tags.includes(title)) act.tags.push(title);
         });
-
-        model.push(makeTagSelection(selectTag, count));
-        previewModel.push(header(selectTag));
-        previewModel.push(makeTagSelection(selectTag, acts.length));
+        if (acts.length > 0) {
+          model.push(makeTagSelection(selectTag, count));
+          previewModel.push(header(selectTag));
+          previewModel.push(makeTagSelection(selectTag, acts.length));
+        }
+        // else log anomaly
       }
     });
   }
