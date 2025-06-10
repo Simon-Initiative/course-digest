@@ -134,28 +134,15 @@ export function standardContentManipulations($: any) {
   // regular sub style from doublesub text when collecting styles in toJSON
   DOM.rename($, 'sub sub', 'doublesub');
 
-  // Convert all inline markup elements to <em> tags, this
+  // Normalize all inline markup elements to <em style="..."> tags, this
   // greatly simplifies downstream conversionto JSON
-  $('var').each((i: any, item: any) => $(item).attr('style', 'code'));
-  $('term').each((i: any, item: any) => $(item).attr('style', 'term'));
-  $('sub').each((i: any, item: any) => $(item).attr('style', 'sub'));
-  $('sup').each((i: any, item: any) => $(item).attr('style', 'sup'));
-  $('doublesub').each((i: any, item: any) =>
-    $(item).attr('style', 'doublesub')
-  );
-  $('deemphasis').each((i: any, item: any) =>
-    $(item).attr('style', 'deemphasis')
-  );
-  $('highlight').each((i: any, item: any) =>
-    $(item).attr('style', 'highlight')
-  );
-  DOM.rename($, 'var', 'em');
-  DOM.rename($, 'term', 'em');
-  DOM.rename($, 'sub', 'em');
-  DOM.rename($, 'sup', 'em');
-  DOM.rename($, 'doublesub', 'em');
-  DOM.rename($, 'deemphasis', 'em');
-  DOM.rename($, 'highlight', 'em');
+  convertStyleTag($, 'var', 'code');
+  convertStyleTag($, 'term');
+  convertStyleTag($, 'sub');
+  convertStyleTag($, 'sup');
+  convertStyleTag($, 'doublesub');
+  convertStyleTag($, 'highlight');
+  convertStyleTag($, 'deemphasis');
 
   // <code> is a mixed element, we only want to translate the inline <code>
   // instances to <em> elements.  The block level <code> will get converted
@@ -292,7 +279,7 @@ export function standardContentManipulations($: any) {
 
   DOM.stripElement($, 'p>quote');
 
-  $('p>table').remove();
+  // $('p>table').remove();
   $('p>title').remove();
 
   DOM.rename($, 'quote', 'blockquote');
@@ -376,6 +363,15 @@ export function standardContentManipulations($: any) {
 
   // Torus input_ref's use id attribute
   DOM.renameAttribute($, 'input_ref', 'input', 'id');
+}
+
+export function convertStyleTag(
+  $: cheerio.Root,
+  tag: string,
+  styleToUse = tag
+) {
+  $(tag).attr('style', styleToUse);
+  DOM.rename($, tag, 'em');
 }
 
 function handleCommandButtons($: any) {

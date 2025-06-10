@@ -73,6 +73,8 @@ function inlineAttrName(attrs: Record<string, unknown>) {
     return 'strikethrough';
   } else if (attrs['style'] === 'emphasis') {
     return 'strong';
+  } else if (attrs['style'] === 'underline') {
+    return 'underline';
   } else {
     if (attrs['style']) console.log('unknown inline style: ' + attrs['style']);
     return 'strong';
@@ -348,8 +350,7 @@ export function toJSON(
                 selfClosingTags: false,
                 // avoid re-encoding Unicode symbols as numeric escapes:
                 decodeEntities: false,
-              },
-              {}
+              }
             )
           )
           .html();

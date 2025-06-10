@@ -155,13 +155,16 @@ export function transformToFlatDirectory(
 const handleScriptedImageLinks = ($: any) => {
   $('link[href^="javascript\\:loadImage"]').each((i: any, item: any) => {
     const href = $(item).attr('href');
-    const arg = href.match(/javascript:loadImage\(['"](.+)['"]\)/)[1];
-    // found this needed in our cases. maybe fixing user error, but works.
-    const imageRef = arg.startsWith('../..') ? arg.substr(3) : arg;
-    const text = $(item).text();
-    $(item).replaceWith(
-      `<extra><anchor>${text}</anchor><image src="${imageRef}"></image></extra>`
-    );
+    const match = href.match(/javascript:loadImage\(['"](.+)['"]\)/);
+    if (match) {
+      const arg = match[1];
+      // found this needed in our cases. maybe fixing user error, but works.
+      const imageRef = arg.startsWith('../..') ? arg.substr(3) : arg;
+      const text = $(item).text();
+      $(item).replaceWith(
+        `<extra><anchor>${text}</anchor><image src="${imageRef}"></image></extra>`
+      );
+    }
   });
 };
 
@@ -370,6 +373,14 @@ export function flatten(
 ): string | null {
   // console.log('flatten: ref=' + ref.assetReference + ' from ' + ref.filePath);
   const absolutePath = resolve(ref);
+  return flattenPath(absolutePath, summary, ref);
+}
+
+export function flattenPath(
+  absolutePath: string,
+  summary: MediaSummary,
+  ref: MediaItemReference
+) {
   const decodedPath = decodeURIComponent(absolutePath);
 
   if (fs.existsSync(decodedPath) && !fs.lstatSync(decodedPath).isDirectory()) {

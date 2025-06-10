@@ -1,4 +1,5 @@
 import { Maybe } from 'tsmonad';
+import { escapeInput } from './multi';
 
 export const invertRule = (rule: string) => `(!(${rule}))`;
 
@@ -44,6 +45,10 @@ export function isOperator(s: string): s is RuleOperator {
 }
 
 // text
+export const equalsRule = (input: string) =>
+  `input equals {${escapeInput(input)}}`;
+export const iequalsRule = (input: string) =>
+  `input iequals {${escapeInput(input)}}`;
 export const matchRule = (input: string) => `input like {${input}}`;
 export const containsRule = (input: string) => `input contains {${input}}`;
 export const notContainsRule = (input: string) =>

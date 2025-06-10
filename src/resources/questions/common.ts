@@ -103,7 +103,8 @@ export function wrapInlinesWithParagraphs(children: any) {
           result.push({ type: 'p', children: successiveInline });
           successiveInline = [];
         }
-        result.push(c);
+        // for QTI conversion: treat HTML <br> as paragraph ender, but don't include
+        if (c.type !== 'br') result.push(c);
       }
     });
   // finish any final pending paragraph

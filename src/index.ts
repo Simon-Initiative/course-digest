@@ -28,7 +28,7 @@ import * as Merge from './merge';
 import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
-import { Activity } from './resources/resource';
+import { isActivity, isPage, TorusResource } from './resources/resource';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -125,9 +125,6 @@ function validateArgs(options: CmdOptions) {
         return false;
       }
     }
-    // Just always zip when doing qti conversions
-    if (options.operation === 'qti') options.zipOnly = true;
-
     return true;
   } else if (options.operation === 'summarize') {
     return options.inputDir && options.outputDir;
@@ -147,9 +144,9 @@ function validateArgs(options: CmdOptions) {
 }
 
 // Helper to execute a function that returns a promise, and resolve it
-// as an element in an array that includes any number of other times. This
+// as an element in an array that includes any number of other elements. This
 // allows an easy way to 'pass along' some number of values through a
-// promise change to keep them in scope.
+// promise chain to keep them in scope.
 function alongWith(promiseFunc: any, ...along: any) {
   return promiseFunc().then((result: any) => [...along, result]);
 }
@@ -372,13 +369,13 @@ const anyOf = (ans: string, ...opts: any[]) => {
 
 function suggestUploadAction(options: CmdOptions) {
   const manifest = readMediaManifest(options);
+  const { mediaItems, mediaItemsSize } = manifest;
 
   return new Promise<string>((res) => {
-    if (options.no || options.zipOnly) res('n');
+    // skip prompt if suppressed or no items to upload
+    if (options.no || options.zipOnly || mediaItems.length === 0) res('n');
     else if (options.yes) res('y');
     else {
-      const { mediaItems, mediaItemsSize } = manifest;
-
       rl.question(
         `Do you want to upload ${mediaItems.length} media assets (${filesize(
           mediaItemsSize
@@ -448,7 +445,8 @@ function zipAction(options: CmdOptions) {
 function suggestZipAction(options: CmdOptions) {
   return new Promise<string>((res) => {
     if (options.no) res('n');
-    else if (options.yes || options.zipOnly) res('y');
+    else if (options.yes || options.zipOnly || options.operation === 'qti')
+      res('y');
     else rl.question('Do you want to create a zip archive? [Y/n] ', res);
   }).then((answer: string) => {
     if (anyOf(answer || 'y', 'y', 'yes')) {
@@ -483,13 +481,24 @@ async function qtiAction(options: CmdOptions): Promise<any> {
     return QTI.processQtiFolder(dir, projectSummary);
   });
 
-  const activities: Activity[] = await executeSerially(zipProcessors);
+  let resources: TorusResource[] = await executeSerially(zipProcessors);
+  const activities = resources.filter(isActivity);
   console.log(`Got ${activities.length} activities`);
 
-  // have to generate Tags for the activities
-  const resources = Convert.generatePoolTags(activities, 'QTI');
+  // add demo page resources for each of the quizzes (tags)
+  // resources = QTI.addPreviewPages(resources);
 
-  // include empty hierarchy
+  // add Tag resources for all tags used
+  resources = Convert.generatePoolTags(resources, 'QTI');
+
+  // include hierarchy containing all quiz pages and preview pages
+  const toItem = (p: any) => {
+    return { type: 'item', idref: p.id, children: [] };
+  };
+
+  const pages = resources.filter(isPage);
+  const quizItems = pages.filter((p) => p.isGraded).map(toItem);
+  const previewItems = pages.filter((p) => !p.isGraded).map(toItem);
   const hierarchy: Resources.Hierarchy = {
     type: 'Hierarchy',
     id: '',
@@ -498,13 +507,23 @@ async function qtiAction(options: CmdOptions): Promise<any> {
     title: '',
     tags: [],
     unresolvedReferences: [],
-    children: [],
+    children: [
+      { type: 'container', title: 'Quizzes', children: quizItems },
+      { type: 'container', title: 'Preview Pages', children: previewItems },
+    ],
+
     warnings: [],
   };
-  // create some sort of manifest
-  projectSummary.manifest = { title: 'QTI Import', description: '' };
 
-  await Convert.output(projectSummary, hierarchy, resources, []);
+  // create some sort of manifest. Uses source folder name in title
+  const dirName = options.inputDir.split('/').pop();
+  projectSummary.manifest = { title: 'QTI Import ' + dirName, description: '' };
+
+  // mediaItems maps file paths to data; output function takes list of values
+  const mediaSummary = projectSummary.mediaSummary;
+  const mediaItems = Object.values(mediaSummary.mediaItems);
+
+  await Convert.output(projectSummary, hierarchy, resources, mediaItems);
 }
 
 function helpAction() {
@@ -555,6 +574,7 @@ function main() {
     } else if (options.operation === 'qti') {
       qtiAction(options)
         .then(() => suggestZipAction(options))
+        .then(() => suggestUploadAction(options))
         .then(exit);
     } else {
       helpAction();

@@ -191,8 +191,7 @@ function cleanHtml(targetArea: any) {
           normalizeWhitespace: false,
           xmlMode: true,
           selfClosingTags: false,
-        },
-        {}
+        }
       )
     )
     .html();
