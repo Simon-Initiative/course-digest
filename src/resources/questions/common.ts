@@ -36,7 +36,9 @@ export function convertAutoGenResponses(model: any) {
       );
 
     const catchAll = autoGens[0];
-    catchAll.rule = 'input like {.*}';
+    // This is used at stage in which rule is provisionally filled with a
+    // catchAll-normalized legacy match pattern to be converted, not a torus rule.
+    catchAll.rule = '.*';
     model.authoring.parts[0].responses.push(catchAll);
   }
 }

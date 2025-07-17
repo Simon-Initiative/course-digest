@@ -272,7 +272,7 @@ export function cata(question: any, from = 'multiple_choice') {
       id: guid(),
       score: 0,
       rule: '.*', // legacy match pattern awaiting translation below
-      feedback: Common.makeFeedback('Correct'),
+      feedback: Common.makeFeedback('Incorrect'),
     });
   }
 
