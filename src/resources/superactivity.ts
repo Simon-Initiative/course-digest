@@ -236,11 +236,6 @@ function determineActivityDefaults(
         base: 'embedded',
         src: 'index.html',
       };
-    // return {
-    //   subType: 'oli_linked_activity',
-    //   base: 'linked',
-    //   src: 'linked.html',
-    // };
     default:
       return null;
   }
