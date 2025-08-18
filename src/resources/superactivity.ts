@@ -53,7 +53,13 @@ export class Superactivity extends Resource {
             // x-cmu-ctattutors using sequence files need special processing
             const modelXml = handleCtatSequenceFiles(xml, file, projectSummary);
             const activity = toActivity(
-              toActivityModel(defaults.base, defaults.src, title, modelXml),
+              toActivityModel(
+                defaults.base,
+                defaults.src,
+                title,
+                modelXml,
+                projectSummary.mediaSummary.webContentBundle?.name
+              ),
               guid(),
               defaults.subType,
               title
@@ -84,7 +90,13 @@ export class Superactivity extends Resource {
           } else {
             resolve([
               toActivity(
-                toActivityModel(defaults.base, defaults.src, title, xml),
+                toActivityModel(
+                  defaults.base,
+                  defaults.src,
+                  title,
+                  xml,
+                  projectSummary.mediaSummary.webContentBundle?.name
+                ),
                 legacyId,
                 defaults.subType,
                 title
@@ -238,13 +250,14 @@ function toActivityModel(
   base: string,
   src: string,
   title: string,
-  modelXml: string
+  modelXml: string,
+  resourceBase?: string
 ) {
   return {
     base,
     src,
     modelXml,
-    resourceBase: guid(),
+    resourceBase: resourceBase ? 'bundles/' + resourceBase : guid(),
     resourceURLs: [],
     stem: {
       id: guid(),
