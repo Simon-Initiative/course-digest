@@ -297,7 +297,6 @@ function getHotspots(imageHotspot: any) {
 }
 
 function ordering(question: any) {
-  const shuffle = Common.getChild(question, 'ordering').shuffle;
   const transformationElement = Common.getChild(question, 'transformation');
   const transformationsArray =
     transformationElement === undefined ? [] : [transformationElement];
@@ -309,7 +308,8 @@ function ordering(question: any) {
       version: 2,
       parts: [buildOrderingPart(question)],
       transformations: [
-        ...(shuffle === 'true' ? [Common.shuffleTransformation()] : []),
+        // no shuffle attribute, just always set on this question type
+        Common.shuffleTransformation(),
         ...transformationsArray,
       ],
       previewText: '',
@@ -764,7 +764,6 @@ export class Formative extends Resource {
           r.children[0].children,
           this.file
         );
-
         resolve(items);
       });
     });
