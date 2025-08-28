@@ -102,17 +102,21 @@ export function transformToFlatDirectory(
     ['link', 'iframe', 'asset', 'interface', 'dataset'].includes(
       $(e)[0].name
     ) ||
-    ($(e)[0].name === 'source' && $(e).parent()[0].name === 'embed_activity');
+    ($(e)[0].name === 'source' &&
+      ($(e).parent()[0].name === 'embed_activity' ||
+        $(e).parent()[0].name === 'linked_activity'));
 
   Object.keys(paths).forEach((assetReference: any) => {
     const ref = { filePath, assetReference };
 
     // Update the URL in the XML DOM
     paths[assetReference].forEach((elem: cheerio.Element) => {
+      const isWebBundle =
+        mediaSummary.webContentBundle?.name && isWebBundleElement(elem);
       const url =
         // For link, iframe and superactivity source and webcontent assets, use a
         // webBundle URL rather than a flattened media library URL when webBundle requested.
-        mediaSummary.webContentBundle?.name && isWebBundleElement(elem)
+        isWebBundle
           ? getWebBundleUrl(ref, projectDirectory, mediaSummary)
           : flatten(ref, mediaSummary);
 
@@ -123,7 +127,15 @@ export function transformToFlatDirectory(
           ($(elem)[0].name === 'source' && $(elem).parent()[0].name !== 'video')
         ) {
           // superactivity assets take paths relative to the media base url
-          const superMediaPath = url.slice(url.lastIndexOf('media/') + 6);
+          const superMediaPath = isWebBundle
+            ? url.slice(
+                url.lastIndexOf(
+                  `media/bundles/${mediaSummary.webContentBundle?.name}/`
+                ) +
+                  15 +
+                  (mediaSummary.webContentBundle?.name?.length ?? 0)
+              )
+            : url.slice(url.lastIndexOf('media/') + 6);
           const query = $(elem).text().split('?')[1];
           $(elem).text(superMediaPath + (query ? `?${query}` : ''));
         } else if ($(elem)[0].name === 'link') {
@@ -581,6 +593,10 @@ function findFromDOM(
   });
 
   $('embed_activity source').each((i: any, elem: any) => {
+    paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
+  });
+
+  $('linked_activity source').each((i: any, elem: any) => {
     paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
   });
 
