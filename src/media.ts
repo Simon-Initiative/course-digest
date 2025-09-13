@@ -143,7 +143,12 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      } else console.log('Referenced file not found: ' + assetReference);
+      } else
+        console.log(
+          `Referenced file not found: ${assetReference} elem=${$(
+            paths[assetReference]
+          ).prop('tagName')}`
+        );
     });
     modified = true;
   });

@@ -21,7 +21,7 @@ import {
   TorusResource,
 } from './resources/resource';
 import { decode } from 'html-entities';
-import { updateInputRefs } from './resources/questions/multi';
+import { ruleArg, updateInputRefs } from './resources/questions/multi';
 import * as path from 'path';
 import { flattenPath } from './media';
 
@@ -206,9 +206,14 @@ async function processQtiItem(
       subType = 'oli_short_answer';
       q = await build_short_answer($, item, 'numeric');
       break;
+    case 'short_answer_question':
     case 'Fill in the Blank':
       subType = 'oli_short_answer';
       q = await build_short_answer($, item, 'text');
+      break;
+    case 'essay_question':
+      subType = 'oli_short_answer';
+      q = await build_essay($, item);
       break;
     case 'calculated_question':
     case 'Calculated':
@@ -247,16 +252,33 @@ function getItemRefId($: cheerio.Root, item: any) {
 }
 
 async function build_multiple_choice($: cheerio.Root, item: any) {
+  const parts = [await mcq_part($, item)];
+
+  // must fixup targeted feedback for case where it includes custom correct answer
+  // feedback as separate entry from correct answer rule.
+  const correctResponse = parts[0].responses[0];
+  const correctChoice = ruleArg(correctResponse.rule);
+  const targetedResponses = parts[0].responses.slice(1, -1);
+  const targeted: any[] = [];
+  targetedResponses.forEach((tr) => {
+    if (ruleArg(tr.rule) === correctChoice) {
+      correctResponse.feedback = tr.feedback;
+    } else {
+      // authoring requires targeted index mapping array of choice ids to response id.
+      targeted.push([[ruleArg(tr.rule)], tr.id]);
+    }
+  });
+
   return {
     stem: await getStem($, item),
     choices: await getChoices($, item),
     authoring: {
       version: 2,
-      parts: [mcq_part($, item)],
+      parts,
       transformations: getShuffle($, item)
         ? [Common.shuffleTransformation()]
         : [],
-      targeted: [],
+      targeted,
       previewText: '',
     },
   };
@@ -274,8 +296,12 @@ function fixBBChoices(q: { choices: any[] }) {
 
 // Used for both single part multiple choice (respident === '')
 // and potentially multi-part dropdown question parts (respident set)
-function mcq_part($: cheerio.Root, item: any, respident = '') {
-  const correctResp = getCorrectRespConditions($, item, respident);
+async function mcq_part($: cheerio.Root, item: any, respident = '') {
+  const [correctResp, targeted, catchAll] = getResponseConditions(
+    $,
+    item,
+    respident
+  );
   // Found BB multi-part dropdowns with a single correct response condition of form
   // <and>
   //   <varequal respident="a"> correctChoicePartA</varequal>
@@ -292,14 +318,30 @@ function mcq_part($: cheerio.Root, item: any, respident = '') {
     id: guid(),
     score: 1,
     rule: matchRule(torusId),
-    feedback: {
-      id: guid(),
-      content: Common.buildContentModelFromText('Correct'),
-    },
+    feedback: await getResponseFeedback($, item, correctResp, 'Correct'),
   };
+  const catchAllResponse = {
+    id: guid(),
+    score: 0,
+    rule: 'input like {.*}',
+    feedback: await getResponseFeedback($, item, catchAll, 'Incorrect'),
+  };
+  // !! should process any alternate corrects in correctResponse return list
+  const targetedResponses = await Promise.all(
+    targeted.map(async (resp: any) => {
+      const choiceId = $(resp).find(varSelector).text().trim();
+      return {
+        id: guid(),
+        score: 0,
+        rule: `input like {${choiceId}}`,
+        feedback: await getResponseFeedback($, item, resp, ''),
+      };
+    })
+  );
+
   return {
     id: respident === '' ? '1' : respident,
-    responses: [correctResponse, Common.makeCatchAllResponse()],
+    responses: [correctResponse, ...targetedResponses, catchAllResponse],
     hints: Common.ensureThree(),
     scoringStrategy: 'average',
   };
@@ -314,7 +356,7 @@ function getShuffle($: cheerio.Root, item: any, respident = '') {
   return $(item).find(choiceSelector).attr('shuffle') === 'Yes';
 }
 
-function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
+function getResponseConditions($: cheerio.Root, item: any, respident = '') {
   // see if a max value for score variable is declared
   let maxvalue: string | undefined = undefined;
   const decvar = $(item).find('outcomes decvar[varname="SCORE"]');
@@ -329,6 +371,8 @@ function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
   const respconditions = $(item).find(`respcondition:has(${childSelector})`);
 
   const correct: any[] = [];
+  const targeted: any[] = [];
+  let wildcard: any = null;
   $(respconditions).each((i: number, resp: any) => {
     if (
       $(resp).find('setvar:contains("SCORE.max")').length === 1 ||
@@ -343,6 +387,15 @@ function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
       $(resp).find('displayfeedback[linkrefid="correct"]').length === 1
     ) {
       correct.push(resp);
+    } else if (
+      $(resp).find('other').length === 1 &&
+      $(resp).find('displayfeedback').length === 1
+    ) {
+      // !!! Note: <other> doesn't carry respident so has to be question wide, not part-specific
+      // Selector used above means won't find this in multi-part case.
+      wildcard = resp;
+    } else {
+      targeted.push(resp);
     }
   });
 
@@ -354,12 +407,12 @@ function getCorrectRespConditions($: cheerio.Root, item: any, respident = '') {
     if ($(respconditions).length === 1) correct.push($(respconditions)[0]);
   }
   if (correct.length === 0) console.log('correct response condition not found');
-  return correct;
+  return [correct, targeted, wildcard];
 }
 
 async function build_cata($: cheerio.Root, item: any) {
   const choices = await getChoices($, item);
-  const [part, correct] = cata_part($, item, choices);
+  const [part, correct] = await cata_part($, item, choices);
   return {
     stem: await getStem($, item),
     choices,
@@ -376,8 +429,8 @@ async function build_cata($: cheerio.Root, item: any) {
   };
 }
 
-function cata_part($: cheerio.Root, item: any, choices: any[]) {
-  const correctResp = getCorrectRespConditions($, item)[0];
+async function cata_part($: cheerio.Root, item: any, choices: any[]) {
+  const [correctResp, _targeted, catchAll] = getResponseConditions($, item)[0];
   const allIds = choices.map((choice: any) => choice.id);
   const incorrectIds = $(correctResp)
     .find('not>varequal')
@@ -393,11 +446,25 @@ function cata_part($: cheerio.Root, item: any, choices: any[]) {
       content: Common.buildContentModelFromText('Correct'),
     },
   };
+  const catchAllResponse = {
+    id: guid(),
+    score: 0,
+    rule: 'input like {.*}',
+    feedback: await getResponseFeedback($, item, catchAll, 'Incorrect'),
+  };
+  /*
+  const targetedResponses = targeted.map((tr: any) => {
+    // extract set of ids being matched., !!! Assuming no not conditions or disjunctions
+    const targetedSet = $(tr)
+      .find('varequal')
+      .map((i: number, vareq: any) => $(vareq).text().trim());
+  });
+  */
   // return part plus correct map
   return [
     {
       id: '1',
-      responses: [correctResponse, Common.makeCatchAllResponse()],
+      responses: [correctResponse, catchAllResponse],
       hints: Common.ensureThree(),
       scoringStrategy: 'average',
     },
@@ -451,7 +518,7 @@ async function build_multi_dropdown($: cheerio.Root, item: any) {
       // could estimate size from max choice text length
     });
 
-    parts.push(mcq_part($, item, response_id));
+    parts.push(await mcq_part($, item, response_id));
 
     if (getShuffle($, item, response_id))
       transformations.push(Common.shufflePartTransformation(response_id));
@@ -482,7 +549,7 @@ async function build_short_answer(
     inputType,
     authoring: {
       version: 2,
-      parts: [short_answer_part($, item, inputType)],
+      parts: [await short_answer_part($, item, inputType)],
       transformations: [],
       previewText: '',
       targeted: [],
@@ -490,10 +557,15 @@ async function build_short_answer(
   };
 }
 
-function short_answer_part($: cheerio.Root, item: any, inputType: string) {
+async function short_answer_part(
+  $: cheerio.Root,
+  item: any,
+  inputType: string
+) {
   // Allow for multiple correct answers, primarily for text input accepting multiple forms
-  const correctRespConds = getCorrectRespConditions($, item);
+  const [correctResps, _targeted, catchAll] = getResponseConditions($, item);
 
+  // Doesn't handle boolean compounds, but works on simple rules we encounter
   const condToRule = (respCond: any) => {
     let rule = null;
     if (inputType === 'numeric') {
@@ -532,7 +604,7 @@ function short_answer_part($: cheerio.Root, item: any, inputType: string) {
     return rule;
   };
 
-  const correctResponses = correctRespConds.map((respCond) => {
+  const correctResponses = correctResps.map((respCond: any) => {
     return {
       id: guid(),
       score: 1,
@@ -543,10 +615,54 @@ function short_answer_part($: cheerio.Root, item: any, inputType: string) {
       },
     };
   });
+  const catchAllResponse = {
+    id: guid(),
+    score: 0,
+    rule: 'input like {.*}',
+    feedback: await getResponseFeedback($, item, catchAll, 'Incorrect'),
+  };
 
   return {
     id: '1',
-    responses: [...correctResponses, Common.makeCatchAllResponse()],
+    responses: [...correctResponses, catchAllResponse],
+    hints: Common.ensureThree(),
+    scoringStrategy: 'average',
+  };
+}
+
+// "Essay" question. Treat as ungraded submit and compare rather than instructor graded
+async function build_essay($: cheerio.Root, item: any) {
+  return {
+    stem: await getStem($, item),
+    inputType: 'textarea',
+    authoring: {
+      version: 2,
+      parts: [await essay_part($, item)],
+      transformations: [],
+      previewText: '',
+      targeted: [],
+    },
+  };
+}
+
+async function essay_part($: cheerio.Root, item: any) {
+  const [_correctResps, _targeted, catchAll] = getResponseConditions($, item);
+  const correctResponse = {
+    id: guid(),
+    score: 1,
+    rule: 'input like {.+}',
+    // get correct feedback from the *catchAll* response
+    feedback: await getResponseFeedback($, item, catchAll, ''),
+  };
+  const catchAllResponse = {
+    id: guid(),
+    score: 0,
+    rule: 'input like {.*}',
+    feedback: Common.makeFeedback('Please enter a response'),
+  };
+  return {
+    id: '1',
+    responses: [correctResponse, catchAllResponse],
     hints: Common.ensureThree(),
     scoringStrategy: 'average',
   };
@@ -725,6 +841,31 @@ async function getStem($: cheerio.Root, item: any, replace = '') {
   if (replace === 'inputs') content = updateInputRefs(content, {});
 
   return { content: Common.ensureParagraphs(content as any[]) };
+}
+
+async function getResponseFeedback(
+  $: cheerio.Root,
+  item: any,
+  resp: any,
+  defaultText: string
+) {
+  if (item == null) return Common.makeFeedback(defaultText);
+
+  const displayfeedback = $(resp).find('displayfeedback');
+  if ($(displayfeedback).length > 0) {
+    const id = $(displayfeedback).attr('linkrefid');
+    const itemfeedback = $(item).find(`itemfeedback[ident=${id}]`);
+    if ($(itemfeedback).length > 0) {
+      // might have to worry about feedback elements with empty content and ignore
+      const content = await getContent($, itemfeedback);
+      return {
+        id: guid(),
+        content,
+      };
+    }
+  }
+
+  return Common.makeFeedback(defaultText);
 }
 
 async function getContent($: cheerio.Root, elem: any, replace = '') {
@@ -951,11 +1092,12 @@ function findImagePath(src: string, qtiFolder: string) {
   // @X@EmbeddedFile.requestUrlStub@X@bbcswebdav/xid-74789077_1 w/o extension
   // files stored within csfiles/home_dir tree as __xid-74789077_1.[jpg, png, ...?]
   if (src.startsWith('@X@EmbeddedFile')) {
-    const basename = path.basename(src);
+    const basename = decodeURI(path.basename(src));
     const root = qtiFolder + '/csfiles/home_dir';
     const localPath =
       findFile(root, `__${basename}.jpg`) ||
-      findFile(root, `__${basename}.png`);
+      findFile(root, `__${basename}.png`) ||
+      findFile(root, `__${basename}.gif`);
 
     if (!localPath) console.log('referenced image file not found: ' + basename);
     return localPath;
@@ -964,7 +1106,7 @@ function findImagePath(src: string, qtiFolder: string) {
   // Canvas image urls may start with magic $IMS-CC-FILEBASE$/ and usually
   // live within a 'media' folder though have seen web_resources/media
   // We just search for local image file within archive by its base name w/extension
-  const filename = src.substring(src.lastIndexOf('/') + 1);
+  const filename = decodeURI(src.substring(src.lastIndexOf('/') + 1));
   const localPath = findFile(qtiFolder, filename);
   if (!localPath) console.log('referenced image file not found: ' + filename);
   return localPath;
