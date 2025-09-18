@@ -399,6 +399,17 @@ export function toJSON(
           } else {
             top().src = getAllOfType(top().children, 'source');
           }
+          // video may carry vtt subtitle file(s) in captions children
+          const captions = getAllOfType(top().children, 'captions');
+          if (captions != null && captions.length > 0) {
+            top().captions = captions.map((c: any) => {
+              return {
+                label: c.label,
+                language_code: c.language_code,
+                src: c.src,
+              };
+            });
+          }
 
           top().children = [{ text: ' ' }];
           if (top().width !== undefined) {

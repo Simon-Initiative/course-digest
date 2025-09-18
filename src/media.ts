@@ -143,7 +143,12 @@ export function transformToFlatDirectory(
         } else {
           $(elem).attr('src', url);
         }
-      } else console.log('Referenced file not found: ' + assetReference);
+      } else
+        console.log(
+          `Referenced file not found: ${assetReference} elem=${$(
+            paths[assetReference]
+          ).prop('tagName')}`
+        );
     });
     modified = true;
   });
@@ -577,6 +582,9 @@ function findFromDOM(
   });
 
   $('video source').each((i: any, elem: any) => {
+    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
+  });
+  $('video track').each((i: any, elem: any) => {
     paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
   });
 
