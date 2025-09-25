@@ -183,12 +183,14 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     } else {
       let errorDetail = '';
       let activity = byActivityId[a.resourceId + '-' + a.questionId];
+      console.log('found by full id: ' + a.resourceId + '-' + a.questionId);
       if (activity === undefined) {
         // Could not find directly, see if we can find it by strictly the question id
         // !!! Assumes some uniquifying id conventions, else could have id=q1 in two assessments
         activity = Object.values(byActivityId).find((ac: TorusResource) =>
           ac.id.endsWith('-' + a.questionId)
         );
+        if (activity) console.log('found by qid tail:' + a.questionId);
       }
       if (activity === undefined) {
         // try convention found in french1 sheet: questionId of form resourceId_qId where qId
@@ -196,7 +198,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         // This primarily for pools, since pool id nowhere else in sheet, but also used for assessments
         const matches = a.questionId.match(/(.*)_(q\w+)$/);
         if (matches) {
-          const [_ignore, resourceId, qId] = matches;
+          const [, resourceId, qId] = matches;
           const isPool =
             resources.find((r) => r.id === resourceId)?.type === 'Tag';
           // get list of activities within this resource
@@ -211,7 +213,10 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
           if (resourceActivities.length === 0) {
             errorDetail = `No activities converted for ${resourceId}, may not be referenced`;
           } else {
-            // console.log('searching qids: ' + resourceActivities.map((a) => a.id.split('_').pop()));
+            console.log(
+              `searching for ${qId} among qids: ` +
+                resourceActivities.map((a) => a.id.split('_').pop())
+            );
             // Found that full id of pool questions may differ, but can match on _qId tail
             if (isPool) {
               activity = resourceActivities.find((a) =>
