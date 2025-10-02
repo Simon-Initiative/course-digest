@@ -183,14 +183,12 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     } else {
       let errorDetail = '';
       let activity = byActivityId[a.resourceId + '-' + a.questionId];
-      console.log('found by full id: ' + a.resourceId + '-' + a.questionId);
       if (activity === undefined) {
         // Could not find directly, see if we can find it by strictly the question id
-        // !!! Assumes some uniquifying id conventions, else could have id=q1 in two assessments
+        // Assumes some uniquifying id conventions, else could have id=q1 in two assessments
         activity = Object.values(byActivityId).find((ac: TorusResource) =>
           ac.id.endsWith('-' + a.questionId)
         );
-        if (activity) console.log('found by qid tail:' + a.questionId);
       }
       if (activity === undefined) {
         // try convention found in french1 sheet: questionId of form resourceId_qId where qId
@@ -201,6 +199,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
           const [, resourceId, qId] = matches;
           const isPool =
             resources.find((r) => r.id === resourceId)?.type === 'Tag';
+
           // get list of activities within this resource
           const resourceActivities = isPool
             ? resources.filter(
@@ -211,23 +210,17 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
                   r.type === 'Activity' && r.id.startsWith(resourceId + '-')
               );
           if (resourceActivities.length === 0) {
+            // save for appending to problem not found message
             errorDetail = `No activities converted for ${resourceId}, may not be referenced`;
           } else {
-            console.log(
-              `searching for ${qId} among qids: ` +
-                resourceActivities.map((a) => a.id.split('_').pop())
-            );
-            // Found that full id of pool questions may differ, but can match on _qId tail
-            if (isPool) {
-              activity = resourceActivities.find((a) =>
-                a.id.endsWith(`_${qId}`)
-              );
-            } else {
-              // found qIds in assessments may have been renumbered from different base, eg q65, q66, q77
-              // but qIds like q1, q2, q3 used in sheet work to determine an ordinal (1-based index)
-              const nth = Number.parseInt(qId.substring(1));
-              // Activity order within legacy assessment is preserved in resource list here
-              activity = resourceActivities[nth - 1];
+            // found full id of pool questions may differ, but can match on _qId tail
+            activity = resourceActivities.find((a) => a.id.endsWith(`_${qId}`));
+            if (activity === undefined) {
+              // found qIds in french1 assessments renumbered to different base, eg q65, q66, q77, while
+              // qIds like q1, q2, q3 used in sheet. Maybe error, but using qnum as ordinal worked.
+              // Activity order within legacy resource is preserved in list here
+              const qNum = Number.parseInt(qId.substring(1));
+              activity = resourceActivities[qNum - 1];
             }
           }
         }
