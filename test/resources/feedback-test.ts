@@ -430,7 +430,6 @@ describe('convert feedback', () => {
                     },
                   },
                 ],
-                scoringStrategy: 'average',
                 objectives: expect.any(Array),
                 targeted: expect.any(Array),
                 explanation: null,
@@ -477,7 +476,7 @@ describe('convert feedback', () => {
                     },
                   },
                 ],
-                scoringStrategy: 'average',
+
                 objectives: expect.any(Array),
                 targeted: expect.any(Array),
                 explanation: null,
@@ -524,7 +523,7 @@ describe('convert feedback', () => {
                     },
                   },
                 ],
-                scoringStrategy: 'average',
+
                 objectives: expect.any(Array),
                 targeted: expect.any(Array),
                 explanation: null,
@@ -657,7 +656,7 @@ describe('convert feedback', () => {
                     },
                   },
                 ],
-                scoringStrategy: 'average',
+
                 objectives: expect.any(Array),
                 targeted: expect.any(Array),
                 explanation: null,
@@ -730,7 +729,7 @@ describe('convert feedback', () => {
                   },
                 ],
                 objectives: [],
-                scoringStrategy: 'average',
+
                 explanation: null,
               },
             ],
@@ -1071,7 +1070,7 @@ describe('convert feedback', () => {
                     content: [{ type: 'p', children: [{ text: '' }] }],
                   },
                 ],
-                scoringStrategy: 'average',
+
                 targeted: expect.any(Array),
                 objectives: [],
                 explanation: null,
