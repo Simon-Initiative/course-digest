@@ -480,7 +480,7 @@ export function toActivity(
   }
 
   // add optional custom scoring attributes to model if needed
-  setCustomScoringFlags(model, activity.subType, activity.id);
+  setCustomScoringFlags(model, activity.subType);
 
   // collect refs from any internal links in stem content
   const links: any[] = Common.getDescendants(model.stem?.content, 'a');
@@ -550,7 +550,7 @@ export function titleActivity(
 }
 
 // add optional attributes to flag custom scoring to torus authoring
-export function setCustomScoringFlags(model: any, subType: string, id: string) {
+export function setCustomScoringFlags(model: any, subType: string) {
   const hasCustomPoints = model.authoring.parts.some(
     (p: any) => Common.getOutOfPoints(p) > 1
   );
