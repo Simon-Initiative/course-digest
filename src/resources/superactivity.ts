@@ -265,7 +265,6 @@ function toActivityModel(
       parts: [
         {
           id: guid(),
-          scoringStrategy: 'average',
           responses: [],
           hints: [],
         },

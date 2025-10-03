@@ -378,7 +378,6 @@ export function buildTextPart(id: string, question: any) {
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: 'average',
     explanation: maybeBuildPartExplanation(legacyResponses),
     gradingApproach: getGradingApproach(question),
   };
@@ -432,5 +431,9 @@ export function adjustSubmitCompareResponses(origResponses: any[]) {
 }
 
 export function getOutOfPoints(part: any) {
-  return Math.max(...part.responses.map((r: any) => r?.score ?? 0));
+  return (
+    // instructor-graded questions have no responses but may still have custom
+    // outOf points set from score_out_of attribute on legacy part
+    part?.outOf || Math.max(...part.responses.map((r: any) => r?.score ?? 0))
+  );
 }

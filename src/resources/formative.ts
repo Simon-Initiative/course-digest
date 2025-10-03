@@ -75,7 +75,6 @@ function buildMCQPart(question: any) {
         content: Common.ensureParagraphs(r.children),
       }))
     ),
-    scoringStrategy: 'average',
     targeted: [],
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
@@ -161,7 +160,6 @@ function buildOrderingPart(question: any) {
         content: Common.ensureParagraphs(r.children),
       }))
     ),
-    scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
   };
@@ -215,7 +213,6 @@ function buildLikertParts(question: any, items: any[]) {
       },
       Common.makeCatchAllResponse(),
     ],
-    scoringStrategy: 'average',
     objectives: [],
     targeted: [],
     explanation: null,
@@ -483,7 +480,7 @@ export function toActivity(
   }
 
   // add optional custom scoring attributes to model if needed
-  setCustomScoringFlags(model, activity.subType);
+  setCustomScoringFlags(model, activity.subType, activity.id);
 
   // collect refs from any internal links in stem content
   const links: any[] = Common.getDescendants(model.stem?.content, 'a');
@@ -553,10 +550,11 @@ export function titleActivity(
 }
 
 // add optional attributes to flag custom scoring to torus authoring
-export function setCustomScoringFlags(model: any, subType: string) {
+export function setCustomScoringFlags(model: any, subType: string, id: string) {
   const hasCustomPoints = model.authoring.parts.some(
     (p: any) => Common.getOutOfPoints(p) > 1
   );
+
   if (hasCustomPoints) {
     // For multi-part questions, authoring detects custom by activity-wide flag
     if (['oli_multi_input', 'oli_response_multi'].includes(subType))

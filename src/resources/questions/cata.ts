@@ -204,7 +204,6 @@ export function buildCATAPart(question: any) {
         content: Common.ensureParagraphs(r.children),
       }))
     ),
-    scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
     targeted: [],
