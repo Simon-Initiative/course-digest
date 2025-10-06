@@ -150,6 +150,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     }
     return m;
   }, {});
+
   m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
     // If the question id is null, we apply the attached skills to all questions in the resource
     if (a.questionId === null) {
@@ -180,13 +181,51 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         );
       });
     } else {
+      let errorDetail = '';
       let activity = byActivityId[a.resourceId + '-' + a.questionId];
       if (activity === undefined) {
         // Could not find directly, see if we can find it by strictly the question id
+        // Assumes some uniquifying id conventions, else could have id=q1 in two assessments
         activity = Object.values(byActivityId).find((ac: TorusResource) =>
           ac.id.endsWith('-' + a.questionId)
         );
       }
+      if (activity === undefined) {
+        // try convention found in french1 sheet: questionId of form resourceId_qId where qId
+        // allows matching to question within containing legacy pool or assessment w/id resourceId
+        // This primarily for pools, since pool id nowhere else in sheet, but also used for assessments
+        const matches = a.questionId.match(/(.*)_(q\w+)$/);
+        if (matches) {
+          const [, resourceId, qId] = matches;
+          const isPool =
+            resources.find((r) => r.id === resourceId)?.type === 'Tag';
+
+          // get list of activities within this resource
+          const resourceActivities = isPool
+            ? resources.filter(
+                (r) => r.type === 'Activity' && r.tags.includes(resourceId)
+              )
+            : resources.filter(
+                (r) =>
+                  r.type === 'Activity' && r.id.startsWith(resourceId + '-')
+              );
+          if (resourceActivities.length === 0) {
+            // save for appending to problem not found message
+            errorDetail = `No activities converted for ${resourceId}, may not be referenced`;
+          } else {
+            // found full id of pool questions may differ, but can match on _qId tail
+            activity = resourceActivities.find((a) => a.id.endsWith(`_${qId}`));
+            if (activity === undefined) {
+              // found qIds in french1 assessments renumbered to different base, eg q65, q66, q77, while
+              // qIds like q1, q2, q3 used in sheet. Maybe error, but using qnum as ordinal worked.
+              // Activity order within legacy resource is preserved in list here
+              const qNum = Number.parseInt(qId.substring(1));
+              activity = resourceActivities[qNum - 1];
+            }
+          }
+        }
+      }
+
       if (activity !== undefined) {
         const objectives = activity.objectives;
 
@@ -215,7 +254,7 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
         }
       } else {
         console.log(
-          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
+          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId} ${errorDetail}`
         );
       }
     }

@@ -188,9 +188,7 @@ function extractAttachments(wb: XLSX.WorkBook): SpreadsheetAttachment[] {
 
 function isValid(wb: XLSX.WorkBook) {
   return (
-    wb.Sheets['Skills'] &&
-    wb.Sheets['Problems'] &&
-    wb.Sheets['LOs'] &&
-    wb.Sheets['LO Ref']
+    wb.Sheets['Skills'] && wb.Sheets['Problems'] && wb.Sheets['LOs']
+    // && wb.Sheets['LO Ref']
   );
 }
