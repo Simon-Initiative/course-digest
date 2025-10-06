@@ -162,7 +162,6 @@ function defaultContent(example: boolean) {
               ],
             },
           ],
-          scoringStrategy: 'average',
         },
       ],
       transformations: [],

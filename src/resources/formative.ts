@@ -75,7 +75,6 @@ function buildMCQPart(question: any) {
         content: Common.ensureParagraphs(r.children),
       }))
     ),
-    scoringStrategy: 'average',
     targeted: [],
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
@@ -161,7 +160,6 @@ function buildOrderingPart(question: any) {
         content: Common.ensureParagraphs(r.children),
       }))
     ),
-    scoringStrategy: 'average',
     objectives: skillrefs.map((s: any) => s.idref),
     explanation: Common.maybeBuildPartExplanation(responses),
   };
@@ -215,7 +213,6 @@ function buildLikertParts(question: any, items: any[]) {
       },
       Common.makeCatchAllResponse(),
     ],
-    scoringStrategy: 'average',
     objectives: [],
     targeted: [],
     explanation: null,
@@ -557,6 +554,7 @@ export function setCustomScoringFlags(model: any, subType: string) {
   const hasCustomPoints = model.authoring.parts.some(
     (p: any) => Common.getOutOfPoints(p) > 1
   );
+
   if (hasCustomPoints) {
     // For multi-part questions, authoring detects custom by activity-wide flag
     if (['oli_multi_input', 'oli_response_multi'].includes(subType))

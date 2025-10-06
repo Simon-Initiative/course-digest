@@ -396,7 +396,6 @@ function buildDropdownPart(part: any, i: number, ignorePartId: boolean) {
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: 'average',
     explanation: Common.maybeBuildPartExplanation(responses),
   };
 }
@@ -461,7 +460,7 @@ export function buildInputPart(
   const skillrefs = Common.getChildren(part, 'skillref');
   const id = part.id !== undefined && part.id !== null ? part.id + '' : guid();
 
-  return {
+  const torusPart: any = {
     id,
     responses: responses.map((r: any) => {
       const cleanedMatch = convertCatchAll(r.match);
@@ -488,10 +487,15 @@ export function buildInputPart(
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: 'average',
     explanation: Common.maybeBuildPartExplanation(responses),
     gradingApproach: Common.getGradingApproach(input),
   };
+  // include custom outOf points for instructor-graded questions if specified by score_out_of attr
+  if (torusPart.gradingApproach === 'manual' && part?.score_out_of) {
+    torusPart.outOf = Number(part.score_out_of);
+  }
+
+  return torusPart;
 }
 
 // Build a response_multi question. Similar to multi-input, but each part subsumes a *set* of
@@ -611,7 +615,6 @@ const toResponseMultiPart = (part: any, items: any[]) => {
       }))
     ),
     objectives: skillrefs.map((s: any) => s.idref),
-    scoringStrategy: 'average',
     explanation: Common.maybeBuildPartExplanation(responses),
   };
 };

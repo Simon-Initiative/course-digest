@@ -683,6 +683,42 @@ export function fixWildcardSelections(resources: TorusResource[]) {
   return resources;
 }
 
+const getSelectionPoints = (resources: TorusResource[], sel: any) => {
+  const tag = sel.logic.conditions.children[0].value[0];
+  const acts = resources.filter(
+    (r) => r.type === 'Activity' && r.tags.includes(tag)
+  );
+
+  const partPoints = (act: any): number[] =>
+    act.content.authoring.parts.map((part: any) => part?.outOf || 1);
+
+  const actPoints = (act: any) =>
+    partPoints(act).reduce((sum: number, val: number) => sum + val, 0);
+
+  // we can only assign points to selection if all possible questions have same points
+  const firstActPoints = actPoints(acts[0]);
+  return acts.every((a) => actPoints(a) === firstActPoints)
+    ? firstActPoints
+    : 1;
+};
+
+export function setSelectionPoints(resources: TorusResource[]) {
+  resources
+    .filter((r) => r.type === 'Page')
+    .forEach((page) => {
+      getDescendants(
+        (page as Page).content.model as any[],
+        'selection'
+      ).forEach((sel: any) => {
+        const points = getSelectionPoints(resources, sel);
+        if (points !== 1) {
+          sel.pointsPerActivity = points;
+        }
+      });
+    });
+
+  return resources;
+}
 function fixReportActivityid(resources: TorusResource[], selection: any) {
   resources
     .filter((r) => r.type === 'Page' && r.id === selection.activityId)
