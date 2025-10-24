@@ -10,7 +10,6 @@ import {
   getChild,
   getChildren,
   getDescendants,
-  isBlankText,
   emptyOrDummyContent,
 } from './questions/common';
 import * as DOM from 'src/utils/dom';
