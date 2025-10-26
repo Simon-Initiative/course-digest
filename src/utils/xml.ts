@@ -296,11 +296,11 @@ export function toJSON(
               top().audioType = pronunciation.contenttype;
             }
 
-            if (meaning && !emptyOrDummyContent(meaning)) {
+            if (!emptyOrDummyContent(meaning?.children)) {
               top().content = meaning.children;
-            } else if (translation && !emptyOrDummyContent(translation)) {
+            } else if (!emptyOrDummyContent(translation?.children)) {
               top().content = translation.children;
-            } else if (elementContent.length > 0) {
+            } else if (!emptyOrDummyContent(elementContent)) {
               top().content = elementContent;
             } else {
               top().content = [{ text: ' ' }];
