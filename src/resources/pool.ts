@@ -76,12 +76,16 @@ export class Pool extends Resource {
         let prefixContent: any[] = [];
         let poolQuestionNumber = 1;
         pool.children.forEach((c: any) => {
-          if (c.type === 'content' && !emptyOrDummyContent(c.children)) {
+          if (c.type === 'content') {
             prefixContent = c.children;
           } else if (c.type !== 'title') {
+            // question: prepend any pool-wide prologue to stem
+            if (!emptyOrDummyContent(prefixContent)) {
+              const stem = getChild(c, 'stem');
+              stem.children = [...prefixContent, ...stem.children];
+            }
+
             const subType = Formative.determineSubType(c);
-            // prepend pool-wide prologue to question stem, safe if empty default
-            c.stem.content = [...prefixContent, ...c.stem.content];
             const pooledActivity = Formative.toActivity(
               c,
               subType,
