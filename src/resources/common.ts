@@ -348,6 +348,8 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'video captions', 'srclang', 'language_code');
 
   DOM.rename($, 'extra', 'popup');
+  // simplifies handling within popup:
+  DOM.eliminateLevel($, 'meaning > material');
 
   handleTheorems($);
   handleFormulaMathML($);

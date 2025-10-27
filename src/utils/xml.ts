@@ -7,6 +7,7 @@ import { parseMathJaxFormulas } from './mathjax-parser';
 import { ProjectSummary } from 'src/project';
 import { unescapeWhiteSpace } from 'src/resources/common';
 import * as cheerio from 'cheerio';
+import { emptyOrDummyContent } from 'src/resources/questions/common';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -295,15 +296,16 @@ export function toJSON(
               top().audioType = pronunciation.contenttype;
             }
 
-            if (meaning !== null) {
-              const material = getOneOfType(meaning.children, 'material');
-              top().content = material.children;
-            } else if (translation !== null) {
+            if (!emptyOrDummyContent(meaning?.children)) {
+              top().content = meaning.children;
+            } else if (!emptyOrDummyContent(translation?.children)) {
               top().content = translation.children;
-            } else if (elementContent.length > 0) {
+            } else if (!emptyOrDummyContent(elementContent)) {
               top().content = elementContent;
             } else {
               top().content = [{ text: ' ' }];
+              // audio-only popups should trigger on click, not hover
+              if (pronunciation) top().trigger = 'click';
             }
           }
         }

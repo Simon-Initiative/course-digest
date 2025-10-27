@@ -142,6 +142,16 @@ export function wrapLooseText(children: any, trace = false) {
   return children;
 }
 
+// To deal with content-bearing elements that may be filled in with dummy empty paragraph.
+// "content" = array of content elements, normally a containing parent element's
+// children, or nullish for case of no content.
+export const emptyOrDummyContent = (content: any[] | undefined | null) =>
+  content == null ||
+  content.length === 0 ||
+  (content.length === 1 &&
+    content[0].type === 'p' &&
+    content[0].children.every(isBlankText));
+
 /*
  * Recursively iterate through children, finding any input_ref pointing at the
  * redundantInputId, remove it, and return the result.

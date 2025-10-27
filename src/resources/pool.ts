@@ -10,7 +10,7 @@ import {
   getChild,
   getChildren,
   getDescendants,
-  isBlankText,
+  emptyOrDummyContent,
 } from './questions/common';
 import * as DOM from 'src/utils/dom';
 import { replaceAll } from 'src/utils/common';
@@ -79,9 +79,13 @@ export class Pool extends Resource {
           if (c.type === 'content') {
             prefixContent = c.children;
           } else if (c.type !== 'title') {
+            // question: prepend any pool-wide prologue to stem
+            if (!emptyOrDummyContent(prefixContent)) {
+              const stem = getChild(c, 'stem');
+              stem.children = [...prefixContent, ...stem.children];
+            }
+
             const subType = Formative.determineSubType(c);
-            if (!isEmptyContent(prefixContent))
-              c.stem.content = [...prefixContent, c.stem.content];
             const pooledActivity = Formative.toActivity(
               c,
               subType,
@@ -132,14 +136,6 @@ export class Pool extends Resource {
     });
   }
 }
-
-const isEmptyContent = (c: any) =>
-  // echo often fills in dummy placeholder paragraph with blank text piece
-  c.children === undefined ||
-  c.children.length === 0 ||
-  (c.children.length === 1 &&
-    c.children[0].type === 'p' &&
-    c.children[0].children.every(isBlankText));
 
 //
 // Convert a pool section which may contain multiple questions into
