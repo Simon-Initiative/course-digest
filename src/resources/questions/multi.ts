@@ -1,7 +1,7 @@
 import { guid } from 'src/utils/common';
 import * as Common from './common';
 import { convertCatchAll } from './common';
-import { andRules, orRules } from './rules';
+import { andRules, makeRule, orRules, RuleOperator } from './rules';
 
 // Assemble the Torus representation of a multi-input activity from
 // a JSON representation of the Formative Legacy model of this question type
@@ -422,9 +422,28 @@ const unescapeInput = (s: string) =>
 export const ruleArg = (r: string) =>
   unescapeInput(r.substring(r.indexOf('{') + 1, r.lastIndexOf('}')));
 
+const toRuleOp = (mathOp: string): RuleOperator => {
+  switch (mathOp) {
+    case '<':
+      return 'lt';
+    case '<=':
+      return 'lte';
+    case '>':
+      return 'gt';
+    case '>=':
+      return 'gte';
+    case '!=':
+      return 'neq';
+    case '=':
+    default:
+      return 'eq';
+  }
+};
+
 // legacy match value for text input is either special wildcard *
 // a literal string to be matched; or, rarely, /regexp/
 // convert to torus rule, handling case_sensitive setting from input
+// Note also used for numeric input rules
 export function inputMatchToRule(
   match: string,
   case_sensitive: string,
@@ -443,8 +462,18 @@ export function inputMatchToRule(
   const matchArg = isRegExp(m) ? getRegExp(m) : m;
   let operator;
   if (isRegExp(m)) operator = 'like';
-  else if (type === 'numeric') operator = '=';
-  else if (case_sensitive === 'false') operator = 'iequals';
+  else if (type === 'numeric') {
+    operator = '=';
+    // little used, but legacy numeric matches may begin with a math operator before number
+    const mathOpMatches = m.match(/^[!<=>]+/);
+    if (mathOpMatches) {
+      const mathOp = mathOpMatches[0];
+      const arg = matchArg.slice(mathOp.length).trim();
+      // need rule builder because some ops turn into logically compound rules in torus
+      console.log(`***** Converting mathop rule op=${mathOp} arg=${arg}`);
+      return makeRule(toRuleOp(mathOp), arg);
+    }
+  } else if (case_sensitive === 'false') operator = 'iequals';
   else operator = 'equals';
 
   return `input ${operator} {${escapeInput(matchArg)}}`;
