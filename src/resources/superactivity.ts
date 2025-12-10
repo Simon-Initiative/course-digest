@@ -10,9 +10,6 @@ import { guid } from 'src/utils/common';
 import * as XML from 'src/utils/xml';
 import { Maybe } from 'tsmonad';
 import { ProjectSummary } from 'src/project';
-import { getWebBundleUrl } from 'src/media';
-import * as DOM from 'src/utils/dom';
-import * as fs from 'fs';
 
 export class Superactivity extends Resource {
   flagContentWarnigns(_$: any, _page: Page) {
@@ -50,10 +47,14 @@ export class Superactivity extends Resource {
             file.includes('x-cmu-ctattutors') ||
             navigable
           ) {
-            // x-cmu-ctattutors using sequence files need special processing
-            const modelXml = handleCtatSequenceFiles(xml, file, projectSummary);
             const activity = toActivity(
-              toActivityModel(defaults.base, defaults.src, title, modelXml),
+              toActivityModel(
+                defaults.base,
+                defaults.src,
+                title,
+                xml,
+                projectSummary.mediaSummary.webContentBundle?.name
+              ),
               guid(),
               defaults.subType,
               title
@@ -84,7 +85,13 @@ export class Superactivity extends Resource {
           } else {
             resolve([
               toActivity(
-                toActivityModel(defaults.base, defaults.src, title, xml),
+                toActivityModel(
+                  defaults.base,
+                  defaults.src,
+                  title,
+                  xml,
+                  projectSummary.mediaSummary.webContentBundle?.name
+                ),
                 legacyId,
                 defaults.subType,
                 title
@@ -224,11 +231,6 @@ function determineActivityDefaults(
         base: 'embedded',
         src: 'index.html',
       };
-    // return {
-    //   subType: 'oli_linked_activity',
-    //   base: 'linked',
-    //   src: 'linked.html',
-    // };
     default:
       return null;
   }
@@ -238,13 +240,14 @@ function toActivityModel(
   base: string,
   src: string,
   title: string,
-  modelXml: string
+  modelXml: string,
+  resourceBase?: string
 ) {
   return {
     base,
     src,
     modelXml,
-    resourceBase: guid(),
+    resourceBase: resourceBase ? 'bundles/' + resourceBase : guid(),
     resourceURLs: [],
     stem: {
       id: guid(),
@@ -272,87 +275,4 @@ function toActivityModel(
       previewText: '',
     },
   };
-}
-
-// Some x-cmu-ctattutors have <interface> element referencing an xml "sequence"
-// file defining a set of problems rather than an HTML file to be loaded. These
-// sequence files contain relative URL references that must be translated, but
-// are not resource files we would otherwise handle, rather just webcontent files.
-// Here we construct torus variant sequence file with translated URLs and add it
-// to the webcontent tree, adjusting the sequence file reference in the given
-// modelXML to point to the torus variant. Because superactivity code detects
-// by url ending in "/sequence.xml" we put it in /torus/ subdir of original file
-// Returns: possibly modified modelXml
-function handleCtatSequenceFiles(
-  modelXml: string,
-  filePath: string,
-  project: ProjectSummary
-): string {
-  const interfaceRef = modelXml.substring(
-    modelXml.indexOf('<interface>') + '<interface>'.length,
-    modelXml.indexOf('</interface>')
-  );
-  if (interfaceRef.endsWith('sequence.xml')) {
-    if (!project.mediaSummary.webContentBundle?.name) {
-      console.log(
-        'CTAT w/sequence file requires webContentBundle option -- not handled'
-      );
-      return modelXml;
-    }
-
-    // ref was translated to web bundle URL. Get full path to file
-    const legacyRef = interfaceRef.substring(
-      interfaceRef.indexOf('/webcontent/')
-    );
-    const sequencePath = project.packageDirectory + '/content' + legacyRef;
-    console.log('Converting CTAT sequence file ' + sequencePath);
-
-    // translate asset refs in this file as we do for others.
-    const $ = DOM.read(sequencePath, {
-      xmlMode: true,
-      selfClosingTags: false,
-    });
-    fixSequenceFileRefs(sequencePath, $, project);
-
-    // to preserve /sequence.xml in path while leaving original file, we
-    //  put transformed version into /torus/ subdirectory of original location
-    const newPath = sequencePath.replace('sequence.xml', 'torus/sequence.xml');
-    const dirPath = newPath.substring(0, newPath.lastIndexOf('/'));
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath);
-    fs.writeFileSync(newPath, $.html());
-
-    // return modelXml adjusted to reference variant file
-    const newRef = interfaceRef.replace('sequence.xml', 'torus/sequence.xml');
-    return modelXml.replace(interfaceRef, newRef);
-  }
-
-  // else no sequence file, just return unchanged
-  return modelXml;
-}
-
-function fixSequenceFileRefs(
-  sequencePath: string,
-  $: cheerio.Root,
-  project: ProjectSummary
-) {
-  const fixAttr = (item: cheerio.Element, attrName: string) => {
-    const value = $(item).attr(attrName);
-    if (value) {
-      const ref = { filePath: sequencePath, assetReference: value };
-      const url = getWebBundleUrl(
-        ref,
-        project.packageDirectory,
-        project.mediaSummary
-      );
-      if (url) {
-        const newRef = url.slice(url.lastIndexOf('media/') + 6);
-        $(item).attr(attrName, newRef);
-      }
-    }
-  };
-
-  $('Problems Problem').each((i: number, problem: any) => {
-    fixAttr(problem, 'problem_file');
-    fixAttr(problem, 'student_interface');
-  });
 }
