@@ -139,7 +139,6 @@ const collectTargets = ($: any, mode: TargetCollectionMode): Target[] => {
       }
 
       if (!value) return;
-      if (spec.valueFilter && !spec.valueFilter(value, elem)) return;
       if (mode === 'relative' && !isRelativeUrl(value)) return;
       if (mode === 'absolute' && isRelativeUrl(value)) return;
 
