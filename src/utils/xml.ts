@@ -8,6 +8,7 @@ import { ProjectSummary } from 'src/project';
 import { unescapeWhiteSpace } from 'src/resources/common';
 import * as cheerio from 'cheerio';
 import { emptyOrDummyContent } from 'src/resources/questions/common';
+import * as mime from 'mime-types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const xmlParser = require('./parser');
@@ -48,6 +49,23 @@ export function isBlockElement(name: string) {
   };
   return (blocks as any)[name];
 }
+
+const DEFAULT_VIDEO_MIME_TYPE = 'video/mp4';
+
+const inferVideoMimeType = (url: string, contenttype?: string) => {
+  const cleanedUrl = url.split('?')[0].split('#')[0];
+  const inferred = mime.lookup(cleanedUrl);
+  const inferredType = typeof inferred === 'string' ? inferred : undefined;
+  const normalized = contenttype ? contenttype.split(';')[0].trim() : undefined;
+
+  if (inferredType) {
+    return inferredType;
+  }
+  if (!normalized) {
+    return DEFAULT_VIDEO_MIME_TYPE;
+  }
+  return contenttype as string;
+};
 
 function inlineAttrName(attrs: Record<string, unknown>) {
   if (attrs['style'] === 'bold') {
@@ -396,10 +414,21 @@ export function toJSON(
         if (tag === 'video') {
           if (typeof top().src === 'string') {
             top().src = [
-              { type: 'source', url: top().src, contenttype: 'video/mp4' },
+              {
+                type: 'source',
+                url: top().src,
+                contenttype: inferVideoMimeType(top().src),
+              },
             ];
           } else {
             top().src = getAllOfType(top().children, 'source');
+            top().src = top().src.map((source: any) => {
+              if (!source?.url) return source;
+              return {
+                ...source,
+                contenttype: inferVideoMimeType(source.url, source.contenttype),
+              };
+            });
           }
           // video may carry vtt subtitle file(s) in captions children
           const captions = getAllOfType(top().children, 'captions');

@@ -109,4 +109,39 @@ describe('cdata and codeblocks', () => {
     expect(result.children[0].children[0].value).toBe('Excel2019PC');
     expect(result.children[0].children[0].id).toBe('Excel2019PC');
   });
+
+  test('should infer video mime type from .webm source', async () => {
+    const content = '<root><video src="../webcontent/sample.webm" /></root>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+    const video = result.children[0].children[0];
+
+    expect(video.type).toBe('video');
+    expect(video.src[0].contenttype).toBe('video/webm');
+  });
+
+  test('should correct mismatched video mime type for .webm sources', async () => {
+    const content =
+      '<root><video><source src="../webcontent/sample.webm" type="video/mp4" /></video></root>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+    const video = result.children[0].children[0];
+
+    expect(video.type).toBe('video');
+    expect(video.src[0].contenttype).toBe('video/webm');
+  });
 });
