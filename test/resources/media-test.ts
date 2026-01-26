@@ -36,6 +36,7 @@ describe('Media conversions', () => {
             <conjugate src="./test/content/webcontent/F1L10s224.mp3" />
             <image src="./test/content/webcontent/polar-bear.jpg" />
             <audio><track src="./test/content/webcontent/F1L10s224.mp3" /></audio>
+            <video src="./test/content/webcontent/ammonium.mp4" poster="./test/content/webcontent/polar-bear.jpg"></video>
             <video><source src="./test/content/webcontent/ammonium.mp4" /></video>
         </content>`,
         { normalizeWhitespace: true, xmlMode: true }
@@ -57,6 +58,9 @@ describe('Media conversions', () => {
       );
       expect($.html()).toContain(
         `<audio><track src=\"unit-test://media/95/954fb22bada7700b4adfdf1a8d93f157/F1L10s224.mp3\"/></audio>`
+      );
+      expect($.html()).toContain(
+        `<video src=\"unit-test://media/f8/f82cb41d5a054fd271290be295075fe8/ammonium.mp4\" poster=\"unit-test://media/48/487591d48552a1fea781e7437a88fd60/polar-bear.jpg\"/> `
       );
       expect($.html()).toContain(
         `<video><source src=\"unit-test://media/f8/f82cb41d5a054fd271290be295075fe8/ammonium.mp4\"/></video> `

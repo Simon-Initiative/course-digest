@@ -82,6 +82,83 @@ export interface UploadFailure {
   error: string;
 }
 
+// Target = DOM Element that contains a media item reference to be rewritten
+type Target = {
+  elem: cheerio.Element;
+  attr: TargetSpec['attr'];
+  value: string;
+};
+
+type TargetSpec = {
+  selector: string;
+  attr: 'src' | 'href' | 'poster' | 'text' | 'style';
+  valueFilter?: (value: string, elem: cheerio.Element) => boolean;
+};
+
+const TARGET_SPECS: TargetSpec[] = [
+  { selector: 'pronunciation', attr: 'src' },
+  { selector: 'conjugate', attr: 'src' },
+  { selector: 'image', attr: 'src' },
+  { selector: 'image_hotspot', attr: 'src' },
+  { selector: 'audio', attr: 'src' },
+  { selector: 'audio source', attr: 'src' },
+  { selector: 'audio track', attr: 'src' },
+  { selector: 'video', attr: 'src' },
+  { selector: 'video', attr: 'poster' },
+  { selector: 'video source', attr: 'src' },
+  { selector: 'video track', attr: 'src' },
+  { selector: 'm\\:math *[style]', attr: 'style' },
+  // may use web bundle:
+  { selector: 'iframe', attr: 'src' },
+  { selector: 'link', attr: 'href' },
+  // web bundle/superactivity assets
+  { selector: 'embed_activity source', attr: 'text' },
+  { selector: 'linked_activity source', attr: 'text' },
+  { selector: 'asset, interface, dataset', attr: 'text' },
+  // in case process HTML, not used in OLI xml
+  { selector: 'script', attr: 'src' },
+  { selector: 'img', attr: 'src' },
+];
+
+type TargetCollectionMode = 'all' | 'relative' | 'absolute';
+
+const collectTargets = ($: any, mode: TargetCollectionMode): Target[] => {
+  const targets: Target[] = [];
+
+  TARGET_SPECS.forEach((spec) => {
+    $(spec.selector).each((i: any, elem: any) => {
+      let value: string | undefined;
+      if (spec.attr === 'text') {
+        value = $(elem).text();
+      } else if (spec.attr === 'style') {
+        const style = $(elem).attr('style');
+        const urlMatch = style?.match(/url\('([^']+)'\)/);
+        value = urlMatch ? urlMatch[1] : undefined;
+      } else {
+        value = $(elem).attr(spec.attr);
+      }
+
+      if (!value) return;
+      if (spec.valueFilter && !spec.valueFilter(value, elem)) return;
+      if (mode === 'relative' && !isRelativeUrl(value)) return;
+      if (mode === 'absolute' && isRelativeUrl(value)) return;
+
+      targets.push({ elem, attr: spec.attr, value });
+    });
+  });
+
+  return targets;
+};
+
+const groupTargetsByValue = (targets: Target[]) =>
+  targets.reduce((acc, target) => {
+    if (!acc[target.value]) {
+      acc[target.value] = [];
+    }
+    acc[target.value].push(target);
+    return acc;
+  }, {} as Record<string, Target[]>);
+
 // From a DOM object, find all media item references and replace
 // returns true if any were modified
 export function transformToFlatDirectory(
@@ -95,75 +172,71 @@ export function transformToFlatDirectory(
   // bit of restructuring that must happen *before* translating link urls
   handleScriptedImageLinks($);
 
-  // paths maps from reference string to list of DOM elements containing it
-  const paths = findFromDOM($, filePath);
-
-  const isWebBundleElement = (e: any) =>
-    ['link', 'iframe', 'asset', 'interface', 'dataset'].includes(
-      $(e)[0].name
-    ) ||
+  const isSuperactivityAsset = (e: cheerio.Element) =>
+    ['asset', 'interface', 'dataset'].includes($(e)[0].name) ||
     ($(e)[0].name === 'source' &&
       ($(e).parent()[0].name === 'embed_activity' ||
         $(e).parent()[0].name === 'linked_activity'));
 
-  Object.keys(paths).forEach((assetReference: any) => {
+  const isWebBundleElement = (e: cheerio.Element) =>
+    ['link', 'iframe'].includes($(e)[0].name) || isSuperactivityAsset(e);
+
+  const targets = collectTargets($, 'relative');
+
+  targets.forEach((target) => {
+    const assetReference = target.value;
     const ref = { filePath, assetReference };
+    const useWebBundleUrl =
+      mediaSummary.webContentBundle?.name && isWebBundleElement(target.elem);
+    const url =
+      // For link, iframe and superactivity source and webcontent assets, use a
+      // webBundle URL rather than a flattened media library URL when webBundle requested.
+      useWebBundleUrl
+        ? getWebBundleUrl(ref, projectDirectory, mediaSummary)
+        : flatten(ref, mediaSummary);
 
-    // Update the URL in the XML DOM
-    paths[assetReference].forEach((elem: cheerio.Element) => {
-      const isWebBundle =
-        mediaSummary.webContentBundle?.name && isWebBundleElement(elem);
-      const url =
-        // For link, iframe and superactivity source and webcontent assets, use a
-        // webBundle URL rather than a flattened media library URL when webBundle requested.
-        isWebBundle
-          ? getWebBundleUrl(ref, projectDirectory, mediaSummary)
-          : flatten(ref, mediaSummary);
-
-      // URL-generating functions should return null url if file doesn't exist
-      if (url !== null) {
-        if (
-          ['asset', 'interface', 'dataset'].includes($(elem)[0].name) ||
-          ($(elem)[0].name === 'source' && $(elem).parent()[0].name !== 'video')
-        ) {
-          // superactivity assets take paths relative to the media base url
-          const superMediaPath = isWebBundle
-            ? url.slice(
-                url.lastIndexOf(
-                  `media/bundles/${mediaSummary.webContentBundle?.name}/`
-                ) +
-                  15 +
-                  (mediaSummary.webContentBundle?.name?.length ?? 0)
-              )
-            : url.slice(url.lastIndexOf('media/') + 6);
-          const query = $(elem).text().split('?')[1];
-          $(elem).text(superMediaPath + (query ? `?${query}` : ''));
-        } else if ($(elem)[0].name === 'link') {
-          $(elem).attr('href', url);
-        } else if (
-          $(elem).attr('style') &&
-          $(elem).attr('style').includes(`url('${assetReference}')`)
-        ) {
-          $(elem).attr(
-            'style',
-            replaceAll(
-              $(elem).attr('style'),
-              escapeRegex(`url('${assetReference}')`),
-              `url('${url}')`
+    if (url !== null) {
+      if (isSuperactivityAsset(target.elem)) {
+        // superactivity assets take paths relative to the media base url
+        const superMediaPath = useWebBundleUrl
+          ? url.slice(
+              url.lastIndexOf(
+                `media/bundles/${mediaSummary.webContentBundle?.name}/`
+              ) +
+                15 +
+                (mediaSummary.webContentBundle?.name?.length ?? 0)
             )
-          );
-        } else {
-          $(elem).attr('src', url);
-        }
-      } else
-        console.log(
-          `Referenced file not found: ${assetReference} elem=${$(
-            paths[assetReference]
-          ).prop('tagName')}`
+          : url.slice(url.lastIndexOf('media/') + 6);
+        const query = assetReference.split('?')[1];
+        $(target.elem).text(superMediaPath + (query ? `?${query}` : ''));
+      } else if (target.attr === 'href') {
+        $(target.elem).attr('href', url);
+      } else if (target.attr === 'poster') {
+        $(target.elem).attr('poster', url);
+      } else if (target.attr === 'style') {
+        $(target.elem).attr(
+          'style',
+          replaceAll(
+            $(target.elem).attr('style'),
+            escapeRegex(`url('${assetReference}')`),
+            `url('${url}')`
+          )
         );
-    });
-    modified = true;
+      } else if (target.attr === 'text') {
+        $(target.elem).text(url);
+      } else {
+        $(target.elem).attr('src', url);
+      }
+      modified = true;
+    } else {
+      console.log(
+        `Referenced file not found: ${assetReference} elem=${$(
+          target.elem
+        ).prop('tagName')}`
+      );
+    }
   });
+
   return modified;
 }
 
@@ -245,8 +318,8 @@ export function downloadRemote(
   $: any,
   summary: MediaSummary
 ) {
-  const paths = findFromDOM($, filePath, true);
-  Object.keys(paths).forEach((assetReference: any) => {
+  const targetsByValue = groupTargetsByValue(collectTargets($, 'absolute'));
+  Object.keys(targetsByValue).forEach((assetReference: any) => {
     // Download the file into a temporary file
     const buffer = fetch(assetReference, {}).buffer();
     const tmpobj = tmp.fileSync();
@@ -270,16 +343,10 @@ export function downloadRemote(
       fs.copyFileSync(tmpobj.name, newLocalPath);
     }
 
-    const subPath = md5.substring(0, 2);
     // Store the new media item
-    const url =
-      summary.urlPrefix +
-      '/' +
-      subPath +
-      '/' +
-      md5 +
-      '/' +
-      encodeURIComponent(name);
+    const subPath = md5.substring(0, 2);
+    const encodedName = encodeURIComponent(name);
+    const url = `${summary.urlPrefix}/${subPath}/${md5}/${encodedName}`;
 
     if (summary.mediaItems[newLocalPath] === undefined) {
       // See if we need to rename this file to avoid conflicts with an already
@@ -300,7 +367,8 @@ export function downloadRemote(
 
     // Update the URL in the XML DOM
     if (url !== null) {
-      paths[assetReference].forEach((elem) => {
+      targetsByValue[assetReference].forEach((target) => {
+        const elem = target.elem;
         if (
           $(elem)[0].name === 'source' &&
           $(elem).parent()[0].name !== 'video'
@@ -332,6 +400,21 @@ export function downloadRemote(
               url.lastIndexOf('media/') + 6
             )}</dataset>`
           );
+        } else if (target.attr === 'href') {
+          $(elem).attr('href', url);
+        } else if (target.attr === 'poster') {
+          $(elem).attr('poster', url);
+        } else if (target.attr === 'style') {
+          $(elem).attr(
+            'style',
+            replaceAll(
+              $(elem).attr('style'),
+              escapeRegex(`url('${assetReference}')`),
+              `url('${url}')`
+            )
+          );
+        } else if (target.attr === 'text') {
+          $(elem).text(url);
         } else {
           $(elem).attr('src', url);
         }
@@ -542,134 +625,6 @@ export function stage(
   return Promise.resolve(
     mediaItems.map((mediaItem) => ({ type: 'UploadSuccess', mediaItem }))
   );
-}
-
-// returns map from asset references (paths) => array of DOM elements referencing it
-function findFromDOM(
-  $: any,
-  filePath: string,
-  remote = false
-): Record<string, Array<cheerio.Element>> {
-  // result to be returned
-  const paths: any = {};
-
-  $('pronunciation').each((i: any, elem: any) => {
-    if ($(elem).attr('src') !== undefined) {
-      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-    }
-  });
-
-  $('conjugate').each((i: any, elem: any) => {
-    if ($(elem).attr('src') !== undefined) {
-      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-    }
-  });
-
-  $('image').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-
-  $('image_hotspot').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-
-  $('audio').each((i: any, elem: any) => {
-    if ($(elem).attr('src') !== undefined) {
-      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-    }
-  });
-
-  $('audio source').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-
-  $('audio track').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-
-  $('video').each((i: any, elem: any) => {
-    if ($(elem).attr('src') !== undefined) {
-      paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-    }
-  });
-
-  $('video source').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-  $('video track').each((i: any, elem: any) => {
-    paths[$(elem).attr('src')] = [elem, ...$(paths[$(elem).attr('src')])];
-  });
-
-  $('embed_activity source').each((i: any, elem: any) => {
-    paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-  });
-
-  $('linked_activity source').each((i: any, elem: any) => {
-    paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-  });
-
-  $('iframe').each((i: any, elem: any) => {
-    const src = $(elem).attr('src');
-    if (src !== undefined && isRelativeUrl(src)) {
-      paths[src] = [elem, ...$(paths[src])];
-    }
-  });
-
-  // link to webcontent. NB: this executes BEFORE <link> renamed to <a>
-  $('link').each((i: any, elem: any) => {
-    const href = $(elem).attr('href');
-    if (href !== undefined && isRelativeUrl(href)) {
-      paths[href] = [elem, ...$(paths[href])];
-    }
-  });
-
-  // element types used for superactivity assets
-  $('asset, interface, dataset').each((i: any, elem: any) => {
-    if (
-      $(elem).text().includes('webcontent') ||
-      $(elem).text().includes('..')
-    ) {
-      paths[$(elem).text()] = [elem, ...$(paths[$(elem).text()])];
-    }
-  });
-
-  // mathML elements can have image refs in inline style sheets
-  $('m\\:math *[style]').each((i: any, elem: any) => {
-    const urlMatch = $(elem)
-      .attr('style')
-      .match(/url\('([^']+)'\)/);
-    if (urlMatch !== null && isRelativeUrl(urlMatch[1])) {
-      const url = urlMatch[1];
-      paths[url] = [elem, ...$(paths[url])];
-    }
-  });
-
-  // Used when processing HTML Media files:
-
-  // local script assets
-  $('script').each((i: any, elem: any) => {
-    const src = $(elem).attr('src');
-    if (src !== undefined && isRelativeUrl(src)) {
-      paths[src] = [elem, ...$(paths[src])];
-    }
-  });
-  // local img assets
-  $('img').each((i: any, elem: any) => {
-    const src = $(elem).attr('src');
-    if (src !== undefined && isRelativeUrl(src)) {
-      paths[src] = [elem, ...$(paths[src])];
-    }
-  });
-  // local css assets fortuitously handled by 'link' href processing
-
-  // return only local or remote references as requested
-  Object.keys(paths)
-    .filter((src: string) =>
-      remote ? isRelativeUrl(src) : !isRelativeUrl(src)
-    )
-    .forEach((src: string) => delete paths[src]);
-
-  return paths;
 }
 
 const absUrlPrefix = new RegExp('^[a-z]+://', 'i');
