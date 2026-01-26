@@ -52,7 +52,7 @@ export function isBlockElement(name: string) {
 
 const DEFAULT_VIDEO_MIME_TYPE = 'video/mp4';
 
-const normalizeVideoMimeType = (url: string, contenttype?: string) => {
+const inferVideoMimeType = (url: string, contenttype?: string) => {
   const cleanedUrl = url.split('?')[0].split('#')[0];
   const inferred = mime.lookup(cleanedUrl);
   const inferredType = typeof inferred === 'string' ? inferred : undefined;
@@ -420,7 +420,7 @@ export function toJSON(
               {
                 type: 'source',
                 url: top().src,
-                contenttype: normalizeVideoMimeType(top().src),
+                contenttype: inferVideoMimeType(top().src),
               },
             ];
           } else {
@@ -429,7 +429,7 @@ export function toJSON(
               if (!source?.url) return source;
               return {
                 ...source,
-                contenttype: normalizeVideoMimeType(source.url, source.contenttype),
+                contenttype: inferVideoMimeType(source.url, source.contenttype),
               };
             });
           }
