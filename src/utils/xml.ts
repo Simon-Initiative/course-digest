@@ -58,10 +58,7 @@ const inferVideoMimeType = (url: string, contenttype?: string) => {
   const inferredType = typeof inferred === 'string' ? inferred : undefined;
   const normalized = contenttype ? contenttype.split(';')[0].trim() : undefined;
 
-  if (inferredType && normalized && inferredType !== normalized) {
-    return inferredType;
-  }
-  if (inferredType && !normalized) {
+  if (inferredType) {
     return inferredType;
   }
   if (!normalized) {
