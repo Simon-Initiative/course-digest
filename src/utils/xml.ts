@@ -16,11 +16,17 @@ const xmlParser = require('./parser');
 export type TagVisitor = (tag: string, attributes: unknown) => void;
 export type ClosingTagVisitor = (tag: string) => void;
 
+// one course left commented out old DOCTYPE when upgrading, must ignore
+function stripCommentedDoctype(content: string): string {
+  return content.replace(/<!--\s*<!DOCTYPE[\s\S]*?-->/gi, '');
+}
+
 function getPastDocType(content: string): string {
-  if (content.indexOf('DOCTYPE') !== -1) {
-    return content.substr(content.indexOf('>', content.indexOf('DOCTYPE')) + 1);
+  const cleaned = stripCommentedDoctype(content);
+  if (cleaned.indexOf('DOCTYPE') !== -1) {
+    return cleaned.substr(cleaned.indexOf('>', cleaned.indexOf('DOCTYPE')) + 1);
   }
-  return content;
+  return cleaned;
 }
 
 export function isBlockElement(name: string) {
@@ -749,7 +755,8 @@ export function toJSON(
 export function rootTag(file: string): Promise<string> {
   return new Promise((resolve, _reject) => {
     const content: string = fs.readFileSync(file, 'utf-8');
-    const dtd = content.substr(content.indexOf('<!DOCTYPE'));
+    const cleaned = stripCommentedDoctype(content);
+    const dtd = cleaned.substr(cleaned.indexOf('<!DOCTYPE'));
     // normalize whitespace for ease of pattern matching in case split over lines
     resolve(dtd.substr(0, dtd.indexOf('>') + 1).replace(/\s+/g, ' '));
   });
