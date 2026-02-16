@@ -298,9 +298,9 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'mtemp>material', 'p');
   DOM.eliminateLevel($, 'mtemp');
 
-  // Strip composite-activity if only one child
+  DOM.rename($, 'composite_activity > instructions', 'p');
+  // Strip composite-activity entirely if only one child
   DOM.eliminateLevel($, 'composite_activity:has(> :only-child)');
-
   DOM.rename($, 'composite_activity', 'group');
 
   // Strip alternatives within feedback/explanation, won't work.
@@ -404,11 +404,13 @@ function handleCommandButtons($: any) {
 }
 
 function handleJmolApplets($: any) {
-  const jmolWrapper =
-    'edu.cmu.oli.messaging.applet.jmol.JmolAppletWrapper';
+  const jmolWrapper = 'edu.cmu.oli.messaging.applet.jmol.JmolAppletWrapper';
 
   const normalizeScriptValue = (value: string) =>
-    value.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+    value
+      .replace(/[\r\n]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   $('applet').each((i: any, elem: any) => {
     const codeAttr = ($(elem).attr('code') || '').trim();
@@ -431,12 +433,18 @@ function handleJmolApplets($: any) {
         if (!name) return;
 
         let raw = '';
-
         if (name === 'load') {
+          // In legacy use, molecule files were always loaded from webcontent, not public databases.
+          // These file loads were same-origin as jsmolframe page in legacy, but wind up cross-origin on
+          // torus (because frame comes from torus superactivity space but data files come from S3).  For
+          // cross-origin loads, jsmol normally calls into a back-end jsmol.php on a specified server to
+          // avoid CORS problems, but Torus doesn't run this and we don't want to rely on an external server.
+          // JSMOL supports including a magic ?ALLOWSORIGIN? marker parameter in the URL to tell it
+          // host allows our origin via CORS, so we always add that to ensure it will do a direct load.
           const wbPath = $(p).find('wb\\:path');
           const href = wbPath.attr('href');
           raw = href !== undefined ? href : $(p).text();
-          raw = normalizeScriptValue(raw);
+          raw = raw + '?ALLOWSORIGIN?';
         } else if (name === 'script') {
           raw = normalizeScriptValue($(p).text());
         } else {
