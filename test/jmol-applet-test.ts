@@ -43,8 +43,7 @@ describe('jmol applet', () => {
 
     const params = {
       progressbar: 'true',
-      load:
-        'https://example.com/media/bundles/test/webcontent/jmol/jmol/pdbs/methane_mir.pdb?ALLOWSORIGIN?',
+      load: 'https://example.com/media/bundles/test/webcontent/jmol/jmol/pdbs/methane_mir.pdb?ALLOWSORIGIN?',
       script: 'set background white; color cpk; wireframe 0.2;',
     };
 
