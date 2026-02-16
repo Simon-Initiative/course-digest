@@ -460,6 +460,9 @@ function handleJmolApplets($: any) {
       `?idref=${encodeURIComponent(idref)}&amp;params=${encodedParams}`;
 
     const iframe = $('<iframe></iframe>');
+    if (idref) {
+      iframe.attr('id', idref);
+    }
     iframe.attr('src', src);
     iframe.attr('scrolling', 'no');
     iframe.attr('frameborder', '0');
