@@ -112,6 +112,7 @@ export function failIfHasValue(
 export function standardContentManipulations($: any) {
   failIfPresent($, ['ipa', 'bdo']);
 
+  handleJmolApplets($);
   handleCommandButtons($);
 
   DOM.unwrapInlinedMedia($, 'video');
@@ -297,9 +298,9 @@ export function standardContentManipulations($: any) {
   DOM.rename($, 'mtemp>material', 'p');
   DOM.eliminateLevel($, 'mtemp');
 
-  // Strip composite-activity if only one child
+  DOM.rename($, 'composite_activity > instructions', 'p');
+  // Strip composite-activity entirely if only one child
   DOM.eliminateLevel($, 'composite_activity:has(> :only-child)');
-
   DOM.rename($, 'composite_activity', 'group');
 
   // Strip alternatives within feedback/explanation, won't work.
@@ -343,13 +344,8 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'video source', 'src', 'url');
   DOM.renameAttribute($, 'video', 'type', 'contenttype');
   DOM.renameAttribute($, 'audio', 'type', 'audioType');
-  // video <track> subelement with .vtt subtitle file => torus captions child
-  DOM.rename($, 'video track[kind="subtitles"]', 'captions');
-  DOM.renameAttribute($, 'video captions', 'srclang', 'language_code');
 
   DOM.rename($, 'extra', 'popup');
-  // simplifies handling within popup:
-  DOM.eliminateLevel($, 'meaning > material');
 
   handleTheorems($);
   handleFormulaMathML($);
@@ -405,6 +401,81 @@ function handleCommandButtons($: any) {
   // paragraphs inside of list-items, but downstream code eliminates those
   // conditions.
   $('command_button').wrap('<p></p>');
+}
+
+function handleJmolApplets($: any) {
+  const jmolWrapper = 'edu.cmu.oli.messaging.applet.jmol.JmolAppletWrapper';
+
+  const normalizeScriptValue = (value: string) =>
+    value
+      .replace(/[\r\n]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  $('applet').each((i: any, elem: any) => {
+    const codeAttr = ($(elem).attr('code') || '').trim();
+    const isJmol = codeAttr.includes(jmolWrapper);
+
+    if (!isJmol) {
+      return;
+    }
+
+    const idref = $(elem).attr('id') || '';
+    const widthAttr = $(elem).attr('width');
+    const heightAttr = $(elem).attr('height');
+
+    const params: Record<string, string> = {};
+
+    $(elem)
+      .children('param')
+      .each((_j: any, p: any) => {
+        const name = ($(p).attr('name') || '').trim();
+        if (!name) return;
+
+        let raw = '';
+        if (name === 'load') {
+          // In legacy use, molecule files were always loaded from webcontent, not public databases.
+          // These file loads were same-origin as jsmolframe page in legacy, but wind up cross-origin on
+          // torus (because frame comes from torus superactivity space but data files come from S3).  For
+          // cross-origin loads, jsmol normally calls into a back-end jsmol.php on a specified server to
+          // avoid CORS problems, but Torus doesn't run this and we don't want to rely on an external server.
+          // JSMOL supports including a magic ?ALLOWSORIGIN? marker parameter in the URL to tell it
+          // host allows our origin via CORS, so we always add that to ensure it will do a direct load.
+          const wbPath = $(p).find('wb\\:path');
+          const href = wbPath.attr('href');
+          raw = href !== undefined ? href : $(p).text();
+          raw = raw + '?ALLOWSORIGIN?';
+        } else if (name === 'script') {
+          raw = normalizeScriptValue($(p).text());
+        } else {
+          raw = $(p).text().trim();
+        }
+
+        params[name] = raw;
+      });
+
+    const encodedParams = encodeURIComponent(JSON.stringify(params));
+    const src =
+      '/superactivity/jsmol/jmolframe.html' +
+      `?idref=${encodeURIComponent(idref)}&amp;params=${encodedParams}`;
+
+    const iframe = $('<iframe></iframe>');
+    if (idref) {
+      iframe.attr('id', idref);
+    }
+    iframe.attr('src', src);
+    iframe.attr('scrolling', 'no');
+    iframe.attr('frameborder', '0');
+
+    if (widthAttr !== undefined) {
+      iframe.attr('width', String(Number(widthAttr) + 5));
+    }
+    if (heightAttr !== undefined) {
+      iframe.attr('height', String(Number(heightAttr) + 5));
+    }
+
+    $(elem).replaceWith(iframe);
+  });
 }
 
 // We don't want empty caption tags ie <caption /> to be expanded to an empty caption with <p></p> in it for iframes (maybe others?)

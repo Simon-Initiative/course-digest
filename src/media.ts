@@ -115,6 +115,7 @@ const TARGET_SPECS: TargetSpec[] = [
   { selector: 'embed_activity source', attr: 'text' },
   { selector: 'linked_activity source', attr: 'text' },
   { selector: 'asset, interface, dataset', attr: 'text' },
+  { selector: 'applet param wb\\:path', attr: 'href' },
   // in case process HTML, not used in OLI xml
   { selector: 'script', attr: 'src' },
   { selector: 'img', attr: 'src' },
@@ -178,7 +179,8 @@ export function transformToFlatDirectory(
         $(e).parent()[0].name === 'linked_activity'));
 
   const isWebBundleElement = (e: cheerio.Element) =>
-    ['link', 'iframe'].includes($(e)[0].name) || isSuperactivityAsset(e);
+    ['link', 'iframe', 'wb:path'].includes($(e)[0].name) ||
+    isSuperactivityAsset(e);
 
   const targets = collectTargets($, 'relative');
 
