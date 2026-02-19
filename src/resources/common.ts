@@ -405,12 +405,14 @@ function stripInvalidParagraphNesting($: any) {
       }
     });
 
-    ['p>p', 'p>quote', 'p>ol', 'p>ul', 'p>li', 'p>dl', 'p>blockquote'].forEach((selector) => {
-      if ($(selector).length > 0) {
-        DOM.stripElement($, selector);
-        changed = true;
+    ['p>p', 'p>quote', 'p>ol', 'p>ul', 'p>li', 'p>dl', 'p>blockquote'].forEach(
+      (selector) => {
+        if ($(selector).length > 0) {
+          DOM.stripElement($, selector);
+          changed = true;
+        }
       }
-    });
+    );
   }
 }
 
