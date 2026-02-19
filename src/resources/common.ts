@@ -261,24 +261,9 @@ export function standardContentManipulations($: any) {
   // videos with size parameters have layout issue (not centered), so strip
   stripMediaSizing($, 'video');
 
-  DOM.stripElement($, 'p>ol');
-  DOM.stripElement($, 'p>ul');
-  DOM.stripElement($, 'p>li');
-  DOM.stripElement($, 'p>ol');
-  DOM.stripElement($, 'p>ul');
-  DOM.stripElement($, 'p>li');
-  DOM.stripElement($, 'p>ol');
-  DOM.stripElement($, 'p>ul');
-  DOM.stripElement($, 'p>li');
-
-  DOM.stripElement($, 'p>p');
-  DOM.stripElement($, 'p>p');
-
   // Change to allow block elements within list items
   // DOM.stripElement($, 'li p');
   // DOM.rename($, 'li img', 'img_inline');
-
-  DOM.stripElement($, 'p>quote');
 
   // $('p>table').remove();
   $('p>title').remove();
@@ -364,6 +349,11 @@ export function standardContentManipulations($: any) {
 
   // Torus input_ref's use id attribute
   DOM.renameAttribute($, 'input_ref', 'input', 'id');
+
+  // Late restructuring steps above can re-introduce invalid block-in-paragraph
+  // nesting (for example when flattening side-by-side materials). Run a final
+  // fixpoint cleanup so wrap-then-strip normalization is deterministic.
+  stripInvalidParagraphNesting($);
 }
 
 export function convertStyleTag(
@@ -401,6 +391,29 @@ function handleCommandButtons($: any) {
   // paragraphs inside of list-items, but downstream code eliminates those
   // conditions.
   $('command_button').wrap('<p></p>');
+}
+
+function stripInvalidParagraphNesting($: any) {
+  let changed = true;
+  while (changed) {
+    changed = false;
+
+    ['video', 'audio', 'youtube', 'iframe'].forEach((type) => {
+      if ($(`p ${type}`).length > 0) {
+        DOM.unwrapInlinedMedia($, type);
+        changed = true;
+      }
+    });
+
+    ['p>p', 'p>quote', 'p>ol', 'p>ul', 'p>li', 'p>dl', 'p>blockquote'].forEach(
+      (selector) => {
+        if ($(selector).length > 0) {
+          DOM.stripElement($, selector);
+          changed = true;
+        }
+      }
+    );
+  }
 }
 
 function handleJmolApplets($: any) {
