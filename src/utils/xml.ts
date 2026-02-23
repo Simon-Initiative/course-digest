@@ -577,13 +577,18 @@ export function toJSON(
 
       const handleCommandButton = () => {
         if (tag === 'command_button') {
-          // We have to set 'pronunciation' as a property
-          // as well introduce 'table' as a property to hold all of the
-          // 'tr' children
-
           const messages = getAllOfType(top().children, 'message');
 
           top().message = messages[0].children[0].text;
+          if (messages.length > 1) {
+            // Legacy message list semantics uses each message title as the label to be
+            // shown *after* that message is sent. Torus toggle states use the label for
+            // the current state, so shift titles forward when building states.
+            top().toggleStates = messages.map((m: any, i: number) => ({
+              title: i === 0 ? top().title : messages[i - 1].title,
+              message: m.children[0].text,
+            }));
+          }
           top().children = [{ text: top().title }];
         }
       };
