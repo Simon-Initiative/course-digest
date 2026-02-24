@@ -277,9 +277,12 @@ export function standardContentManipulations($: any) {
     'innerpurpose'
   );
 
-  // Strip side-by-side materials structure if contains inline activities
-  DOM.rename($, 'materials:has(wb\\:inline)', 'mtemp');
-  DOM.eliminateLevel($, 'mtemp>material:has(wb\\:inline)');
+  // Strip side-by-side materials structure if it contains inline activities
+  // or media/interactive blocks that do not author reliably inside table cells.
+  const flattenableMaterialsSelector =
+    'wb\\:inline, iframe, video, audio, youtube, command_button';
+  DOM.rename($, `materials:has(${flattenableMaterialsSelector})`, 'mtemp');
+  DOM.eliminateLevel($, `mtemp>material:has(${flattenableMaterialsSelector})`);
   DOM.rename($, 'mtemp>material', 'p');
   DOM.eliminateLevel($, 'mtemp');
 
@@ -386,11 +389,9 @@ function handleCommandButtons($: any) {
     }
   });
 
-  // Now wrap all command_button instances in a paragraph.  This can
-  // lead to situations where we have paragraphs inside of paragaphs, or
-  // paragraphs inside of list-items, but downstream code eliminates those
-  // conditions.
-  $('command_button').wrap('<p></p>');
+  // Do not force-wrap command buttons in paragraphs here.
+  // In mixed legacy structures (e.g. materials flattening + inline activities),
+  // wrap/strip cycles can cause command buttons to be dropped or reordered.
 }
 
 function stripInvalidParagraphNesting($: any) {
@@ -476,6 +477,9 @@ function handleJmolApplets($: any) {
     if (idref) {
       iframe.attr('id', idref);
     }
+    // Jmol applets commonly receive command-button messages; mark as listening
+    // so conversion can map legacy id -> iframe targetId consistently.
+    iframe.attr('listen', 'true');
     iframe.attr('src', src);
     iframe.attr('scrolling', 'no');
     iframe.attr('frameborder', '0');

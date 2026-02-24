@@ -55,5 +55,7 @@ describe('jmol applet', () => {
     expect(iframe.src).toBe(expectedSrc);
     expect(iframe.width).toBe('130');
     expect(iframe.height).toBe('130');
+    expect(iframe.listen).toBe('true');
+    expect(iframe.targetId).toBe('methane2');
   });
 });

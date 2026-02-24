@@ -110,6 +110,18 @@ describe('xml conversion', () => {
     });
   });
 
+  test('should map listening iframe id to targetId', async () => {
+    const xml =
+      '<iframe id="targetx" listen="true" src="./demo.html"><caption>demo</caption></iframe>';
+
+    const result: any = await toJSON(xml, projectSummary, preserved);
+    const iframe = result.children[0];
+
+    expect(iframe.type).toBe('iframe');
+    expect(iframe.id).toBe('targetx');
+    expect(iframe.targetId).toBe('targetx');
+  });
+
   test('should convert MathJAX LaTeX embedded in feedback with $$ to formula_inline', async () => {
     const xml = `
         <response match="19" score="10" input="q3numeric">
