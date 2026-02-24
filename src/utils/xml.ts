@@ -593,6 +593,16 @@ export function toJSON(
         }
       };
 
+      const handleIframeTargeting = () => {
+        if (
+          tag === 'iframe' &&
+          (top().listen === true || top().listen === 'true') &&
+          top().id
+        ) {
+          top().targetId = top().id;
+        }
+      };
+
       const renameCaptionForFigure = () => {
         if (tag === 'figure') {
           if (top().caption !== null && top().caption !== undefined) {
@@ -687,6 +697,7 @@ export function toJSON(
         ensureParagraph('pronunciation');
         handleConjugation();
         handleCommandButton();
+        handleIframeTargeting();
         handleDescriptionList();
         handleAlternatives();
         stringToBoolean('formula_inline', 'legacyBlockRendered');

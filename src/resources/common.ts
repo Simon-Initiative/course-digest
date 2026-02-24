@@ -480,6 +480,9 @@ function handleJmolApplets($: any) {
     if (idref) {
       iframe.attr('id', idref);
     }
+    // Jmol applets commonly receive command-button messages; mark as listening
+    // so conversion can map legacy id -> iframe targetId consistently.
+    iframe.attr('listen', 'true');
     iframe.attr('src', src);
     iframe.attr('scrolling', 'no');
     iframe.attr('frameborder', '0');
