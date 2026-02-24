@@ -282,10 +282,7 @@ export function standardContentManipulations($: any) {
   const flattenableMaterialsSelector =
     'wb\\:inline, iframe, video, audio, youtube, command_button';
   DOM.rename($, `materials:has(${flattenableMaterialsSelector})`, 'mtemp');
-  DOM.eliminateLevel(
-    $,
-    `mtemp>material:has(${flattenableMaterialsSelector})`
-  );
+  DOM.eliminateLevel($, `mtemp>material:has(${flattenableMaterialsSelector})`);
   DOM.rename($, 'mtemp>material', 'p');
   DOM.eliminateLevel($, 'mtemp');
 
