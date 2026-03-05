@@ -577,20 +577,52 @@ function generateNewName(
 // XML document into a full path to file in project directory
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
+  const originalRef = removeQueryParams(reference.assetReference);
+
+  // First prefer the path as-authored and normal package upward search.
+  // This preserves references to nested sibling webcontent folders.
+  const originalPath = findInPackage(
+    dir,
+    originalRef,
+    path.resolve(dir, originalRef)
+  );
+  if (fs.existsSync(decodeURIComponent(originalPath))) {
+    return originalPath;
+  }
+
+  const isRootWebcontentRef =
+    originalRef === 'webcontent' ||
+    originalRef.startsWith('webcontent/') ||
+    originalRef === '/webcontent' ||
+    originalRef.startsWith('/webcontent/');
 
   // Ref of form 'webcontent/foo/bar' denotes file within top-level
-  // webcontent directory so is relative to project content directory
-  if (reference.assetReference.startsWith('webcontent')) {
+  // webcontent directory so is relative to project content directory.
+  if (isRootWebcontentRef) {
     // Heuristic for finding path to project content directory assumes
     // no 'content' directory anywhere else within content tree
     dir =
       reference.filePath.slice(0, reference.filePath.lastIndexOf('/content/')) +
       '/content/';
+    const assetRef = originalRef.replace(/^\/+/, '');
+    return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
   }
 
-  const assetRef = removeQueryParams(reference.assetReference);
+  // Some legacy content over-traverses (e.g. ../../webcontent/...) even
+  // though assets actually live under content/webcontent. If the authored
+  // relative path fails, allow this narrowly-scoped fallback.
+  const overTraversedWebcontentRef = originalRef.match(
+    /^(?:\.\.\/)+(webcontent\/.*)$/
+  );
+  if (overTraversedWebcontentRef) {
+    dir =
+      reference.filePath.slice(0, reference.filePath.lastIndexOf('/content/')) +
+      '/content/';
+    const assetRef = overTraversedWebcontentRef[1];
+    return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
+  }
 
-  return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
+  return originalPath;
 }
 
 export function removeQueryParams(ref: string): string {
