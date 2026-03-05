@@ -11,7 +11,8 @@ const testSummary = () => ({
   flattenedNames: {},
 });
 
-const fixturePath = (...parts: string[]) => path.resolve(process.cwd(), ...parts);
+const fixturePath = (...parts: string[]) =>
+  path.resolve(process.cwd(), ...parts);
 
 describe('Media conversions', () => {
   describe('flatten', () => {
@@ -33,7 +34,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
             assetReference: '../../webcontent/abby.jpg',
           },
           testSummary()
@@ -69,7 +76,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
             assetReference: 'webcontent/abby.jpg',
           },
           testSummary()
@@ -83,7 +96,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
             assetReference: '../../../webcontent/abby.jpg',
           },
           testSummary()
@@ -97,7 +116,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
             assetReference:
               '../../../x-oli-skills_model/c04c22b2337f412c8feff2c06e43cef3.xml',
           },
