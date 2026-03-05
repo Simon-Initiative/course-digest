@@ -1,6 +1,7 @@
 import { flatten, transformToFlatDirectory } from '../../src/media';
 
 import * as cheerio from 'cheerio';
+import * as path from 'path';
 
 const testSummary = () => ({
   mediaItems: {},
@@ -9,6 +10,8 @@ const testSummary = () => ({
   downloadRemote: false,
   flattenedNames: {},
 });
+
+const fixturePath = (...parts: string[]) => path.resolve(process.cwd(), ...parts);
 
 describe('Media conversions', () => {
   describe('flatten', () => {
@@ -30,8 +33,7 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath:
-              '/Users/andersw/dev/course-digest/test/content/subdir/deeper/fake.xml',
+            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
             assetReference: '../../webcontent/abby.jpg',
           },
           testSummary()
@@ -45,8 +47,15 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath:
-              '/Users/andersw/dev/course-digest/test/course_packages/migration-4sdfykby_v_1_0-echo/content/PCH01/x-oli-inline-assessment/pch01_lbd08.xml',
+            filePath: fixturePath(
+              'test',
+              'course_packages',
+              'migration-4sdfykby_v_1_0-echo',
+              'content',
+              'PCH01',
+              'x-oli-inline-assessment',
+              'pch01_lbd08.xml'
+            ),
             assetReference: '../webcontent/PCH01/image31.png',
           },
           testSummary()
@@ -60,15 +69,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath:
-              '/Users/andersw/dev/course-digest/biochem/content/x-oli-inline-assessment/inline_l4_titration_selfcheck.xml',
-            assetReference:
-              'webcontent/inline_assessment_images/asp_titration.png',
+            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            assetReference: 'webcontent/abby.jpg',
           },
           testSummary()
         )
       ).toEqual(
-        'unit-test://media/ce/ced64c736c979214f4fd67c4512ebedb/asp_titration.png'
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
       );
     });
 
@@ -76,14 +83,13 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath:
-              '/Users/andersw/dev/course-digest/biochem/content/x-oli-assessment2-pool/DNA_Translation_02_pool.xml',
-            assetReference: '../../webcontent/quiz_images/psyn_schematic.png',
+            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
+            assetReference: '../../../webcontent/abby.jpg',
           },
           testSummary()
         )
       ).toEqual(
-        'unit-test://media/25/257bc68e32d2b61a6d6c9a0042d3cf78/psyn_schematic.png'
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
       );
     });
 
@@ -91,8 +97,7 @@ describe('Media conversions', () => {
       expect(
         flatten(
           {
-            filePath:
-              '/Users/andersw/dev/course-digest/test/content/subdir/deeper/fake.xml',
+            filePath: fixturePath('test', 'content', 'subdir', 'deeper', 'fake.xml'),
             assetReference:
               '../../../x-oli-skills_model/c04c22b2337f412c8feff2c06e43cef3.xml',
           },
