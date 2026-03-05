@@ -86,6 +86,22 @@ describe('Media conversions', () => {
         'unit-test://media/25/257bc68e32d2b61a6d6c9a0042d3cf78/psyn_schematic.png'
       );
     });
+
+    it('Should recover from over-traversed ../ segments for non-webcontent refs', () => {
+      expect(
+        flatten(
+          {
+            filePath:
+              '/Users/andersw/dev/course-digest/test/content/subdir/deeper/fake.xml',
+            assetReference:
+              '../../../x-oli-skills_model/c04c22b2337f412c8feff2c06e43cef3.xml',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/74/74a0df3f73295f37f632da28368b4444/c04c22b2337f412c8feff2c06e43cef3.xml'
+      );
+    });
   });
 
   describe('transformToFlatDirectory', () => {

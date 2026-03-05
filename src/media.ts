@@ -608,18 +608,21 @@ export function resolve(reference: MediaItemReference): string {
     return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
   }
 
-  // Some legacy content over-traverses (e.g. ../../webcontent/...) even
-  // though assets actually live under content/webcontent. If the authored
-  // relative path fails, allow this narrowly-scoped fallback.
-  const overTraversedWebcontentRef = originalRef.match(
-    /^(?:\.\.\/)+(webcontent\/.*)$/
-  );
-  if (overTraversedWebcontentRef) {
-    dir =
-      reference.filePath.slice(0, reference.filePath.lastIndexOf('/content/')) +
-      '/content/';
-    const assetRef = overTraversedWebcontentRef[1];
-    return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
+  // Legacy content may over-traverse with too many ../ prefixes.
+  // If authored resolution failed, progressively trim leading ../ and retry.
+  if (originalRef.startsWith('../')) {
+    let correctedRef = originalRef;
+    while (correctedRef.startsWith('../')) {
+      correctedRef = correctedRef.slice(3);
+      const correctedPath = findInPackage(
+        dir,
+        correctedRef,
+        path.resolve(dir, correctedRef)
+      );
+      if (fs.existsSync(decodeURIComponent(correctedPath))) {
+        return correctedPath;
+      }
+    }
   }
 
   return originalPath;
