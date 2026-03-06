@@ -577,20 +577,53 @@ function generateNewName(
 // XML document into a full path to file in project directory
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
+  const originalRef = removeQueryParams(reference.assetReference);
+
+  // First prefer the path as-authored and normal package upward search.
+  // This preserves references to nested sibling webcontent folders.
+  const originalPath = findInPackage(
+    dir,
+    originalRef,
+    path.resolve(dir, originalRef)
+  );
+  if (fs.existsSync(decodeURIComponent(originalPath))) {
+    return originalPath;
+  }
+
+  const isRootWebcontentRef =
+    originalRef.startsWith('webcontent/') ||
+    originalRef.startsWith('/webcontent/');
 
   // Ref of form 'webcontent/foo/bar' denotes file within top-level
-  // webcontent directory so is relative to project content directory
-  if (reference.assetReference.startsWith('webcontent')) {
+  // webcontent directory so is relative to project content directory.
+  if (isRootWebcontentRef) {
     // Heuristic for finding path to project content directory assumes
     // no 'content' directory anywhere else within content tree
     dir =
       reference.filePath.slice(0, reference.filePath.lastIndexOf('/content/')) +
       '/content/';
+    const assetRef = originalRef.replace(/^\/+/, '');
+    return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
   }
 
-  const assetRef = removeQueryParams(reference.assetReference);
+  // Legacy content may over-traverse with too many ../ prefixes.
+  // If authored resolution failed, progressively trim leading ../ and retry.
+  if (originalRef.startsWith('../')) {
+    let correctedRef = originalRef;
+    while (correctedRef.startsWith('../')) {
+      correctedRef = correctedRef.slice(3);
+      const correctedPath = findInPackage(
+        dir,
+        correctedRef,
+        path.resolve(dir, correctedRef)
+      );
+      if (fs.existsSync(decodeURIComponent(correctedPath))) {
+        return correctedPath;
+      }
+    }
+  }
 
-  return findInPackage(dir, assetRef, path.resolve(dir, assetRef));
+  return originalPath;
 }
 
 export function removeQueryParams(ref: string): string {

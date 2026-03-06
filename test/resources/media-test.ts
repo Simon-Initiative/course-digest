@@ -1,6 +1,7 @@
 import { flatten, transformToFlatDirectory } from '../../src/media';
 
 import * as cheerio from 'cheerio';
+import * as path from 'path';
 
 const testSummary = () => ({
   mediaItems: {},
@@ -9,6 +10,9 @@ const testSummary = () => ({
   downloadRemote: false,
   flattenedNames: {},
 });
+
+const fixturePath = (...parts: string[]) =>
+  path.resolve(process.cwd(), ...parts);
 
 describe('Media conversions', () => {
   describe('flatten', () => {
@@ -23,6 +27,109 @@ describe('Media conversions', () => {
         )
       ).toEqual(
         'unit-test://media/48/487591d48552a1fea781e7437a88fd60/polar-bear.jpg'
+      );
+    });
+
+    it('Should treat ../../ paths as authored relative references', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
+            assetReference: '../../webcontent/abby.jpg',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
+      );
+    });
+
+    it('Should prefer nested sibling webcontent folders when present', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'course_packages',
+              'migration-4sdfykby_v_1_0-echo',
+              'content',
+              'PCH01',
+              'x-oli-inline-assessment',
+              'pch01_lbd08.xml'
+            ),
+            assetReference: '../webcontent/PCH01/image31.png',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/8f/8f18bd77025b1e099ce5de44061903d6/image31.png'
+      );
+    });
+
+    it('Should resolve naked webcontent references from content root', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
+            assetReference: 'webcontent/abby.jpg',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
+      );
+    });
+
+    it('Should recover from over-traversed ../ segments for webcontent refs', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
+            assetReference: '../../../webcontent/abby.jpg',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
+      );
+    });
+
+    it('Should recover from over-traversed ../ segments for non-webcontent refs', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
+            assetReference:
+              '../../../x-oli-skills_model/c04c22b2337f412c8feff2c06e43cef3.xml',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/74/74a0df3f73295f37f632da28368b4444/c04c22b2337f412c8feff2c06e43cef3.xml'
       );
     });
   });
