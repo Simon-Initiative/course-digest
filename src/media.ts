@@ -591,9 +591,7 @@ export function resolve(reference: MediaItemReference): string {
   }
 
   const isRootWebcontentRef =
-    originalRef === 'webcontent' ||
     originalRef.startsWith('webcontent/') ||
-    originalRef === '/webcontent' ||
     originalRef.startsWith('/webcontent/');
 
   // Ref of form 'webcontent/foo/bar' denotes file within top-level
