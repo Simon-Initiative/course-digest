@@ -290,6 +290,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           let updated = converted;
 
           updated = Convert.updateDerivativeReferences(updated);
+          updated = Convert.replaceBrokenPageLinks(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);
           updated = Convert.setSelectionPoints(updated);

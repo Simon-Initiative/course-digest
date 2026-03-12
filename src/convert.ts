@@ -21,6 +21,13 @@ import { getDescendants } from './resources/questions/common';
 
 type DerivedResourceMap = { [key: string]: TorusResource[] };
 
+type BrokenPageReference = {
+  pageId: string;
+  pageTitle: string;
+  idref: string;
+  nodeType: 'a' | 'page_link';
+};
+
 export function convert(
   projectSummary: ProjectSummary,
   file: string,
@@ -312,6 +319,132 @@ export function updateDerivativeReferences(
       legacyMyResponseFeedbackIds
     )
   );
+}
+
+const inlineParents = new Set([
+  'a',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'li',
+  'p',
+  'span',
+  'strong',
+  'td',
+  'th',
+]);
+
+function brokenPageLinkText(idref: string) {
+  return `<broken link: ${idref}>`;
+}
+
+function brokenPageLinkNode(idref: string, parentType?: string) {
+  const text = brokenPageLinkText(idref);
+
+  if (parentType && inlineParents.has(parentType)) {
+    return { text };
+  }
+
+  return {
+    type: 'p',
+    children: [{ text }],
+  };
+}
+
+function replaceBrokenPageLinksInNode(
+  node: any,
+  validPageIds: Set<string>,
+  brokenLinks: BrokenPageReference[],
+  page: Page,
+  parentType?: string
+): any {
+  if (Array.isArray(node)) {
+    return node.map((child) =>
+      replaceBrokenPageLinksInNode(
+        child,
+        validPageIds,
+        brokenLinks,
+        page,
+        parentType
+      )
+    );
+  }
+
+  if (node === null || typeof node !== 'object') {
+    return node;
+  }
+
+  if (
+    (node.type === 'page_link' || node.type === 'a') &&
+    typeof node.idref === 'string'
+  ) {
+    if (!validPageIds.has(node.idref)) {
+      brokenLinks.push({
+        pageId: page.id,
+        pageTitle: page.title,
+        idref: node.idref,
+        nodeType: node.type,
+      });
+
+      return brokenPageLinkNode(node.idref, parentType);
+    }
+
+    return node;
+  }
+
+  return Object.keys(node).reduce(
+    (updated: any, key: string) => {
+      updated[key] = replaceBrokenPageLinksInNode(
+        node[key],
+        validPageIds,
+        brokenLinks,
+        page,
+        node.type
+      );
+      return updated;
+    },
+    { ...node }
+  );
+}
+
+export function replaceBrokenPageLinks(
+  resources: TorusResource[]
+): TorusResource[] {
+  const validPageIds = new Set(
+    resources.filter((r) => r.type === 'Page').map((r) => r.id)
+  );
+
+  const brokenLinks: BrokenPageReference[] = [];
+
+  const updated = resources.map((resource) => {
+    if (resource.type !== 'Page') {
+      return resource;
+    }
+
+    const page = resource as Page;
+
+    return {
+      ...page,
+      content: replaceBrokenPageLinksInNode(
+        page.content,
+        validPageIds,
+        brokenLinks,
+        page
+      ),
+    };
+  });
+
+  brokenLinks.forEach(({ pageId, pageTitle, idref, nodeType }) => {
+    console.log(
+      `Warning: Replaced broken ${nodeType} link ${idref} in page ${pageId} (${pageTitle})`
+    );
+  });
+
+  return updated;
 }
 
 export function createProducts(
