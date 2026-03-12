@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { convertAction } from 'src/index';
-import { Hierarchy } from 'src/resources/resource';
+import { replaceBrokenPageLinks } from 'src/convert';
+import { Hierarchy, Page, TorusResource } from 'src/resources/resource';
 
 // migration-4sdfykby_v_1_0-echo is an echo course downloaded from svn.
 // Though the .svn repo is not committed to VCS, the intent is that any updates
@@ -229,4 +230,82 @@ it('should convert content with purpose to groups', async () => {
       }),
     })
   );
+});
+
+it('should replace broken page links with visible placeholder text', () => {
+  const warn = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+
+  const resources: TorusResource[] = [
+    {
+      type: 'Page',
+      id: 'page-a',
+      legacyPath: '',
+      legacyId: 'page-a',
+      title: 'Page A',
+      tags: [],
+      unresolvedReferences: ['missing-page'],
+      warnings: [],
+      content: {
+        model: [
+          {
+            type: 'content',
+            id: 'content-1',
+            children: [
+              {
+                type: 'page_link',
+                idref: 'missing-page',
+                children: [{ text: ' ' }],
+              },
+              {
+                type: 'a',
+                idref: 'missing-anchor-page',
+                children: [{ text: 'broken xref' }],
+              },
+              {
+                type: 'a',
+                href: 'https://example.org',
+                children: [{ text: 'external link' }],
+              },
+            ],
+          },
+        ],
+      },
+      isGraded: false,
+      isSurvey: false,
+      collabSpace: {
+        status: 'disabled',
+        threaded: true,
+        auto_accept: true,
+        show_full_history: true,
+        participation_min_replies: 0,
+        participation_min_posts: 0,
+      },
+      objectives: [],
+    } as Page,
+  ];
+
+  const updated = replaceBrokenPageLinks(resources);
+  const page = updated[0] as Page;
+
+  expect((page.content as any).model[0].children[0]).toEqual({
+    type: 'p',
+    children: [{ text: '<broken link: missing-page>' }],
+  });
+  expect((page.content as any).model[0].children[1]).toEqual({
+    type: 'p',
+    children: [{ text: '<broken link: missing-anchor-page>' }],
+  });
+  expect((page.content as any).model[0].children[2]).toEqual({
+    type: 'a',
+    href: 'https://example.org',
+    children: [{ text: 'external link' }],
+  });
+  expect(warn).toHaveBeenCalledWith(
+    'Warning: Replaced broken page_link link missing-page in page page-a (Page A)'
+  );
+  expect(warn).toHaveBeenCalledWith(
+    'Warning: Replaced broken a link missing-anchor-page in page page-a (Page A)'
+  );
+
+  warn.mockRestore();
 });
