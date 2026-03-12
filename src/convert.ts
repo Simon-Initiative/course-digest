@@ -396,16 +396,19 @@ function replaceBrokenPageLinksInNode(
     return node;
   }
 
-  return Object.keys(node).reduce((updated: any, key: string) => {
-    updated[key] = replaceBrokenPageLinksInNode(
-      node[key],
-      validPageIds,
-      brokenLinks,
-      page,
-      node.type
-    );
-    return updated;
-  }, { ...node });
+  return Object.keys(node).reduce(
+    (updated: any, key: string) => {
+      updated[key] = replaceBrokenPageLinksInNode(
+        node[key],
+        validPageIds,
+        brokenLinks,
+        page,
+        node.type
+      );
+      return updated;
+    },
+    { ...node }
+  );
 }
 
 export function replaceBrokenPageLinks(
