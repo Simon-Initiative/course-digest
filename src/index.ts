@@ -23,7 +23,6 @@ import * as path from 'path';
 import * as commandLineArgs from 'command-line-args';
 import { filesize } from 'filesize';
 import * as archiver from 'archiver';
-import { Maybe } from 'tsmonad';
 import * as Merge from './merge';
 import { glob } from 'glob';
 import extract = require('extract-zip');
@@ -51,6 +50,7 @@ const optionDefinitions = [
   { name: 'spreadsheetPath', type: String, alias: 's' },
   { name: 'svnRoot', type: String },
   { name: 'downloadRemote', type: Boolean, alias: 'r' },
+  { name: 'localMinio', type: Boolean },
   { name: 'mergePathA', type: String, alias: 'a' },
   { name: 'mergePathB', type: String, alias: 'b' },
   { name: 'discussionsOn', type: Boolean, alias: 'd' },
@@ -67,6 +67,7 @@ interface CmdOptions extends commandLineArgs.CommandLineOptions {
   inputDir: string;
   svnRoot: string;
   downloadRemote: boolean;
+  localMinio?: boolean;
   specificOrg: string;
   mediaUrlPrefix: string;
   mergePathA: string;
@@ -86,10 +87,36 @@ interface ConvertedResults {
   webContentBundle?: Media.WebContentBundle;
 }
 
+export function localMinioBucketName(): string {
+  return (
+    process.env.MINIO_BUCKET_NAME ||
+    process.env.MINIO_MEDIA_BUCKET_NAME ||
+    process.env.MEDIA_BUCKET_NAME ||
+    process.env.S3_MEDIA_BUCKET_NAME ||
+    'torus-media-dev'
+  );
+}
+
+export function defaultLocalMinioMediaUrlPrefix(): string {
+  const explicitPrefix = process.env.MINIO_MEDIA_URL_PREFIX;
+  if (explicitPrefix) {
+    return explicitPrefix.trim().replace(/\/+$/, '');
+  }
+
+  const endpoint =
+    process.env.MINIO_PUBLIC_URL ||
+    process.env.MINIO_ENDPOINT ||
+    `http://localhost:${process.env.AWS_S3_PORT || '9000'}`;
+
+  return `${endpoint.replace(/\/+$/, '')}/${localMinioBucketName()}/media`;
+}
+
 function validateArgs(options: CmdOptions) {
   if (options.operation === 'convert' || options.operation === 'qti') {
     if (options.mediaUrlPrefix === undefined) {
-      options.mediaUrlPrefix = 'https://d2xvti2irp4c7t.cloudfront.net/media';
+      options.mediaUrlPrefix = options.localMinio
+        ? defaultLocalMinioMediaUrlPrefix()
+        : 'https://d2xvti2irp4c7t.cloudfront.net/media';
     } else {
       // remove any trailing slashes from the media URL prefix
       options.mediaUrlPrefix = options.mediaUrlPrefix
@@ -190,17 +217,16 @@ function readMediaManifest(options: CmdOptions): Media.MediaManifest {
   return JSON.parse(raw.toString());
 }
 
-function uploadMediaItems(items: Media.ProcessedMediaItem[]) {
-  const bucketName = Maybe.maybe(process.env.MEDIA_BUCKET_NAME).valueOrThrow(
-    Error('MEDIA_BUCKET_NAME not set in config')
-  );
-
+function uploadMediaItems(
+  items: Media.ProcessedMediaItem[],
+  options: CmdOptions
+) {
   const uploaders = items.map((m: Media.MediaItem) => {
     return () => {
       console.log(`Uploading ${m.file}...`);
-      return upload(m.file, m.url, m.mimeType, bucketName).then((location) =>
-        console.log(`${location} complete`)
-      );
+      return upload(m.file, m.url, m.mimeType, {
+        localMinio: options.localMinio,
+      }).then((location) => console.log(`${location} complete`));
     };
   });
 
@@ -213,7 +239,7 @@ export function uploadAction(options: CmdOptions) {
     ? manifest.webContentBundle.items
     : [];
 
-  return uploadMediaItems(manifest.mediaItems.concat(bundleItems));
+  return uploadMediaItems(manifest.mediaItems.concat(bundleItems), options);
 }
 
 export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
@@ -388,7 +414,7 @@ function suggestUploadAction(options: CmdOptions) {
   })
     .then((answer: string) => {
       if (anyOf(answer || 'n', 'y', 'yes')) {
-        return uploadMediaItems(manifest.mediaItems).then((_r: any) =>
+        return uploadMediaItems(manifest.mediaItems, options).then((_r: any) =>
           console.log('Done!')
         );
       }
@@ -418,9 +444,10 @@ function suggestUploadAction(options: CmdOptions) {
     .then((answer: string) => {
       if (manifest.webContentBundle) {
         if (anyOf(answer || 'n', 'y', 'yes')) {
-          return uploadMediaItems(manifest.webContentBundle.items).then(
-            (_r: any) => console.log('Done!')
-          );
+          return uploadMediaItems(
+            manifest.webContentBundle.items,
+            options
+          ).then((_r: any) => console.log('Done!'));
         }
 
         console.log('Skipping media bundle upload.');
@@ -538,6 +565,10 @@ function helpAction() {
   console.log(
     'npm run start -- upload --mediaManifest <outputDir/_media-manifest.json>'
   );
+  console.log(
+    'npm run start -- upload --mediaManifest <outputDir/_media-manifest.json> --localMinio'
+  );
+  console.log('\nFor local MinIO, configure MINIO_* values in .env.');
   console.log(
     'npm run start -- summarize --inputDir <course package dir> --outputDir <output dir>\n'
   );
