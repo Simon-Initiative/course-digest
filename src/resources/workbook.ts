@@ -248,6 +248,7 @@ export class WorkbookPage extends Resource {
         material: true,
         anchor: true,
         translation: true,
+        foreign: true,
         dt: true,
         dd: true,
       }).then((r: any) => {
