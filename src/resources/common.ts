@@ -231,6 +231,7 @@ export function standardContentManipulations($: any) {
   $('testandconfigure').remove();
   $('theme').remove();
   $('popout').remove();
+  $('sym[name="rarr"]').replaceWith('<em style="bold">→</em>');
   $('sym').remove();
   $('applet').remove();
   $('director').remove();

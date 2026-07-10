@@ -144,4 +144,24 @@ describe('cdata and codeblocks', () => {
     expect(video.type).toBe('video');
     expect(video.src[0].contenttype).toBe('video/webm');
   });
+
+  test('should convert legacy right-arrow symbols to bold Unicode', async () => {
+    const content =
+      '<root><p>before <sym name="rarr"/> after <sym name="unknown"/></p></root>';
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    expect($('em').attr('style')).toBe('bold');
+    expect($('em').text()).toBe('→');
+    expect($('sym')).toHaveLength(0);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+    const paragraph = result.children[0].children[0];
+    expect(paragraph.children).toContainEqual({ text: '→', strong: true });
+  });
 });
