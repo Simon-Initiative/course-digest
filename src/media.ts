@@ -577,7 +577,7 @@ function generateNewName(
 // XML document into a full path to file in project directory
 export function resolve(reference: MediaItemReference): string {
   let dir = path.dirname(reference.filePath);
-  const originalRef = removeQueryParams(reference.assetReference);
+  const originalRef = removeQueryParams(reference.assetReference.trim());
 
   // First prefer the path as-authored and normal package upward search.
   // This preserves references to nested sibling webcontent folders.
