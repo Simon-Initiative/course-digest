@@ -201,7 +201,8 @@ export class WorkbookPage extends Resource {
           `<cite id="${entryId}" bibref="${bibRef.id}">[citation]</cite>`
         );
       } else {
-        $(elem).remove();
+        // found course using empty cites to wrap text, so strip rather than remove to preserve
+        DOM.stripElement($, elem);
       }
     });
     // Also include any uncited refs. Handles case we've seen of references

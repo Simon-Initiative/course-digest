@@ -231,6 +231,7 @@ export function standardContentManipulations($: any) {
   $('testandconfigure').remove();
   $('theme').remove();
   $('popout').remove();
+  // One course used <sym> for right arrow, just replace with bold unicode char
   $('sym[name="rarr"]').replaceWith('<em style="bold">→</em>');
   $('sym').remove();
   $('applet').remove();
