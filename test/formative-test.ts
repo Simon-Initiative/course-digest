@@ -1,6 +1,8 @@
 import { MediaSummary } from 'src/media';
 import { ProjectSummary } from 'src/project';
 import { Formative } from 'src/resources/formative';
+import { updateDerivativeReferences } from 'src/convert';
+import { Page } from 'src/resources/resource';
 
 const mediaSummary: MediaSummary = {
   mediaItems: {},
@@ -55,5 +57,67 @@ describe('conversion to Torus resources', () => {
         expect(pt5CorrectResponse.rule).toEqual('input = {0.00311}');
         expect(pt5CorrectResponse.score).toEqual(10);
       });
+  });
+
+  test('should trim assessment ids before deriving activities', async () => {
+    const results = await new Formative(
+      './test/content/x-oli-inline-assessment/trailing-assessment-id.xml',
+      true
+    ).convert(projectSummary);
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual(
+      expect.objectContaining({
+        id: 'assessment-with-whitespace-question-one',
+        legacyId: 'assessment-with-whitespace',
+        title: 'assessment-with-whitespace-question-one',
+      })
+    );
+
+    const page = {
+      type: 'Page',
+      id: 'referencing-page',
+      legacyPath: '',
+      legacyId: 'referencing-page',
+      title: 'Referencing page',
+      tags: [],
+      unresolvedReferences: ['assessment-with-whitespace'],
+      warnings: [],
+      content: {
+        model: [
+          {
+            type: 'activity_placeholder',
+            idref: 'assessment-with-whitespace',
+          },
+        ],
+      },
+      isGraded: false,
+      isSurvey: false,
+      collabSpace: {
+        status: 'disabled',
+        threaded: true,
+        auto_accept: true,
+        show_full_history: true,
+        participation_min_posts: 0,
+        participation_min_replies: 0,
+      },
+      objectives: [],
+    } as Page;
+
+    const [updatedPage] = updateDerivativeReferences([
+      page,
+      ...(results as any),
+    ]);
+    expect((updatedPage as Page).content.model).toEqual([
+      expect.objectContaining({
+        type: 'group',
+        children: [
+          expect.objectContaining({
+            type: 'activity-reference',
+            activity_id: 'assessment-with-whitespace-question-one',
+          }),
+        ],
+      }),
+    ]);
   });
 });

@@ -668,6 +668,13 @@ export function determineSubType(question: any): ItemTypes {
 }
 
 export function performRestructure($: any) {
+  $('assessment').each((_i: any, assessment: any) => {
+    const id = $(assessment).attr('id');
+    if (id !== undefined) {
+      $(assessment).attr('id', id.trim());
+    }
+  });
+
   standardContentManipulations($);
 
   DOM.rename($, 'question body', 'stem');
