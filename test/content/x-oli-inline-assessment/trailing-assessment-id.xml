@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE assessment
+  PUBLIC "-//Carnegie Mellon University//DTD Inline Assessment 1.4//EN" "http://oli.web.cmu.edu/dtd/oli_inline_assessment_1_4.dtd">
+<assessment id="assessment-with-whitespace   ">
+  <title>Assessment title</title>
+  <question id="question-one">
+    <body>
+      <p>Question text</p>
+    </body>
+    <multiple_choice shuffle="false">
+      <choice value="correct">Correct</choice>
+      <choice value="incorrect">Incorrect</choice>
+    </multiple_choice>
+    <part>
+      <response match="correct" score="1">
+        <feedback>Correct</feedback>
+      </response>
+      <response match="incorrect" score="0">
+        <feedback>Incorrect</feedback>
+      </response>
+    </part>
+  </question>
+</assessment>

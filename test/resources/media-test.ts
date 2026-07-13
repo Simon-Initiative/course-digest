@@ -50,6 +50,26 @@ describe('Media conversions', () => {
       );
     });
 
+    it('Should trim whitespace around media references', () => {
+      expect(
+        flatten(
+          {
+            filePath: fixturePath(
+              'test',
+              'content',
+              'subdir',
+              'deeper',
+              'fake.xml'
+            ),
+            assetReference: '  ../../webcontent/abby.jpg  ',
+          },
+          testSummary()
+        )
+      ).toEqual(
+        'unit-test://media/62/62dd67c254e1d067d385a32c3f51bf4d/abby.jpg'
+      );
+    });
+
     it('Should prefer nested sibling webcontent folders when present', () => {
       expect(
         flatten(
