@@ -66,6 +66,13 @@ export function removeDoubleGroupHeaders($: any) {
 
 export function performRestructure($: any) {
   failIfPresent($, ['multipanel', 'dependency']);
+
+  $('foreign').each((_i: any, elem: any) => {
+    if ($(elem).children().length === 0 && $(elem).text().trim() === '') {
+      DOM.stripElement($, elem);
+    }
+  });
+
   standardContentManipulations($);
 
   liftTitle($);
