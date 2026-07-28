@@ -6,5 +6,6 @@
   </head>
   <body>
     <p><foreign xml:lang="fr">Il est grand. </foreign><foreign xml:lang="fr"> Il </foreign><foreign xml:lang="fr">est </foreign><foreign xml:lang="fr"> grand.</foreign></p>
+    <p><em><foreign xml:lang="fr">ellui</foreign></em><foreign xml:lang="en_US"> </foreign>as <em><foreign xml:lang="fr">iels</foreign></em><foreign xml:lang="en_US"> </foreign><em><foreign xml:lang="fr">elleux</foreign></em></p>
   </body>
 </workbook_page>

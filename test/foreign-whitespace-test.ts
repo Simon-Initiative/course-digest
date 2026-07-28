@@ -19,11 +19,31 @@ describe('foreign text whitespace', () => {
       true
     ).convert(projectSummary);
 
-    const paragraph = results[0].content.model[0].children[0];
-    const foreignText = paragraph.children.map(
+    const [boundaryParagraph, blankForeignParagraph] =
+      results[0].content.model[0].children;
+    const foreignText = boundaryParagraph.children.map(
       (foreign: any) => foreign.children[0].text
     );
 
     expect(foreignText).toEqual(['Il est grand. ', ' Il ', 'est ', ' grand.']);
+    expect(blankForeignParagraph.children).toEqual([
+      {
+        type: 'foreign',
+        children: [{ text: 'ellui', strong: true }],
+        'xml:lang': 'fr',
+      },
+      { text: ' as ' },
+      {
+        type: 'foreign',
+        children: [{ text: 'iels', strong: true }],
+        'xml:lang': 'fr',
+      },
+      { text: ' ' },
+      {
+        type: 'foreign',
+        children: [{ text: 'elleux', strong: true }],
+        'xml:lang': 'fr',
+      },
+    ]);
   });
 });
