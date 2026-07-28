@@ -75,6 +75,21 @@ describe('cdata and codeblocks', () => {
     expect(img2.type).toBe('img_inline');
   });
 
+  test('should unwrap whitespace-only foreign elements', () => {
+    const content =
+      '<p><foreign xml:lang="fr">bonjour</foreign><foreign xml:lang="en_US"> </foreign><foreign xml:lang="fr">monde</foreign></p>';
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    expect($.xml()).toEqual(
+      '<p><foreign xml:lang="fr">bonjour</foreign> <foreign xml:lang="fr">monde</foreign></p>'
+    );
+  });
+
   test('should reorder default alternative to be first', async () => {
     const content = `
     <alternatives id="abc" group="statistics.package">

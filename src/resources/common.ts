@@ -112,6 +112,14 @@ export function failIfHasValue(
 export function standardContentManipulations($: any) {
   failIfPresent($, ['ipa', 'bdo']);
 
+  // A language course used whitespace-only foreign elements for foreign-text spacing.
+  // Torus authoring removes these, so we unwrap them into ordinary space text
+  $('foreign').each((_i: any, elem: any) => {
+    if ($(elem).children().length === 0 && $(elem).text().trim() === '') {
+      DOM.stripElement($, elem);
+    }
+  });
+
   handleJmolApplets($);
   handleCommandButtons($);
 
