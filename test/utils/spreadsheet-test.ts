@@ -1,4 +1,6 @@
 import * as Magic from 'src/utils/spreadsheet';
+import * as XLSX from 'xlsx';
+import * as tmp from 'tmp';
 
 describe('magic spreadsheet processing', () => {
   test('should process full chemistry workbook', () => {
@@ -51,5 +53,52 @@ describe('magic spreadsheet processing', () => {
 
   test('should fail when encountering a badly formed workbook', () => {
     expect(Magic.process('./test/utils/bad.xlsx')).toBeNull();
+  });
+
+  test('accepts a workbook without the optional LO Ref sheet', () => {
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.aoa_to_sheet([
+        ['Skill', 'Title', 'p', 'gamma0', 'gamma1', 'lambda0'],
+        ['skill_1', 'Skill 1', 0.7, 0.8, 0.9, 1],
+      ]),
+      'Skills'
+    );
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.aoa_to_sheet([
+        ['test', '1'],
+        ['Resource', 'Problem', 'Step', 'Skill1'],
+      ]),
+      'Problems'
+    );
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.aoa_to_sheet([
+        ['test', '1'],
+        ['Learning Objective'],
+        ['objective_1', 'N', 2, 3.5, 7, 'skill_1'],
+      ]),
+      'LOs'
+    );
+    const file = tmp.fileSync({ postfix: '.xlsx' });
+    XLSX.writeFile(workbook, file.name);
+    const warning = jest.spyOn(console, 'warn').mockImplementation();
+
+    const result = Magic.process(file.name);
+
+    expect(result?.objectives).toEqual([
+      expect.objectContaining({
+        id: 'objective_1',
+        title: 'Missing title',
+        skillIds: ['skill_1'],
+      }),
+    ]);
+    expect(warning).toHaveBeenCalledWith(
+      expect.stringContaining('optional LO Ref sheet not found')
+    );
+    warning.mockRestore();
+    file.removeCallback();
   });
 });

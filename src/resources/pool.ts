@@ -164,26 +164,30 @@ export const sectionToQuestion = (s: any): any => {
         );
         subType = 'oli_multi_input';
       }
-      pieces.push(Formative.toActivity(sc, subType, sc.id, 'pool', []).content);
+      const model = Formative.toActivity(sc, subType, sc.id, 'pool', [])
+        .content as any;
+      // Keep the child question id until its parts have been renamed. It is not
+      // included in the merged model emitted to Torus.
+      model.legacyQuestionId = sc.id;
+      pieces.push(model);
     }
   });
 
   // if any one is response_multi, our result must be response_multi
   const multInputsPerPart = pieces.some((q) => q.multInputsPerPart);
 
-  // if >1 questions, get them in shape to be merged:
+  // Get each question in shape to be merged. Even a one-question section is
+  // renamed so its Torus part id documents the legacy child question id.
   const qs = pieces.filter((p) => p.type !== 'content');
-  if (qs.length > 1) {
-    let nPart = 1;
-    qs.forEach((q: any) => {
-      // if result is response_multi, convert any regular multi-inputs
-      if (multInputsPerPart && !q.multInputsPerPart) toResponseMulti(q);
+  const usedPartIds = new Set<string>();
+  qs.forEach((q: any) => {
+    // If the result is response_multi, convert any regular multi-inputs.
+    if (multInputsPerPart && !q.multInputsPerPart) toResponseMulti(q);
 
-      // redo each question's ids to ensure unique over whole merged question
-      makeUniqueIds(q, nPart);
-      nPart += q.authoring.parts.length;
-    });
-  }
+    // Use the child question id as provenance while ensuring all ids in the
+    // synthesized question remain unique.
+    makeUniqueIds(q, q.legacyQuestionId, usedPartIds);
+  });
 
   // Now merge parts into one big question
   const concatLists = (objs: any[], fn: (obj: any) => any[] | undefined) =>
@@ -221,12 +225,32 @@ const toResponseMulti = (q: any) => {
   q.multInputsPerPart = true;
 };
 
-// rewrite all ids using given part number as unique prefix
-const makeUniqueIds = (q: any, nPart: number) => {
+// Rewrite ids using the legacy child question id. Section pools are a rare
+// legacy device for faking a heterogeneous multi-part question, so the common
+// single-part child can preserve its question id directly as the Torus part id.
+const makeUniqueIds = (
+  q: any,
+  legacyQuestionId: string,
+  usedPartIds: Set<string>
+) => {
   const idMap = new Map<string, string>();
-  q.authoring.parts.forEach((part: any) => {
+  const isSinglePart = q.authoring.parts.length === 1;
+  q.authoring.parts.forEach((part: any, index: number) => {
     const oldPartId = part.id;
-    part.id = `p${nPart++}`;
+    const legacyPartId = oldPartId || `p${index + 1}`;
+    const basePartId = isSinglePart
+      ? legacyQuestionId
+      : `${legacyQuestionId}__${legacyPartId}`;
+    let partId = basePartId;
+    let suffix = 2;
+    while (usedPartIds.has(partId)) partId = `${basePartId}__${suffix++}`;
+    if (partId !== basePartId) {
+      console.warn(
+        `Duplicate part id while converting pool section: ${basePartId}; using ${partId}`
+      );
+    }
+    usedPartIds.add(partId);
+    part.id = partId;
     // update any per-part transformations
     q.authoring.transformations
       .filter((t: any) => t.partId === oldPartId)

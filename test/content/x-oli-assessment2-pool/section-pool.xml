@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pool
+  PUBLIC "-//Carnegie Mellon University//DTD Assessment Pool 2.3//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_2_3.dtd">
+<pool id="section_pool">
+  <title>Section pool</title>
+  <section id="question_set_1">
+    <multiple_choice id="legacy_q1">
+      <body><p>First question</p></body>
+      <input shuffle="false">
+        <choice value="a">A</choice>
+        <choice value="b">B</choice>
+      </input>
+      <part id="p1">
+        <response match="a" score="1"><feedback>Correct</feedback></response>
+        <response match="b" score="0"><feedback>Incorrect</feedback></response>
+      </part>
+    </multiple_choice>
+    <multiple_choice id="legacy_q2">
+      <body><p>Second question</p></body>
+      <input shuffle="false">
+        <choice value="a">A</choice>
+        <choice value="b">B</choice>
+      </input>
+      <part id="p1">
+        <response match="a" score="1"><feedback>Correct</feedback></response>
+        <response match="b" score="0"><feedback>Incorrect</feedback></response>
+      </part>
+    </multiple_choice>
+  </section>
+</pool>

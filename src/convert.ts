@@ -158,110 +158,220 @@ function applyMagic(resources: TorusResource[], m: Magic.MagicSpreadsheet) {
     return m;
   }, {});
 
-  m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
-    // If the question id is null, we apply the attached skills to all questions in the resource
-    if (a.questionId === null) {
-      const activities = Object.values(byActivityId).filter(
-        (ac: TorusResource) => ac.id.startsWith(a.resourceId + '-')
-      );
+  const activities = Object.values(byActivityId) as Activity[];
+  const activitiesInLegacyResource = (resourceId: string) =>
+    activities.filter(
+      (activity) =>
+        activity.legacyId === resourceId || activity.tags.includes(resourceId)
+    );
+  const knownLegacyResourceIds = new Set<string>();
+  activities.forEach((activity) => {
+    if (activity.legacyId) knownLegacyResourceIds.add(activity.legacyId);
+    activity.tags.forEach((tag) => knownLegacyResourceIds.add(tag));
+  });
 
-      activities.forEach((activity: TorusResource) => {
-        const mappedSkillIds = a.skillIds.map((id) => {
-          if (bySkillId[id] !== undefined) {
-            return bySkillId[id].id;
-          }
+  type AttachmentTarget = {
+    activity: Activity;
+    partIds: string[];
+    clause: string;
+  };
+
+  const ordinaryPartIds = (
+    activity: Activity,
+    partId: string | null
+  ): string[] => {
+    const ids = Object.keys(activity.objectives);
+    if (partId === null) return ids;
+
+    // First use Step as an opaque id when the legacy and Torus part ids agree.
+    if (ids.includes(partId)) return [partId];
+
+    // In Argument Diagramming custom drag-and-drops, Step names a legacy pN
+    // part, but conversion gives the corresponding Torus part its input's id.
+    // Map that legacy ordinal to the Torus part within this activity only.
+    const ordinalMatch = partId.match(/^p(\d+)$/);
+    if (ordinalMatch !== null) {
+      const ordinal = ids[Number.parseInt(ordinalMatch[1]) - 1];
+      if (ordinal !== undefined) return [ordinal];
+    }
+
+    return [];
+  };
+
+  const resolveAttachment = (
+    attachment: Magic.SpreadsheetAttachment
+  ): AttachmentTarget | null => {
+    const { resourceId, questionId, partId } = attachment;
+    if (questionId === null) return null;
+
+    // Normal convention: Resource names the assessment or pool and Problem
+    // names a question directly within it.
+    const direct = byActivityId[`${resourceId}-${questionId}`] as
+      | Activity
+      | undefined;
+    if (direct !== undefined) {
+      return {
+        activity: direct,
+        partIds: ordinaryPartIds(direct, partId),
+        clause: 'exact resource/question match',
+      };
+    }
+
+    // Some French 1 rows put a globally descriptive legacy question id in
+    // Problem while Resource names a containing test. Match that complete
+    // child id only when unique and prefixed by that activity's legacy resource;
+    // unscoped ids such as q1 or legacy_q1 are intentionally barred.
+    if (!/^q\w+$/.test(questionId)) {
+      const exactQuestionCandidates = activities.filter(
+        (activity) =>
+          questionId.startsWith(`${activity.legacyId}_`) &&
+          activity.id === `${activity.legacyId}-${questionId}`
+      );
+      if (exactQuestionCandidates.length === 1) {
+        return {
+          activity: exactQuestionCandidates[0],
+          partIds: ordinaryPartIds(exactQuestionCandidates[0], partId),
+          clause: 'unique exact legacy question-id match',
+        };
+      }
+      if (exactQuestionCandidates.length > 1) {
+        console.log(
+          `warning: ambiguous exact spreadsheet question id, questionId: ${questionId}`
+        );
+        return null;
+      }
+    }
+
+    // Section-pool convention: several legacy questions were synthesized
+    // into one activity, with each legacy question id retained as its part id.
+    const sectionCandidates = activitiesInLegacyResource(resourceId)
+      .map((activity) => {
+        const ids = Object.keys(activity.objectives);
+        const qualifiedPartId =
+          partId === null ? null : `${questionId}__${partId}`;
+        const partIds = ids.includes(questionId)
+          ? [questionId]
+          : qualifiedPartId !== null && ids.includes(qualifiedPartId)
+          ? [qualifiedPartId]
+          : partId === null
+          ? ids.filter((id) => id.startsWith(`${questionId}__`))
+          : [];
+        return { activity, partIds };
+      })
+      .filter(({ partIds }) => partIds.length > 0);
+    if (sectionCandidates.length === 1) {
+      return {
+        ...sectionCandidates[0],
+        clause: 'section-pool question/part match',
+      };
+    }
+    if (sectionCandidates.length > 1) {
+      console.log(
+        `warning: ambiguous section-pool spreadsheet reference, resourceId: ${resourceId} questionId: ${questionId}`
+      );
+      return null;
+    }
+
+    // Some Argument Diagramming inline assessments call their questions q1, q2, ...
+    // in the sheet even though the XML uses descriptive ids. Resolve only within the
+    // explicitly named legacy resource.
+    const questionOrdinalMatch = questionId.match(/^q(\d+)$/);
+    if (questionOrdinalMatch !== null) {
+      const resourceActivities = activitiesInLegacyResource(resourceId);
+      const ordinal =
+        resourceActivities[Number.parseInt(questionOrdinalMatch[1]) - 1];
+      if (ordinal !== undefined) {
+        return {
+          activity: ordinal,
+          partIds: ordinaryPartIds(ordinal, partId),
+          clause: 'resource-scoped question ordinal match',
+        };
+      }
+    }
+
+    // French 1 compatibility: Resource names containing assessment; Problem has
+    // qualified id embedding pool id and qId. Prefer the longest known prefix.
+    const embeddedResourceId = Array.from(knownLegacyResourceIds)
+      .filter((id) => questionId.startsWith(`${id}_`))
+      .sort((a, b) => b.length - a.length)[0];
+    if (embeddedResourceId !== undefined) {
+      const embeddedQuestionId = questionId.substring(
+        embeddedResourceId.length + 1
+      );
+      if (/^q\w+$/.test(embeddedQuestionId)) {
+        const embeddedActivities =
+          activitiesInLegacyResource(embeddedResourceId);
+
+        // First try the exact legacy question id within the embedded resource.
+        const exactEmbedded = embeddedActivities.filter(
+          (activity) =>
+            activity.id === `${embeddedResourceId}-${questionId}` ||
+            activity.id === `${embeddedResourceId}-${embeddedQuestionId}`
+        );
+        if (exactEmbedded.length === 1) {
+          return {
+            activity: exactEmbedded[0],
+            partIds: ordinaryPartIds(exactEmbedded[0], partId),
+            clause: 'embedded-resource exact question match',
+          };
+        }
+        if (exactEmbedded.length > 1) {
           console.log(
-            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
-              id
+            `warning: ambiguous embedded-resource spreadsheet reference, resourceId: ${embeddedResourceId} questionId: ${questionId}`
           );
           return null;
-        });
+        }
 
-        const objectives = (activity as any).objectives;
+        // Ad hoc French 1 repair: some sheets kept q1, q2, ... after source
+        // questions were renumbered globally, so qN means the Nth question.
+        const questionNumber = Number.parseInt(embeddedQuestionId.substring(1));
+        const ordinal = embeddedActivities[questionNumber - 1];
+        if (Number.isFinite(questionNumber) && ordinal !== undefined) {
+          return {
+            activity: ordinal,
+            partIds: ordinaryPartIds(ordinal, partId),
+            clause: 'French 1 ordinal repair',
+          };
+        }
+      }
+    }
 
-        (activity as any).objectives = Object.keys(objectives).reduce(
-          (m: any, k: string) => {
-            m[k] = mappedSkillIds;
-            return m;
-          },
-          {}
+    return null;
+  };
+
+  const mappedSkillIds = (attachment: Magic.SpreadsheetAttachment) =>
+    attachment.skillIds.map((id) => {
+      if (bySkillId[id] !== undefined) return bySkillId[id].id;
+      console.log(
+        'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
+          id
+      );
+      return null;
+    });
+
+  m.attachments.forEach((a: Magic.SpreadsheetAttachment) => {
+    // Blank Problem means apply the skills to every part derived from Resource.
+    if (a.questionId === null) {
+      const skills = mappedSkillIds(a);
+      activitiesInLegacyResource(a.resourceId).forEach((activity) => {
+        const objectives = activity.objectives as any;
+        Object.keys(objectives).forEach(
+          (partId) => (objectives[partId] = skills)
         );
       });
     } else {
-      let errorDetail = '';
-      let activity = byActivityId[a.resourceId + '-' + a.questionId];
-      if (activity === undefined) {
-        // Could not find directly, see if we can find it by strictly the question id
-        // Assumes some uniquifying id conventions, else could have id=q1 in two assessments
-        activity = Object.values(byActivityId).find((ac: TorusResource) =>
-          ac.id.endsWith('-' + a.questionId)
+      const target = resolveAttachment(a);
+      if (target !== null && target.partIds.length > 0) {
+        const skills = mappedSkillIds(a);
+        const objectives = target.activity.objectives as any;
+        target.partIds.forEach((partId) => (objectives[partId] = skills));
+      } else if (target !== null) {
+        console.log(
+          `warning: could not locate part referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId} partId: ${a.partId} (${target.clause})`
         );
-      }
-      if (activity === undefined) {
-        // try convention found in french1 sheet: questionId of form resourceId_qId where qId
-        // allows matching to question within containing legacy pool or assessment w/id resourceId
-        // This primarily for pools, since pool id nowhere else in sheet, but also used for assessments
-        const matches = a.questionId.match(/(.*)_(q\w+)$/);
-        if (matches) {
-          const [, resourceId, qId] = matches;
-          const isPool =
-            resources.find((r) => r.id === resourceId)?.type === 'Tag';
-
-          // get list of activities within this resource
-          const resourceActivities = isPool
-            ? resources.filter(
-                (r) => r.type === 'Activity' && r.tags.includes(resourceId)
-              )
-            : resources.filter(
-                (r) =>
-                  r.type === 'Activity' && r.id.startsWith(resourceId + '-')
-              );
-          if (resourceActivities.length === 0) {
-            // save for appending to problem not found message
-            errorDetail = `No activities converted for ${resourceId}, may not be referenced`;
-          } else {
-            // found full id of pool questions may differ, but can match on _qId tail
-            activity = resourceActivities.find((a) => a.id.endsWith(`_${qId}`));
-            if (activity === undefined) {
-              // found qIds in french1 assessments renumbered to different base, eg q65, q66, q77, while
-              // qIds like q1, q2, q3 used in sheet. Maybe error, but using qnum as ordinal worked.
-              // Activity order within legacy resource is preserved in list here
-              const qNum = Number.parseInt(qId.substring(1));
-              activity = resourceActivities[qNum - 1];
-            }
-          }
-        }
-      }
-
-      if (activity !== undefined) {
-        const objectives = activity.objectives;
-
-        const mappedSkillIds = a.skillIds.map((id) => {
-          if (bySkillId[id] !== undefined) {
-            return bySkillId[id].id;
-          }
-          console.log(
-            'A skill attachment (in the Problems tab) was not found in the Skill tab: ' +
-              id
-          );
-          return null;
-        });
-
-        // If no partId specified, apply the skills to all parts present in the activity
-        if (a.partId === null) {
-          activity.objectives = Object.keys(objectives).reduce(
-            (m: any, k: string) => {
-              m[k] = mappedSkillIds;
-              return m;
-            },
-            {}
-          );
-        } else {
-          objectives[a.partId] = mappedSkillIds;
-        }
       } else {
         console.log(
-          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId} ${errorDetail}`
+          `warning: could not locate activity referenced from spreadsheet, resourceId: ${a.resourceId} questionId: ${a.questionId}`
         );
       }
     }
