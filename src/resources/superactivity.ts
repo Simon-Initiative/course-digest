@@ -41,12 +41,17 @@ export class Superactivity extends Resource {
         if (!defaults) {
           resolve(['']);
         } else {
-          if (
+          const requiresWrapper =
+            r.children[0].type === 'linked_activity' ||
             file.includes('x-oli-embed-activity-highstakes') ||
             file.includes('x-cmu-ctat-tutor2') ||
             file.includes('x-cmu-ctattutors') ||
-            navigable
-          ) {
+            navigable;
+          if (requiresWrapper) {
+            // Torus cannot navigate directly to an activity. Preserve the
+            // source id as legacyId on both resources so legacy links resolve
+            // to this scored wrapper while its placeholder still resolves to
+            // the embedded activity.
             const activity = toActivity(
               toActivityModel(
                 defaults.base,
@@ -55,7 +60,7 @@ export class Superactivity extends Resource {
                 xml,
                 projectSummary.mediaSummary.webContentBundle?.name
               ),
-              guid(),
+              legacyId,
               defaults.subType,
               title
             );
