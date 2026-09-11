@@ -116,8 +116,26 @@ export interface Page extends TorusResource {
   content: Record<string, unknown>;
   isGraded: boolean;
   isSurvey: boolean;
+  maxAttempts?: number;
   collabSpace: CollabSpaceDefinition;
   objectives: any[];
+}
+
+// Legacy scored resources store their attempt limit as an XML attribute. Both
+// "unlimited" and -1 mean unlimited in legacy content; Torus represents that as 0.
+export function parseLegacyMaxAttempts(resource: any): number | undefined {
+  const value = resource.max_attempts?.trim().toLowerCase();
+  if (value === 'unlimited' || value === '-1') {
+    return 0;
+  }
+  if (!value) {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+
+  // Leave absent or malformed values out so Torus can apply its default.
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
 }
 
 export function isPage(r: TorusResource): r is Page {
