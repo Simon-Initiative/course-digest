@@ -300,7 +300,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const specificOrgPath = `${packageDirectory}/organizations/${specificOrg}/organization.xml`;
     return Convert.convert(projectSummary, specificOrgPath, false).then(
       (results) => {
-        const hierarchy = results[0] as Resources.TorusResource;
+        let hierarchy = results[0] as Resources.Hierarchy;
 
         return processResources(
           (file: string) => Convert.convert(projectSummary, file, false),
@@ -316,6 +316,10 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           let updated = converted;
 
           updated = Convert.updateDerivativeReferences(updated);
+          hierarchy = Convert.addLinkedActivityWrapperContainer(
+            updated,
+            hierarchy
+          );
           updated = Convert.replaceBrokenPageLinks(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);

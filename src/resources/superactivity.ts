@@ -64,13 +64,43 @@ export class Superactivity extends Resource {
               defaults.subType,
               title
             );
-            const model = [
+            const model: any[] = [
               {
                 type: 'activity_placeholder',
                 children: [],
                 idref: activity.legacyId,
               },
             ];
+            const derivedResources: TorusResource[] = [];
+
+            if (isILogosLinkedActivity(r.children[0].type, xml)) {
+              // iLogos diagrams require instructor review and do not call endAttempt.
+              // Mark the embedded activity for manual grading and add an unscored
+              // confirmation activity so the scored wrapper retains its Submit button.
+              activity.content.authoring.parts[0].gradingApproach = 'manual';
+
+              const confirmation = toActivity(
+                toILogosCompletionModel(),
+                `${legacyId}-completion-confirmation`,
+                'oli_check_all_that_apply',
+                'Diagram Completion Confirmation'
+              );
+
+              // A survey excludes the confirmation from the wrapper's score while its
+              // second activity prevents Torus's singleton-superactivity auto-finalization.
+              model.push({
+                type: 'survey',
+                id: guid(),
+                children: [
+                  {
+                    type: 'activity-reference',
+                    activity_id: confirmation.id,
+                    id: guid(),
+                  },
+                ],
+              });
+              derivedResources.push(confirmation);
+            }
             const page: Page = {
               type: 'Page',
               id: legacyId,
@@ -86,7 +116,7 @@ export class Superactivity extends Resource {
               warnings: [],
               collabSpace: defaultCollabSpaceDefinition(),
             };
-            resolve([page, activity]);
+            resolve([page, activity, ...derivedResources]);
           } else {
             resolve([
               toActivity(
@@ -134,6 +164,88 @@ export class Superactivity extends Resource {
         .catch((err) => reject(err));
     });
   }
+}
+
+function isILogosLinkedActivity(type: string, xml: string): boolean {
+  // Media rewriting changes directory paths before translation, but preserves the
+  // distinctive iLogos driver filename declared by each linked diagram activity.
+  return type === 'linked_activity' && /ilogosdriver\.js/i.test(xml);
+}
+
+function toILogosCompletionModel() {
+  const partId = guid();
+  const choiceId = guid();
+  const correctResponseId = guid();
+
+  return {
+    type: 'TargetedCATA',
+    stem: {
+      id: guid(),
+      content: [
+        {
+          type: 'p',
+          children: [{ text: 'Confirm completion:' }],
+        },
+      ],
+    },
+    choices: [
+      {
+        id: choiceId,
+        content: [
+          {
+            type: 'p',
+            children: [{ text: 'I have completed my diagram.' }],
+          },
+        ],
+      },
+    ],
+    authoring: {
+      version: 2,
+      parts: [
+        {
+          id: partId,
+          gradingApproach: 'automatic',
+          outOf: null,
+          responses: [
+            {
+              id: correctResponseId,
+              score: 1,
+              rule: `input like {${choiceId}}`,
+              feedback: makeFeedback('Completion confirmed.'),
+            },
+            {
+              id: guid(),
+              score: 0,
+              rule: 'input like {.*}',
+              feedback: makeFeedback(
+                'Please confirm that you completed your diagram.'
+              ),
+            },
+          ],
+          hints: [makeHint(), makeHint(), makeHint()],
+          objectives: [],
+          explanation: null,
+          targeted: [],
+        },
+      ],
+      transformations: [],
+      previewText: '',
+      targeted: [],
+      correct: [[choiceId], correctResponseId],
+      incorrect: [],
+    },
+  };
+}
+
+function makeFeedback(text: string) {
+  return {
+    id: guid(),
+    content: [{ type: 'p', children: [{ text }] }],
+  };
+}
+
+function makeHint() {
+  return makeFeedback('');
 }
 
 function toActivity(

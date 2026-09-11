@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE linked_activity PUBLIC "-//Carnegie Mellon University//DTD Linked 1.0//EN" "http://oli.cmu.edu/dtd/oli-linked-activity_1.0.dtd">
+<linked_activity id="ilogos_diagram" width="800" height="500">
+    <title>Argument Diagram</title>
+    <source>webcontent/api/oli.v2.min.js</source>
+    <assets>
+        <asset name="javascript">webcontent/ilogos/ilogosdriver.js</asset>
+        <asset name="layout">webcontent/ilogos/index.html</asset>
+    </assets>
+</linked_activity>
