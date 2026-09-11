@@ -117,6 +117,7 @@ export interface Page extends TorusResource {
   isGraded: boolean;
   isSurvey: boolean;
   maxAttempts?: number;
+  recommendedAttempts?: number;
   collabSpace: CollabSpaceDefinition;
   objectives: any[];
 }
@@ -135,6 +136,20 @@ export function parseLegacyMaxAttempts(resource: any): number | undefined {
   const parsed = Number(value);
 
   // Leave absent or malformed values out so Torus can apply its default.
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
+// Recommended attempts has no unlimited form, so pass through only a valid
+// non-negative count and otherwise allow Torus to supply its default.
+export function parseLegacyRecommendedAttempts(
+  resource: any
+): number | undefined {
+  const value = resource.recommended_attempts?.trim();
+  if (!value) {
+    return undefined;
+  }
+
+  const parsed = Number(value);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
 }
 

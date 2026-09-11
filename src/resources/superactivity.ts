@@ -6,6 +6,7 @@ import {
   Page,
   defaultCollabSpaceDefinition,
   parseLegacyMaxAttempts,
+  parseLegacyRecommendedAttempts,
 } from './resource';
 import { guid } from 'src/utils/common';
 import * as XML from 'src/utils/xml';
@@ -79,6 +80,9 @@ export class Superactivity extends Resource {
               isGraded: true,
               isSurvey: false,
               maxAttempts: parseLegacyMaxAttempts(r.children[0]),
+              recommendedAttempts: parseLegacyRecommendedAttempts(
+                r.children[0]
+              ),
               objectives: [],
               warnings: [],
               collabSpace: defaultCollabSpaceDefinition(),

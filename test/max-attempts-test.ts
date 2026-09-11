@@ -1,7 +1,11 @@
 import { convert } from 'src/convert';
 import { MediaSummary } from 'src/media';
 import { ProjectSummary } from 'src/project';
-import { Page, parseLegacyMaxAttempts } from 'src/resources/resource';
+import {
+  Page,
+  parseLegacyMaxAttempts,
+  parseLegacyRecommendedAttempts,
+} from 'src/resources/resource';
 import { Superactivity } from 'src/resources/superactivity';
 
 const mediaSummary: MediaSummary = {
@@ -19,7 +23,7 @@ const projectSummary = new ProjectSummary(
   mediaSummary
 );
 
-describe('maximum assessment attempts', () => {
+describe('assessment attempt settings', () => {
   test('passes through max_attempts from a legacy assessment', async () => {
     const resources = await convert(
       projectSummary,
@@ -31,6 +35,7 @@ describe('maximum assessment attempts', () => {
     ) as Page;
 
     expect(page.maxAttempts).toBe(3);
+    expect(page.recommendedAttempts).toBe(3);
   });
 
   test('passes through max_attempts to a synthesized superactivity wrapper', async () => {
@@ -56,6 +61,25 @@ describe('maximum assessment attempts', () => {
     'omits absent or invalid legacy value %s',
     (max_attempts) => {
       expect(parseLegacyMaxAttempts({ max_attempts })).toBeUndefined();
+    }
+  );
+
+  test.each([
+    ['0', 0],
+    ['1', 1],
+    ['100', 100],
+  ])('passes through recommended_attempts value %s', (value, expected) => {
+    expect(
+      parseLegacyRecommendedAttempts({ recommended_attempts: value })
+    ).toBe(expected);
+  });
+
+  test.each([undefined, '', 'unlimited', '1.5', '-1'])(
+    'omits absent or invalid recommended_attempts value %s',
+    (recommended_attempts) => {
+      expect(
+        parseLegacyRecommendedAttempts({ recommended_attempts })
+      ).toBeUndefined();
     }
   );
 });
