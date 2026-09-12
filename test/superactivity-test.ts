@@ -1,5 +1,5 @@
 import {
-  addLinkedActivityWrapperContainer,
+  addLinkedActivityWrapperReferencesToOrganizations,
   updateDerivativeReferences,
 } from 'src/convert';
 import { MediaSummary } from 'src/media';
@@ -165,7 +165,7 @@ describe('legacy linked activities', () => {
     ]);
   });
 
-  test('groups linked activity wrappers referenced by banked questions in the hierarchy', () => {
+  test('adds reachable linked activity wrappers to the hierarchy root', () => {
     const assessment = {
       type: 'Page',
       id: 'quiz',
@@ -263,9 +263,47 @@ describe('legacy linked activities', () => {
         },
       ],
     } as Hierarchy;
+    const product = {
+      type: 'Product',
+      id: 'short-product',
+      legacyId: '',
+      title: 'Short organization',
+      legacyPath: '',
+      tags: [],
+      unresolvedReferences: [],
+      warnings: [],
+      children: [
+        {
+          type: 'container',
+          id: 'short-content',
+          title: 'Short Content',
+          children: [{ type: 'item', idref: 'quiz', children: [] }],
+        },
+      ],
+    } as any;
+    const unrelatedProduct = {
+      ...product,
+      id: 'unrelated-product',
+      title: 'Unrelated organization',
+      children: [
+        {
+          type: 'container',
+          id: 'unrelated-content',
+          title: 'Unrelated Content',
+          children: [{ type: 'item', idref: 'other-page', children: [] }],
+        },
+      ],
+    } as any;
 
-    addLinkedActivityWrapperContainer(
-      [assessment, bankedQuestion, wrapper, linkedActivity],
+    addLinkedActivityWrapperReferencesToOrganizations(
+      [
+        assessment,
+        bankedQuestion,
+        wrapper,
+        linkedActivity,
+        product,
+        unrelatedProduct,
+      ],
       hierarchy
     );
 
@@ -274,12 +312,16 @@ describe('legacy linked activities', () => {
         type: 'container',
         title: 'Course Content',
       }),
+      { type: 'item', idref: 'diagram', children: [] },
+    ]);
+    expect(product.children).toEqual([
       expect.objectContaining({
         type: 'container',
-        title: 'Linked Activities',
-        children: [{ type: 'item', idref: 'diagram', children: [] }],
+        title: 'Short Content',
       }),
+      { type: 'item', idref: 'diagram', children: [] },
     ]);
+    expect(unrelatedProduct.children).toHaveLength(1);
     expect(assessment.content.model).toHaveLength(1);
     expect(assessment.unresolvedReferences).toEqual(['diagram-pool']);
   });
@@ -312,9 +354,9 @@ describe('legacy linked activities', () => {
       children: [],
     } as Hierarchy;
 
-    expect(addLinkedActivityWrapperContainer([assessment], hierarchy)).toBe(
-      hierarchy
-    );
+    expect(
+      addLinkedActivityWrapperReferencesToOrganizations([assessment], hierarchy)
+    ).toBe(hierarchy);
     expect(hierarchy.children).toEqual([]);
     expect(assessment.content.model).toHaveLength(1);
   });
@@ -384,7 +426,7 @@ describe('legacy linked activities', () => {
       ],
     } as Hierarchy;
 
-    addLinkedActivityWrapperContainer(
+    addLinkedActivityWrapperReferencesToOrganizations(
       [bankedQuestion, wrapper, linkedActivity],
       hierarchy
     );

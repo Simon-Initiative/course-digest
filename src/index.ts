@@ -316,10 +316,6 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
           let updated = converted;
 
           updated = Convert.updateDerivativeReferences(updated);
-          hierarchy = Convert.addLinkedActivityWrapperContainer(
-            updated,
-            hierarchy
-          );
           updated = Convert.replaceBrokenPageLinks(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);
@@ -348,6 +344,14 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
             specificOrg,
             projectSummary
           ).then((updated) => {
+            // Products contain the alternate legacy organization hierarchies, so linked
+            // activity wrapper references must be added after Products have been created.
+            hierarchy =
+              Convert.addLinkedActivityWrapperReferencesToOrganizations(
+                updated,
+                hierarchy
+              );
+
             return addWebContentToMediaSummary(
               packageDirectory,
               projectSummary,
