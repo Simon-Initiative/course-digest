@@ -13,7 +13,7 @@ export type SpreadsheetObjective = {
 
 export type SpreadsheetAttachment = {
   resourceId: string;
-  questionId: string;
+  questionId: string | null;
   partId: string | null;
   skillIds: string[];
 };
@@ -28,12 +28,12 @@ import * as XLSX from 'xlsx';
 
 // Processes the 'Magic Spreadsheet' - an Excel sheet that defines the learning
 // model to a course external to the XML.  This spreadsheet has a defined structure of
-// four named sheets:
+// three required named sheets and one optional sheet:
 //
 // 'Skills' - a listing of all of the skills and their details
 // 'Problems' - a definition of the mapping of skills to questions/parts
 // 'LOs' - a definition of which LOs a skill belongs to
-// 'LO Ref' - details of LOs
+// 'LO Ref' - optional display details for LOs
 export function process(file: string): MagicSpreadsheet | null {
   const workbook = XLSX.readFile(file);
   if (isValid(workbook)) {
@@ -83,6 +83,15 @@ function extractLORefs(
 ): Record<string, SpreadsheetObjective> {
   const sheet = wb.Sheets['LO Ref'];
   const all: Record<string, SpreadsheetObjective> = {};
+
+  // LO Ref only supplies titles. Course-defined objectives can provide those,
+  // so a missing sheet is noteworthy but does not invalidate the workbook.
+  if (sheet === undefined) {
+    console.warn(
+      'warning: optional LO Ref sheet not found; using course-defined learning objective titles where available'
+    );
+    return all;
+  }
 
   try {
     let row = 2;
@@ -151,7 +160,7 @@ function extractLOs(
       row++;
     }
   } catch (e) {
-    console.log('error encountered in extracting LO Refs: ' + e);
+    console.log('error encountered in extracting LOs: ' + e);
   }
   return all;
 }
@@ -187,8 +196,5 @@ function extractAttachments(wb: XLSX.WorkBook): SpreadsheetAttachment[] {
 }
 
 function isValid(wb: XLSX.WorkBook) {
-  return (
-    wb.Sheets['Skills'] && wb.Sheets['Problems'] && wb.Sheets['LOs']
-    // && wb.Sheets['LO Ref']
-  );
+  return wb.Sheets['Skills'] && wb.Sheets['Problems'] && wb.Sheets['LOs'];
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE pool
+  PUBLIC "-//Carnegie Mellon University//DTD Assessment Pool 2.3//EN" "http://oli.web.cmu.edu/dtd/oli_assessment_2_3.dtd">
+<pool id="rich_choice_section_pool">
+  <title>Rich-choice section pool</title>
+  <section id="question_set_1">
+    <multiple_choice id="table_question">
+      <body><p>Choose the best table.</p></body>
+      <input shuffle="true">
+        <choice value="table">
+          <table>
+            <tr><td>Statement</td><td>First sentence.</td></tr>
+            <tr><td>Statement</td><td>Second sentence.</td></tr>
+          </table>
+        </choice>
+        <choice value="plain">A plain alternative</choice>
+      </input>
+      <part id="p1">
+        <response match="table" score="1"><feedback>Correct</feedback></response>
+        <response match="plain" score="0"><feedback>Incorrect</feedback></response>
+      </part>
+    </multiple_choice>
+    <multiple_choice id="plain_question">
+      <body><p>Choose some text.</p></body>
+      <input shuffle="true">
+        <choice value="yes">Yes</choice>
+        <choice value="no">No</choice>
+      </input>
+      <part id="p1">
+        <response match="yes" score="1"><feedback>Correct</feedback></response>
+        <response match="no" score="0"><feedback>Incorrect</feedback></response>
+      </part>
+    </multiple_choice>
+    <multiple_choice id="image_question">
+      <body><p>Choose the best diagram.</p></body>
+      <input shuffle="true">
+        <choice value="first">
+          <image src="../webcontent/first.png" alt="First diagram" width="350" />
+        </choice>
+        <choice value="second">
+          <image src="../webcontent/second.png" alt="Second diagram" width="350" />
+        </choice>
+      </input>
+      <part id="p1">
+        <response match="first" score="0"><feedback>Incorrect</feedback></response>
+        <response match="second" score="1"><feedback>Correct</feedback></response>
+      </part>
+    </multiple_choice>
+  </section>
+</pool>
