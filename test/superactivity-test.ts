@@ -11,7 +11,12 @@ import {
   Page,
   TorusResource,
 } from 'src/resources/resource';
-import { Superactivity } from 'src/resources/superactivity';
+import {
+  addILogosArgumentsToWrapperPages,
+  deduplicateILogosCompletionActivity,
+  ILOGOS_COMPLETION_ID,
+  Superactivity,
+} from 'src/resources/superactivity';
 
 const mediaSummary: MediaSummary = {
   mediaItems: {},
@@ -76,7 +81,7 @@ describe('legacy linked activities', () => {
     ]);
   });
 
-  test('adds manual grading and an unscored completion confirmation to iLogos wrappers', async () => {
+  test('adds a scored banked completion confirmation to iLogos wrappers', async () => {
     const converted = await new Superactivity(
       './test/content/x-oli-linked-activity/ilogos.xml',
       false
@@ -95,18 +100,19 @@ describe('legacy linked activities', () => {
       (activity) => activity.legacyId === 'ilogos_diagram'
     ) as Activity;
     const confirmation = activities.find(
-      (activity) =>
-        activity.legacyId === 'ilogos_diagram-completion-confirmation'
+      (activity) => activity.legacyId === ILOGOS_COMPLETION_ID
     ) as Activity;
 
     expect(converted).toHaveLength(3);
     expect((ilogos.content as any).authoring.parts[0].gradingApproach).toBe(
-      'manual'
+      'automatic'
     );
     expect(confirmation).toEqual(
       expect.objectContaining({
         title: 'Diagram Completion Confirmation',
         subType: 'oli_check_all_that_apply',
+        scope: 'banked',
+        tags: [ILOGOS_COMPLETION_ID],
       })
     );
     expect(confirmation.content).toEqual(
@@ -116,7 +122,7 @@ describe('legacy linked activities', () => {
           expect.objectContaining({
             content: [
               expect.objectContaining({
-                children: [{ text: 'I have completed my diagram.' }],
+                children: [{ text: 'Diagram complete' }],
               }),
             ],
           }),
@@ -129,13 +135,20 @@ describe('legacy linked activities', () => {
         idref: 'ilogos_diagram',
       }),
       expect.objectContaining({
-        type: 'survey',
-        children: [
-          expect.objectContaining({
-            type: 'activity-reference',
-            activity_id: confirmation.id,
-          }),
-        ],
+        type: 'selection',
+        count: 1,
+        logic: {
+          conditions: {
+            operator: 'all',
+            children: [
+              {
+                fact: 'tags',
+                operator: 'equals',
+                value: [ILOGOS_COMPLETION_ID],
+              },
+            ],
+          },
+        },
       }),
     ]);
 
@@ -155,13 +168,181 @@ describe('legacy linked activities', () => {
         ],
       }),
       expect.objectContaining({
-        type: 'survey',
-        children: [
-          expect.objectContaining({
-            activity_id: confirmation.id,
-          }),
-        ],
+        type: 'selection',
+        count: 1,
       }),
+    ]);
+  });
+
+  test('keeps one shared iLogos completion question', async () => {
+    const first = await new Superactivity(
+      './test/content/x-oli-linked-activity/ilogos.xml',
+      false
+    ).convert(projectSummary);
+    const second = await new Superactivity(
+      './test/content/x-oli-linked-activity/ilogos.xml',
+      false
+    ).convert(projectSummary);
+
+    const resources = [...first, ...second].filter(
+      (resource): resource is TorusResource => typeof resource !== 'string'
+    );
+    const deduplicated = deduplicateILogosCompletionActivity(resources);
+
+    expect(
+      deduplicated.filter(
+        (resource) => resource.legacyId === ILOGOS_COMPLETION_ID
+      )
+    ).toHaveLength(1);
+  });
+
+  test('copies the linked bank question argument onto the iLogos wrapper', async () => {
+    const converted = await new Superactivity(
+      './test/content/x-oli-linked-activity/ilogos.xml',
+      false
+    ).convert(projectSummary);
+    const resources = converted.filter(
+      (resource): resource is TorusResource => typeof resource !== 'string'
+    );
+    const bankedQuestion = {
+      type: 'Activity',
+      id: 'diagram-question',
+      legacyId: 'diagram-pool',
+      title: 'Diagram question',
+      legacyPath: '',
+      tags: ['diagram-pool'],
+      unresolvedReferences: ['ilogos_diagram'],
+      warnings: [],
+      scope: 'banked',
+      subType: 'oli_multiple_choice',
+      objectives: [],
+      content: {
+        stem: {
+          content: [
+            {
+              type: 'p',
+              children: [{ text: 'Diagram the following argument:' }],
+            },
+            {
+              type: 'p',
+              children: [
+                {
+                  text: 'My computer is conscious because it can think.',
+                  strong: true,
+                },
+              ],
+            },
+            {
+              type: 'p',
+              children: [
+                {
+                  type: 'a',
+                  idref: 'ilogos_diagram',
+                  children: [{ text: 'Open iLogos' }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    } as Activity;
+
+    const updated = addILogosArgumentsToWrapperPages([
+      ...resources,
+      bankedQuestion,
+    ]);
+    const wrapper = updated.find(
+      (resource) => resource.type === 'Page'
+    ) as Page;
+
+    expect(wrapper.content.model).toEqual([
+      {
+        type: 'content',
+        id: expect.any(String),
+        children: [
+          {
+            type: 'p',
+            children: [{ text: 'Diagram the following argument:' }],
+          },
+          {
+            type: 'p',
+            children: [
+              {
+                text: 'My computer is conscious because it can think.',
+                strong: true,
+              },
+            ],
+          },
+        ],
+      },
+      expect.objectContaining({
+        type: 'activity_placeholder',
+        idref: 'ilogos_diagram',
+      }),
+      expect.objectContaining({ type: 'selection' }),
+    ]);
+    expect(bankedQuestion.warnings).toEqual([]);
+
+    const rerun = addILogosArgumentsToWrapperPages(updated);
+    const rerunWrapper = rerun.find(
+      (resource) => resource.type === 'Page'
+    ) as Page;
+    expect(rerunWrapper.content.model).toEqual(wrapper.content.model);
+  });
+
+  test('warns and leaves an iLogos wrapper unchanged when argument markup is missing', async () => {
+    const converted = await new Superactivity(
+      './test/content/x-oli-linked-activity/ilogos.xml',
+      false
+    ).convert(projectSummary);
+    const resources = converted.filter(
+      (resource): resource is TorusResource => typeof resource !== 'string'
+    );
+    const wrapper = resources.find(
+      (resource) => resource.type === 'Page'
+    ) as Page;
+    const originalModel = wrapper.content.model;
+    const bankedQuestion = {
+      type: 'Activity',
+      id: 'diagram-question',
+      legacyId: 'diagram-pool',
+      title: 'Diagram question',
+      legacyPath: '',
+      tags: ['diagram-pool'],
+      unresolvedReferences: ['ilogos_diagram'],
+      warnings: [],
+      scope: 'banked',
+      subType: 'oli_multiple_choice',
+      objectives: [],
+      content: {
+        stem: {
+          content: [
+            {
+              type: 'p',
+              children: [
+                {
+                  type: 'a',
+                  idref: 'ilogos_diagram',
+                  children: [{ text: 'Open iLogos' }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    } as Activity;
+
+    const updated = addILogosArgumentsToWrapperPages([
+      ...resources,
+      bankedQuestion,
+    ]);
+    const updatedWrapper = updated.find(
+      (resource) => resource.type === 'Page'
+    ) as Page;
+
+    expect(updatedWrapper.content.model).toBe(originalModel);
+    expect(bankedQuestion.warnings).toEqual([
+      expect.objectContaining({ idref: 'ilogos_diagram' }),
     ]);
   });
 

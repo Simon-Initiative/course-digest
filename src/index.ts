@@ -28,6 +28,10 @@ import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
 import { isActivity, isPage, TorusResource } from './resources/resource';
+import {
+  addILogosArgumentsToWrapperPages,
+  deduplicateILogosCompletionActivity,
+} from './resources/superactivity';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -315,7 +319,9 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 
           let updated = converted;
 
+          updated = addILogosArgumentsToWrapperPages(updated);
           updated = Convert.updateDerivativeReferences(updated);
+          updated = deduplicateILogosCompletionActivity(updated);
           updated = Convert.replaceBrokenPageLinks(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);
