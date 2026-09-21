@@ -7,6 +7,8 @@ import {
   Summary,
   Page,
   defaultCollabSpaceDefinition,
+  parseLegacyMaxAttempts,
+  parseLegacyRecommendedAttempts,
 } from './resource';
 import {
   processCodeblock,
@@ -160,6 +162,10 @@ export class Summative extends Resource {
         page.isGraded = true;
         page.title = title;
         page.unresolvedReferences = unresolvedReferences;
+        page.maxAttempts = parseLegacyMaxAttempts(r.children[0]);
+        page.recommendedAttempts = parseLegacyRecommendedAttempts(
+          r.children[0]
+        );
 
         resolve([page, ...items]);
       });
