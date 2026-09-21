@@ -5,6 +5,7 @@ import {
   ResourceType,
   Page,
   Activity,
+  Hierarchy,
   NonDirectImageReference,
 } from './resources/resource';
 import { determineResourceType, create } from './resources/create';
@@ -429,6 +430,156 @@ export function updateDerivativeReferences(
       legacyMyResponseFeedbackIds
     )
   );
+}
+
+type OrganizationHierarchy = Pick<Hierarchy, 'children'>;
+
+type LinkedActivityWrapperContext = {
+  linkedActivityIds: Set<string>;
+  resourcesByReference: Map<string, TorusResource[]>;
+  wrapperPages: Page[];
+};
+
+function addLinkedActivityWrapperReferences(
+  context: LinkedActivityWrapperContext,
+  hierarchy: OrganizationHierarchy
+): OrganizationHierarchy {
+  // Start with this organization's curriculum items, then follow page, assessment, and
+  // pool references. This prevents one organization's linked activities from leaking into
+  // unrelated Products generated from other legacy organizations.
+  const pendingReferences = getDescendants(hierarchy.children, 'item')
+    .map((item: any) => item.idref)
+    .filter((idref: unknown): idref is string => typeof idref === 'string');
+  const visitedReferences = new Set<string>();
+  const linkedIdsFromBankedQuestions = new Set<string>();
+
+  while (pendingReferences.length > 0) {
+    const reference = pendingReferences.pop() as string;
+    if (visitedReferences.has(reference)) continue;
+    visitedReferences.add(reference);
+
+    (context.resourcesByReference.get(reference) || []).forEach((resource) => {
+      if (
+        resource.type === 'Activity' &&
+        (resource as Activity).scope === 'banked'
+      ) {
+        // Only links in reachable banked questions need this workaround. Links in ordinary
+        // page content are already visible to Torus's section reachability analysis.
+        getDescendants(
+          ((resource as Activity).content as any).stem?.content,
+          'a'
+        )
+          .map((link: any) => link.idref)
+          .filter(
+            (idref: unknown): idref is string =>
+              typeof idref === 'string' && context.linkedActivityIds.has(idref)
+          )
+          .forEach((idref: string) => linkedIdsFromBankedQuestions.add(idref));
+      }
+
+      resource.unresolvedReferences.forEach((idref) => {
+        if (!visitedReferences.has(idref)) pendingReferences.push(idref);
+      });
+    });
+  }
+
+  if (linkedIdsFromBankedQuestions.size === 0) return hierarchy;
+
+  // Do not duplicate a wrapper that the legacy organization already placed in the
+  // curriculum. Hierarchy items retain legacy idrefs until Torus ingestion rewires them.
+  const existingPageIds = new Set(
+    getDescendants(hierarchy.children, 'item')
+      .map((item: any) => item.idref)
+      .filter((idref: unknown): idref is string => typeof idref === 'string')
+  );
+
+  // Follow resource order for stable, source-oriented ordering at the curriculum root.
+  // Root-level items remain easy to find and hide in Remix without leaving an empty
+  // student-visible container after all of the wrapper pages have been hidden.
+  const wrapperIds = context.wrapperPages
+    .filter(
+      (page) =>
+        linkedIdsFromBankedQuestions.has(page.legacyId) &&
+        !existingPageIds.has(page.legacyId)
+    )
+    .map((page) => page.legacyId);
+
+  if (wrapperIds.length === 0) return hierarchy;
+
+  hierarchy.children.push(
+    ...wrapperIds.map((idref) => ({
+      type: 'item',
+      idref,
+      children: [],
+    }))
+  );
+
+  return hierarchy;
+}
+
+// Legacy linked activities can be launched from questions selected from a pool. Torus's
+// section reachability analysis does not inspect every possible activity-bank selection,
+// so add their scored wrapper pages to the root of every organization that can reach the
+// selecting assessment. Alternate organizations are emitted as Product resources.
+export function addLinkedActivityWrapperReferencesToOrganizations(
+  resources: TorusResource[],
+  hierarchy: Hierarchy
+): Hierarchy {
+  // This feature is rare (it currently supports the Argument Diagramming course), so
+  // courses without legacy linked activities should exit after one inexpensive scan.
+  const linkedActivityIds = new Set(
+    resources
+      .filter((resource): resource is Activity => resource.type === 'Activity')
+      .filter((activity) => {
+        const modelXml = activity.content.modelXml;
+        return (
+          typeof modelXml === 'string' &&
+          /<linked_activity(?:\s|>)/.test(modelXml)
+        );
+      })
+      .map((activity) => activity.legacyId)
+  );
+
+  if (linkedActivityIds.size === 0) return hierarchy;
+
+  // Resources retain unresolved legacy references through derivative-reference rewriting.
+  // Index both legacy and current ids so this traversal also works for resources whose ids
+  // were not changed during conversion.
+  const resourcesByReference = resources.reduce(
+    (index: Map<string, TorusResource[]>, resource) => {
+      [resource.legacyId, resource.id].forEach((reference) => {
+        if (!reference) return;
+        const matches = index.get(reference) || [];
+        if (!matches.includes(resource)) matches.push(resource);
+        index.set(reference, matches);
+      });
+      return index;
+    },
+    new Map<string, TorusResource[]>()
+  );
+
+  const context = {
+    linkedActivityIds,
+    resourcesByReference,
+    wrapperPages: resources.filter(
+      (resource): resource is Page =>
+        resource.type === 'Page' && linkedActivityIds.has(resource.legacyId)
+    ),
+  };
+
+  addLinkedActivityWrapperReferences(context, hierarchy);
+
+  resources
+    .filter(
+      (resource): resource is TorusResource & OrganizationHierarchy =>
+        resource.type === 'Product' &&
+        Array.isArray(
+          (resource as TorusResource & OrganizationHierarchy).children
+        )
+    )
+    .forEach((product) => addLinkedActivityWrapperReferences(context, product));
+
+  return hierarchy;
 }
 
 const inlineParents = new Set([

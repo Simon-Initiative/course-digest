@@ -28,6 +28,10 @@ import { glob } from 'glob';
 import extract = require('extract-zip');
 import * as QTI from './qti';
 import { isActivity, isPage, TorusResource } from './resources/resource';
+import {
+  addILogosArgumentsToWrapperPages,
+  deduplicateILogosCompletionActivity,
+} from './resources/superactivity';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -300,7 +304,7 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
     const specificOrgPath = `${packageDirectory}/organizations/${specificOrg}/organization.xml`;
     return Convert.convert(projectSummary, specificOrgPath, false).then(
       (results) => {
-        const hierarchy = results[0] as Resources.TorusResource;
+        let hierarchy = results[0] as Resources.Hierarchy;
 
         return processResources(
           (file: string) => Convert.convert(projectSummary, file, false),
@@ -315,7 +319,9 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
 
           let updated = converted;
 
+          updated = addILogosArgumentsToWrapperPages(updated);
           updated = Convert.updateDerivativeReferences(updated);
+          updated = deduplicateILogosCompletionActivity(updated);
           updated = Convert.replaceBrokenPageLinks(updated);
           updated = Convert.generatePoolTags(updated);
           updated = Convert.fixWildcardSelections(updated);
@@ -344,6 +350,14 @@ export function convertAction(options: CmdOptions): Promise<ConvertedResults> {
             specificOrg,
             projectSummary
           ).then((updated) => {
+            // Products contain the alternate legacy organization hierarchies, so linked
+            // activity wrapper references must be added after Products have been created.
+            hierarchy =
+              Convert.addLinkedActivityWrapperReferencesToOrganizations(
+                updated,
+                hierarchy
+              );
+
             return addWebContentToMediaSummary(
               packageDirectory,
               projectSummary,
