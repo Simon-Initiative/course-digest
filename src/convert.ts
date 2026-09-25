@@ -414,6 +414,33 @@ export function updateDerivativeReferences(
   // must updated in their parent resource
   const byLegacyId: DerivedResourceMap = bucketByLegacyId(resources);
 
+  // A synthesized superactivity wrapper deliberately shares its legacy id with
+  // the activity it contains. Remember those collisions before resolving any
+  // placeholders, since resolution mutates page models in resource order.
+  const scoredSuperactivityWrapperIds = new Set(
+    resources
+      .filter((resource): resource is Page => resource.type === 'Page')
+      .filter((page) => {
+        const model = (page.content as any).model;
+        const derived = byLegacyId[page.id] || [];
+
+        return (
+          page.isGraded &&
+          Array.isArray(model) &&
+          model.some(
+            (item: any) =>
+              item.type === 'activity_placeholder' && item.idref === page.id
+          ) &&
+          derived.some(
+            (resource) =>
+              resource.type === 'Activity' &&
+              typeof (resource as Activity).content.modelXml === 'string'
+          )
+        );
+      })
+      .map((page) => page.id)
+  );
+
   // Visit every resource, replacing legacy references with corresponding collection
   // of derivative references
 
@@ -427,7 +454,8 @@ export function updateDerivativeReferences(
       parent,
       byLegacyId,
       resourceActivityRefs,
-      legacyMyResponseFeedbackIds
+      legacyMyResponseFeedbackIds,
+      scoredSuperactivityWrapperIds
     )
   );
 }
@@ -880,9 +908,26 @@ function handleOnePlaceholder(
   byLegacyId: DerivedResourceMap,
   pageMap: any,
   page: Page,
-  legacyMyResponseFeedbackIds: Record<string, boolean>
+  legacyMyResponseFeedbackIds: Record<string, boolean>,
+  scoredSuperactivityWrapperIds: Set<string>
 ) {
   const derived = byLegacyId[m.idref];
+  const referencedPage = pageMap[m.idref];
+
+  if (
+    referencedPage !== undefined &&
+    (derived === undefined ||
+      (referencedPage !== page && scoredSuperactivityWrapperIds.has(m.idref)))
+  ) {
+    return [
+      ...entries,
+      wrapContentInSurveyOrGroup(
+        [createContentWithLink(referencedPage.title, m.idref)],
+        m,
+        legacyMyResponseFeedbackIds
+      ),
+    ];
+  }
 
   if (derived !== undefined) {
     return [
@@ -912,17 +957,6 @@ function handleOnePlaceholder(
       ),
     ];
   }
-  if (pageMap[m.idref] !== undefined) {
-    const page = pageMap[m.idref];
-    return [
-      ...entries,
-      wrapContentInSurveyOrGroup(
-        [createContentWithLink(page.title, m.idref)],
-        m,
-        legacyMyResponseFeedbackIds
-      ),
-    ];
-  }
 
   console.log(
     `Warning: Could not find derived resources for ${m.idref} within page ${page.id}`
@@ -935,7 +969,8 @@ function updateParentReference(
   parent: TorusResource,
   byLegacyId: DerivedResourceMap,
   pageMap: any,
-  legacyMyResponseFeedbackIds: Record<string, boolean>
+  legacyMyResponseFeedbackIds: Record<string, boolean>,
+  scoredSuperactivityWrapperIds: Set<string>
 ): TorusResource {
   if (parent.type === 'Page') {
     const page = parent as Page;
@@ -948,7 +983,8 @@ function updateParentReference(
             byLegacyId,
             pageMap,
             page,
-            legacyMyResponseFeedbackIds
+            legacyMyResponseFeedbackIds,
+            scoredSuperactivityWrapperIds
           );
         } else if (m.type === 'group') {
           const group = Object.assign({}, m, {
@@ -962,7 +998,8 @@ function updateParentReference(
                     byLegacyId,
                     pageMap,
                     page,
-                    legacyMyResponseFeedbackIds
+                    legacyMyResponseFeedbackIds,
+                    scoredSuperactivityWrapperIds
                   )[0];
                 } else {
                   return c;
