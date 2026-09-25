@@ -81,6 +81,133 @@ describe('legacy linked activities', () => {
     ]);
   });
 
+  test.each([
+    [
+      'linked activity',
+      './test/content/x-oli-linked-activity/improvement.xml',
+      'improvement',
+    ],
+    [
+      'CTAT2 activity',
+      './test/content/x-cmu-ctat-tutor2/ctat2_m1_stattutor.xml',
+      'ctat2_m1_stattutor',
+    ],
+    [
+      'high-stakes embedded activity',
+      './test/course_packages/migration-4sdfykby_v_1_0-echo/content/x-oli-embed-activity-highstakes/thermo1_2_highstakes.xml',
+      'thermo1_2_highstakes',
+    ],
+  ])(
+    'links an external inline reference to a scored %s wrapper',
+    async (_kind, file, id) => {
+      const converted = await new Superactivity(file, false).convert(
+        projectSummary
+      );
+      const resources = converted.filter(
+        (resource): resource is TorusResource => typeof resource !== 'string'
+      );
+      const lesson = {
+        type: 'Page',
+        id: 'lesson',
+        legacyId: 'lesson',
+        title: 'Lesson',
+        legacyPath: '',
+        tags: [],
+        unresolvedReferences: [id],
+        warnings: [],
+        content: {
+          model: [
+            {
+              type: 'activity_placeholder',
+              idref: id,
+            },
+          ],
+        },
+        isGraded: false,
+        isSurvey: false,
+        objectives: [],
+        collabSpace: defaultCollabSpaceDefinition(),
+      } as Page;
+
+      const resolved = updateDerivativeReferences([...resources, lesson]);
+      const resolvedLesson = resolved.find(
+        (resource) => resource.id === 'lesson'
+      ) as Page;
+
+      expect(resolvedLesson.content.model).toEqual([
+        expect.objectContaining({
+          type: 'group',
+          children: [
+            expect.objectContaining({
+              type: 'content',
+              children: [
+                expect.objectContaining({
+                  type: 'p',
+                  children: [
+                    expect.objectContaining({
+                      type: 'a',
+                      idref: id,
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ]);
+    }
+  );
+
+  test('keeps an ordinary inline superactivity embedded', async () => {
+    const activityId = 'd9bd71f02ca144bf9246d0631cb2d086';
+    const converted = await new Superactivity(
+      `./test/content/x-oli-embed-activity/${activityId}.xml`,
+      false
+    ).convert(projectSummary);
+    const resources = converted.filter(
+      (resource): resource is TorusResource => typeof resource !== 'string'
+    );
+    const lesson = {
+      type: 'Page',
+      id: 'lesson',
+      legacyId: 'lesson',
+      title: 'Lesson',
+      legacyPath: '',
+      tags: [],
+      unresolvedReferences: [activityId],
+      warnings: [],
+      content: {
+        model: [
+          {
+            type: 'activity_placeholder',
+            idref: activityId,
+          },
+        ],
+      },
+      isGraded: false,
+      isSurvey: false,
+      objectives: [],
+      collabSpace: defaultCollabSpaceDefinition(),
+    } as Page;
+
+    const resolved = updateDerivativeReferences([...resources, lesson]);
+    const resolvedLesson = resolved.find(
+      (resource) => resource.id === 'lesson'
+    ) as Page;
+
+    expect(resolvedLesson.content.model).toEqual([
+      expect.objectContaining({
+        type: 'group',
+        children: [
+          expect.objectContaining({
+            type: 'activity-reference',
+            activity_id: (resources[0] as Activity).id,
+          }),
+        ],
+      }),
+    ]);
+  });
+
   test('adds a scored banked completion confirmation to iLogos wrappers', async () => {
     const converted = await new Superactivity(
       './test/content/x-oli-linked-activity/ilogos.xml',
