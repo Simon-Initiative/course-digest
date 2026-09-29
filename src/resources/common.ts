@@ -340,6 +340,8 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'pronunciation', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'type', 'contenttype');
   DOM.renameAttribute($, 'video source', 'src', 'url');
+  DOM.renameAttribute($, 'audio source', 'type', 'contenttype');
+  DOM.renameAttribute($, 'audio source', 'src', 'url');
   DOM.renameAttribute($, 'video', 'type', 'contenttype');
   DOM.renameAttribute($, 'audio', 'type', 'audioType');
 

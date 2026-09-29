@@ -458,6 +458,24 @@ export function toJSON(
         }
       };
 
+      const setAudioAttributes = () => {
+        if (tag === 'audio') {
+          const source = getOneOfType(top().children, 'source');
+          if (top().src === undefined && source?.url !== undefined) {
+            top().src = source.url;
+          }
+          if (
+            top().audioType === undefined &&
+            source?.contenttype !== undefined
+          ) {
+            top().audioType = source.contenttype;
+          }
+
+          // Audio is a Slate void element and may only contain a text leaf.
+          top().children = [{ text: ' ' }];
+        }
+      };
+
       const ensureTextDoesNotSurroundBlockElement = (e: string) => {
         if (tag === e) {
           if (top() && top().children.length === 3) {
@@ -684,6 +702,7 @@ export function toJSON(
         unescapeCodeLine();
         setTransformationData();
         setVideoAttributes();
+        setAudioAttributes();
         convertTableAttrstoNumbers();
         elevateDefinitionComponents();
         elevateDialogComponents();

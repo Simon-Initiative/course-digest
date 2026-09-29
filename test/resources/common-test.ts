@@ -160,6 +160,75 @@ describe('cdata and codeblocks', () => {
     expect(video.src[0].contenttype).toBe('video/webm');
   });
 
+  test('should normalize legacy audio sources into a Slate void element', async () => {
+    const content = `
+      <root>
+        <choice value="Res1">
+          <audio id="answer-audio" src="../webcontent/answer.mp3" type="audio/mp3" controls="false">
+            <caption />
+            <popout enable="false" />
+            <source src="../webcontent/answer.mp3" type="audio/mp3" />
+          </audio>
+        </choice>
+      </root>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary, {
+      choice: true,
+    });
+    const audio = result.children[0].children[0].children.find(
+      (child: any) => child.type === 'audio'
+    );
+
+    expect(audio).toEqual(
+      expect.objectContaining({
+        type: 'audio',
+        id: 'answer-audio',
+        src: '../webcontent/answer.mp3',
+        audioType: 'audio/mp3',
+        children: [{ text: ' ' }],
+      })
+    );
+  });
+
+  test('should promote a nested audio source when parent attributes are absent', async () => {
+    const content = `
+      <root>
+        <audio>
+          <source src="../webcontent/answer.mp3" type="audio/mp3" />
+        </audio>
+      </root>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+    const audio = result.children[0].children.find(
+      (child: any) => child.type === 'audio'
+    );
+
+    expect(audio).toEqual(
+      expect.objectContaining({
+        type: 'audio',
+        src: '../webcontent/answer.mp3',
+        audioType: 'audio/mp3',
+        children: [{ text: ' ' }],
+      })
+    );
+  });
+
   test('should convert legacy right-arrow symbols to bold Unicode', async () => {
     const content =
       '<root><p>before <sym name="rarr"/> after <sym name="unknown"/></p></root>';
