@@ -160,6 +160,40 @@ describe('cdata and codeblocks', () => {
     expect(video.src[0].contenttype).toBe('video/webm');
   });
 
+  test('should convert legacy video subtitle tracks to captions', async () => {
+    const content = `
+      <root>
+        <video>
+          <source src="../webcontent/sample.mp4" type="video/mp4" />
+          <track
+            src="../webcontent/sample.vtt"
+            kind="subtitles"
+            label="French subtitles"
+            srclang="fr"
+          />
+        </video>
+      </root>
+    `;
+
+    const $ = cheerio.load(content, {
+      normalizeWhitespace: true,
+      xmlMode: true,
+    });
+
+    standardContentManipulations($);
+
+    const result: any = await toJSON($.xml(), projectSummary);
+    const video = result.children[0].children[0];
+
+    expect(video.captions).toEqual([
+      {
+        label: 'French subtitles',
+        language_code: 'fr',
+        src: '../webcontent/sample.vtt',
+      },
+    ]);
+  });
+
   test('should normalize legacy audio sources into a Slate void element', async () => {
     const content = `
       <root>

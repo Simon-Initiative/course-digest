@@ -344,6 +344,9 @@ export function standardContentManipulations($: any) {
   DOM.renameAttribute($, 'audio source', 'src', 'url');
   DOM.renameAttribute($, 'video', 'type', 'contenttype');
   DOM.renameAttribute($, 'audio', 'type', 'audioType');
+  // video <track> subelement with .vtt subtitle file => torus captions child
+  DOM.rename($, 'video track[kind="subtitles"]', 'captions');
+  DOM.renameAttribute($, 'video captions', 'srclang', 'language_code');
 
   DOM.rename($, 'extra', 'popup');
 
